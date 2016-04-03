@@ -59,7 +59,7 @@ func init() {
 	RootCmd.PersistentFlags().StringP("delimiter", "d", ",", `Delimiting character of the input CSV file`)
 	RootCmd.PersistentFlags().StringP("out-delimiter", "D", ",", `Delimiting character of the input CSV file`)
 	// RootCmd.PersistentFlags().StringP("quote-char", "q", `"`, `Character used to quote strings in the input CSV file`)
-	RootCmd.PersistentFlags().StringP("comment-char", "C", ``, `Commment character for start of line in the input CSV file`)
+	RootCmd.PersistentFlags().StringP("comment-char", "C", `#`, `Commment character for start of line in the input CSV file`)
 	RootCmd.PersistentFlags().BoolP("lazy-quotes", "l", false, `If --lazy-quotes, a quote may appear in an unquoted field and a non-doubled quote may appear in a quoted field`)
 
 	RootCmd.PersistentFlags().BoolP("tabs", "t", false, `Specifies that the input CSV file is delimited with tabs. Overrides "-d"`)

@@ -26,6 +26,7 @@ import (
 	"os"
 
 	"github.com/brentp/xopen"
+	"github.com/shenwei356/util/stringutil"
 	"github.com/spf13/cobra"
 )
 
@@ -88,6 +89,12 @@ func getFlagString(cmd *cobra.Command, flag string) string {
 	value, err := cmd.Flags().GetString(flag)
 	checkError(err)
 	return value
+}
+
+func getFlagCommaSeparatedString(cmd *cobra.Command, flag string) []string {
+	value, err := cmd.Flags().GetString(flag)
+	checkError(err)
+	return stringutil.Split(value, ",")
 }
 
 func getFlagRune(cmd *cobra.Command, flag string) rune {

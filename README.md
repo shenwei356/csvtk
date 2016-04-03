@@ -2,7 +2,7 @@ csvtk
 
 Another cross-platform, efficient and practical CSV/TSV tool kit.
 
-## commands
+## Subcommands
 
 **Information**
 
@@ -12,16 +12,14 @@ Another cross-platform, efficient and practical CSV/TSV tool kit.
 
 -  [x] csv2tab
 -  [x] tab2csv
--  space2tab
+-  [x] space2tab
 -  [x] transpose
 
 **Set operations**
 
--  cut
+-  [x] cut
 -  split
 -  grep
-
-
 -  join
 -  uniq
 -  inter
