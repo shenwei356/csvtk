@@ -22,6 +22,7 @@ package cmd
 
 import (
 	"fmt"
+	"runtime"
 	"strings"
 
 	"github.com/brentp/xopen"
@@ -40,6 +41,7 @@ var space2tabCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
 		files := getFileList(args)
+		runtime.GOMAXPROCS(config.NumCPUs)
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)

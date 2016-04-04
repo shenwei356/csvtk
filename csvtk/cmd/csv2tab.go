@@ -22,6 +22,7 @@ package cmd
 
 import (
 	"encoding/csv"
+	"runtime"
 
 	"github.com/brentp/xopen"
 	"github.com/spf13/cobra"
@@ -37,6 +38,7 @@ var csv2tabCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
 		files := getFileList(args)
+		runtime.GOMAXPROCS(config.NumCPUs)
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)

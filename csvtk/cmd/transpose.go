@@ -23,6 +23,7 @@ package cmd
 import (
 	"encoding/csv"
 	"fmt"
+	"runtime"
 
 	"github.com/brentp/xopen"
 	"github.com/spf13/cobra"
@@ -38,6 +39,7 @@ var transposeCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
 		files := getFileList(args)
+		runtime.GOMAXPROCS(config.NumCPUs)
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)

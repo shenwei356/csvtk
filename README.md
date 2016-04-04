@@ -27,7 +27,7 @@ Another cross-platform, efficient and practical CSV/TSV tool kit.
 
 -  [x] `cut` select parts of fields
 -  `split` split data to multiple files by values of selected fields
--  `grep` grep data by selected fields with patterns
+-  [x] `grep` grep data by selected fields with patterns
 -  `filter` filter data by values of selected fields, supporting math/string expression
 -  `join` join multiple CSV files by selected fields
 -  `uniq` unique data without sorting
