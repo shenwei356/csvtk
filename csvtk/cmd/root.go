@@ -53,18 +53,18 @@ func Execute() {
 }
 
 func init() {
-	RootCmd.PersistentFlags().IntP("chunk-size", "c", 50, `Chunk size of CSV reader`)
-	RootCmd.PersistentFlags().IntP("num-cups", "j", 50, `Number of CPUs to use`)
+	RootCmd.PersistentFlags().IntP("chunk-size", "c", 50, `chunk size of CSV reader`)
+	RootCmd.PersistentFlags().IntP("num-cups", "j", 50, `number of CPUs to use`)
 
-	RootCmd.PersistentFlags().StringP("delimiter", "d", ",", `Delimiting character of the input CSV file`)
-	RootCmd.PersistentFlags().StringP("out-delimiter", "D", ",", `Delimiting character of the input CSV file`)
-	// RootCmd.PersistentFlags().StringP("quote-char", "q", `"`, `Character used to quote strings in the input CSV file`)
-	RootCmd.PersistentFlags().StringP("comment-char", "C", `#`, `Commment character for start of line in the input CSV file`)
-	RootCmd.PersistentFlags().BoolP("lazy-quotes", "l", false, `If --lazy-quotes, a quote may appear in an unquoted field and a non-doubled quote may appear in a quoted field`)
+	RootCmd.PersistentFlags().StringP("delimiter", "d", ",", `delimiting character of the input CSV file`)
+	RootCmd.PersistentFlags().StringP("out-delimiter", "D", ",", `delimiting character of the input CSV file`)
+	// RootCmd.PersistentFlags().StringP("quote-char", "q", `"`, `character used to quote strings in the input CSV file`)
+	RootCmd.PersistentFlags().StringP("comment-char", "C", `#`, `commment character for start of line in the input CSV file`)
+	RootCmd.PersistentFlags().BoolP("lazy-quotes", "l", false, `if given, a quote may appear in an unquoted field and a non-doubled quote may appear in a quoted field`)
 
-	RootCmd.PersistentFlags().BoolP("tabs", "t", false, `Specifies that the input CSV file is delimited with tabs. Overrides "-d"`)
-	RootCmd.PersistentFlags().BoolP("out-tabs", "T", false, `Specifies that the output is delimited with tabs. Overrides "-D"`)
-	RootCmd.PersistentFlags().BoolP("with-header-row", "H", false, `Specifies that the input CSV file has header row`)
-
-	RootCmd.PersistentFlags().StringP("out-file", "o", "-", `Out file ("-" for stdout, suffix .gz for gzipped out)`)
+	RootCmd.PersistentFlags().BoolP("tabs", "t", false, `specifies that the input CSV file is delimited with tabs. Overrides "-d"`)
+	RootCmd.PersistentFlags().BoolP("out-tabs", "T", false, `specifies that the output is delimited with tabs. Overrides "-D"`)
+	// RootCmd.PersistentFlags().BoolP("with-header-row", "H", false, `Specifies that the input CSV file has header row`)
+	RootCmd.PersistentFlags().BoolP("no-header-row", "H", false, `specifies that the input CSV file does not have header row`)
+	RootCmd.PersistentFlags().StringP("out-file", "o", "-", `out file ("-" for stdout, suffix .gz for gzipped out)`)
 }

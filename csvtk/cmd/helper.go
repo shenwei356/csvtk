@@ -24,6 +24,8 @@ import (
 	"encoding/csv"
 	"fmt"
 	"os"
+	"regexp"
+	"strconv"
 
 	"github.com/brentp/xopen"
 	"github.com/shenwei356/util/stringutil"
@@ -91,10 +93,23 @@ func getFlagString(cmd *cobra.Command, flag string) string {
 	return value
 }
 
-func getFlagCommaSeparatedString(cmd *cobra.Command, flag string) []string {
+func getFlagCommaSeparatedStrings(cmd *cobra.Command, flag string) []string {
 	value, err := cmd.Flags().GetString(flag)
 	checkError(err)
 	return stringutil.Split(value, ",")
+}
+
+func getFlagCommaSeparatedInts(cmd *cobra.Command, flag string) []int {
+	filedsStrList := getFlagCommaSeparatedStrings(cmd, flag)
+	fields := make([]int, len(filedsStrList))
+	for i, value := range filedsStrList {
+		v, err := strconv.Atoi(value)
+		if err != nil || v < 1 {
+			checkError(fmt.Errorf("value of flag --%s should be comma separated positive integers", flag))
+		}
+		fields[i] = v
+	}
+	return fields
 }
 
 func getFlagRune(cmd *cobra.Command, flag string) rune {
@@ -142,7 +157,7 @@ type Config struct {
 
 	Tabs        bool
 	OutTabs     bool
-	WithHeadRow bool
+	NoHeaderRow bool
 
 	OutFile string
 }
@@ -160,7 +175,7 @@ func getConfigs(cmd *cobra.Command) Config {
 
 		Tabs:        getFlagBool(cmd, "tabs"),
 		OutTabs:     getFlagBool(cmd, "out-tabs"),
-		WithHeadRow: getFlagBool(cmd, "with-header-row"),
+		NoHeaderRow: getFlagBool(cmd, "no-header-row"),
 
 		OutFile: getFlagString(cmd, "out-file"),
 	}
@@ -212,4 +227,35 @@ func NewCSVWriterChanByConfig(config Config) (chan []string, error) {
 	}()
 
 	return ch, nil
+}
+
+var reFields = regexp.MustCompile(`([^,]+)(,[^,]+)*,?`)
+var reDigitals = regexp.MustCompile(`^\d+$`)
+
+func parseFields(cmd *cobra.Command,
+	flagOfFields string,
+	flagOfNoHeaderRow string) ([]int, []string, bool) {
+	fieldsStr, err := cmd.Flags().GetString(flagOfFields)
+	checkError(err)
+	if fieldsStr == "" {
+		checkError(fmt.Errorf("flag --%s needed", flagOfFields))
+	}
+	if !reFields.MatchString(fieldsStr) {
+		checkError(fmt.Errorf("invalid value of flag %s", flagOfFields))
+	}
+
+	var fields []int
+	var colnames []string
+	var parseHeaderRow bool
+	firstField := reFields.FindAllStringSubmatch(fieldsStr, -1)[0][1]
+	if reDigitals.MatchString(firstField) {
+		fields = getFlagCommaSeparatedInts(cmd, flagOfFields)
+		if !getFlagBool(cmd, "no-header-row") {
+			parseHeaderRow = true
+		}
+	} else {
+		colnames = getFlagCommaSeparatedStrings(cmd, flagOfFields)
+		parseHeaderRow = true
+	}
+	return fields, colnames, parseHeaderRow
 }

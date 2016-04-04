@@ -23,7 +23,6 @@ package cmd
 import (
 	"encoding/csv"
 	"fmt"
-	"strconv"
 
 	"github.com/brentp/xopen"
 	"github.com/spf13/cobra"
@@ -32,45 +31,81 @@ import (
 // cutCmd represents the seq command
 var cutCmd = &cobra.Command{
 	Use:   "cut",
-	Short: "print selected parts of fields",
-	Long: `print selected parts of fields
+	Short: "select parts of fields",
+	Long: `select parts of fields
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
 		files := getFileList(args)
 
-		filedsStrList := getFlagCommaSeparatedString(cmd, "fields")
-		fields := make([]int, len(filedsStrList))
-		for i, value := range filedsStrList {
-			v, err := strconv.Atoi(value)
-			if err != nil || v < 1 {
-				checkError(fmt.Errorf("value of flag -f (--fields) should be comma separated positive integers"))
-			}
-			fields[i] = v
-		}
+		fields, colnames, needParseHeaderRow := parseFields(cmd, "fields", "no-header-row")
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
 		defer outfh.Close()
 
 		writer := csv.NewWriter(outfh)
-		writer.Comma = config.OutDelimiter
+		if config.OutTabs {
+			writer.Comma = '\t'
+		} else {
+			writer.Comma = config.OutDelimiter
+		}
 
-		items := make([]string, len(fields))
 		for _, file := range files {
 			csvReader, err := newCSVReaderByConfig(config, file)
 			checkError(err)
 			csvReader.Run()
 
+			parseHeaderRow := needParseHeaderRow // parsing header row
+			var colnames2fileds map[string]int   // column name -> field
+
+			checkFields := true
+			var items []string
+
 			for chunk := range csvReader.Ch {
 				checkError(chunk.Err)
 
 				for _, record := range chunk.Data {
-					for i, f := range fields {
-						if f > len(record) {
-							continue
+					if parseHeaderRow { // parsing header row
+						colnames2fileds = make(map[string]int, len(record))
+						for i, col := range record {
+							colnames2fileds[col] = i + 1
 						}
+
+						if len(fields) == 0 { // user gives the colnames
+							fields = []int{}
+							for _, col := range colnames {
+								if v, ok := colnames2fileds[col]; ok {
+									fields = append(fields, v)
+								} else {
+									log.Warningf("ignore unknown column name: %s", col)
+								}
+							}
+						}
+
+						parseHeaderRow = false
+					}
+
+					if checkFields {
+						fields2 := []int{}
+						for _, f := range fields {
+							if f > len(record) {
+								log.Warningf("ignore unmatched field: %d", f)
+								continue
+							}
+							fields2 = append(fields2, f)
+						}
+						fields = fields2
+						if len(fields) == 0 {
+							checkError(fmt.Errorf("no fields matched"))
+						}
+						items = make([]string, len(fields))
+
+						checkFields = false
+					}
+
+					for i, f := range fields {
 						items[i] = record[f-1]
 					}
 					checkError(writer.Write(items))
@@ -84,5 +119,5 @@ var cutCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(cutCmd)
-	cutCmd.Flags().StringP("fields", "f", "", `select only these fields. e.g -f 1,2`)
+	cutCmd.Flags().StringP("fields", "f", "", `select only these fields. e.g -f 1,2 or -f columnA,columnB`)
 }
