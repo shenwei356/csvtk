@@ -23,89 +23,26 @@ package cmd
 import (
 	"encoding/csv"
 	"fmt"
-	"regexp"
 	"runtime"
 	"strings"
 
 	"github.com/brentp/xopen"
-	"github.com/shenwei356/breader"
 	"github.com/spf13/cobra"
 )
 
-// grepCmd represents the seq command
-var grepCmd = &cobra.Command{
-	Use:   "grep",
-	Short: "grep data by selected fields with patterns",
-	Long: `grep data by selected fields with patterns
+// uniqCmd represents the seq command
+var uniqCmd = &cobra.Command{
+	Use:   "uniq",
+	Short: "unique data without sorting",
+	Long: `unique data without sorting
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
 		files := getFileList(args)
-		if len(files) > 1 {
-			checkError(fmt.Errorf("no more than one file should be given"))
-		}
 		runtime.GOMAXPROCS(config.NumCPUs)
 
-		fields, colnames, needParseHeaderRow := parseFields(cmd, "field", "no-header-row")
-		if len(fields) > 1 || len(colnames) > 1 {
-			checkError(fmt.Errorf("only single key field supported"))
-		}
-
-		patterns := getFlagStringSlice(cmd, "pattern")
-		patternFile := getFlagString(cmd, "pattern-file")
-		if len(patterns) == 0 && patternFile == "" {
-			checkError(fmt.Errorf("one of flags -p (--pattern) or -f (--pattern-file) should be given"))
-		}
-
-		ignoreCase := getFlagBool(cmd, "ignore-case")
-		useRegexp := getFlagBool(cmd, "use-regexp")
-		invert := getFlagBool(cmd, "invert")
-
-		patternsMap := make(map[string]*regexp.Regexp)
-		for _, pattern := range patterns {
-			if useRegexp {
-				p := pattern
-				if ignoreCase {
-					p = "(?i)" + p
-				}
-				re, err := regexp.Compile(p)
-				checkError(err)
-				patternsMap[pattern] = re
-			} else {
-				if ignoreCase {
-					patternsMap[strings.ToLower(pattern)] = nil
-				} else {
-					patternsMap[pattern] = nil
-				}
-			}
-		}
-
-		if patternFile != "" {
-			reader, err := breader.NewDefaultBufferedReader(patternFile)
-			checkError(err)
-			for chunk := range reader.Ch {
-				checkError(chunk.Err)
-				for _, data := range chunk.Data {
-					pattern := data.(string)
-					if useRegexp {
-						p := pattern
-						if ignoreCase {
-							p = "(?i)" + p
-						}
-						re, err := regexp.Compile(p)
-						checkError(err)
-						patternsMap[pattern] = re
-					} else {
-						if ignoreCase {
-							patternsMap[strings.ToLower(pattern)] = nil
-						} else {
-							patternsMap[pattern] = nil
-						}
-					}
-				}
-			}
-		}
+		fields, colnames, needParseHeaderRow := parseFields(cmd, "fields", "no-header-row")
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
@@ -118,19 +55,20 @@ var grepCmd = &cobra.Command{
 			writer.Comma = config.OutDelimiter
 		}
 
+		keysMaps := make(map[string]struct{}, 10000)
+
 		for _, file := range files {
 			csvReader, err := newCSVReaderByConfig(config, file)
 			checkError(err)
 			csvReader.Run()
 
 			parseHeaderRow := needParseHeaderRow // parsing header row
-			var colnames2fileds map[string]int   // column name -> field
 			var HeaderRow []string
+			var colnames2fileds map[string]int // column name -> field
 
 			checkFields := true
 			var items []string
-			var target string
-			var hit bool
+			var key string
 
 			for chunk := range csvReader.Ch {
 				checkError(chunk.Err)
@@ -181,34 +119,11 @@ var grepCmd = &cobra.Command{
 						items[i] = record[f-1]
 					}
 
-					target = items[0]
-					hit = false
-
-					if useRegexp {
-						for _, re := range patternsMap {
-							if re.MatchString(target) {
-								hit = true
-								break
-							}
-						}
-					} else {
-						k := target
-						if ignoreCase {
-							k = strings.ToLower(k)
-						}
-						if _, ok := patternsMap[k]; ok {
-							hit = true
-						}
+					key = strings.Join(items, "__")
+					if _, ok := keysMaps[key]; ok {
+						continue
 					}
-					if invert {
-						if hit {
-							continue
-						}
-					} else {
-						if !hit {
-							continue
-						}
-					}
+					keysMaps[key] = struct{}{}
 					checkError(writer.Write(record))
 				}
 			}
@@ -219,11 +134,7 @@ var grepCmd = &cobra.Command{
 }
 
 func init() {
-	RootCmd.AddCommand(grepCmd)
-	grepCmd.Flags().StringP("field", "f", "1", `key field, column name or index`)
-	grepCmd.Flags().StringSliceP("pattern", "p", []string{""}, `query pattern (multiple values supported)`)
-	grepCmd.Flags().StringP("pattern-file", "P", "", `pattern files (could also be CSV format)`)
-	grepCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
-	grepCmd.Flags().BoolP("use-regexp", "r", false, `patterns are regular expression`)
-	grepCmd.Flags().BoolP("invert", "v", false, `invert match`)
+	RootCmd.AddCommand(uniqCmd)
+	uniqCmd.Flags().StringP("fields", "f", "1", `select only these fields. e.g -f 1,2 or -f columnA,columnB`)
+	uniqCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
 }

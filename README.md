@@ -26,12 +26,13 @@ Another cross-platform, efficient and practical CSV/TSV tool kit.
 **Set operations**
 
 -  [x] `cut` select parts of fields
--  `split` split data to multiple files by values of selected fields
+-  [x] `uniq` unique data without sorting
+-  [x] `inter` intersection of multiple files
+
 -  [x] `grep` grep data by selected fields with patterns
 -  `filter` filter data by values of selected fields, supporting math/string expression
 -  `join` join multiple CSV files by selected fields
--  `uniq` unique data without sorting
--  `inter` intersection of multiple files
+-  `split` split data to multiple files by values of selected fields
 
 **Edit**
 

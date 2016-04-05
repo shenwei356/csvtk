@@ -39,6 +39,9 @@ var cutCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
 		files := getFileList(args)
+		if len(files) > 1 {
+			checkError(fmt.Errorf("no more than one file should be given"))
+		}
 		runtime.GOMAXPROCS(config.NumCPUs)
 
 		fields, colnames, needParseHeaderRow := parseFields(cmd, "fields", "no-header-row")
@@ -48,7 +51,7 @@ var cutCmd = &cobra.Command{
 		defer outfh.Close()
 
 		writer := csv.NewWriter(outfh)
-		if config.OutTabs {
+		if config.OutTabs || config.Tabs {
 			writer.Comma = '\t'
 		} else {
 			writer.Comma = config.OutDelimiter
