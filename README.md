@@ -12,7 +12,7 @@ Another cross-platform, efficient and practical CSV/TSV tool kit.
 
 ## Download
 
-Try the preview version [v0.1](https://github.com/shenwei356/fakit/releases/tag/v0.1).
+Try the preview version [v0.1](https://github.com/shenwei356/csvtk/releases/tag/v0.1).
 
 ## Subcommands
 
@@ -32,7 +32,6 @@ Try the preview version [v0.1](https://github.com/shenwei356/fakit/releases/tag/
 -  [x] `cut` select parts of fields
 -  [x] `uniq` unique data without sorting
 -  [x] `inter` intersection of multiple files
-
 -  [x] `grep` grep data by selected fields with patterns
 -  `filter` filter data by values of selected fields, supporting math/string expression
 -  `join` join multiple CSV files by selected fields
