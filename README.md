@@ -10,6 +10,10 @@ Another cross-platform, efficient and practical CSV/TSV tool kit.
 - **Practical functions supported by N subcommands**
 - **Support STDIN and gziped input/output file, easy being used in pipe**
 
+## Download
+
+Try the preview version [v0.1](https://github.com/shenwei356/fakit/releases/tag/v0.1).
+
 ## Subcommands
 
 **Information**
