@@ -79,6 +79,11 @@ var transposeCmd = &cobra.Command{
 		}
 
 		writer := csv.NewWriter(outfh)
+		if config.OutTabs || config.Tabs {
+			writer.Comma = '\t'
+		} else {
+			writer.Comma = config.OutDelimiter
+		}
 		for j := uint64(0); j < numCols0; j++ {
 			rowNew := make([]string, numRows)
 			for i, rowOld := range data {

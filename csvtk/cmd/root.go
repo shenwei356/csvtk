@@ -34,7 +34,7 @@ var RootCmd = &cobra.Command{
 	Short: "Another cross-platform, efficient and practical CSV/TSV tool kit",
 	Long: `Another cross-platform, efficient and practical CSV/TSV tool kit
 
-Version: 0.1
+Version: 0.1.1
 
 Author: Wei Shen <shenwei356@gmail.com>
 

@@ -32,7 +32,7 @@ Try the preview version [v0.1](https://github.com/shenwei356/csvtk/releases/tag/
 -  [x] `cut` select parts of fields
 -  [x] `uniq` unique data without sorting
 -  [x] `inter` intersection of multiple files
--  [x] `grep` grep data by selected fields with patterns
+-  [x] `grep` grep data by selected fields with patterns/regular expressions
 -  `filter` filter data by values of selected fields, supporting math/string expression
 -  `join` join multiple CSV files by selected fields
 -  `split` split data to multiple files by values of selected fields
@@ -48,9 +48,29 @@ Try the preview version [v0.1](https://github.com/shenwei356/csvtk/releases/tag/
 
 ## Compared to `csvkit`
 
+*not finished*
+
 [csvkit](http://csvkit.readthedocs.org/en/540/)
 
-TODO
+Features                |  csvtk   |  csvkit
+:-----------------------|:--------:|:--------:
+Read    Gzip            |   Yes    |  Yes
+Unselect fileds         |   Yes    |  No
+
+
+## Examples
+
+1. Select fields/columns
+
+    1. By index: `csvtk cut -f 1,2`
+    1. By names: `csvtk cut -f first_name,username`
+    1. Unselect: `csvtk cut -f -1,-2` or `csvtk cut -f -first_name`
+
+1. Grep by selected fields
+
+    1. By exactly matching: `csvtk grep -f first_name -p Robert -p Rob`
+    1. By regular expression: `csvtk grep -f first_name -r -p Rob`
+    1. By pattern list: `csvtk grep -f first_name -P name_list.txt`
 
 ## Contact
 

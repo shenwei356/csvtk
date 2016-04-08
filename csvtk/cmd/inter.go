@@ -42,7 +42,23 @@ var interCmd = &cobra.Command{
 		files := getFileList(args)
 		runtime.GOMAXPROCS(config.NumCPUs)
 
-		fields, colnames, needParseHeaderRow := parseFields(cmd, "fields", "no-header-row")
+		fields, colnames, negativeFields, needParseHeaderRow := parseFields(cmd, "fields", "no-header-row")
+		var fieldsMap map[int]struct{}
+		if len(fields) > 0 {
+			fields2 := make([]int, len(fields))
+			fieldsMap = make(map[int]struct{}, len(fields))
+			for i, f := range fields {
+				if negativeFields {
+					fieldsMap[f*-1] = struct{}{}
+					fields2[i] = f * -1
+				} else {
+					fieldsMap[f] = struct{}{}
+					fields2[i] = f
+				}
+			}
+			fields = fields2
+		}
+
 		ignoreCase := getFlagBool(cmd, "ignore-case")
 
 		outfh, err := xopen.Wopen(config.OutFile)
@@ -68,8 +84,9 @@ var interCmd = &cobra.Command{
 			csvReader.Run()
 
 			parseHeaderRow := needParseHeaderRow // parsing header row
+			var colnames2fileds map[string]int   // column name -> field
+			var colnamesMap map[string]struct{}
 			var HeaderRow []string
-			var colnames2fileds map[string]int // column name -> field
 
 			checkFields := true
 			var items []string
@@ -84,35 +101,51 @@ var interCmd = &cobra.Command{
 						for i, col := range record {
 							colnames2fileds[col] = i + 1
 						}
+						colnamesMap = make(map[string]struct{}, len(colnames))
+						for _, col := range colnames {
+							if negativeFields {
+								colnamesMap[col[1:]] = struct{}{}
+							} else {
+								colnamesMap[col] = struct{}{}
+							}
+						}
 
 						if len(fields) == 0 { // user gives the colnames
 							fields = []int{}
-							for _, col := range colnames {
-								if v, ok := colnames2fileds[col]; ok {
-									fields = append(fields, v)
-								} else {
-									log.Warningf("ignore unknown column name: %s", col)
+							for _, col := range record {
+								_, ok := colnamesMap[col]
+								if (negativeFields && !ok) || (!negativeFields && ok) {
+									fields = append(fields, colnames2fileds[col])
 								}
 							}
 						}
 
-						HeaderRow = record
+						fieldsMap = make(map[int]struct{}, len(fields))
+						for _, f := range fields {
+							fieldsMap[f] = struct{}{}
+						}
+
 						parseHeaderRow = false
+						HeaderRow = record
 						continue
 					}
-
 					if checkFields {
 						fields2 := []int{}
-						for _, f := range fields {
-							if f > len(record) {
-								log.Warningf("ignore unmatched field: %d", f)
-								continue
+						for f := range record {
+							_, ok := fieldsMap[f+1]
+							if negativeFields {
+								if !ok {
+									fields2 = append(fields2, f+1)
+								}
+							} else {
+								if ok {
+									fields2 = append(fields2, f+1)
+								}
 							}
-							fields2 = append(fields2, f)
 						}
 						fields = fields2
 						if len(fields) == 0 {
-							checkError(fmt.Errorf("no fields matched"))
+							checkError(fmt.Errorf("no fields matched in file: %s", file))
 						}
 						items = make([]string, len(fields))
 

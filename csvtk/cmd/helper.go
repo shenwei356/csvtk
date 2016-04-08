@@ -104,7 +104,7 @@ func getFlagCommaSeparatedInts(cmd *cobra.Command, flag string) []int {
 	fields := make([]int, len(filedsStrList))
 	for i, value := range filedsStrList {
 		v, err := strconv.Atoi(value)
-		if err != nil || v < 1 {
+		if err != nil {
 			checkError(fmt.Errorf("value of flag --%s should be comma separated positive integers", flag))
 		}
 		fields[i] = v
@@ -230,11 +230,11 @@ func NewCSVWriterChanByConfig(config Config) (chan []string, error) {
 }
 
 var reFields = regexp.MustCompile(`([^,]+)(,[^,]+)*,?`)
-var reDigitals = regexp.MustCompile(`^\d+$`)
+var reDigitals = regexp.MustCompile(`^[\-\d]+$`)
 
 func parseFields(cmd *cobra.Command,
 	flagOfFields string,
-	flagOfNoHeaderRow string) ([]int, []string, bool) {
+	flagOfNoHeaderRow string) ([]int, []string, bool, bool) {
 	fieldsStr, err := cmd.Flags().GetString(flagOfFields)
 	checkError(err)
 	if fieldsStr == "" {
@@ -247,15 +247,57 @@ func parseFields(cmd *cobra.Command,
 	var fields []int
 	var colnames []string
 	var parseHeaderRow bool
+	var negativeFields bool
 	firstField := reFields.FindAllStringSubmatch(fieldsStr, -1)[0][1]
 	if reDigitals.MatchString(firstField) {
 		fields = getFlagCommaSeparatedInts(cmd, flagOfFields)
+
+		for _, f := range fields {
+			if f == 0 {
+				checkError(fmt.Errorf(`field should not be 0`))
+			} else if f < 0 {
+				negativeFields = true
+			} else {
+				if negativeFields {
+					checkError(fmt.Errorf(`filed should not fixed with positive and negative fields`))
+				}
+			}
+		}
+		// 2 pass check
+		if negativeFields {
+			for _, f := range fields {
+				if f > 0 {
+					checkError(fmt.Errorf(`filed should not fixed with positive and negative fields`))
+				}
+			}
+		}
+
 		if !getFlagBool(cmd, "no-header-row") {
 			parseHeaderRow = true
 		}
 	} else {
 		colnames = getFlagCommaSeparatedStrings(cmd, flagOfFields)
+		for _, f := range colnames {
+			if f[0] == '-' {
+				negativeFields = true
+			} else {
+				if negativeFields {
+					checkError(fmt.Errorf(`filed should not fixed with positive and negative fields`))
+				}
+			}
+		}
+		// 2 pass check
+		if negativeFields {
+			for _, f := range colnames {
+				if f[0] != '-' {
+					checkError(fmt.Errorf(`filed should not fixed with positive and negative fields`))
+				}
+			}
+		}
+		if getFlagBool(cmd, "no-header-row") {
+			log.Warningf("colnames detected, flag -H (--no-header-row) ignored")
+		}
 		parseHeaderRow = true
 	}
-	return fields, colnames, parseHeaderRow
+	return fields, colnames, negativeFields, parseHeaderRow
 }

@@ -35,8 +35,8 @@ import (
 // grepCmd represents the seq command
 var grepCmd = &cobra.Command{
 	Use:   "grep",
-	Short: "grep data by selected fields with patterns",
-	Long: `grep data by selected fields with patterns
+	Short: "grep data by selected fields with patterns/regular expressions",
+	Long: `grep data by selected fields with patterns/regular expressions
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -47,9 +47,24 @@ var grepCmd = &cobra.Command{
 		}
 		runtime.GOMAXPROCS(config.NumCPUs)
 
-		fields, colnames, needParseHeaderRow := parseFields(cmd, "field", "no-header-row")
-		if len(fields) > 1 || len(colnames) > 1 {
-			checkError(fmt.Errorf("only single key field supported"))
+		fields, colnames, negativeFields, needParseHeaderRow := parseFields(cmd, "fields", "no-header-row")
+		if !(len(fields) == 1 || len(colnames) == 1) {
+			checkError(fmt.Errorf("single fields needed"))
+		}
+		var fieldsMap map[int]struct{}
+		if len(fields) > 0 {
+			fields2 := make([]int, len(fields))
+			fieldsMap = make(map[int]struct{}, len(fields))
+			for i, f := range fields {
+				if negativeFields {
+					fieldsMap[f*-1] = struct{}{}
+					fields2[i] = f * -1
+				} else {
+					fieldsMap[f] = struct{}{}
+					fields2[i] = f
+				}
+			}
+			fields = fields2
 		}
 
 		patterns := getFlagStringSlice(cmd, "pattern")
@@ -125,6 +140,7 @@ var grepCmd = &cobra.Command{
 
 			parseHeaderRow := needParseHeaderRow // parsing header row
 			var colnames2fileds map[string]int   // column name -> field
+			var colnamesMap map[string]struct{}
 			var HeaderRow []string
 
 			checkFields := true
@@ -141,36 +157,52 @@ var grepCmd = &cobra.Command{
 						for i, col := range record {
 							colnames2fileds[col] = i + 1
 						}
+						colnamesMap = make(map[string]struct{}, len(colnames))
+						for _, col := range colnames {
+							if negativeFields {
+								colnamesMap[col[1:]] = struct{}{}
+							} else {
+								colnamesMap[col] = struct{}{}
+							}
+						}
 
 						if len(fields) == 0 { // user gives the colnames
 							fields = []int{}
-							for _, col := range colnames {
-								if v, ok := colnames2fileds[col]; ok {
-									fields = append(fields, v)
-								} else {
-									log.Warningf("ignore unknown column name: %s", col)
+							for _, col := range record {
+								_, ok := colnamesMap[col]
+								if (negativeFields && !ok) || (!negativeFields && ok) {
+									fields = append(fields, colnames2fileds[col])
 								}
 							}
 						}
 
+						fieldsMap = make(map[int]struct{}, len(fields))
+						for _, f := range fields {
+							fieldsMap[f] = struct{}{}
+						}
+
+						parseHeaderRow = false
 						HeaderRow = record
 						checkError(writer.Write(HeaderRow))
-						parseHeaderRow = false
 						continue
 					}
-
 					if checkFields {
 						fields2 := []int{}
-						for _, f := range fields {
-							if f > len(record) {
-								log.Warningf("ignore unmatched field: %d", f)
-								continue
+						for f := range record {
+							_, ok := fieldsMap[f+1]
+							if negativeFields {
+								if !ok {
+									fields2 = append(fields2, f+1)
+								}
+							} else {
+								if ok {
+									fields2 = append(fields2, f+1)
+								}
 							}
-							fields2 = append(fields2, f)
 						}
 						fields = fields2
 						if len(fields) == 0 {
-							checkError(fmt.Errorf("no fields matched"))
+							checkError(fmt.Errorf("no fields matched in file: %s", file))
 						}
 						items = make([]string, len(fields))
 
@@ -220,7 +252,7 @@ var grepCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(grepCmd)
-	grepCmd.Flags().StringP("field", "f", "1", `key field, column name or index`)
+	grepCmd.Flags().StringP("fields", "f", "1", `key field, column name or index`)
 	grepCmd.Flags().StringSliceP("pattern", "p", []string{""}, `query pattern (multiple values supported)`)
 	grepCmd.Flags().StringP("pattern-file", "P", "", `pattern files (could also be CSV format)`)
 	grepCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
