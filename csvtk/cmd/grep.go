@@ -122,6 +122,8 @@ var grepCmd = &cobra.Command{
 			}
 		}
 
+		fuzzyFileds := getFlagBool(cmd, "fuzzy-fileds")
+
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
 		defer outfh.Close()
@@ -140,7 +142,7 @@ var grepCmd = &cobra.Command{
 
 			parseHeaderRow := needParseHeaderRow // parsing header row
 			var colnames2fileds map[string]int   // column name -> field
-			var colnamesMap map[string]struct{}
+			var colnamesMap map[string]*regexp.Regexp
 			var HeaderRow []string
 
 			checkFields := true
@@ -157,19 +159,29 @@ var grepCmd = &cobra.Command{
 						for i, col := range record {
 							colnames2fileds[col] = i + 1
 						}
-						colnamesMap = make(map[string]struct{}, len(colnames))
+						colnamesMap = make(map[string]*regexp.Regexp, len(colnames))
 						for _, col := range colnames {
 							if negativeFields {
-								colnamesMap[col[1:]] = struct{}{}
+								colnamesMap[col[1:]] = fuzzyField2Regexp(col)
 							} else {
-								colnamesMap[col] = struct{}{}
+								colnamesMap[col] = fuzzyField2Regexp(col)
 							}
 						}
 
 						if len(fields) == 0 { // user gives the colnames
 							fields = []int{}
 							for _, col := range record {
-								_, ok := colnamesMap[col]
+								var ok bool
+								if fuzzyFileds {
+									for _, re := range colnamesMap {
+										if re.MatchString(col) {
+											ok = true
+											break
+										}
+									}
+								} else {
+									_, ok = colnamesMap[col]
+								}
 								if (negativeFields && !ok) || (!negativeFields && ok) {
 									fields = append(fields, colnames2fileds[col])
 								}
@@ -258,4 +270,5 @@ func init() {
 	grepCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
 	grepCmd.Flags().BoolP("use-regexp", "r", false, `patterns are regular expression`)
 	grepCmd.Flags().BoolP("invert", "v", false, `invert match`)
+	grepCmd.Flags().BoolP("fuzzy-fileds", "F", false, `using fuzzy fileds, e.g. *name or id123*`)
 }

@@ -48,15 +48,15 @@ Try the preview version [v0.1](https://github.com/shenwei356/csvtk/releases/tag/
 
 ## Compared to `csvkit`
 
-*not finished*
-
 [csvkit](http://csvkit.readthedocs.org/en/540/)
 
 Features                |  csvtk   |  csvkit
 :-----------------------|:--------:|:--------:
 Read    Gzip            |   Yes    |  Yes
 Unselect fileds         |   Yes    |  No
+Fuzzy fields            |   Yes    |  No
 
+to be continued...
 
 ## Examples
 
@@ -64,7 +64,8 @@ Unselect fileds         |   Yes    |  No
 
     1. By index: `csvtk cut -f 1,2`
     1. By names: `csvtk cut -f first_name,username`
-    1. Unselect: `csvtk cut -f -1,-2` or `csvtk cut -f -first_name`
+    1. **Unselect**: `csvtk cut -f -1,-2` or `csvtk cut -f -first_name`
+    1. **Fuzzy fields**: `csvtk cut -F -f *_name,username`
 
 1. Grep by selected fields
 

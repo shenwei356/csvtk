@@ -26,6 +26,7 @@ import (
 	"os"
 	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/brentp/xopen"
 	"github.com/shenwei356/util/stringutil"
@@ -300,4 +301,15 @@ func parseFields(cmd *cobra.Command,
 		parseHeaderRow = true
 	}
 	return fields, colnames, negativeFields, parseHeaderRow
+}
+
+func fuzzyField2Regexp(field string) *regexp.Regexp {
+	if strings.IndexAny(field, "*") >= 0 {
+		field = strings.Replace(field, "*", ".*?", -1)
+	}
+
+	field = "^" + field + "$"
+	re, err := regexp.Compile(field)
+	checkError(err)
+	return re
 }
