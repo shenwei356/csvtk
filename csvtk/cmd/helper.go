@@ -106,7 +106,7 @@ func getFlagCommaSeparatedInts(cmd *cobra.Command, flag string) []int {
 	for i, value := range filedsStrList {
 		v, err := strconv.Atoi(value)
 		if err != nil {
-			checkError(fmt.Errorf("value of flag --%s should be comma separated positive integers", flag))
+			checkError(fmt.Errorf("value of flag --%s should be comma separated integers", flag))
 		}
 		fields[i] = v
 	}
@@ -232,6 +232,7 @@ func NewCSVWriterChanByConfig(config Config) (chan []string, error) {
 
 var reFields = regexp.MustCompile(`([^,]+)(,[^,]+)*,?`)
 var reDigitals = regexp.MustCompile(`^[\-\d]+$`)
+var reDigitalRange = regexp.MustCompile(`^([\-\d]+?)\-([\-\d]+?)$`)
 
 func parseFields(cmd *cobra.Command,
 	flagOfFields string,
@@ -251,7 +252,30 @@ func parseFields(cmd *cobra.Command,
 	var negativeFields bool
 	firstField := reFields.FindAllStringSubmatch(fieldsStr, -1)[0][1]
 	if reDigitals.MatchString(firstField) {
-		fields = getFlagCommaSeparatedInts(cmd, flagOfFields)
+		fields = []int{}
+		fieldsStrs := getFlagCommaSeparatedStrings(cmd, flagOfFields)
+		for _, s := range fieldsStrs {
+			found := reDigitalRange.FindAllStringSubmatch(s, -1)
+			if len(found) > 0 { // field range
+				start, err := strconv.Atoi(found[0][1])
+				checkError(err)
+				end, err := strconv.Atoi(found[0][2])
+				checkError(err)
+				if start == 0 || end == 0 {
+					checkError(fmt.Errorf("no 0 allowed in field range: %s", s))
+				}
+				if start >= end {
+					checkError(fmt.Errorf("invalid field range: %s. start (%d) should be less than end (%d)", s, start, end))
+				}
+				for i := start; i <= end; i++ {
+					fields = append(fields, i)
+				}
+			} else {
+				field, err := strconv.Atoi(s)
+				checkError(err)
+				fields = append(fields, field)
+			}
+		}
 
 		for _, f := range fields {
 			if f == 0 {

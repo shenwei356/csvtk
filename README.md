@@ -14,7 +14,7 @@ Another cross-platform, efficient and practical CSV/TSV tool kit.
 
 Try the preview version [v0.1](https://github.com/shenwei356/csvtk/releases/tag/v0.1).
 
-## Subcommands
+## Subcommands (17 in total)
 
 **Information**
 
@@ -39,7 +39,9 @@ Try the preview version [v0.1](https://github.com/shenwei356/csvtk/releases/tag/
 
 **Edit**
 
--  `replace` replace data of selected fields by regular expression
+-  [x] `rename` rename column names
+-  [x] `rename2` rename column names by regular expression
+-  [x] `replace` replace data of selected fields by regular expression
 -  `mutate` create new columns from selected fields by regular expression
 
 **Ordering**
@@ -53,8 +55,11 @@ Try the preview version [v0.1](https://github.com/shenwei356/csvtk/releases/tag/
 Features                |  csvtk   |  csvkit
 :-----------------------|:--------:|:--------:
 Read    Gzip            |   Yes    |  Yes
+Fields ranges           |   Yes    |  Yes
 **Unselect fileds**     |   Yes    |  No
 **Fuzzy fields**        |   Yes    |  No
+Rename columns          |   Yes    |  No
+
 
 to be continued...
 
@@ -66,12 +71,19 @@ to be continued...
     1. By names: `csvtk cut -f first_name,username`
     1. **Unselect**: `csvtk cut -f -1,-2` or `csvtk cut -f -first_name`
     1. **Fuzzy fields**: `csvtk cut -F -f "*_name,username"`
+    1. Field ranges: `csvtk cut -f 2-4` for column 2,3,4 or `csvtk cut -f -3--1` for discarding column 1,2,3
+    1. All fields: `csvtk cut -F -f "*"`
 
 1. Grep by selected fields
 
     1. By exactly matching: `csvtk grep -f first_name -p Robert -p Rob`
     1. By regular expression: `csvtk grep -f first_name -r -p Rob`
     1. By pattern list: `csvtk grep -f first_name -P name_list.txt`
+
+1. Rename column names
+
+    1. Setting new names: `csvtk rename -f A,B -n a,b` or `csvtk rename -f 1-3 -n a,b,c`
+    1. Replacing with original names by regular express: `cat ../testdata/c.csv | ./csvtk rename2 -F -f "*" -p "(.*)" -r 'prefix_$1'` for adding prefix to all column names.
 
 ## Contact
 
