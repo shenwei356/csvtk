@@ -43,7 +43,8 @@ var interCmd = &cobra.Command{
 		files := getFileList(args)
 		runtime.GOMAXPROCS(config.NumCPUs)
 
-		fields, colnames, negativeFields, needParseHeaderRow := parseFields(cmd, "fields", "no-header-row")
+		fieldStr := getFlagString(cmd, "fields")
+		fields, colnames, negativeFields, needParseHeaderRow := parseFields(cmd, fieldStr, config.NoHeaderRow)
 		var fieldsMap map[int]struct{}
 		if len(fields) > 0 {
 			fields2 := make([]int, len(fields))
@@ -62,7 +63,7 @@ var interCmd = &cobra.Command{
 
 		ignoreCase := getFlagBool(cmd, "ignore-case")
 
-		fuzzyFileds := getFlagBool(cmd, "fuzzy-fileds")
+		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
@@ -117,7 +118,7 @@ var interCmd = &cobra.Command{
 							fields = []int{}
 							for _, col := range record {
 								var ok bool
-								if fuzzyFileds {
+								if fuzzyFields {
 									for _, re := range colnamesMap {
 										if re.MatchString(col) {
 											ok = true
@@ -222,5 +223,5 @@ func init() {
 	RootCmd.AddCommand(interCmd)
 	interCmd.Flags().StringP("fields", "f", "1", `select only these fields. e.g -f 1,2 or -f columnA,columnB`)
 	interCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
-	interCmd.Flags().BoolP("fuzzy-fileds", "F", false, `using fuzzy fileds, e.g. *name or id123*`)
+	interCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fileds, e.g. *name or id123*`)
 }

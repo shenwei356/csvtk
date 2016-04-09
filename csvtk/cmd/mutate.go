@@ -30,11 +30,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// replaceCmd represents the seq command
-var replaceCmd = &cobra.Command{
-	Use:   "replace",
-	Short: "replace data of selected fields by regular expression",
-	Long: `replace data of selected fields by regular expression
+// mutateCmd represents the seq command
+var mutateCmd = &cobra.Command{
+	Use:   "mutate",
+	Short: "create new column from selected fields by regular expression",
+	Long: `create new column from selected fields by regular expression
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -45,12 +45,16 @@ var replaceCmd = &cobra.Command{
 		}
 		runtime.GOMAXPROCS(config.NumCPUs)
 
-		pattern := getFlagString(cmd, "pattern")
-		replacement := getFlagString(cmd, "replacement")
-		ignoreCase := getFlagBool(cmd, "ignore-case")
-		if pattern == "" {
-			checkError(fmt.Errorf("flags -p (--pattern) needed"))
+		name := getFlagString(cmd, "name")
+		if name == "" {
+			checkError(fmt.Errorf("falg -n (--name) needed"))
 		}
+		ignoreCase := getFlagBool(cmd, "ignore-case")
+		pattern := getFlagString(cmd, "pattern")
+		if !regexp.MustCompile(`\(.+\)`).MatchString(pattern) {
+			checkError(fmt.Errorf(`value of -p (--pattern) must contains "(" and ")" to capture data which is used to create new column`))
+		}
+
 		p := pattern
 		if ignoreCase {
 			p = "(?i)" + p
@@ -60,6 +64,12 @@ var replaceCmd = &cobra.Command{
 
 		fieldStr := getFlagString(cmd, "fields")
 		fields, colnames, negativeFields, needParseHeaderRow := parseFields(cmd, fieldStr, config.NoHeaderRow)
+		if !(len(fields) == 1 || len(colnames) == 1) {
+			checkError(fmt.Errorf("single fields needed"))
+		}
+		if negativeFields {
+			checkError(fmt.Errorf("unselect not allowed"))
+		}
 		var fieldsMap map[int]struct{}
 		if len(fields) > 0 {
 			fields2 := make([]int, len(fields))
@@ -76,7 +86,8 @@ var replaceCmd = &cobra.Command{
 			fields = fields2
 		}
 
-		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
+		// fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
+		fuzzyFields := false
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
@@ -98,6 +109,7 @@ var replaceCmd = &cobra.Command{
 			var colnames2fileds map[string]int   // column name -> field
 			var colnamesMap map[string]*regexp.Regexp
 
+			handleHeaderRow := needParseHeaderRow
 			checkFields := true
 
 			var record2 []string // for output
@@ -170,15 +182,21 @@ var replaceCmd = &cobra.Command{
 							fieldsMap[f] = struct{}{}
 						}
 
-						record2 = make([]string, len(record))
-
 						checkFields = false
 					}
 
+					record2 = record
 					for f := range record {
 						record2[f] = record[f]
 						if _, ok := fieldsMap[f+1]; ok {
-							record2[f] = patternRegexp.ReplaceAllString(record2[f], replacement)
+							if handleHeaderRow {
+								record2 = append(record2, name)
+								handleHeaderRow = false
+							} else {
+								found := patternRegexp.FindAllStringSubmatch(record[f], -1)
+								record2 = append(record2, found[0][0])
+							}
+							break
 						}
 					}
 					checkError(writer.Write(record2))
@@ -191,14 +209,9 @@ var replaceCmd = &cobra.Command{
 }
 
 func init() {
-	RootCmd.AddCommand(replaceCmd)
-	replaceCmd.Flags().StringP("fields", "f", "1", `select only these fields. e.g -f 1,2 or -f columnA,columnB`)
-	replaceCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fileds, e.g. *name or id123*`)
-	replaceCmd.Flags().StringP("pattern", "p", "", "search regular expression")
-	replaceCmd.Flags().StringP("replacement", "r", "",
-		"replacement. supporting capture variables. "+
-			" e.g. $1 represents the text of the first submatch. "+
-			"ATTENTION: use SINGLE quote NOT double quotes in *nix OS or "+
-			"use the \\ escape character.")
-	replaceCmd.Flags().BoolP("ignore-case", "i", false, "ignore case")
+	RootCmd.AddCommand(mutateCmd)
+	mutateCmd.Flags().StringP("fields", "f", "1", `select only these fields. e.g -f 1,2 or -f columnA,columnB`)
+	mutateCmd.Flags().StringP("pattern", "p", "^(.+)$", `search regular expression with capture bracket. e.g.`)
+	mutateCmd.Flags().StringP("name", "n", "", `new column name`)
+	mutateCmd.Flags().BoolP("ignore-case", "i", false, "ignore case")
 }

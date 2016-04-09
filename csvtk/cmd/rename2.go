@@ -45,7 +45,7 @@ var rename2Cmd = &cobra.Command{
 		}
 		runtime.GOMAXPROCS(config.NumCPUs)
 
-		if getFlagBool(cmd, "no-header-row") {
+		if config.NoHeaderRow {
 			checkError(fmt.Errorf("flag --H (--no-header-row) is not allowed for this command"))
 		}
 
@@ -62,7 +62,11 @@ var rename2Cmd = &cobra.Command{
 		patternRegexp, err := regexp.Compile(p)
 		checkError(err)
 
-		fields, colnames, negativeFields, needParseHeaderRow := parseFields(cmd, "fields", "no-header-row")
+		fieldStr := getFlagString(cmd, "fields")
+		if fieldStr == "" {
+			checkError(fmt.Errorf("flag -f (--field) needed"))
+		}
+		fields, colnames, negativeFields, needParseHeaderRow := parseFields(cmd, fieldStr, config.NoHeaderRow)
 		var fieldsMap map[int]struct{}
 		if len(fields) > 0 {
 			fields2 := make([]int, len(fields))
@@ -79,7 +83,7 @@ var rename2Cmd = &cobra.Command{
 			fields = fields2
 		}
 
-		fuzzyFileds := getFlagBool(cmd, "fuzzy-fileds")
+		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
@@ -127,7 +131,7 @@ var rename2Cmd = &cobra.Command{
 							fields = []int{}
 							for _, col := range record {
 								var ok bool
-								if fuzzyFileds {
+								if fuzzyFields {
 									for _, re := range colnamesMap {
 										if re.MatchString(col) {
 											ok = true
@@ -200,7 +204,7 @@ var rename2Cmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(rename2Cmd)
 	rename2Cmd.Flags().StringP("fields", "f", "", `select only these fields. e.g -f 1,2 or -f columnA,columnB`)
-	rename2Cmd.Flags().BoolP("fuzzy-fileds", "F", false, `using fuzzy fileds, e.g. *name or id123*`)
+	rename2Cmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fileds, e.g. *name or id123*`)
 	rename2Cmd.Flags().StringP("pattern", "p", "", "search regular expression")
 	rename2Cmd.Flags().StringP("replacement", "r", "",
 		"renamement. supporting capture variables. "+

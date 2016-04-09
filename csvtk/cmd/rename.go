@@ -49,9 +49,13 @@ var renameCmd = &cobra.Command{
 			checkError(fmt.Errorf("flag --H (--no-header-row) is not allowed for this command"))
 		}
 
+		fieldStr := getFlagString(cmd, "fields")
+		if fieldStr == "" {
+			checkError(fmt.Errorf("flag -f (--field) needed"))
+		}
 		names := getFlagCommaSeparatedStrings(cmd, "names")
 
-		fields, colnames, negativeFields, needParseHeaderRow := parseFields(cmd, "fields", "no-header-row")
+		fields, colnames, negativeFields, needParseHeaderRow := parseFields(cmd, fieldStr, config.NoHeaderRow)
 		var fieldsMap map[int]struct{}
 		if len(fields) > 0 {
 			fields2 := make([]int, len(fields))
@@ -68,7 +72,7 @@ var renameCmd = &cobra.Command{
 			fields = fields2
 		}
 
-		fuzzyFileds := getFlagBool(cmd, "fuzzy-fileds")
+		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
@@ -116,7 +120,7 @@ var renameCmd = &cobra.Command{
 							fields = []int{}
 							for _, col := range record {
 								var ok bool
-								if fuzzyFileds {
+								if fuzzyFields {
 									for _, re := range colnamesMap {
 										if re.MatchString(col) {
 											ok = true
@@ -198,6 +202,6 @@ var renameCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(renameCmd)
 	renameCmd.Flags().StringP("fields", "f", "", `select only these fields. e.g -f 1,2 or -f columnA,columnB`)
-	renameCmd.Flags().BoolP("fuzzy-fileds", "F", false, `using fuzzy fileds, e.g. *name or id123*`)
+	renameCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fileds, e.g. *name or id123*`)
 	renameCmd.Flags().StringP("names", "n", "", "comma separated new names")
 }

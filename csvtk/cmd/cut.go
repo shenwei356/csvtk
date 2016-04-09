@@ -45,7 +45,11 @@ var cutCmd = &cobra.Command{
 		}
 		runtime.GOMAXPROCS(config.NumCPUs)
 
-		fields, colnames, negativeFields, needParseHeaderRow := parseFields(cmd, "fields", "no-header-row")
+		fieldStr := getFlagString(cmd, "fields")
+		if fieldStr == "" {
+			checkError(fmt.Errorf("flag -f (--field) needed"))
+		}
+		fields, colnames, negativeFields, needParseHeaderRow := parseFields(cmd, fieldStr, config.NoHeaderRow)
 		var fieldsMap map[int]struct{}
 		if len(fields) > 0 {
 			fields2 := make([]int, len(fields))
@@ -62,7 +66,7 @@ var cutCmd = &cobra.Command{
 			fields = fields2
 		}
 
-		fuzzyFileds := getFlagBool(cmd, "fuzzy-fileds")
+		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
@@ -109,7 +113,7 @@ var cutCmd = &cobra.Command{
 							fields = []int{}
 							for _, col := range record {
 								var ok bool
-								if fuzzyFileds {
+								if fuzzyFields {
 									for _, re := range colnamesMap {
 										if re.MatchString(col) {
 											ok = true
@@ -170,5 +174,5 @@ var cutCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(cutCmd)
 	cutCmd.Flags().StringP("fields", "f", "", `select only these fields. e.g -f 1,2 or -f columnA,columnB`)
-	cutCmd.Flags().BoolP("fuzzy-fileds", "F", false, `using fuzzy fileds, e.g. *name or id123*`)
+	cutCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g. *name or id123*`)
 }

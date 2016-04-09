@@ -100,6 +100,12 @@ func getFlagCommaSeparatedStrings(cmd *cobra.Command, flag string) []string {
 	return stringutil.Split(value, ",")
 }
 
+func getFlagSemicolonSeparatedStrings(cmd *cobra.Command, flag string) []string {
+	value, err := cmd.Flags().GetString(flag)
+	checkError(err)
+	return stringutil.Split(value, ";")
+}
+
 func getFlagCommaSeparatedInts(cmd *cobra.Command, flag string) []int {
 	filedsStrList := getFlagCommaSeparatedStrings(cmd, flag)
 	fields := make([]int, len(filedsStrList))
@@ -234,17 +240,21 @@ var reFields = regexp.MustCompile(`([^,]+)(,[^,]+)*,?`)
 var reDigitals = regexp.MustCompile(`^[\-\d]+$`)
 var reDigitalRange = regexp.MustCompile(`^([\-\d]+?)\-([\-\d]+?)$`)
 
-func parseFields(cmd *cobra.Command,
-	flagOfFields string,
-	flagOfNoHeaderRow string) ([]int, []string, bool, bool) {
-	fieldsStr, err := cmd.Flags().GetString(flagOfFields)
+func getFlagFields(cmd *cobra.Command, flag string) string {
+	fieldsStr, err := cmd.Flags().GetString(flag)
 	checkError(err)
 	if fieldsStr == "" {
-		checkError(fmt.Errorf("flag --%s needed", flagOfFields))
+		checkError(fmt.Errorf("flag --%s needed", flag))
 	}
 	if !reFields.MatchString(fieldsStr) {
-		checkError(fmt.Errorf("invalid value of flag %s", flagOfFields))
+		checkError(fmt.Errorf("invalid value of flag %s", flag))
 	}
+	return fieldsStr
+}
+
+func parseFields(cmd *cobra.Command,
+	fieldsStr string,
+	noHeaderRow bool) ([]int, []string, bool, bool) {
 
 	var fields []int
 	var colnames []string
@@ -253,7 +263,7 @@ func parseFields(cmd *cobra.Command,
 	firstField := reFields.FindAllStringSubmatch(fieldsStr, -1)[0][1]
 	if reDigitals.MatchString(firstField) {
 		fields = []int{}
-		fieldsStrs := getFlagCommaSeparatedStrings(cmd, flagOfFields)
+		fieldsStrs := strings.Split(fieldsStr, ",")
 		for _, s := range fieldsStrs {
 			found := reDigitalRange.FindAllStringSubmatch(s, -1)
 			if len(found) > 0 { // field range
@@ -297,11 +307,11 @@ func parseFields(cmd *cobra.Command,
 			}
 		}
 
-		if !getFlagBool(cmd, "no-header-row") {
+		if !noHeaderRow {
 			parseHeaderRow = true
 		}
 	} else {
-		colnames = getFlagCommaSeparatedStrings(cmd, flagOfFields)
+		colnames = strings.Split(fieldsStr, ",")
 		for _, f := range colnames {
 			if f[0] == '-' {
 				negativeFields = true
@@ -336,4 +346,110 @@ func fuzzyField2Regexp(field string) *regexp.Regexp {
 	re, err := regexp.Compile(field)
 	checkError(err)
 	return re
+}
+
+func parseCSVfile(cmd *cobra.Command, config Config, file string,
+	fieldStr string, fuzzyFields bool) ([]string, [][]string, []int) {
+	fields, colnames, negativeFields, needParseHeaderRow := parseFields(cmd, fieldStr, config.NoHeaderRow)
+	var fieldsMap map[int]struct{}
+	if len(fields) > 0 {
+		fields2 := make([]int, len(fields))
+		fieldsMap = make(map[int]struct{}, len(fields))
+		for i, f := range fields {
+			if negativeFields {
+				fieldsMap[f*-1] = struct{}{}
+				fields2[i] = f * -1
+			} else {
+				fieldsMap[f] = struct{}{}
+				fields2[i] = f
+			}
+		}
+		fields = fields2
+	}
+
+	csvReader, err := newCSVReaderByConfig(config, file)
+	checkError(err)
+	csvReader.Run()
+
+	parseHeaderRow := needParseHeaderRow // parsing header row
+	var colnames2fileds map[string]int   // column name -> field
+	var colnamesMap map[string]*regexp.Regexp
+
+	var HeaderRow []string
+	var Data [][]string
+
+	checkFields := true
+
+	for chunk := range csvReader.Ch {
+		checkError(chunk.Err)
+
+		for _, record := range chunk.Data {
+			if parseHeaderRow { // parsing header row
+				colnames2fileds = make(map[string]int, len(record))
+				for i, col := range record {
+					colnames2fileds[col] = i + 1
+				}
+				colnamesMap = make(map[string]*regexp.Regexp, len(colnames))
+				for _, col := range colnames {
+					if negativeFields {
+						colnamesMap[col[1:]] = fuzzyField2Regexp(col)
+					} else {
+						colnamesMap[col] = fuzzyField2Regexp(col)
+					}
+				}
+
+				if len(fields) == 0 { // user gives the colnames
+					fields = []int{}
+					for _, col := range record {
+						var ok bool
+						if fuzzyFields {
+							for _, re := range colnamesMap {
+								if re.MatchString(col) {
+									ok = true
+									break
+								}
+							}
+						} else {
+							_, ok = colnamesMap[col]
+						}
+						if (negativeFields && !ok) || (!negativeFields && ok) {
+							fields = append(fields, colnames2fileds[col])
+						}
+					}
+				}
+
+				fieldsMap = make(map[int]struct{}, len(fields))
+				for _, f := range fields {
+					fieldsMap[f] = struct{}{}
+				}
+
+				parseHeaderRow = false
+				HeaderRow = record
+				continue
+			}
+			if checkFields {
+				fields2 := []int{}
+				for f := range record {
+					_, ok := fieldsMap[f+1]
+					if negativeFields {
+						if !ok {
+							fields2 = append(fields2, f+1)
+						}
+					} else {
+						if ok {
+							fields2 = append(fields2, f+1)
+						}
+					}
+				}
+				fields = fields2
+				if len(fields) == 0 {
+					checkError(fmt.Errorf("no fields matched in file: %s", file))
+				}
+				checkFields = false
+			}
+
+			Data = append(Data, record)
+		}
+	}
+	return HeaderRow, Data, fields
 }

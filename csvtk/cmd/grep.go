@@ -47,9 +47,13 @@ var grepCmd = &cobra.Command{
 		}
 		runtime.GOMAXPROCS(config.NumCPUs)
 
-		fields, colnames, negativeFields, needParseHeaderRow := parseFields(cmd, "fields", "no-header-row")
+		fieldStr := getFlagString(cmd, "fields")
+		fields, colnames, negativeFields, needParseHeaderRow := parseFields(cmd, fieldStr, config.NoHeaderRow)
 		if !(len(fields) == 1 || len(colnames) == 1) {
 			checkError(fmt.Errorf("single fields needed"))
+		}
+		if negativeFields {
+			checkError(fmt.Errorf("unselect not allowed"))
 		}
 		var fieldsMap map[int]struct{}
 		if len(fields) > 0 {
@@ -122,7 +126,8 @@ var grepCmd = &cobra.Command{
 			}
 		}
 
-		fuzzyFileds := getFlagBool(cmd, "fuzzy-fileds")
+		// fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
+		fuzzyFields := false
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
@@ -172,7 +177,7 @@ var grepCmd = &cobra.Command{
 							fields = []int{}
 							for _, col := range record {
 								var ok bool
-								if fuzzyFileds {
+								if fuzzyFields {
 									for _, re := range colnamesMap {
 										if re.MatchString(col) {
 											ok = true
@@ -270,5 +275,5 @@ func init() {
 	grepCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
 	grepCmd.Flags().BoolP("use-regexp", "r", false, `patterns are regular expression`)
 	grepCmd.Flags().BoolP("invert", "v", false, `invert match`)
-	grepCmd.Flags().BoolP("fuzzy-fileds", "F", false, `using fuzzy fileds, e.g. *name or id123*`)
+	//grepCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fileds, e.g. *name or id123*`)
 }
