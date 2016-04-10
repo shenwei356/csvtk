@@ -235,12 +235,13 @@ $ csvtk transpose -t digitals.tsv
 </code></pre>
 <h2 id="cut">cut</h2>
 <p>Usage</p>
-<pre><code>select parts of fields
+<pre><code>elect parts of fields
 
 Usage:
   csvtk cut [flags]
 
 Flags:
+  -n, --colnames        print column names
   -f, --fields string   select only these fields. e.g -f 1,2 or -f columnA,columnB
   -F, --fuzzy-fields    using fuzzy fields, e.g. *name or id123*
 
@@ -248,6 +249,7 @@ Flags:
 
 <p>Examples</p>
 <ul>
+<li>Print colnames: <code>csvtk cut -n</code></li>
 <li>By index: <code>csvtk cut -f 1,2</code></li>
 <li>By names: <code>csvtk cut -f first_name,username</code></li>
 <li><strong>Unselect</strong>: <code>csvtk cut -f -1,-2</code> or <code>csvtk cut -f -first_name</code></li>

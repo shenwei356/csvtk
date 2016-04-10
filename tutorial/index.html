@@ -181,6 +181,22 @@ Tenericutes     .00     .00     .00     .01     .03     .02     .00     .00     
 </code></pre>
 </li>
 <li>
+<p>Column names</p>
+<pre><code>$ csvtk cut -n otu_table.csv 
+#field  colname
+1       Taxonomy
+2       A.1
+3       A.2
+4       A.3
+5       B.1
+6       B.2
+7       B.3
+8       C.1
+9       C.2
+10      C.3
+</code></pre>
+</li>
+<li>
 <p>Extract data of group A and B and save to file <code>-o otu_table.gAB.csv</code></p>
 <pre><code>$ csvtk cut -F -f "A.*,B.*,Taxonomy" otu_table.csv -o otu_table.gAB.csv
 $ cat otu_table.gAB.csv
