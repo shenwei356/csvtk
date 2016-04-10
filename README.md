@@ -1,6 +1,6 @@
 # csvtk
 
-Another cross-platform, efficient and practical CSV/TSV tool kit.
+Another cross-platform, efficient and practical CSV/TSV toolkit.
 
 ## Features
 
@@ -15,7 +15,7 @@ Another cross-platform, efficient and practical CSV/TSV tool kit.
 Just [download](https://github.com/shenwei356/csvtk/releases) executable file
  of your operating system and rename it to `csvtk.exe` (Windows) or
  `csvtk` (other operating systems) for convenience.
- 
+
 You can also add the directory of the executable file to environment variable
 `PATH`, so you can run `csvtk` anywhere.
 
@@ -32,34 +32,34 @@ You can also add the directory of the executable file to environment variable
 
 **Information**
 
--  [x] `stat` summary of CSV file
+-  `stat` summary of CSV file
 
 **Format convertion**
 
--  [x] `csv2tab` convert CSV to tabular format
--  [x] `tab2csv` convert tabular format to CSV
--  [x] `space2tab` convert space delimited format to CSV
--  [x] `transpose` transpose CSV data
+-  `csv2tab` convert CSV to tabular format
+-  `tab2csv` convert tabular format to CSV
+-  `space2tab` convert space delimited format to CSV
+-  `transpose` transpose CSV data
 
 **Set operations**
 
--  [x] `cut` select parts of fields
--  [x] `uniq` unique data without sorting
--  [x] `inter` intersection of multiple files
--  [x] `grep` grep data by selected fields with patterns/regular expressions
--  `filter` filter data by values of selected fields, supporting math/string expression
--  [x] `join` join multiple CSV files by selected fields
+-  `cut` select parts of fields
+-  `uniq` unique data without sorting
+-  `inter` intersection of multiple files
+-  `grep` grep data by selected fields with patterns/regular expressions
+-  `filter` filter data by values of selected fields, supporting math/string expression (not impelemented yet)
+-  `join` join multiple CSV files by selected fields
 
 **Edit**
 
--  [x] `rename` rename column names
--  [x] `rename2` rename column names by regular expression
--  [x] `replace` replace data of selected fields by regular expression
--  [x] `mutate` create new columns from selected fields by regular expression
+-  `rename` rename column names
+-  `rename2` rename column names by regular expression
+-  `replace` replace data of selected fields by regular expression
+-  `mutate` create new columns from selected fields by regular expression
 
 **Ordering**
 
--  [x] `sort` sort by selected fields
+-  `sort` sort by selected fields
 
 ## Compared to `csvkit`
 
@@ -103,12 +103,12 @@ to be continued...
 
 1. Edit data with regular expression (`replace`)
 
-    - e.g. remove Chinese charactors:  `csvtk replace -F -f "*_name" -p "\p{Han}+" -r ""`
+    - Remove Chinese charactors:  `csvtk replace -F -f "*_name" -p "\p{Han}+" -r ""`
 
 1. Create new column from selected fields by regular expression (`mutate`)
 
     - In default, copy a column: `csvtk mutate -f id `
-    - e.g. extract prefix of data as group name (get "A" from "A.1" as group name):
+    - Extract prefix of data as group name (get "A" from "A.1" as group name):
       `csvtk mutate -f sample -n group -p "^(.+?)\."`
 
 1. Sort by multiple keys (`sort`)

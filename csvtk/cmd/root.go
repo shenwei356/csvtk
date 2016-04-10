@@ -31,8 +31,8 @@ import (
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
 	Use:   "csvtk",
-	Short: "Another cross-platform, efficient and practical CSV/TSV tool kit",
-	Long: `Another cross-platform, efficient and practical CSV/TSV tool kit
+	Short: "Another cross-platform, efficient and practical CSV/TSV toolkit",
+	Long: `Another cross-platform, efficient and practical CSV/TSV toolkit
 
 Version: 0.2.1
 
