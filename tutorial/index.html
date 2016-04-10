@@ -9,7 +9,7 @@
         
         <link rel="shortcut icon" href="../img/favicon.ico">
 
-	<title>Download - csvtk - CSV/TSV Toolkit</title>
+	<title>Tutorial - csvtk - CSV/TSV Toolkit</title>
 
         <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../css/font-awesome-4.5.0.css" rel="stylesheet">
@@ -69,8 +69,8 @@
                 
                 
                 
-                    <li class="active">
-                        <a href="./">Download</a>
+                    <li >
+                        <a href="../download/">Download</a>
                     </li>
                 
                 
@@ -81,8 +81,8 @@
                 
                 
                 
-                    <li >
-                        <a href="../tutorial/">Tutorial</a>
+                    <li class="active">
+                        <a href="./">Tutorial</a>
                     </li>
                 
                 
@@ -97,12 +97,12 @@
                 </li>
                 
                     <li >
-                        <a rel="next" href="..">
+                        <a rel="next" href="../usage/">
                             <i class="fa fa-arrow-left"></i> Previous
                         </a>
                     </li>
-                    <li >
-                        <a rel="prev" href="../usage/">
+                    <li class="disabled">
+                        <a rel="prev" >
                             Next <i class="fa fa-arrow-right"></i>
                         </a>
                     </li>
@@ -127,57 +127,147 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
     
-        <li class="main active"><a href="#download">Download</a></li>
+        <li class="main active"><a href="#tutorial">Tutorial</a></li>
         
-            <li><a href="#current-version">Current Version</a></li>
+            <li><a href="#forewords">Forewords</a></li>
         
-            <li><a href="#installation">Installation</a></li>
-        
-            <li><a href="#previous-versions">Previous Versions</a></li>
+            <li><a href="#explor-with-otu-table">Explor with OTU table</a></li>
         
     
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="download">Download</h1>
-<p><code>csvtk</code> is implemented in <a href="https://golang.org/">Golang</a> programming language,
- executable binary files <strong>for most popular operating system</strong> are freely available
-  in <a href="https://github.com/shenwei356/csvtk/releases">release</a> page.</p>
-<h2 id="current-version">Current Version</h2>
-<ul>
-<li><a href="https://github.com/shenwei356/csvtk/releases/tag/v0.2.1">csvtk v0.2.1</a><ul>
-<li>fix bug of <code>mutate</code></li>
-</ul>
-</li>
-</ul>
-<h2 id="installation">Installation</h2>
-<p>Just <a href="https://github.com/shenwei356/csvtk/releases">download</a> executable file
- of your operating system and rename it to <code>csvtk.exe</code> (Windows) or
- <code>csvtk</code> (other operating systems) for convenience,
- and then run it in command-line interface, no dependencies,
- no complicated compilation process.</p>
-<p>You can also add the directory of the executable file to environment variable
-<code>PATH</code>, so you can run <code>csvtk</code> anywhere.</p>
+<h1 id="tutorial">Tutorial</h1>
+<h2 id="forewords">Forewords</h2>
+<p>Yes, you could just use spreadsheet softwares like MS excel to
+do most of the job.</p>
+<p>Howerver it's all by clicking and typing, which is <strong>not
+automatically and time-consuming to repeate</strong>, especially when we want to
+apply similar operations with different datasets or purposes.</p>
+<p><code>csvtk</code> is <strong>convenient for rapid investigation
+and also easy to integrated into analysis pipelines</strong>.
+ It could save you much time of writting scripts.</p>
+<p>Hope it be helpful for you.</p>
+<h2 id="explor-with-otu-table">Explor with OTU table</h2>
+<h3 id="data">Data</h3>
+<p>Here is mock a OTU table from 16S sequencing result.
+Columns are sample IDs in format of "GROUP.ID"</p>
+<pre><code>    $ cat otu_table.csv
+    Taxonomy,A.1,A.2,A.3,B.1,B.2,B.3,C.1,C.2,C.3
+    Proteobacteria,.13,.29,.13,.16,.13,.22,.30,.23,.21
+    Firmicutes,.42,.06,.49,.41,.55,.41,.32,.38,.66
+    Bacteroidetes,.19,.62,.12,.33,.16,.29,.34,.35,.09
+    Deferribacteres,.17,.00,.24,.01,.01,.01,.01,.01,.02
+    Tenericutes,.00,.00,.00,.01,.03,.02,.00,.00,.00
+</code></pre>
+<h3 id="explor">Explor</h3>
 <ol>
 <li>
-<p>For windows, the simplest way is copy it to <code>C:\WINDOWS\system32</code>.</p>
+<p>Counting</p>
+<pre><code>$ csvtk stat otu_table.csv
+file: otu_table.csv  num_cols: 10  num_rows: 6
+</code></pre>
 </li>
 <li>
-<p>For Linux, type:</p>
-<pre><code>chmod a+x /PATH/OF/FASTCOV/csvtk
-echo export PATH=\$PATH:/PATH/OF/FASTCOV &gt;&gt; ~/.bashrc
+<p>Convert to tab-delimited table</p>
+<pre><code>$ csvtk csv2tab  otu_table.csv
+Taxonomy        A.1     A.2     A.3     B.1     B.2     B.3     C.1     C.2     C.3
+Proteobacteria  .13     .29     .13     .16     .13     .22     .30     .23     .21
+Firmicutes      .42     .06     .49     .41     .55     .41     .32     .38     .66
+Bacteroidetes   .19     .62     .12     .33     .16     .29     .34     .35     .09
+Deferribacteres .17     .00     .24     .01     .01     .01     .01     .01     .02
+Tenericutes     .00     .00     .00     .01     .03     .02     .00     .00     .00
 </code></pre>
-<p>or simply copy it to <code>/usr/local/bin</code></p>
+</li>
+<li>
+<p>Extract data of group A and B and save to file <code>-o otu_table.gAB.csv</code></p>
+<pre><code>$ csvtk cut -F -f "A.*,B.*,Taxonomy" otu_table.csv -o otu_table.gAB.csv
+$ cat otu_table.gAB.csv
+Taxonomy,A.1,A.2,A.3,B.1,B.2,B.3
+Proteobacteria,.13,.29,.13,.16,.13,.22
+Firmicutes,.42,.06,.49,.41,.55,.41
+Bacteroidetes,.19,.62,.12,.33,.16,.29
+Deferribacteres,.17,.00,.24,.01,.01,.01
+Tenericutes,.00,.00,.00,.01,.03,.02
+</code></pre>
+</li>
+<li>
+<p>Transpose</p>
+<pre><code>$ csvtk transpose otu_table.gAB.csv -o otu_table.gAB.t.csv
+$ csvtk csv2tab  otu_table.gAB.t.csv         
+Taxonomy        Proteobacteria  Firmicutes      Bacteroidetes   Deferribacteres Tenericutes
+A.1     .13     .42     .19     .17     .00
+A.2     .29     .06     .62     .00     .00
+A.3     .13     .49     .12     .24     .00
+B.1     .16     .41     .33     .01     .01
+B.2     .13     .55     .16     .01     .03
+B.3     .22     .41     .29     .01     .02
+</code></pre>
+</li>
+<li>
+<p>Rename first column</p>
+<pre><code>$ csvtk rename -f 1 -n "sample" otu_table.gAB.t.csv -o otu_table.gAB.t.r.csv
+$ csvtk csv2tab  otu_table.gAB.t.r.csv
+sample  Proteobacteria  Firmicutes      Bacteroidetes   Deferribacteres Tenericutes
+A.1     .13     .42     .19     .17     .00
+A.2     .29     .06     .62     .00     .00
+A.3     .13     .49     .12     .24     .00
+B.1     .16     .41     .33     .01     .01
+B.2     .13     .55     .16     .01     .03
+B.3     .22     .41     .29     .01     .02
+</code></pre>
+</li>
+<li>
+<p>Add group column</p>
+<pre><code>$ csvtk mutate -p "(.+?)\." -n group otu_table.gAB.t.r.csv -o otu_table2.csv
+$ csvtk csv2tab otu_table2.csv
+sample  Proteobacteria  Firmicutes      Bacteroidetes   Deferribacteres Tenericutes     group
+A.1     .13     .42     .19     .17     .00     A
+A.2     .29     .06     .62     .00     .00     A
+A.3     .13     .49     .12     .24     .00     A
+B.1     .16     .41     .33     .01     .01     B
+B.2     .13     .55     .16     .01     .03     B
+B.3     .22     .41     .29     .01     .02     B
+</code></pre>
+</li>
+<li>
+<p>Rename groups:</p>
+<pre><code>$ csvtk replace -f group -p "A" -r "Ctrl" otu_table2.csv | csvtk replace -f group -p "B" -r "Treatment" &gt; otu_table3.csv
+$ csvtk csv2tab otu_table3.csv sample  Proteobacteria  Firmicutes      Bacteroidetes   Deferribacteres Tenericutes     group
+A.1     .13     .42     .19     .17     .00     Ctrl
+A.2     .29     .06     .62     .00     .00     Ctrl
+A.3     .13     .49     .12     .24     .00     Ctrl
+B.1     .16     .41     .33     .01     .01     Treatment
+B.2     .13     .55     .16     .01     .03     Treatment
+B.3     .22     .41     .29     .01     .02     Treatment
+</code></pre>
+</li>
+<li>
+<p>Sort by abundance of <em>Proteobacteria</em> in descending order.</p>
+<pre><code>$ csvtk sort -k Proteobacteria:nr otu_table3.csv -T
+sample  Proteobacteria  Firmicutes      Bacteroidetes   Deferribacteres Tenericutes     group
+A.2     .29     .06     .62     .00     .00     Ctrl
+B.3     .22     .41     .29     .01     .02     Treatment
+B.1     .16     .41     .33     .01     .01     Treatment
+B.2     .13     .55     .16     .01     .03     Treatment
+A.3     .13     .49     .12     .24     .00     Ctrl
+A.1     .13     .42     .19     .17     .00     Ctrl
+</code></pre>
+</li>
+<li>
+<p>Sort by abundance of <em>Proteobacteria</em> in descending order and <em>Firmicutes</em> in ascending order</p>
+<pre><code>$ csvtk sort -k Proteobacteria:nr -k Firmicutes:n otu_table3.csv -T
+sample  Proteobacteria  Firmicutes      Bacteroidetes   Deferribacteres Tenericutes     group
+A.2     .29     .06     .62     .00     .00     Ctrl
+B.3     .22     .41     .29     .01     .02     Treatment
+B.1     .16     .41     .33     .01     .01     Treatment
+A.1     .13     .42     .19     .17     .00     Ctrl
+A.3     .13     .49     .12     .24     .00     Ctrl
+B.2     .13     .55     .16     .01     .03     Treatment
+</code></pre>
 </li>
 </ol>
-<h2 id="previous-versions">Previous Versions</h2>
-<ul>
-<li><a href="https://github.com/shenwei356/csvtk/releases/tag/v0.2">csvtk v0.2</a><ul>
-<li>finish almost functions</li>
-</ul>
-</li>
-</ul>
 <div id="disqus_thread"></div>
 
 <script>
