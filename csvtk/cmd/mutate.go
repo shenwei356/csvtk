@@ -50,6 +50,7 @@ var mutateCmd = &cobra.Command{
 			checkError(fmt.Errorf("falg -n (--name) needed"))
 		}
 		ignoreCase := getFlagBool(cmd, "ignore-case")
+		naUnmatched := getFlagBool(cmd, "na")
 		pattern := getFlagString(cmd, "pattern")
 		if !regexp.MustCompile(`\(.+\)`).MatchString(pattern) {
 			checkError(fmt.Errorf(`value of -p (--pattern) must contains "(" and ")" to capture data which is used to create new column`))
@@ -193,8 +194,16 @@ var mutateCmd = &cobra.Command{
 								record2 = append(record2, name)
 								handleHeaderRow = false
 							} else {
-								found := patternRegexp.FindAllStringSubmatch(record[f], -1)
-								record2 = append(record2, found[0][0])
+								if patternRegexp.MatchString(record[f]) {
+									found := patternRegexp.FindAllStringSubmatch(record[f], -1)
+									record2 = append(record2, found[0][0])
+								} else {
+									if naUnmatched {
+										record2 = append(record2, "")
+									} else {
+										record2 = append(record2, record[f])
+									}
+								}
 							}
 							break
 						}
@@ -214,4 +223,5 @@ func init() {
 	mutateCmd.Flags().StringP("pattern", "p", "^(.+)$", `search regular expression with capture bracket. e.g.`)
 	mutateCmd.Flags().StringP("name", "n", "", `new column name`)
 	mutateCmd.Flags().BoolP("ignore-case", "i", false, "ignore case")
+	mutateCmd.Flags().BoolP("na", "", false, "for unmatched data, use blank instead of orginal data")
 }
