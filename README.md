@@ -120,7 +120,7 @@ to be continued...
 
 1. Join multiple files by keys (`join`)
 
-    - `csvtk join -f "username;username;name" names.csv phone.csv adress.csv`
+    - `csvtk join -f "username;username;name" names.csv phone.csv adress.csv -k`
 
 ## Contact
 

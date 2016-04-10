@@ -7,7 +7,7 @@ Usage
 ```
 Another cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.2.1
+Version: 0.2.2
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -167,21 +167,24 @@ Examples
 Usage
 
 ```
-join multiple CSV files by selected fields
+join multiple CSV files by selected fields.
+Join 2- files to the first one.
 
 Usage:
   csvtk join [flags]
 
 Flags:
-  -f, --fields string   Semicolon seperated key fields of all files. e.g -f 1,2;2,3 or -f A,B;C,D
-  -F, --fuzzy-fields    using fuzzy fileds, e.g. *name or id123*
-  -i, --ignore-case     ignore case
+  -f, --fields string    Semicolon seperated key fields of all files. e.g -f 1,2;2,3 or -f A,B;C,D
+  -F, --fuzzy-fields     using fuzzy fileds, e.g. *name or id123*
+  -i, --ignore-case      ignore case
+  -k, --keep-unmatched   keep unmatched data of the first file
+
 
 ```
 
 Examples:
 
-- `csvtk join -f "username;username;name" names.csv phone.csv adress.csv`
+- `csvtk join -f "username;username;name" names.csv phone.csv adress.csv -k`
 
 ## rename
 

@@ -34,7 +34,8 @@ import (
 var joinCmd = &cobra.Command{
 	Use:   "join",
 	Short: "join multiple CSV files by selected fields",
-	Long: ` join multiple CSV files by selected fields
+	Long: ` join multiple CSV files by selected fields.
+Join 2- files to the first one.
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -53,6 +54,7 @@ var joinCmd = &cobra.Command{
 		// ignoreCase := getFlagBool(cmd, "ignore-case")
 
 		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
+		keepUnmatched := getFlagBool(cmd, "keep-unmatched")
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
@@ -125,6 +127,13 @@ var joinCmd = &cobra.Command{
 						}
 					}
 					Data2 = append(Data2, record)
+				} else {
+					if keepUnmatched {
+						for i := 1; i <= len(data[0])-len(fieldsMap); i++ {
+							record = append(record, "")
+						}
+						Data2 = append(Data2, record)
+					}
 				}
 			}
 			Data = Data2
@@ -147,4 +156,5 @@ func init() {
 	joinCmd.Flags().StringP("fields", "f", "", `Semicolon seperated key fields of all files. e.g -f 1,2;2,3 or -f A,B;C,D`)
 	joinCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
 	joinCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fileds, e.g. *name or id123*`)
+	joinCmd.Flags().BoolP("keep-unmatched", "k", false, `keep unmatched data of the first file`)
 }

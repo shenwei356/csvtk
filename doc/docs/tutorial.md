@@ -15,7 +15,7 @@ and also easy to integrated into analysis pipelines**.
 
 Hope it be helpful for you.
 
-## Explor with OTU table
+## Analyze OTU table
 
 ### Data
 
@@ -30,7 +30,7 @@ Columns are sample IDs in format of "GROUP.ID"
         Deferribacteres,.17,.00,.24,.01,.01,.01,.01,.01,.02
         Tenericutes,.00,.00,.00,.01,.03,.02,.00,.00,.00
 
-### Explor
+### Steps
 
 1. Counting
 
