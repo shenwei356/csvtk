@@ -6,8 +6,8 @@
 
 ## Current Version
 
-- [csvtk v0.2.1](https://github.com/shenwei356/csvtk/releases/tag/v0.2.1)
-    - fix bug of `mutate`
+- [csvtk v0.2.3](https://github.com/shenwei356/csvtk/releases/tag/v0.2.3)
+    - add flag `--colnames` to `cut`
 
 ## Installation
 
@@ -31,9 +31,12 @@ You can also add the directory of the executable file to environment variable
 
 ## Previous Versions
 
+- [csvtk v0.2.2](https://github.com/shenwei356/csvtk/releases/tag/v0.2.2)
+    - add flag `--keep-unmathed` to `join`
 - [csvtk v0.2](https://github.com/shenwei356/csvtk/releases/tag/v0.2)
     - finish almost functions
-
+- [csvtk v0.2.1](https://github.com/shenwei356/csvtk/releases/tag/v0.2.1)
+    - fix bug of `mutate`
 
         
 <div id="disqus_thread"></div>

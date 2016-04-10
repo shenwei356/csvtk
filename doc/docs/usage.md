@@ -83,12 +83,13 @@ Examples
 Usage
 
 ```
-select parts of fields
+elect parts of fields
 
 Usage:
   csvtk cut [flags]
 
 Flags:
+  -n, --colnames        print column names
   -f, --fields string   select only these fields. e.g -f 1,2 or -f columnA,columnB
   -F, --fuzzy-fields    using fuzzy fields, e.g. *name or id123*
 
@@ -96,6 +97,7 @@ Flags:
 
 Examples
 
+- Print colnames: `csvtk cut -n`
 - By index: `csvtk cut -f 1,2`
 - By names: `csvtk cut -f first_name,username`
 - **Unselect**: `csvtk cut -f -1,-2` or `csvtk cut -f -first_name`

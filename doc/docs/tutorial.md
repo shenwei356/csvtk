@@ -47,6 +47,21 @@ Columns are sample IDs in format of "GROUP.ID"
         Deferribacteres .17     .00     .24     .01     .01     .01     .01     .01     .02
         Tenericutes     .00     .00     .00     .01     .03     .02     .00     .00     .00
 
+1. Column names
+
+        $ csvtk cut -n otu_table.csv 
+        #field  colname
+        1       Taxonomy
+        2       A.1
+        3       A.2
+        4       A.3
+        5       B.1
+        6       B.2
+        7       B.3
+        8       C.1
+        9       C.2
+        10      C.3
+        
 1. Extract data of group A and B and save to file `-o otu_table.gAB.csv`
 
         $ csvtk cut -F -f "A.*,B.*,Taxonomy" otu_table.csv -o otu_table.gAB.csv
