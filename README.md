@@ -126,8 +126,10 @@ to be continued...
 
 Email me for any problem when using `csvtk`. shenwei356(at)gmail.com
 
-[Create an issue](https://github.com/shenwei356/csvtk/issues) to report bugs,
+Or [Create an issue](https://github.com/shenwei356/csvtk/issues) to report bugs,
 propose new functions or ask for help.
+
+Or [leave a comment](https://github.com/shenwei356/csvtk/usage/#disqus_thread).
 
 ## License
 

@@ -196,7 +196,7 @@ var mutateCmd = &cobra.Command{
 							} else {
 								if patternRegexp.MatchString(record[f]) {
 									found := patternRegexp.FindAllStringSubmatch(record[f], -1)
-									record2 = append(record2, found[0][0])
+									record2 = append(record2, found[0][1])
 								} else {
 									if naUnmatched {
 										record2 = append(record2, "")

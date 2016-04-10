@@ -3,6 +3,7 @@ pages:
 - Home: index.md
 - Download: download.md
 - Usage: usage.md
+- Tutorial: tutorial.md
 theme: mkdocs
 
 repo_url: https://github.com/shenwei356/csvkit

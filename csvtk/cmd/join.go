@@ -33,7 +33,7 @@ import (
 // joinCmd represents the seq command
 var joinCmd = &cobra.Command{
 	Use:   "join",
-	Short: " join multiple CSV files by selected fields",
+	Short: "join multiple CSV files by selected fields",
 	Long: ` join multiple CSV files by selected fields
 
 `,
