@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="csvtk - CSV/TSV toolkit">
+        <meta name="author" content="shenwei356">
+        
+        <link rel="shortcut icon" href="./img/favicon.ico">
+
+	<title>csvtk - CSV/TSV Toolkit</title>
+
+        <link href="./css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="./css/font-awesome-4.5.0.css" rel="stylesheet">
+        <link href="./css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="./css/highlight.css">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        
+        <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+            ga('create', 'UA-28948626-3', 'blog.shenwei.me/csvkit');
+            ga('send', 'pageview');
+        </script>
+        
+    </head>
+
+    <body class="homepage">
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            
+
+            <!-- Main title -->
+            <a class="navbar-brand" href=".">csvtk - CSV/TSV Toolkit</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            
+                <!-- Main navigation -->
+                <ul class="nav navbar-nav">
+                
+                
+                    <li class="active">
+                        <a href=".">Home</a>
+                    </li>
+                
+                
+                
+                    <li >
+                        <a href="download/">Download</a>
+                    </li>
+                
+                
+                
+                    <li >
+                        <a href="usage/">Usage</a>
+                    </li>
+                
+                
+                </ul>
+            
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+                
+                    <li class="disabled">
+                        <a rel="next" >
+                            <i class="fa fa-arrow-left"></i> Previous
+                        </a>
+                    </li>
+                    <li >
+                        <a rel="prev" href="download/">
+                            Next <i class="fa fa-arrow-right"></i>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a href="https://github.com/shenwei356/csvkit">
+                            
+                                <i class="fa fa-github"></i>
+                            
+                            GitHub
+                        </a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#csvtk">csvtk</a></li>
+        
+            <li><a href="#features">Features</a></li>
+        
+            <li><a href="#installation">Installation</a></li>
+        
+            <li><a href="#subcommands-16-in-total">Subcommands (16 in total)</a></li>
+        
+            <li><a href="#compared-to-csvkit">Compared to csvkit</a></li>
+        
+            <li><a href="#examples">Examples</a></li>
+        
+            <li><a href="#contact">Contact</a></li>
+        
+            <li><a href="#license">License</a></li>
+        
+    
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="csvtk">csvtk</h1>
+<p>Another cross-platform, efficient and practical CSV/TSV toolkit.</p>
+<h2 id="features">Features</h2>
+<ul>
+<li><strong>Cross-platform</strong> (Linux/Windows/Mac OS X/OpenBSD/FreeBSD)</li>
+<li><strong>Light weight and out-of-the-box, no dependencies, no compilation, no configuration</strong></li>
+<li><strong>Fast</strong>,  <strong>multiple-CPUs supported</strong></li>
+<li><strong>Practical functions supported by N subcommands</strong></li>
+<li><strong>Support STDIN and gziped input/output file, easy being used in pipe</strong></li>
+</ul>
+<h2 id="installation">Installation</h2>
+<p>Just <a href="https://github.com/shenwei356/csvtk/releases">download</a> executable file
+ of your operating system and rename it to <code>csvtk.exe</code> (Windows) or
+ <code>csvtk</code> (other operating systems) for convenience.</p>
+<p>You can also add the directory of the executable file to environment variable
+<code>PATH</code>, so you can run <code>csvtk</code> anywhere.</p>
+<ol>
+<li>
+<p>For windows, the simplest way is copy it to <code>C:\WINDOWS\system32</code>.</p>
+</li>
+<li>
+<p>For Linux, type:</p>
+<pre><code>chmod a+x /PATH/OF/FASTCOV/csvtk
+echo export PATH=\$PATH:/PATH/OF/FASTCOV &gt;&gt; ~/.bashrc
+</code></pre>
+<p>or simply copy it to <code>/usr/local/bin</code></p>
+</li>
+</ol>
+<h2 id="subcommands-16-in-total">Subcommands (16 in total)</h2>
+<p><strong>Information</strong></p>
+<ul>
+<li><code>stat</code> summary of CSV file</li>
+</ul>
+<p><strong>Format convertion</strong></p>
+<ul>
+<li><code>csv2tab</code> convert CSV to tabular format</li>
+<li><code>tab2csv</code> convert tabular format to CSV</li>
+<li><code>space2tab</code> convert space delimited format to CSV</li>
+<li><code>transpose</code> transpose CSV data</li>
+</ul>
+<p><strong>Set operations</strong></p>
+<ul>
+<li><code>cut</code> select parts of fields</li>
+<li><code>uniq</code> unique data without sorting</li>
+<li><code>inter</code> intersection of multiple files</li>
+<li><code>grep</code> grep data by selected fields with patterns/regular expressions</li>
+<li><code>filter</code> filter data by values of selected fields, supporting math/string expression (not impelemented yet)</li>
+<li><code>join</code> join multiple CSV files by selected fields</li>
+</ul>
+<p><strong>Edit</strong></p>
+<ul>
+<li><code>rename</code> rename column names</li>
+<li><code>rename2</code> rename column names by regular expression</li>
+<li><code>replace</code> replace data of selected fields by regular expression</li>
+<li><code>mutate</code> create new columns from selected fields by regular expression</li>
+</ul>
+<p><strong>Ordering</strong></p>
+<ul>
+<li><code>sort</code> sort by selected fields</li>
+</ul>
+<h2 id="compared-to-csvkit">Compared to <code>csvkit</code></h2>
+<p><a href="http://csvkit.readthedocs.org/en/540/">csvkit</a></p>
+<table>
+<thead>
+<tr>
+<th align="left">Features</th>
+<th align="center">csvtk</th>
+<th align="center">csvkit</th>
+<th align="left">Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Read    Gzip</td>
+<td align="center">Yes</td>
+<td align="center">Yes</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">Fields ranges</td>
+<td align="center">Yes</td>
+<td align="center">Yes</td>
+<td align="left">e.g. <code>-f 1-4,6</code></td>
+</tr>
+<tr>
+<td align="left"><strong>Unselect fileds</strong></td>
+<td align="center">Yes</td>
+<td align="center">--</td>
+<td align="left">e.g. <code>-1</code> for excluding first column</td>
+</tr>
+<tr>
+<td align="left"><strong>Fuzzy fields</strong></td>
+<td align="center">Yes</td>
+<td align="center">--</td>
+<td align="left">e.g. <code>ab*</code> for columns with prefix "ab"</td>
+</tr>
+<tr>
+<td align="left">Rename columns</td>
+<td align="center">Yes</td>
+<td align="center">--</td>
+<td align="left">rename with new name(s) or from existed names</td>
+</tr>
+<tr>
+<td align="left">Sort by multiple keys</td>
+<td align="center">Yes</td>
+<td align="center">Yes</td>
+<td align="left">bash sort like operations</td>
+</tr>
+<tr>
+<td align="left">Sort by number</td>
+<td align="center">Yes</td>
+<td align="center">--</td>
+<td align="left">e.g. <code>-k 1:n</code></td>
+</tr>
+<tr>
+<td align="left"><strong>Multiple sort</strong></td>
+<td align="center">Yes</td>
+<td align="center">--</td>
+<td align="left">e.g. <code>-k 2:r -k 1:nr</code></td>
+</tr>
+</tbody>
+</table>
+<p>to be continued...</p>
+<h2 id="examples">Examples</h2>
+<ol>
+<li>
+<p>Select fields/columns (<code>cut</code>)</p>
+<ul>
+<li>By index: <code>csvtk cut -f 1,2</code></li>
+<li>By names: <code>csvtk cut -f first_name,username</code></li>
+<li><strong>Unselect</strong>: <code>csvtk cut -f -1,-2</code> or <code>csvtk cut -f -first_name</code></li>
+<li><strong>Fuzzy fields</strong>: <code>csvtk cut -F -f "*_name,username"</code></li>
+<li>Field ranges: <code>csvtk cut -f 2-4</code> for column 2,3,4 or <code>csvtk cut -f -3--1</code> for discarding column 1,2,3</li>
+<li>All fields: <code>csvtk cut -F -f "*"</code></li>
+</ul>
+</li>
+<li>
+<p>Search by selected fields (<code>grep</code>)</p>
+<ul>
+<li>By exactly matching: <code>csvtk grep -f first_name -p Robert -p Rob</code></li>
+<li>By regular expression: <code>csvtk grep -f first_name -r -p Rob</code></li>
+<li>By pattern list: <code>csvtk grep -f first_name -P name_list.txt</code></li>
+</ul>
+</li>
+<li>
+<p>Rename column names (<code>rename</code> and <code>rename2</code>)</p>
+<ul>
+<li>Setting new names: <code>csvtk rename -f A,B -n a,b</code> or <code>csvtk rename -f 1-3 -n a,b,c</code></li>
+<li>Replacing with original names by regular express: <code>cat ../testdata/c.csv | ./csvtk rename2 -F -f "*" -p "(.*)" -r 'prefix_$1'</code> for adding prefix to all column names.</li>
+</ul>
+</li>
+<li>
+<p>Edit data with regular expression (<code>replace</code>)</p>
+<ul>
+<li>Remove Chinese charactors:  <code>csvtk replace -F -f "*_name" -p "\p{Han}+" -r ""</code></li>
+</ul>
+</li>
+<li>
+<p>Create new column from selected fields by regular expression (<code>mutate</code>)</p>
+<ul>
+<li>In default, copy a column: <code>csvtk mutate -f id</code></li>
+<li>Extract prefix of data as group name (get "A" from "A.1" as group name):
+  <code>csvtk mutate -f sample -n group -p "^(.+?)\."</code></li>
+</ul>
+</li>
+<li>
+<p>Sort by multiple keys (<code>sort</code>)</p>
+<ul>
+<li>By single column : <code>csvtk sort -k 1</code> or <code>csvtk sort -k last_name</code></li>
+<li>By multiple columns: <code>csvtk sort -k 1,2</code> or <code>csvtk sort -k 1 -k 2</code> or <code>csvtk sort -k last_name,age</code></li>
+<li>Sort by number: <code>csvtk sort -k 1:n</code> or  <code>csvtk sort -k 1:nr</code> for reverse number</li>
+<li>Complex sort: <code>csvtk sort -k region -k age:n -k id:nr</code></li>
+</ul>
+</li>
+<li>
+<p>Join multiple files by keys (<code>join</code>)</p>
+<ul>
+<li><code>csvtk join -f "username;username;name" names.csv phone.csv adress.csv</code></li>
+</ul>
+</li>
+</ol>
+<h2 id="contact">Contact</h2>
+<p>Email me for any problem when using <code>csvtk</code>. shenwei356(at)gmail.com</p>
+<p><a href="https://github.com/shenwei356/csvtk/issues">Create an issue</a> to report bugs,
+propose new functions or ask for help.</p>
+<h2 id="license">License</h2>
+<p><a href="https://github.com/shenwei356/csvtk/blob/master/LICENSE">MIT License</a></p></div>
+            
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            
+            <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+
+        <script src="./js/jquery-1.10.2.min.js"></script>
+        <script src="./js/bootstrap-3.0.3.min.js"></script>
+        <script src="./js/highlight.pack.js"></script>
+        <script>var base_url = '.';</script>
+        <script data-main="./mkdocs/js/search.js" src="./mkdocs/js/require.js"></script>
+        <script src="./js/base.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            From here you can search these documents. Enter
+                            your search terms below.
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </body>
+</html>
+
+<!--
+MkDocs version : 0.15.3
+Build Date UTC : 2016-04-10 01:56:16.342591
+-->
