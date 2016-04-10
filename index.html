@@ -245,6 +245,12 @@ echo export PATH=\$PATH:/PATH/OF/FASTCOV &gt;&gt; ~/.bashrc
 <td align="left">e.g. <code>ab*</code> for columns with prefix "ab"</td>
 </tr>
 <tr>
+<td align="left">Order-specific fields</td>
+<td align="center">--</td>
+<td align="center">Yes</td>
+<td align="left">it means <code>1,2</code> is different from <code>2,1</code></td>
+</tr>
+<tr>
 <td align="left">Rename columns</td>
 <td align="center">Yes</td>
 <td align="center">--</td>
@@ -325,7 +331,8 @@ echo export PATH=\$PATH:/PATH/OF/FASTCOV &gt;&gt; ~/.bashrc
 <li>
 <p>Join multiple files by keys (<code>join</code>)</p>
 <ul>
-<li><code>csvtk join -f "username;username;name" names.csv phone.csv adress.csv -k</code></li>
+<li>All files have same key column: <code>csvtk join -f id file1.csv file2.csv</code></li>
+<li>Files have different key columns: <code>csvtk join -f "username;username;name" names.csv phone.csv adress.csv -k</code></li>
 </ul>
 </li>
 </ol>
@@ -382,5 +389,5 @@ propose new functions or ask for help.</p>
 
 <!--
 MkDocs version : 0.15.3
-Build Date UTC : 2016-04-10 09:34:08.553517
+Build Date UTC : 2016-04-10 12:04:25.127006
 -->
