@@ -55,7 +55,7 @@ func Execute() {
 
 func init() {
 	RootCmd.PersistentFlags().IntP("chunk-size", "c", 50, `chunk size of CSV reader`)
-	RootCmd.PersistentFlags().IntP("num-cups", "j", runtime.NumCPU(), `number of CPUs to use (default value depends on your computer)`)
+	RootCmd.PersistentFlags().IntP("num-cpus", "j", runtime.NumCPU(), `number of CPUs to use (default value depends on your computer)`)
 
 	RootCmd.PersistentFlags().StringP("delimiter", "d", ",", `delimiting character of the input CSV file`)
 	RootCmd.PersistentFlags().StringP("out-delimiter", "D", ",", `delimiting character of the input CSV file`)

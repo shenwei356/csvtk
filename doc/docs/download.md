@@ -8,6 +8,7 @@
 
 - [csvtk v0.2.3](https://github.com/shenwei356/csvtk/releases/tag/v0.2.3)
     - add flag `--colnames` to `cut`
+    - flag `-f` (`--fields`) of `join` supports single value now
 
 ## Installation
 
@@ -38,7 +39,7 @@ You can also add the directory of the executable file to environment variable
 - [csvtk v0.2.1](https://github.com/shenwei356/csvtk/releases/tag/v0.2.1)
     - fix bug of `mutate`
 
-        
+
 <div id="disqus_thread"></div>
 <script>
 /**

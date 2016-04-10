@@ -71,6 +71,7 @@ Read    Gzip            |   Yes    |  Yes      |
 Fields ranges           |   Yes    |  Yes      | e.g. `-f 1-4,6`
 **Unselect fileds**     |   Yes    |  --       | e.g. `-1` for excluding first column
 **Fuzzy fields**        |   Yes    |  --       | e.g. `ab*` for columns with prefix "ab"
+Order-specific fields   |   --     |  Yes      | it means `1,2` is different from `2,1`
 Rename columns          |   Yes    |  --       | rename with new name(s) or from existed names
 Sort by multiple keys   |   Yes    |  Yes      | bash sort like operations
 Sort by number          |   Yes    |  --       | e.g. `-k 1:n`
@@ -120,7 +121,8 @@ to be continued...
 
 1. Join multiple files by keys (`join`)
 
-    - `csvtk join -f "username;username;name" names.csv phone.csv adress.csv -k`
+    - All files have same key column: `csvtk join -f id file1.csv file2.csv`
+    - Files have different key columns: `csvtk join -f "username;username;name" names.csv phone.csv adress.csv -k`
 
 ## Contact
 

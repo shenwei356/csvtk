@@ -7,7 +7,7 @@ Usage
 ```
 Another cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.2.2
+Version: 0.2.3
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -72,7 +72,7 @@ Examples
     7       8       0
     8       1,000   4
 
-    $ csvtk transpose -t digitals.tsv 
+    $ csvtk transpose -t digitals.tsv
     4       1       7       8
     5       2       8       1,000
     6       3       0       4
@@ -169,24 +169,25 @@ Examples
 Usage
 
 ```
-join multiple CSV files by selected fields.
-Join 2- files to the first one.
+join 2nd and later files to the first file by selected fields.
+
+Multiple keys supported, but the orders are ignored.
 
 Usage:
   csvtk join [flags]
 
 Flags:
-  -f, --fields string    Semicolon seperated key fields of all files. e.g -f 1,2;2,3 or -f A,B;C,D
+  -f, --fields string    Semicolon seperated key fields of all files, if given one, we think all the files have the same key columns. e.g -f 1;2 or -f A,B;C,D or -f id (default "1")
   -F, --fuzzy-fields     using fuzzy fileds, e.g. *name or id123*
   -i, --ignore-case      ignore case
   -k, --keep-unmatched   keep unmatched data of the first file
-
 
 ```
 
 Examples:
 
-- `csvtk join -f "username;username;name" names.csv phone.csv adress.csv -k`
+- All files have same key column: `csvtk join -f id file1.csv file2.csv`
+- Files have different key columns: `csvtk join -f "username;username;name" names.csv phone.csv adress.csv -k`
 
 ## rename
 
@@ -303,7 +304,7 @@ Examples
 - Complex sort: `csvtk sort -k region -k age:n -k id:nr`
 
 
-        
+
 <div id="disqus_thread"></div>
 <script>
 /**

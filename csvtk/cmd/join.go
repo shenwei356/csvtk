@@ -34,8 +34,9 @@ import (
 var joinCmd = &cobra.Command{
 	Use:   "join",
 	Short: "join multiple CSV files by selected fields",
-	Long: ` join multiple CSV files by selected fields.
-Join 2- files to the first one.
+	Long: ` join 2nd and later files to the first file by selected fields.
+	
+Multiple keys supported, but the orders are ignored.
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -48,7 +49,13 @@ Join 2- files to the first one.
 		}
 
 		allFields := getFlagSemicolonSeparatedStrings(cmd, "fields")
-		if len(allFields) != len(files) {
+		if len(allFields) == 1 {
+			s := make([]string, len(files))
+			for i := range files {
+				s[i] = allFields[0]
+			}
+			allFields = s
+		} else if len(allFields) != len(files) {
 			checkError(fmt.Errorf("number of fields (%d) should be equal to number of files (%d)", len(allFields), len(files)))
 		}
 		// ignoreCase := getFlagBool(cmd, "ignore-case")
@@ -153,7 +160,8 @@ Join 2- files to the first one.
 
 func init() {
 	RootCmd.AddCommand(joinCmd)
-	joinCmd.Flags().StringP("fields", "f", "", `Semicolon seperated key fields of all files. e.g -f 1,2;2,3 or -f A,B;C,D`)
+	joinCmd.Flags().StringP("fields", "f", "1", "Semicolon seperated key fields of all files, "+
+		"if given one, we think all the files have the same key columns. e.g -f 1;2 or -f A,B;C,D or -f id")
 	joinCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
 	joinCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fileds, e.g. *name or id123*`)
 	joinCmd.Flags().BoolP("keep-unmatched", "k", false, `keep unmatched data of the first file`)

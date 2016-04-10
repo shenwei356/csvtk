@@ -172,7 +172,7 @@ type Config struct {
 func getConfigs(cmd *cobra.Command) Config {
 	return Config{
 		ChunkSize: getFlagPositiveInt(cmd, "chunk-size"),
-		NumCPUs:   getFlagPositiveInt(cmd, "num-cups"),
+		NumCPUs:   getFlagPositiveInt(cmd, "num-cpus"),
 
 		Delimiter:    getFlagRune(cmd, "delimiter"),
 		OutDelimiter: getFlagRune(cmd, "out-delimiter"),
