@@ -166,7 +166,8 @@ Columns are sample IDs in format of "GROUP.ID"</p>
 <li>
 <p>Counting</p>
 <pre><code>$ csvtk stat otu_table.csv
-file: otu_table.csv  num_cols: 10  num_rows: 6
+file            num_cols   num_rows
+otu_table.csv         10          5
 </code></pre>
 </li>
 <li>
@@ -182,7 +183,7 @@ Tenericutes     .00     .00     .00     .01     .03     .02     .00     .00     
 </li>
 <li>
 <p>Column names</p>
-<pre><code>$ csvtk cut -n otu_table.csv 
+<pre><code>$ csvtk cut -n otu_table.csv
 #field  colname
 1       Taxonomy
 2       A.1
@@ -258,6 +259,18 @@ B.1     .16     .41     .33     .01     .01     Treatment
 B.2     .13     .55     .16     .01     .03     Treatment
 B.3     .22     .41     .29     .01     .02     Treatment
 </code></pre>
+</li>
+<li>
+<p>Statistics of number data</p>
+<pre><code>$ csvtk stat2 -f 2-6 otu_table3.csv
+field             num    sum    min    max   mean   stdev
+Proteobacteria      6   1.06   0.13   0.29   0.18    0.07
+Firmicutes          6   2.34   0.06   0.55   0.39    0.17
+Bacteroidetes       6   1.71   0.12   0.62   0.28    0.18
+Deferribacteres     6   0.44      0   0.24   0.07     0.1
+Tenericutes         6   0.06      0   0.03   0.01    0.01
+</code></pre>
+<p>Please don't be supprised at the <code>sum</code>, it's a mock otu table...</p>
 </li>
 <li>
 <p>Sort by abundance of <em>Proteobacteria</em> in descending order.</p>

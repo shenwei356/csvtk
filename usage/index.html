@@ -135,6 +135,8 @@
         
             <li><a href="#stat">stat</a></li>
         
+            <li><a href="#stat2">stat2</a></li>
+        
             <li><a href="#csv2tab">csv2tab</a></li>
         
             <li><a href="#tab2csv">tab2csv</a></li>
@@ -183,7 +185,7 @@
 <p>Usage</p>
 <pre><code>Another cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.2.4
+Version: 0.2.5
 
 Author: Wei Shen &lt;shenwei356@gmail.com&gt;
 
@@ -196,7 +198,7 @@ Attention:
      Even lines with spaces will cause error.
   2. By default, csvtk think your files have header row, if not, use &quot;-H&quot;.
   3. By default, lines starting with '#' will be ignored, if the header row
-     starts with '#', please assign &quot;-C&quot; another rare symbol, e.g. '&amp;'.
+     starts with '#', please assign &quot;-C&quot; another rare symbol, e.g. '$'.
   4. By default, csvtk handles CSV files, use &quot;-t&quot; for tab-delimited files.
 
 Usage:
@@ -215,13 +217,14 @@ Available Commands:
   sort        sort by selected fields
   space2tab   convert space delimited format to CSV
   stat        summary of CSV file
+  stat2       summary of selected number fields
   tab2csv     convert tabular format to CSV
   transpose   transpose CSV data
   uniq        unique data without sorting
 
 Flags:
   -c, --chunk-size int         chunk size of CSV reader (default 50)
-  -C, --comment-char string    lines starting with commment-character will be ignored. if your header row starts with '#', please assign &quot;-C&quot; another rare symbol, e.g. '&amp;' (default &quot;#&quot;)
+  -C, --comment-char string    lines starting with commment-character will be ignored. if your header row starts with '#', please assign &quot;-C&quot; another rare symbol, e.g. '$' (default &quot;#&quot;)
   -d, --delimiter string       delimiting character of the input CSV file (default &quot;,&quot;)
   -l, --lazy-quotes            if given, a quote may appear in an unquoted field and a non-doubled quote may appear in a quoted field
   -H, --no-header-row          specifies that the input CSV file does not have header row
@@ -236,6 +239,83 @@ Use &quot;csvtk [command] --help&quot; for more information about a command.
 </code></pre>
 
 <h2 id="stat">stat</h2>
+<p>Usage</p>
+<pre><code>summary of CSV file
+
+Usage:
+  csvtk stat [flags]
+
+</code></pre>
+
+<p>Examples</p>
+<ol>
+<li>
+<p>with header row</p>
+<pre><code>$ cat names.csv
+id,first_name,last_name,username
+11,"Rob","Pike",rob
+2,Ken,Thompson,ken
+4,"Robert","Griesemer","gri"
+1,"Robert","Thompson","abc"
+NA,"Robert","Abel","123"
+
+$ cat names.csv | csvtk stat
+file   num_cols   num_rows
+-             4          5
+</code></pre>
+</li>
+<li>
+<p>no header row</p>
+<pre><code>$ cat digitals.tsv
+4       5       6
+1       2       3
+7       8       0
+8       1,000   4
+
+$ cat digitals.tsv | csvtk stat -t -H
+file   num_cols   num_rows
+-             3          4
+</code></pre>
+</li>
+</ol>
+<h2 id="stat2">stat2</h2>
+<p>Usage</p>
+<pre><code>summary of selected number fields: num, sum, min, max, mean, stdev
+
+Usage:
+  csvtk stat2 [flags]
+
+Flags:
+  -f, --fields string   select only these fields. e.g -f 1,2 or -f columnA,columnB
+  -F, --fuzzy-fields    using fuzzy fields, e.g. *name or id123*
+
+</code></pre>
+
+<p>Examples</p>
+<ol>
+<li>
+<p>simplest one</p>
+<pre><code>$ seq 1 5 | csvtk stat2 -H -f 1
+field   num   sum   min   max   mean   stdev
+1         5    15     1     5      3    1.58
+</code></pre>
+</li>
+<li>
+<p>multiple fields</p>
+<pre><code>$ cat digitals.tsv
+4       5       6
+1       2       3
+7       8       0
+8       1,000   4
+
+$ cat digitals.tsv | csvtk stat2 -t -H -f 1-3
+field   num     sum   min     max     mean    stdev
+1         4      20     1       8        5     3.16
+2         4   1,015     2   1,000   253.75   497.51
+3         4      13     0       6     3.25      2.5
+</code></pre>
+</li>
+</ol>
 <h2 id="csv2tab">csv2tab</h2>
 <h2 id="tab2csv">tab2csv</h2>
 <h2 id="space2tab">space2tab</h2>
