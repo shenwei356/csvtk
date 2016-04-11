@@ -1,5 +1,16 @@
 # Usage and Examples
 
+## Before use
+
+**Attention**
+
+1. The CSV parser requires all the lines have same number of fields/columns.
+ Even lines with spaces will cause error.
+2. By default, csvtk think your files have header row, if not, use `-H`.
+3. By default, lines starting with `#` will be ignored, if the header row
+ starts with `#`, please assign `-C` another rare symbol, e.g. `&`.
+4. By default, csvtk handles CSV files, use `-t` for tab-delimited files.
+
 ## csvkit
 
 Usage
@@ -7,12 +18,21 @@ Usage
 ```
 Another cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.2.3
+Version: 0.2.4
 
 Author: Wei Shen <shenwei356@gmail.com>
 
 Documents  : http://shenwei356.github.io/csvtk
 Source code: https://github.com/shenwei356/csvtk
+
+Attention:
+
+  1. The CSV parser requires all the lines have same number of fields/columns.
+     Even lines with spaces will cause error.
+  2. By default, csvtk think your files have header row, if not, use "-H".
+  3. By default, lines starting with '#' will be ignored, if the header row
+     starts with '#', please assign "-C" another rare symbol, e.g. '&'.
+  4. By default, csvtk handles CSV files, use "-t" for tab-delimited files.
 
 Usage:
   csvtk [command]
@@ -22,7 +42,7 @@ Available Commands:
   cut         select parts of fields
   grep        grep data by selected fields with patterns/regular expressions
   inter       intersection of multiple files
-  join         join multiple CSV files by selected fields
+  join        join multiple CSV files by selected fields
   mutate      create new column from selected fields by regular expression
   rename      rename column names
   rename2     rename column names by regular expression
@@ -36,15 +56,17 @@ Available Commands:
 
 Flags:
   -c, --chunk-size int         chunk size of CSV reader (default 50)
-  -C, --comment-char string    commment character for start of line in the input CSV file (default "#")
+  -C, --comment-char string    lines starting with commment-character will be ignored. if your header row starts with '#', please assign "-C" another rare symbol, e.g. '&' (default "#")
   -d, --delimiter string       delimiting character of the input CSV file (default ",")
   -l, --lazy-quotes            if given, a quote may appear in an unquoted field and a non-doubled quote may appear in a quoted field
   -H, --no-header-row          specifies that the input CSV file does not have header row
-  -j, --num-cups int           number of CPUs to use (default value depends on your computer) (default 4)
+  -j, --num-cpus int           number of CPUs to use (default value depends on your computer) (default 4)
   -D, --out-delimiter string   delimiting character of the input CSV file (default ",")
   -o, --out-file string        out file ("-" for stdout, suffix .gz for gzipped out) (default "-")
   -T, --out-tabs               specifies that the output is delimited with tabs. Overrides "-D"
   -t, --tabs                   specifies that the input CSV file is delimited with tabs. Overrides "-d"
+
+Use "csvtk [command] --help" for more information about a command.
 
 ```
 

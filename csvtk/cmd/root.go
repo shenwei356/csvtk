@@ -34,12 +34,21 @@ var RootCmd = &cobra.Command{
 	Short: "Another cross-platform, efficient and practical CSV/TSV toolkit",
 	Long: `Another cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.2.3
+Version: 0.2.4
 
 Author: Wei Shen <shenwei356@gmail.com>
 
 Documents  : http://shenwei356.github.io/csvtk
 Source code: https://github.com/shenwei356/csvtk
+
+Attention:
+
+  1. The CSV parser requires all the lines have same number of fields/columns.
+     Even lines with spaces will cause error.
+  2. By default, csvtk think your files have header row, if not, use "-H".
+  3. By default, lines starting with '#' will be ignored, if the header row
+     starts with '#', please assign "-C" another rare symbol, e.g. '$'.
+  4. By default, csvtk handles CSV files, use "-t" for tab-delimited files.
 
 `,
 }
@@ -60,7 +69,8 @@ func init() {
 	RootCmd.PersistentFlags().StringP("delimiter", "d", ",", `delimiting character of the input CSV file`)
 	RootCmd.PersistentFlags().StringP("out-delimiter", "D", ",", `delimiting character of the input CSV file`)
 	// RootCmd.PersistentFlags().StringP("quote-char", "q", `"`, `character used to quote strings in the input CSV file`)
-	RootCmd.PersistentFlags().StringP("comment-char", "C", `#`, `commment character for start of line in the input CSV file`)
+	RootCmd.PersistentFlags().StringP("comment-char", "C", `#`, "lines starting with commment-character will be ignored. "+
+		`if your header row starts with '#', please assign "-C" another rare symbol, e.g. '$'`)
 	RootCmd.PersistentFlags().BoolP("lazy-quotes", "l", false, `if given, a quote may appear in an unquoted field and a non-doubled quote may appear in a quoted field`)
 
 	RootCmd.PersistentFlags().BoolP("tabs", "t", false, `specifies that the input CSV file is delimited with tabs. Overrides "-d"`)

@@ -6,9 +6,9 @@
 
 ## Current Version
 
-- [csvtk v0.2.3](https://github.com/shenwei356/csvtk/releases/tag/v0.2.3)
-    - add flag `--colnames` to `cut`
-    - flag `-f` (`--fields`) of `join` supports single value now
+- [csvtk v0.2.4](https://github.com/shenwei356/csvtk/releases/tag/v0.2.4)
+    - fix bug of handling comment lines
+    - add some notes before using csvtk
 
 ## Installation
 
@@ -32,6 +32,9 @@ You can also add the directory of the executable file to environment variable
 
 ## Previous Versions
 
+- [csvtk v0.2.3](https://github.com/shenwei356/csvtk/releases/tag/v0.2.3)
+    - add flag `--colnames` to `cut`
+    - flag `-f` (`--fields`) of `join` supports single value now
 - [csvtk v0.2.2](https://github.com/shenwei356/csvtk/releases/tag/v0.2.2)
     - add flag `--keep-unmathed` to `join`
 - [csvtk v0.2](https://github.com/shenwei356/csvtk/releases/tag/v0.2)

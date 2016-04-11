@@ -96,7 +96,9 @@ func (csvReader *CSVReader) Run() {
 				csvReader.Ch <- CSVRecordsChunk{id, chunkData[0:i], err}
 				break
 			}
-
+			if record == nil {
+				continue
+			}
 			chunkData[i] = record
 			i++
 			if i == csvReader.chunkSize {

@@ -83,6 +83,17 @@ to be continued...
 
 ## Examples
 
+**Attention**
+
+1. The CSV parser requires all the lines have same number of fields/columns.
+ Even lines with spaces will cause error.
+2. By default, csvtk think your files have header row, if not, use `-H`.
+3. By default, lines starting with `#` will be ignored, if the header row
+ starts with `#`, please assign `-C` another rare symbol, e.g. `&`.
+4. By default, csvtk handles CSV files, use `-t` for tab-delimited files.
+
+Examples
+
 1. Select fields/columns (`cut`)
 
     - By index: `csvtk cut -f 1,2`
