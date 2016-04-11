@@ -40,6 +40,7 @@ You can also add the directory of the executable file to environment variable
 -  `tab2csv` convert tabular format to CSV
 -  `space2tab` convert space delimited format to CSV
 -  `transpose` transpose CSV data
+-  `csv2md` convert CSV to markdown format (TODO)
 
 **Set operations**
 
@@ -47,7 +48,7 @@ You can also add the directory of the executable file to environment variable
 -  `uniq` unique data without sorting
 -  `inter` intersection of multiple files
 -  `grep` grep data by selected fields with patterns/regular expressions
--  `filter` filter data by values of selected fields, supporting math/string expression (not impelemented yet)
+-  `filter` filter data by values of selected fields with math expression (TODO)
 -  `join` join multiple CSV files by selected fields
 
 **Edit**
