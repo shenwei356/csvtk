@@ -6,9 +6,10 @@
 
 ## Current Version
 
-- [csvtk v0.2.4](https://github.com/shenwei356/csvtk/releases/tag/v0.2.4)
-    - fix bug of handling comment lines
-    - add some notes before using csvtk
+- [csvtk v0.2.5](https://github.com/shenwei356/csvtk/releases/tag/v0.2.5)
+    - fix bug of `stat` that failed to considerate files with header row
+    - add subcommand `stat2` - summary of selected number fields
+    - make the output of `stat` prettier
 
 ## Installation
 
@@ -32,6 +33,9 @@ You can also add the directory of the executable file to environment variable
 
 ## Previous Versions
 
+- [csvtk v0.2.4](https://github.com/shenwei356/csvtk/releases/tag/v0.2.4)
+    - fix bug of handling comment lines
+    - add some notes before using csvtk
 - [csvtk v0.2.3](https://github.com/shenwei356/csvtk/releases/tag/v0.2.3)
     - add flag `--colnames` to `cut`
     - flag `-f` (`--fields`) of `join` supports single value now

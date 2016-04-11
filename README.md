@@ -28,11 +28,12 @@ You can also add the directory of the executable file to environment variable
 
     or simply copy it to `/usr/local/bin`
 
-## Subcommands (16 in total)
+## Subcommands (18 in total)
 
 **Information**
 
 -  `stat` summary of CSV file
+-  `stat2` summary of selected number fields
 
 **Format convertion**
 
@@ -91,6 +92,8 @@ to be continued...
 3. By default, lines starting with `#` will be ignored, if the header row
  starts with `#`, please assign `-C` another rare symbol, e.g. `&`.
 4. By default, csvtk handles CSV files, use `-t` for tab-delimited files.
+
+More [examples](http://shenwei356.github.io/csvtk/usage/) and [tutorial](http://shenwei356.github.io/csvtk/tutorial/)
 
 Examples
 

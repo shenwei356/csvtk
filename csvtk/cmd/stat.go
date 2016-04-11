@@ -21,11 +21,13 @@
 package cmd
 
 import (
-	"fmt"
 	"runtime"
 
 	"github.com/brentp/xopen"
 	"github.com/spf13/cobra"
+
+	"github.com/tatsushid/go-prettytable"
+	"github.com/dustin/go-humanize"
 )
 
 // statCmd represents the seq command
@@ -43,6 +45,14 @@ var statCmd = &cobra.Command{
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
 		defer outfh.Close()
+
+
+		tbl, err := prettytable.NewTable([]prettytable.Column{
+		    {Header: "file"},
+		    {Header: "num_cols", AlignRight: true},
+			{Header: "num_rows", AlignRight: true}}...)
+		checkError(err)
+		tbl.Separator = "   "
 
 		for _, file := range files {
 			csvReader, err := newCSVReaderByConfig(config, file)
@@ -63,8 +73,16 @@ var statCmd = &cobra.Command{
 					once = false
 				}
 			}
-			outfh.WriteString(fmt.Sprintf("file: %s  num_cols: %d  num_rows: %d\n", file, numCols, numRows))
+			if !config.NoHeaderRow {
+				numRows--
+			}
+			tbl.AddRow(
+				file,
+				humanize.Comma(int64(numCols)),
+				humanize.Comma(int64(numRows)))
+
 		}
+		outfh.Write(tbl.Bytes())
 	},
 }
 

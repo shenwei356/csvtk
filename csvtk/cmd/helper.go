@@ -237,7 +237,7 @@ func NewCSVWriterChanByConfig(config Config) (chan []string, error) {
 }
 
 var reFields = regexp.MustCompile(`([^,]+)(,[^,]+)*,?`)
-var reDigitals = regexp.MustCompile(`^[\-\d]+$`)
+var reDigitals = regexp.MustCompile(`^[\-\d\.e,E\+]+$`)
 var reDigitalRange = regexp.MustCompile(`^([\-\d]+?)\-([\-\d]+?)$`)
 
 func getFlagFields(cmd *cobra.Command, flag string) string {
@@ -452,4 +452,16 @@ func parseCSVfile(cmd *cobra.Command, config Config, file string,
 		}
 	}
 	return HeaderRow, Data, fields
+}
+
+func removeComma(s string) string {
+	newSlice := []byte{}
+	for i:=0; i<len(s); i++ {
+		switch s[i] {
+		case ',':
+		default:
+			newSlice = append(newSlice, s[i])
+		}
+	}
+	return string(newSlice)
 }

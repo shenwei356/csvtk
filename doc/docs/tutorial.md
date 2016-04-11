@@ -35,7 +35,8 @@ Columns are sample IDs in format of "GROUP.ID"
 1. Counting
 
         $ csvtk stat otu_table.csv
-        file: otu_table.csv  num_cols: 10  num_rows: 6
+        file            num_cols   num_rows
+        otu_table.csv         10          5
 
 1. Convert to tab-delimited table
 
@@ -49,7 +50,7 @@ Columns are sample IDs in format of "GROUP.ID"
 
 1. Column names
 
-        $ csvtk cut -n otu_table.csv 
+        $ csvtk cut -n otu_table.csv
         #field  colname
         1       Taxonomy
         2       A.1
@@ -61,7 +62,7 @@ Columns are sample IDs in format of "GROUP.ID"
         8       C.1
         9       C.2
         10      C.3
-        
+
 1. Extract data of group A and B and save to file `-o otu_table.gAB.csv`
 
         $ csvtk cut -F -f "A.*,B.*,Taxonomy" otu_table.csv -o otu_table.gAB.csv
@@ -120,6 +121,17 @@ Columns are sample IDs in format of "GROUP.ID"
         B.2     .13     .55     .16     .01     .03     Treatment
         B.3     .22     .41     .29     .01     .02     Treatment
 
+1. Statistics of number data
+
+        $ csvtk stat2 -f 2-6 otu_table3.csv
+        field             num    sum    min    max   mean   stdev
+        Proteobacteria      6   1.06   0.13   0.29   0.18    0.07
+        Firmicutes          6   2.34   0.06   0.55   0.39    0.17
+        Bacteroidetes       6   1.71   0.12   0.62   0.28    0.18
+        Deferribacteres     6   0.44      0   0.24   0.07     0.1
+        Tenericutes         6   0.06      0   0.03   0.01    0.01
+
+    Please don't be supprised at the `sum`, it's a mock otu table...
 
 1. Sort by abundance of *Proteobacteria* in descending order.
 
@@ -144,7 +156,7 @@ Columns are sample IDs in format of "GROUP.ID"
         B.2     .13     .55     .16     .01     .03     Treatment
 
 
-        
+
 <div id="disqus_thread"></div>
 <script>
 /**

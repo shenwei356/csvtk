@@ -21,20 +21,26 @@
 package cmd
 
 import (
-	"encoding/csv"
 	"fmt"
 	"regexp"
 	"runtime"
+	"strconv"
+	"sort"
 
 	"github.com/brentp/xopen"
 	"github.com/spf13/cobra"
+	"github.com/gonum/floats"
+	"github.com/tatsushid/go-prettytable"
+	"github.com/dustin/go-humanize"
+	"github.com/gonum/stat"
+	"github.com/shenwei356/util/math"
 )
 
-// cutCmd represents the seq command
-var cutCmd = &cobra.Command{
-	Use:   "cut",
-	Short: "select parts of fields",
-	Long: `select parts of fields
+// stat2Cmd represents the seq command
+var stat2Cmd = &cobra.Command{
+	Use:   "stat2",
+	Short: "summary of selected number fields",
+	Long: `summary of selected number fields: num, sum, min, max, mean, stdev
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -45,21 +51,12 @@ var cutCmd = &cobra.Command{
 		}
 		runtime.GOMAXPROCS(config.NumCPUs)
 
-		printNames := getFlagBool(cmd, "colnames")
-		if printNames && config.NoHeaderRow {
-			checkError(fmt.Errorf("flag -n (--colnames) and -H (--no-header-row) should not given both"))
-		}
-
 		fieldStr := getFlagString(cmd, "fields")
-		if !printNames && fieldStr == "" {
+		if fieldStr == "" {
 			checkError(fmt.Errorf("flag -f (--field) needed"))
 		}
 
 		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
-		if printNames {
-			fieldStr = "*"
-			fuzzyFields = true
-		}
 		fields, colnames, negativeFields, needParseHeaderRow := parseFields(cmd, fieldStr, config.NoHeaderRow)
 		var fieldsMap map[int]struct{}
 		if len(fields) > 0 {
@@ -81,12 +78,6 @@ var cutCmd = &cobra.Command{
 		checkError(err)
 		defer outfh.Close()
 
-		writer := csv.NewWriter(outfh)
-		if config.OutTabs || config.Tabs {
-			writer.Comma = '\t'
-		} else {
-			writer.Comma = config.OutDelimiter
-		}
 
 		file := files[0]
 		csvReader, err := newCSVReaderByConfig(config, file)
@@ -96,22 +87,18 @@ var cutCmd = &cobra.Command{
 		parseHeaderRow := needParseHeaderRow // parsing header row
 		var colnames2fileds map[string]int   // column name -> field
 		var colnamesMap map[string]*regexp.Regexp
+		var HeaderRow []string
+		var isHeaderRow bool
 
 		checkFields := true
-		var items []string
+
+		data := make(map[int][]float64)
 
 		for chunk := range csvReader.Ch {
 			checkError(chunk.Err)
 
 			for _, record := range chunk.Data {
 				if parseHeaderRow { // parsing header row
-					if printNames {
-						outfh.WriteString(fmt.Sprintf("%s\t%s\n", "#field", "colname"))
-						for i, n := range record {
-							outfh.WriteString(fmt.Sprintf("%d\t%s\n", i+1, n))
-						}
-						break
-					}
 					colnames2fileds = make(map[string]int, len(record))
 					for i, col := range record {
 						colnames2fileds[col] = i + 1
@@ -150,7 +137,9 @@ var cutCmd = &cobra.Command{
 						fieldsMap[f] = struct{}{}
 					}
 
+					HeaderRow = record
 					parseHeaderRow = false
+					isHeaderRow = true
 				}
 				if checkFields {
 					fields2 := []int{}
@@ -170,26 +159,67 @@ var cutCmd = &cobra.Command{
 					if len(fields) == 0 {
 						checkError(fmt.Errorf("no fields matched in file: %s", file))
 					}
-					items = make([]string, len(fields))
 
 					checkFields = false
 				}
 
-				for i, f := range fields {
-					items[i] = record[f-1]
+				if isHeaderRow {
+					isHeaderRow = false
+					continue
 				}
-				checkError(writer.Write(items))
+				for _, f := range fields {
+					if !reDigitals.MatchString(record[f-1]) {
+						checkError(fmt.Errorf("column %d has non-number data: %s", f, record[f-1]))
+					}
+					v, e := strconv.ParseFloat(removeComma(record[f-1]), 64)
+					checkError(e)
+					if _, ok := data[f]; !ok {
+						data[f] = []float64{}
+					}
+					data[f] = append(data[f], v)
+				}
 			}
 		}
+		tbl, err := prettytable.NewTable([]prettytable.Column{
+		    {Header: "field"},
+		    {Header: "num", AlignRight: true},
+			{Header: "sum", AlignRight: true},
+			{Header: "min", AlignRight: true},
+			{Header: "max", AlignRight: true},
+			{Header: "mean", AlignRight: true},
+			{Header: "stdev", AlignRight: true}}...)
+		checkError(err)
+		tbl.Separator = "   "
 
-		writer.Flush()
-		checkError(writer.Error())
+		fields = []int{}
+		for f := range data {
+			fields = append(fields, f)
+		}
+		sort.Ints(fields)
+
+		var fieldS string
+		for _, f := range fields {
+			if needParseHeaderRow {
+				fieldS = HeaderRow[f-1]
+			} else {
+				fieldS = fmt.Sprintf("%d", f)
+			}
+			mean, stdev := stat.MeanStdDev(data[f], nil)
+			tbl.AddRow(
+				fieldS,
+				humanize.Comma(int64(len(data[f]))),
+				humanize.Commaf(math.Round(floats.Sum(data[f]),2)),
+				humanize.Commaf(math.Round(floats.Min(data[f]),2)),
+				humanize.Commaf(math.Round(floats.Max(data[f]),2)),
+				humanize.Commaf(math.Round(mean,2)),
+				humanize.Commaf(math.Round(stdev,2)))
+		}
+		outfh.Write(tbl.Bytes())
 	},
 }
 
 func init() {
-	RootCmd.AddCommand(cutCmd)
-	cutCmd.Flags().StringP("fields", "f", "", `select only these fields. e.g -f 1,2 or -f columnA,columnB`)
-	cutCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g. *name or id123*`)
-	cutCmd.Flags().BoolP("colnames", "n", false, `print column names`)
+	RootCmd.AddCommand(stat2Cmd)
+	stat2Cmd.Flags().StringP("fields", "f", "", `select only these fields. e.g -f 1,2 or -f columnA,columnB`)
+	stat2Cmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g. *name or id123*`)
 }
