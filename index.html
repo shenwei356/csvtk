@@ -187,6 +187,7 @@ echo export PATH=\$PATH:/PATH/OF/FASTCOV &gt;&gt; ~/.bashrc
 <li><code>tab2csv</code> convert tabular format to CSV</li>
 <li><code>space2tab</code> convert space delimited format to CSV</li>
 <li><code>transpose</code> transpose CSV data</li>
+<li><code>csv2md</code> convert CSV to markdown format (TODO)</li>
 </ul>
 <p><strong>Set operations</strong></p>
 <ul>
@@ -194,7 +195,7 @@ echo export PATH=\$PATH:/PATH/OF/FASTCOV &gt;&gt; ~/.bashrc
 <li><code>uniq</code> unique data without sorting</li>
 <li><code>inter</code> intersection of multiple files</li>
 <li><code>grep</code> grep data by selected fields with patterns/regular expressions</li>
-<li><code>filter</code> filter data by values of selected fields, supporting math/string expression (not impelemented yet)</li>
+<li><code>filter</code> filter data by values of selected fields with math expression (TODO)</li>
 <li><code>join</code> join multiple CSV files by selected fields</li>
 </ul>
 <p><strong>Edit</strong></p>
@@ -278,6 +279,16 @@ echo export PATH=\$PATH:/PATH/OF/FASTCOV &gt;&gt; ~/.bashrc
 </table>
 <p>to be continued...</p>
 <h2 id="examples">Examples</h2>
+<p><strong>Attention</strong></p>
+<ol>
+<li>The CSV parser requires all the lines have same number of fields/columns.
+ Even lines with spaces will cause error.</li>
+<li>By default, csvtk think your files have header row, if not, use <code>-H</code>.</li>
+<li>By default, lines starting with <code>#</code> will be ignored, if the header row
+ starts with <code>#</code>, please assign <code>-C</code> another rare symbol, e.g. <code>&amp;</code>.</li>
+<li>By default, csvtk handles CSV files, use <code>-t</code> for tab-delimited files.</li>
+</ol>
+<p>Examples</p>
 <ol>
 <li>
 <p>Select fields/columns (<code>cut</code>)</p>
@@ -389,5 +400,5 @@ propose new functions or ask for help.</p>
 
 <!--
 MkDocs version : 0.15.3
-Build Date UTC : 2016-04-10 12:12:39.734839
+Build Date UTC : 2016-04-11 08:12:17.621538
 -->

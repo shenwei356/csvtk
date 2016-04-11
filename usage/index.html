@@ -129,6 +129,8 @@
     
         <li class="main active"><a href="#usage-and-examples">Usage and Examples</a></li>
         
+            <li><a href="#before-use">Before use</a></li>
+        
             <li><a href="#csvkit">csvkit</a></li>
         
             <li><a href="#stat">stat</a></li>
@@ -167,16 +169,35 @@
                 <div class="col-md-9" role="main">
 
 <h1 id="usage-and-examples">Usage and Examples</h1>
+<h2 id="before-use">Before use</h2>
+<p><strong>Attention</strong></p>
+<ol>
+<li>The CSV parser requires all the lines have same number of fields/columns.
+ Even lines with spaces will cause error.</li>
+<li>By default, csvtk think your files have header row, if not, use <code>-H</code>.</li>
+<li>By default, lines starting with <code>#</code> will be ignored, if the header row
+ starts with <code>#</code>, please assign <code>-C</code> another rare symbol, e.g. <code>&amp;</code>.</li>
+<li>By default, csvtk handles CSV files, use <code>-t</code> for tab-delimited files.</li>
+</ol>
 <h2 id="csvkit">csvkit</h2>
 <p>Usage</p>
 <pre><code>Another cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.2.3
+Version: 0.2.4
 
 Author: Wei Shen &lt;shenwei356@gmail.com&gt;
 
 Documents  : http://shenwei356.github.io/csvtk
 Source code: https://github.com/shenwei356/csvtk
+
+Attention:
+
+  1. The CSV parser requires all the lines have same number of fields/columns.
+     Even lines with spaces will cause error.
+  2. By default, csvtk think your files have header row, if not, use &quot;-H&quot;.
+  3. By default, lines starting with '#' will be ignored, if the header row
+     starts with '#', please assign &quot;-C&quot; another rare symbol, e.g. '&amp;'.
+  4. By default, csvtk handles CSV files, use &quot;-t&quot; for tab-delimited files.
 
 Usage:
   csvtk [command]
@@ -186,7 +207,7 @@ Available Commands:
   cut         select parts of fields
   grep        grep data by selected fields with patterns/regular expressions
   inter       intersection of multiple files
-  join         join multiple CSV files by selected fields
+  join        join multiple CSV files by selected fields
   mutate      create new column from selected fields by regular expression
   rename      rename column names
   rename2     rename column names by regular expression
@@ -200,15 +221,17 @@ Available Commands:
 
 Flags:
   -c, --chunk-size int         chunk size of CSV reader (default 50)
-  -C, --comment-char string    commment character for start of line in the input CSV file (default &quot;#&quot;)
+  -C, --comment-char string    lines starting with commment-character will be ignored. if your header row starts with '#', please assign &quot;-C&quot; another rare symbol, e.g. '&amp;' (default &quot;#&quot;)
   -d, --delimiter string       delimiting character of the input CSV file (default &quot;,&quot;)
   -l, --lazy-quotes            if given, a quote may appear in an unquoted field and a non-doubled quote may appear in a quoted field
   -H, --no-header-row          specifies that the input CSV file does not have header row
-  -j, --num-cups int           number of CPUs to use (default value depends on your computer) (default 4)
+  -j, --num-cpus int           number of CPUs to use (default value depends on your computer) (default 4)
   -D, --out-delimiter string   delimiting character of the input CSV file (default &quot;,&quot;)
   -o, --out-file string        out file (&quot;-&quot; for stdout, suffix .gz for gzipped out) (default &quot;-&quot;)
   -T, --out-tabs               specifies that the output is delimited with tabs. Overrides &quot;-D&quot;
   -t, --tabs                   specifies that the input CSV file is delimited with tabs. Overrides &quot;-d&quot;
+
+Use &quot;csvtk [command] --help&quot; for more information about a command.
 
 </code></pre>
 
