@@ -210,6 +210,13 @@ Tenericutes,.00,.00,.00,.01,.03,.02
 </code></pre>
 </li>
 <li>
+<p>Search some rows by fields. Matched parts will be <em>highlight</em> as red    </p>
+<pre><code>$ csvtk grep -f Taxonomy -r -p "tes" otu_table.gAB.csv -T
+</code></pre>
+<p>Result:</p>
+<p><img alt="grep_result.png" src="../files/grep_result.png" /></p>
+</li>
+<li>
 <p>Transpose</p>
 <pre><code>$ csvtk transpose otu_table.gAB.csv -o otu_table.gAB.t.csv
 $ csvtk csv2tab  otu_table.gAB.t.csv         
