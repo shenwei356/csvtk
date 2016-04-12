@@ -31,6 +31,7 @@ import (
 	"github.com/shenwei356/breader"
 	"github.com/spf13/cobra"
 	"github.com/fatih/color"
+	"github.com/mattn/go-colorable"
 )
 
 // grepCmd represents the seq command
@@ -81,7 +82,6 @@ var grepCmd = &cobra.Command{
 		ignoreCase := getFlagBool(cmd, "ignore-case")
 		useRegexp := getFlagBool(cmd, "use-regexp")
 		invert := getFlagBool(cmd, "invert")
-		noHighlight := getFlagBool(cmd, "no-highlight")
 
 		patternsMap := make(map[string]*regexp.Regexp)
 		for _, pattern := range patterns {
@@ -130,12 +130,20 @@ var grepCmd = &cobra.Command{
 
 		// fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
 		fuzzyFields := false
+		noHighlight := false
+		var writer *csv.Writer
+		if config.OutFile == "-" {
+			outfh := colorable.NewColorableStdout()
+			writer = csv.NewWriter(outfh)
+		}else{
+			noHighlight = true
+			outfh, err := xopen.Wopen(config.OutFile)
+			checkError(err)
+			defer outfh.Close()
+			writer = csv.NewWriter(outfh)
+		}
 
-		outfh, err := xopen.Wopen(config.OutFile)
-		checkError(err)
-		defer outfh.Close()
 
-		writer := csv.NewWriter(outfh)
 		if config.OutTabs || config.Tabs {
 			writer.Comma = '\t'
 		} else {
@@ -292,7 +300,7 @@ var grepCmd = &cobra.Command{
 	},
 }
 
-var redText = color.New(color.FgRed).SprintFunc()
+var redText = color.New(color.FgHiRed).SprintFunc()
 func init() {
 	RootCmd.AddCommand(grepCmd)
 	grepCmd.Flags().StringP("fields", "f", "1", `key field, column name or index`)
@@ -301,7 +309,4 @@ func init() {
 	grepCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
 	grepCmd.Flags().BoolP("use-regexp", "r", false, `patterns are regular expression`)
 	grepCmd.Flags().BoolP("invert", "v", false, `invert match`)
-	grepCmd.Flags().BoolP("no-highlight", "n", false, `no highlight for matched data. use this in Windows if highlight does not work.`)
-
-	//grepCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fileds, e.g. *name or id123*`)
 }

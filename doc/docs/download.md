@@ -6,9 +6,8 @@
 
 ## Current Version
 
-- [csvtk v0.2.6](https://github.com/shenwei356/csvtk/releases/tag/v0.2.6)
-    - fix one error message of `grep`
-    - highlight matched fields in result of `grep`
+- [csvtk v0.2.7](https://github.com/shenwei356/csvtk/releases/tag/v0.2.7)
+    - fix highlight failing in windows
 
 ## Installation
 
@@ -32,6 +31,9 @@ You can also add the directory of the executable file to environment variable
 
 ## Previous Versions
 
+- [csvtk v0.2.6](https://github.com/shenwei356/csvtk/releases/tag/v0.2.6)
+    - fix one error message of `grep`
+    - highlight matched fields in result of `grep`
 - [csvtk v0.2.5](https://github.com/shenwei356/csvtk/releases/tag/v0.2.5)
     - fix bug of `stat` that failed to considerate files with header row
     - add subcommand `stat2` - summary of selected number fields
