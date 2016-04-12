@@ -8,7 +8,7 @@
 
 - [csvtk v0.2.6](https://github.com/shenwei356/csvtk/releases/tag/v0.2.6)
     - fix one error message of `grep`
-    - colorfy result of `grep`
+    - highlight matched fields in result of `grep`
 
 ## Installation
 

@@ -106,7 +106,7 @@ Examples
     - Field ranges: `csvtk cut -f 2-4` for column 2,3,4 or `csvtk cut -f -3--1` for discarding column 1,2,3
     - All fields: `csvtk cut -F -f "*"`
 
-1. Search by selected fields (`grep`) (matched parts will be *highlight* as red)
+1. Search by selected fields (`grep`) (matched parts will be highlighted as red)
 
     - By exactly matching: `csvtk grep -f first_name -p Robert -p Rob`
     - By regular expression: `csvtk grep -f first_name -r -p Rob`

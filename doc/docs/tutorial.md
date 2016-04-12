@@ -74,7 +74,7 @@ Columns are sample IDs in format of "GROUP.ID"
         Deferribacteres,.17,.00,.24,.01,.01,.01
         Tenericutes,.00,.00,.00,.01,.03,.02
 
-1. Search some rows by fields. Matched parts will be *highlight* as red    
+1. Search some rows by fields. Matched parts will be highlighted as red
 
         $ csvtk grep -f Taxonomy -r -p "tes" otu_table.gAB.csv -T
 
