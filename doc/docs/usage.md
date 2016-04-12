@@ -18,7 +18,7 @@ Usage
 ```
 Another cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.2.5
+Version: 0.2.6
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -253,6 +253,7 @@ Flags:
   -f, --fields string         key field, column name or index (default "1")
   -i, --ignore-case           ignore case
   -v, --invert                invert match
+  -n, --no-highlight          no highlight for matched data. use this in Windows if highlight does not work.
   -p, --pattern value         query pattern (multiple values supported) (default [])
   -P, --pattern-file string   pattern files (could also be CSV format)
   -r, --use-regexp            patterns are regular expression

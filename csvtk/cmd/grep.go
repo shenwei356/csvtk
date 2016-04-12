@@ -81,6 +81,7 @@ var grepCmd = &cobra.Command{
 		ignoreCase := getFlagBool(cmd, "ignore-case")
 		useRegexp := getFlagBool(cmd, "use-regexp")
 		invert := getFlagBool(cmd, "invert")
+		noHighlight := getFlagBool(cmd, "no-highlight")
 
 		patternsMap := make(map[string]*regexp.Regexp)
 		for _, pattern := range patterns {
@@ -260,26 +261,29 @@ var grepCmd = &cobra.Command{
 						}
 					}
 
-					record2 :=make([]string, len(record)) //with color
-					for i, c :=range record {
-						if i+1 == fields[0] {
-							if useRegexp {
-								v := ""
-								for _, re := range patternsMap {
-									if re.MatchString(target) {
-										v = re.ReplaceAllString(c, redText(re.FindAllString(c, 1)[0]))
-										break
+					if !noHighlight {
+						record2 :=make([]string, len(record)) //with color
+						for i, c :=range record {
+							if i+1 == fields[0] {
+								if useRegexp {
+									v := ""
+									for _, re := range patternsMap {
+										if re.MatchString(target) {
+											v = re.ReplaceAllString(c, redText(re.FindAllString(c, 1)[0]))
+											break
+										}
 									}
+									record2[i] = v
+								} else {
+									record2[i] = redText(c)
 								}
-								record2[i] = v
-							} else {
-								record2[i] = redText(c)
+							}else {
+								record2[i] = c
 							}
-						}else {
-							record2[i] = c
 						}
+						record = record2
 					}
-					checkError(writer.Write(record2))
+					checkError(writer.Write(record))
 				}
 			}
 		}
@@ -297,5 +301,7 @@ func init() {
 	grepCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
 	grepCmd.Flags().BoolP("use-regexp", "r", false, `patterns are regular expression`)
 	grepCmd.Flags().BoolP("invert", "v", false, `invert match`)
+	grepCmd.Flags().BoolP("no-highlight", "n", false, `no highlight for matched data. use this in Windows if highlight does not work.`)
+
 	//grepCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fileds, e.g. *name or id123*`)
 }
