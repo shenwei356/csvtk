@@ -185,7 +185,7 @@
 <p>Usage</p>
 <pre><code>Another cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.2.6
+Version: 0.2.7
 
 Author: Wei Shen &lt;shenwei356@gmail.com&gt;
 
@@ -390,7 +390,8 @@ Flags:
 
 <h2 id="grep">grep</h2>
 <p>Usage</p>
-<pre><code>grep data by selected fields with patterns/regular expressions
+<pre><code>[shenwei@Riolinux csvtk]$ csvtk grep -h
+grep data by selected fields with patterns/regular expressions
 
 Usage:
   csvtk grep [flags]
@@ -399,7 +400,6 @@ Flags:
   -f, --fields string         key field, column name or index (default &quot;1&quot;)
   -i, --ignore-case           ignore case
   -v, --invert                invert match
-  -n, --no-highlight          no highlight for matched data. use this in Windows if highlight does not work.
   -p, --pattern value         query pattern (multiple values supported) (default [])
   -P, --pattern-file string   pattern files (could also be CSV format)
   -r, --use-regexp            patterns are regular expression
