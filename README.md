@@ -10,24 +10,6 @@ Another cross-platform, efficient and practical CSV/TSV toolkit.
 - **Practical functions supported by N subcommands**
 - **Support STDIN and gziped input/output file, easy being used in pipe**
 
-## Installation
-
-Just [download](https://github.com/shenwei356/csvtk/releases) executable file
- of your operating system and rename it to `csvtk.exe` (Windows) or
- `csvtk` (other operating systems) for convenience.
-
-You can also add the directory of the executable file to environment variable
-`PATH`, so you can run `csvtk` anywhere.
-
-1. For windows, the simplest way is copy it to `C:\WINDOWS\system32`.
-
-2. For Linux, type:
-
-        chmod a+x /PATH/OF/FASTCOV/csvtk
-        echo export PATH=\$PATH:/PATH/OF/FASTCOV >> ~/.bashrc
-
-    or simply copy it to `/usr/local/bin`
-
 ## Subcommands (18 in total)
 
 **Information**
@@ -62,6 +44,24 @@ You can also add the directory of the executable file to environment variable
 **Ordering**
 
 -  `sort` sort by selected fields
+
+## Installation
+
+Just [download](https://github.com/shenwei356/csvtk/releases) executable file
+ of your operating system and rename it to `csvtk.exe` (Windows) or
+ `csvtk` (other operating systems) for convenience.
+
+You can also add the directory of the executable file to environment variable
+`PATH`, so you can run `csvtk` anywhere.
+
+1. For windows, the simplest way is copy it to `C:\WINDOWS\system32`.
+
+2. For Linux, type:
+
+        chmod a+x /PATH/OF/FASTCOV/csvtk
+        echo export PATH=\$PATH:/PATH/OF/FASTCOV >> ~/.bashrc
+
+    or simply copy it to `/usr/local/bin`
 
 ## Compared to `csvkit`
 
@@ -106,11 +106,13 @@ Examples
     - Field ranges: `csvtk cut -f 2-4` for column 2,3,4 or `csvtk cut -f -3--1` for discarding column 1,2,3
     - All fields: `csvtk cut -F -f "*"`
 
-1. Search by selected fields (`grep`)
+1. Search by selected fields (`grep`) (matched parts will be *highlight* as red)
 
     - By exactly matching: `csvtk grep -f first_name -p Robert -p Rob`
     - By regular expression: `csvtk grep -f first_name -r -p Rob`
     - By pattern list: `csvtk grep -f first_name -P name_list.txt`
+
+
 
 1. Rename column names (`rename` and `rename2`)
 
@@ -138,6 +140,20 @@ Examples
 
     - All files have same key column: `csvtk join -f id file1.csv file2.csv`
     - Files have different key columns: `csvtk join -f "username;username;name" names.csv phone.csv adress.csv -k`
+
+1. Summary of selected number fields: num, sum, min, max, mean, stdev (`stat2`)
+
+        $ cat digitals.tsv
+        4       5       6
+        1       2       3
+        7       8       0
+        8       1,000   4
+
+        $ cat digitals.tsv | csvtk stat2 -t -H -f 1-3
+        field   num     sum   min     max     mean    stdev
+        1         4      20     1       8        5     3.16
+        2         4   1,015     2   1,000   253.75   497.51
+        3         4      13     0       6     3.25      2.5
 
 ## Contact
 

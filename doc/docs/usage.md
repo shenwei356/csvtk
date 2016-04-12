@@ -261,6 +261,8 @@ Flags:
 
 Examples
 
+Matched parts will be *highlight*
+
 - By regular expression: `csvtk grep -f first_name -r -p Rob`
 - By pattern list: `csvtk grep -f first_name -P name_list.txt`
 

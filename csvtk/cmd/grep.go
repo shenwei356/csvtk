@@ -30,6 +30,7 @@ import (
 	"github.com/brentp/xopen"
 	"github.com/shenwei356/breader"
 	"github.com/spf13/cobra"
+	"github.com/fatih/color"
 )
 
 // grepCmd represents the seq command
@@ -74,7 +75,7 @@ var grepCmd = &cobra.Command{
 		patterns := getFlagStringSlice(cmd, "pattern")
 		patternFile := getFlagString(cmd, "pattern-file")
 		if len(patterns) == 0 && patternFile == "" {
-			checkError(fmt.Errorf("one of flags -p (--pattern) or -f (--pattern-file) should be given"))
+			checkError(fmt.Errorf("one of flags -p (--pattern) or -P (--pattern-file) should be given"))
 		}
 
 		ignoreCase := getFlagBool(cmd, "ignore-case")
@@ -258,7 +259,27 @@ var grepCmd = &cobra.Command{
 							continue
 						}
 					}
-					checkError(writer.Write(record))
+
+					record2 :=make([]string, len(record)) //with color
+					for i, c :=range record {
+						if i+1 == fields[0] {
+							if useRegexp {
+								v := ""
+								for _, re := range patternsMap {
+									if re.MatchString(target) {
+										v = re.ReplaceAllString(c, redText(re.FindAllString(c, 1)[0]))
+										break
+									}
+								}
+								record2[i] = v
+							} else {
+								record2[i] = redText(c)
+							}
+						}else {
+							record2[i] = c
+						}
+					}
+					checkError(writer.Write(record2))
 				}
 			}
 		}
@@ -267,6 +288,7 @@ var grepCmd = &cobra.Command{
 	},
 }
 
+var redText = color.New(color.FgRed).SprintFunc()
 func init() {
 	RootCmd.AddCommand(grepCmd)
 	grepCmd.Flags().StringP("fields", "f", "1", `key field, column name or index`)
