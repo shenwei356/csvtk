@@ -18,7 +18,7 @@ Usage
 ```
 Another cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.2.7
+Version: 0.2.8
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -44,6 +44,7 @@ Available Commands:
   inter       intersection of multiple files
   join        join multiple CSV files by selected fields
   mutate      create new column from selected fields by regular expression
+  pretty      convert CSV to readable aligned table
   rename      rename column names
   rename2     rename column names by regular expression
   replace     replace data of selected fields by regular expression
@@ -150,17 +151,65 @@ Examples
         2         4   1,015     2   1,000   253.75   497.51
         3         4      13     0       6     3.25      2.5
 
-## csv2tab
 
-## tab2csv
+## pretty
 
-## space2tab
+Usage
+
+```
+convert CSV to readable aligned table
+
+Usage:
+  csvtk pretty [flags]
+
+Flags:
+  -r, --align-right        align right
+  -s, --separator string   fields/columns separator (default "   ")
+
+```
+
+Examples:
+
+1. default
+
+        $ csvtk pretty names.csv
+        id   first_name   last_name   username
+        11   Rob          Pike        rob
+        2    Ken          Thompson    ken
+        4    Robert       Griesemer   gri
+        1    Robert       Thompson    abc
+        NA   Robert       Abel        123
+
+2. align right
+
+        $ csvtk pretty names.csv -r
+        id   first_name   last_name   username
+        11          Rob        Pike        rob
+         2          Ken    Thompson        ken
+         4       Robert   Griesemer        gri
+         1       Robert    Thompson        abc
+        NA       Robert        Abel        123
+
+
+3. custom separator
+
+        $ csvtk pretty names.csv -s " | "
+        id | first_name | last_name | username
+        11 | Rob        | Pike      | rob
+        2  | Ken        | Thompson  | ken
+        4  | Robert     | Griesemer | gri
+        1  | Robert     | Thompson  | abc
+        NA | Robert     | Abel      | 123
 
 ## transpose
 
 Usage
 
 ```
+transpose CSV data
+
+Usage:
+  csvtk transpose [flags]
 
 ```
 
@@ -264,6 +313,14 @@ Examples
 Matched parts will be *highlight*
 
 - By regular expression: `csvtk grep -f first_name -r -p Rob`
+
+        $ names.csv | csvtk grep -f first_name -r -p Rob | csvtk pretty
+        id   first_name   last_name   username
+        11   Rob          Pike        rob
+        4    Robert       Griesemer   gri
+        1    Robert       Thompson    abc
+        NA   Robert       Abel        123
+
 - By pattern list: `csvtk grep -f first_name -P name_list.txt`
 
 ## join

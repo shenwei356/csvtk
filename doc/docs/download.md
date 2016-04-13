@@ -6,16 +6,18 @@
 
 ## Current Version
 
-- [csvtk v0.2.7](https://github.com/shenwei356/csvtk/releases/tag/v0.2.7)
-    - fix highlight failing in windows
+- [csvtk v0.2.8](https://github.com/shenwei356/csvtk/releases/tag/v0.2.8)
+    - add subcommand `pretty` -- convert CSV to readable aligned table
 
 ## Installation
 
-Just [download](https://github.com/shenwei356/csvtk/releases) executable file
- of your operating system and rename it to `csvtk.exe` (Windows) or
- `csvtk` (other operating systems) for convenience,
- and then run it in command-line interface, no dependencies,
- no complicated compilation process.
+[Download Page](https://github.com/shenwei356/csvtk/releases)
+
+Just [download](https://github.com/shenwei356/csvtk/releases) gzip-compressed
+executable file of your operating system, and uncompress it with `gzip -d *.gz` command,
+rename it to `csvtk.exe` (Windows) or `csvtk` (other operating systems) for convenience.
+
+You may need to add executable permision by `chmod a+x csvtk`.
 
 You can also add the directory of the executable file to environment variable
 `PATH`, so you can run `csvtk` anywhere.
@@ -31,6 +33,8 @@ You can also add the directory of the executable file to environment variable
 
 ## Previous Versions
 
+- [csvtk v0.2.7](https://github.com/shenwei356/csvtk/releases/tag/v0.2.7)
+    - fix highlight failing in windows
 - [csvtk v0.2.6](https://github.com/shenwei356/csvtk/releases/tag/v0.2.6)
     - fix one error message of `grep`
     - highlight matched fields in result of `grep`

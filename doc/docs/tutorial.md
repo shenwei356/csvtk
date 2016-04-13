@@ -30,6 +30,16 @@ Columns are sample IDs in format of "GROUP.ID"
         Deferribacteres,.17,.00,.24,.01,.01,.01,.01,.01,.02
         Tenericutes,.00,.00,.00,.01,.03,.02,.00,.00,.00
 
+What's a mess. Let's make it prettier!
+
+        $ csvtk pretty otu_table.csv
+        Taxonomy          A.1   A.2   A.3   B.1   B.2   B.3   C.1   C.2   C.3
+        Proteobacteria    .13   .29   .13   .16   .13   .22   .30   .23   .21
+        Firmicutes        .42   .06   .49   .41   .55   .41   .32   .38   .66
+        Bacteroidetes     .19   .62   .12   .33   .16   .29   .34   .35   .09
+        Deferribacteres   .17   .00   .24   .01   .01   .01   .01   .01   .02
+        Tenericutes       .00   .00   .00   .01   .03   .02   .00   .00   .00
+
 ### Steps
 
 1. Counting
@@ -66,13 +76,14 @@ Columns are sample IDs in format of "GROUP.ID"
 1. Extract data of group A and B and save to file `-o otu_table.gAB.csv`
 
         $ csvtk cut -F -f "A.*,B.*,Taxonomy" otu_table.csv -o otu_table.gAB.csv
-        $ cat otu_table.gAB.csv
-        Taxonomy,A.1,A.2,A.3,B.1,B.2,B.3
-        Proteobacteria,.13,.29,.13,.16,.13,.22
-        Firmicutes,.42,.06,.49,.41,.55,.41
-        Bacteroidetes,.19,.62,.12,.33,.16,.29
-        Deferribacteres,.17,.00,.24,.01,.01,.01
-        Tenericutes,.00,.00,.00,.01,.03,.02
+
+        $ csvtk prety otu_table.gAB.csv
+        Taxonomy          A.1   A.2   A.3   B.1   B.2   B.3
+        Proteobacteria    .13   .29   .13   .16   .13   .22
+        Firmicutes        .42   .06   .49   .41   .55   .41
+        Bacteroidetes     .19   .62   .12   .33   .16   .29
+        Deferribacteres   .17   .00   .24   .01   .01   .01
+        Tenericutes       .00   .00   .00   .01   .03   .02
 
 1. Search some rows by fields. Matched parts will be highlighted as red
 
@@ -86,49 +97,55 @@ Columns are sample IDs in format of "GROUP.ID"
 1. Transpose
 
         $ csvtk transpose otu_table.gAB.csv -o otu_table.gAB.t.csv
-        $ csvtk csv2tab  otu_table.gAB.t.csv         
-        Taxonomy        Proteobacteria  Firmicutes      Bacteroidetes   Deferribacteres Tenericutes
-        A.1     .13     .42     .19     .17     .00
-        A.2     .29     .06     .62     .00     .00
-        A.3     .13     .49     .12     .24     .00
-        B.1     .16     .41     .33     .01     .01
-        B.2     .13     .55     .16     .01     .03
-        B.3     .22     .41     .29     .01     .02
+
+        $ csvtk pretty otu_table.gAB.t.csv
+        Taxonomy   Proteobacteria   Firmicutes   Bacteroidetes   Deferribacteres   Tenericutes
+        A.1        .13              .42          .19             .17               .00
+        A.2        .29              .06          .62             .00               .00
+        A.3        .13              .49          .12             .24               .00
+        B.1        .16              .41          .33             .01               .01
+        B.2        .13              .55          .16             .01               .03
+        B.3        .22              .41          .29             .01               .02
 
 1. Rename first column
 
         $ csvtk rename -f 1 -n "sample" otu_table.gAB.t.csv -o otu_table.gAB.t.r.csv
-        $ csvtk csv2tab  otu_table.gAB.t.r.csv
-        sample  Proteobacteria  Firmicutes      Bacteroidetes   Deferribacteres Tenericutes
-        A.1     .13     .42     .19     .17     .00
-        A.2     .29     .06     .62     .00     .00
-        A.3     .13     .49     .12     .24     .00
-        B.1     .16     .41     .33     .01     .01
-        B.2     .13     .55     .16     .01     .03
-        B.3     .22     .41     .29     .01     .02
+
+        $ csvtk pretty otu_table.gAB.t.r.csv
+        sample   Proteobacteria   Firmicutes   Bacteroidetes   Deferribacteres   Tenericutes
+        A.1      .13              .42          .19             .17               .00
+        A.2      .29              .06          .62             .00               .00
+        A.3      .13              .49          .12             .24               .00
+        B.1      .16              .41          .33             .01               .01
+        B.2      .13              .55          .16             .01               .03
+        B.3      .22              .41          .29             .01               .02
 
 1. Add group column
 
         $ csvtk mutate -p "(.+?)\." -n group otu_table.gAB.t.r.csv -o otu_table2.csv
-        $ csvtk csv2tab otu_table2.csv
-        sample  Proteobacteria  Firmicutes      Bacteroidetes   Deferribacteres Tenericutes     group
-        A.1     .13     .42     .19     .17     .00     A
-        A.2     .29     .06     .62     .00     .00     A
-        A.3     .13     .49     .12     .24     .00     A
-        B.1     .16     .41     .33     .01     .01     B
-        B.2     .13     .55     .16     .01     .03     B
-        B.3     .22     .41     .29     .01     .02     B
+
+        $ csvtk pretty otu_table2.csv
+        sample   Proteobacteria   Firmicutes   Bacteroidetes   Deferribacteres   Tenericutes   group
+        A.1      .13              .42          .19             .17               .00           A
+        A.2      .29              .06          .62             .00               .00           A
+        A.3      .13              .49          .12             .24               .00           A
+        B.1      .16              .41          .33             .01               .01           B
+        B.2      .13              .55          .16             .01               .03           B
+        B.3      .22              .41          .29             .01               .02           B
 
 1. Rename groups:
 
         $ csvtk replace -f group -p "A" -r "Ctrl" otu_table2.csv | csvtk replace -f group -p "B" -r "Treatment" > otu_table3.csv
-        $ csvtk csv2tab otu_table3.csv sample  Proteobacteria  Firmicutes      Bacteroidetes   Deferribacteres Tenericutes     group
-        A.1     .13     .42     .19     .17     .00     Ctrl
-        A.2     .29     .06     .62     .00     .00     Ctrl
-        A.3     .13     .49     .12     .24     .00     Ctrl
-        B.1     .16     .41     .33     .01     .01     Treatment
-        B.2     .13     .55     .16     .01     .03     Treatment
-        B.3     .22     .41     .29     .01     .02     Treatment
+
+        $ csvtk pretty otu_table3.csv
+        sample   Proteobacteria   Firmicutes   Bacteroidetes   Deferribacteres   Tenericutes   group
+        A.1      .13              .42          .19             .17               .00           Ctrl
+        A.2      .29              .06          .62             .00               .00           Ctrl
+        A.3      .13              .49          .12             .24               .00           Ctrl
+        B.1      .16              .41          .33             .01               .01           Treatment
+        B.2      .13              .55          .16             .01               .03           Treatment
+        B.3      .22              .41          .29             .01               .02           Treatment
+
 
 1. Statistics of number data
 
@@ -144,26 +161,26 @@ Columns are sample IDs in format of "GROUP.ID"
 
 1. Sort by abundance of *Proteobacteria* in descending order.
 
-        $ csvtk sort -k Proteobacteria:nr otu_table3.csv -T
-        sample  Proteobacteria  Firmicutes      Bacteroidetes   Deferribacteres Tenericutes     group
-        A.2     .29     .06     .62     .00     .00     Ctrl
-        B.3     .22     .41     .29     .01     .02     Treatment
-        B.1     .16     .41     .33     .01     .01     Treatment
-        B.2     .13     .55     .16     .01     .03     Treatment
-        A.3     .13     .49     .12     .24     .00     Ctrl
-        A.1     .13     .42     .19     .17     .00     Ctrl
+        $ csvtk sort -k Proteobacteria:nr otu_table3.csv | csvtk pretty
+        sample   Proteobacteria   Firmicutes   Bacteroidetes   Deferribacteres   Tenericutes   group
+        A.2      .29              .06          .62             .00               .00           Ctrl
+        B.3      .22              .41          .29             .01               .02           Treatment
+        B.1      .16              .41          .33             .01               .01           Treatment
+        B.2      .13              .55          .16             .01               .03           Treatment
+        A.3      .13              .49          .12             .24               .00           Ctrl
+        A.1      .13              .42          .19             .17               .00           Ctrl
+
 
 1. Sort by abundance of *Proteobacteria* in descending order and *Firmicutes* in ascending order
 
-        $ csvtk sort -k Proteobacteria:nr -k Firmicutes:n otu_table3.csv -T
-        sample  Proteobacteria  Firmicutes      Bacteroidetes   Deferribacteres Tenericutes     group
-        A.2     .29     .06     .62     .00     .00     Ctrl
-        B.3     .22     .41     .29     .01     .02     Treatment
-        B.1     .16     .41     .33     .01     .01     Treatment
-        A.1     .13     .42     .19     .17     .00     Ctrl
-        A.3     .13     .49     .12     .24     .00     Ctrl
-        B.2     .13     .55     .16     .01     .03     Treatment
-
+        $ csvtk sort -k Proteobacteria:nr -k Firmicutes:n otu_table3.csv | csvtk pretty
+        sample   Proteobacteria   Firmicutes   Bacteroidetes   Deferribacteres   Tenericutes   group
+        A.2      .29              .06          .62             .00               .00           Ctrl
+        B.3      .22              .41          .29             .01               .02           Treatment
+        B.1      .16              .41          .33             .01               .01           Treatment
+        A.1      .13              .42          .19             .17               .00           Ctrl
+        A.3      .13              .49          .12             .24               .00           Ctrl
+        B.2      .13              .55          .16             .01               .03           Treatment
 
 
 <div id="disqus_thread"></div>

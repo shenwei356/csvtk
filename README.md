@@ -2,6 +2,20 @@
 
 Another cross-platform, efficient and practical CSV/TSV toolkit.
 
+Yes, you could just use spreadsheet softwares like MS excel to
+do most of the job.
+
+Howerver it's all by clicking and typing, which is **not
+automatically and time-consuming to repeate**, especially when we want to
+apply similar operations with different datasets or purposes.
+
+`csvtk` is **convenient for rapid investigation
+and also easy to integrated into analysis pipelines**.
+ It could save you much time of writting scripts.
+
+Hope it be helpful for you.
+
+
 ## Features
 
 - **Cross-platform** (Linux/Windows/Mac OS X/OpenBSD/FreeBSD)
@@ -19,11 +33,11 @@ Another cross-platform, efficient and practical CSV/TSV toolkit.
 
 **Format convertion**
 
+-  `pretty` convert CSV to readable aligned table
 -  `csv2tab` convert CSV to tabular format
 -  `tab2csv` convert tabular format to CSV
 -  `space2tab` convert space delimited format to CSV
 -  `transpose` transpose CSV data
--  `pretty` convert CSV to readable aligned table (TODO)
 -  `csv2md` convert CSV to markdown format (TODO)
 
 **Set operations**
@@ -50,7 +64,7 @@ Another cross-platform, efficient and practical CSV/TSV toolkit.
 
 [Download Page](https://github.com/shenwei356/csvtk/releases)
 
-Just [download](https://github.com/shenwei356/csvtk/releases) gzip-compressed 
+Just [download](https://github.com/shenwei356/csvtk/releases) gzip-compressed
 executable file of your operating system, and uncompress it with `gzip -d *.gz` command,
 rename it to `csvtk.exe` (Windows) or `csvtk` (other operating systems) for convenience.
 
@@ -79,13 +93,12 @@ Fields ranges           |   Yes    |  Yes      | e.g. `-f 1-4,6`
 **Unselect fileds**     |   Yes    |  --       | e.g. `-1` for excluding first column
 **Fuzzy fields**        |   Yes    |  --       | e.g. `ab*` for columns with prefix "ab"
 Order-specific fields   |   --     |  Yes      | it means `1,2` is different from `2,1`
-Rename columns          |   Yes    |  --       | rename with new name(s) or from existed names
+**Rename columns**      |   Yes    |  --       | rename with new name(s) or from existed names
 Sort by multiple keys   |   Yes    |  Yes      | bash sort like operations
-Sort by number          |   Yes    |  --       | e.g. `-k 1:n`
+**Sort by number**      |   Yes    |  --       | e.g. `-k 1:n`
 **Multiple sort**       |   Yes    |  --       | e.g. `-k 2:r -k 1:nr`
+**Pretty output**       |   Yes    |  --       | convert CSV to readable aligned table
 
-
-to be continued...
 
 ## Examples
 
@@ -101,6 +114,16 @@ to be continued...
 More [examples](http://shenwei356.github.io/csvtk/usage/) and [tutorial](http://shenwei356.github.io/csvtk/tutorial/)
 
 Examples
+
+1. Pretty result
+
+        $ csvtk pretty names.csv
+        id   first_name   last_name   username
+        11   Rob          Pike        rob
+        2    Ken          Thompson    ken
+        4    Robert       Griesemer   gri
+        1    Robert       Thompson    abc
+        NA   Robert       Abel        123
 
 1. Select fields/columns (`cut`)
 
