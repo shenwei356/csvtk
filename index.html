@@ -150,6 +150,15 @@
 
 <h1 id="csvtk">csvtk</h1>
 <p>Another cross-platform, efficient and practical CSV/TSV toolkit.</p>
+<p>Yes, you could just use spreadsheet softwares like MS excel to
+do most of the job.</p>
+<p>Howerver it's all by clicking and typing, which is <strong>not
+automatically and time-consuming to repeate</strong>, especially when we want to
+apply similar operations with different datasets or purposes.</p>
+<p><code>csvtk</code> is <strong>convenient for rapid investigation
+and also easy to integrated into analysis pipelines</strong>.
+ It could save you much time of writting scripts.</p>
+<p>Hope it be helpful for you.</p>
 <h2 id="features">Features</h2>
 <ul>
 <li><strong>Cross-platform</strong> (Linux/Windows/Mac OS X/OpenBSD/FreeBSD)</li>
@@ -166,11 +175,11 @@
 </ul>
 <p><strong>Format convertion</strong></p>
 <ul>
+<li><code>pretty</code> convert CSV to readable aligned table</li>
 <li><code>csv2tab</code> convert CSV to tabular format</li>
 <li><code>tab2csv</code> convert tabular format to CSV</li>
 <li><code>space2tab</code> convert space delimited format to CSV</li>
 <li><code>transpose</code> transpose CSV data</li>
-<li><code>pretty</code> convert CSV to readable aligned table (TODO)</li>
 <li><code>csv2md</code> convert CSV to markdown format (TODO)</li>
 </ul>
 <p><strong>Set operations</strong></p>
@@ -195,7 +204,7 @@
 </ul>
 <h2 id="installation">Installation</h2>
 <p><a href="https://github.com/shenwei356/csvtk/releases">Download Page</a></p>
-<p>Just <a href="https://github.com/shenwei356/csvtk/releases">download</a> gzip-compressed 
+<p>Just <a href="https://github.com/shenwei356/csvtk/releases">download</a> gzip-compressed
 executable file of your operating system, and uncompress it with <code>gzip -d *.gz</code> command,
 rename it to <code>csvtk.exe</code> (Windows) or <code>csvtk</code> (other operating systems) for convenience.</p>
 <p>You may need to add executable permision by <code>chmod a+x csvtk</code>.</p>
@@ -256,7 +265,7 @@ echo export PATH=\$PATH:/PATH/OF/FASTCOV &gt;&gt; ~/.bashrc
 <td align="left">it means <code>1,2</code> is different from <code>2,1</code></td>
 </tr>
 <tr>
-<td align="left">Rename columns</td>
+<td align="left"><strong>Rename columns</strong></td>
 <td align="center">Yes</td>
 <td align="center">--</td>
 <td align="left">rename with new name(s) or from existed names</td>
@@ -268,7 +277,7 @@ echo export PATH=\$PATH:/PATH/OF/FASTCOV &gt;&gt; ~/.bashrc
 <td align="left">bash sort like operations</td>
 </tr>
 <tr>
-<td align="left">Sort by number</td>
+<td align="left"><strong>Sort by number</strong></td>
 <td align="center">Yes</td>
 <td align="center">--</td>
 <td align="left">e.g. <code>-k 1:n</code></td>
@@ -279,9 +288,14 @@ echo export PATH=\$PATH:/PATH/OF/FASTCOV &gt;&gt; ~/.bashrc
 <td align="center">--</td>
 <td align="left">e.g. <code>-k 2:r -k 1:nr</code></td>
 </tr>
+<tr>
+<td align="left"><strong>Pretty output</strong></td>
+<td align="center">Yes</td>
+<td align="center">--</td>
+<td align="left">convert CSV to readable aligned table</td>
+</tr>
 </tbody>
 </table>
-<p>to be continued...</p>
 <h2 id="examples">Examples</h2>
 <p><strong>Attention</strong></p>
 <ol>
@@ -295,6 +309,17 @@ echo export PATH=\$PATH:/PATH/OF/FASTCOV &gt;&gt; ~/.bashrc
 <p>More <a href="http://shenwei356.github.io/csvtk/usage/">examples</a> and <a href="http://shenwei356.github.io/csvtk/tutorial/">tutorial</a></p>
 <p>Examples</p>
 <ol>
+<li>
+<p>Pretty result</p>
+<pre><code>$ csvtk pretty names.csv
+id   first_name   last_name   username
+11   Rob          Pike        rob
+2    Ken          Thompson    ken
+4    Robert       Griesemer   gri
+1    Robert       Thompson    abc
+NA   Robert       Abel        123
+</code></pre>
+</li>
 <li>
 <p>Select fields/columns (<code>cut</code>)</p>
 <ul>
@@ -420,5 +445,5 @@ propose new functions or ask for help.</p>
 
 <!--
 MkDocs version : 0.15.3
-Build Date UTC : 2016-04-13 10:01:15.669253
+Build Date UTC : 2016-04-13 12:18:10.768142
 -->

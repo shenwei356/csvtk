@@ -137,11 +137,7 @@
         
             <li><a href="#stat2">stat2</a></li>
         
-            <li><a href="#csv2tab">csv2tab</a></li>
-        
-            <li><a href="#tab2csv">tab2csv</a></li>
-        
-            <li><a href="#space2tab">space2tab</a></li>
+            <li><a href="#pretty">pretty</a></li>
         
             <li><a href="#transpose">transpose</a></li>
         
@@ -185,7 +181,7 @@
 <p>Usage</p>
 <pre><code>Another cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.2.7
+Version: 0.2.8
 
 Author: Wei Shen &lt;shenwei356@gmail.com&gt;
 
@@ -211,6 +207,7 @@ Available Commands:
   inter       intersection of multiple files
   join        join multiple CSV files by selected fields
   mutate      create new column from selected fields by regular expression
+  pretty      convert CSV to readable aligned table
   rename      rename column names
   rename2     rename column names by regular expression
   replace     replace data of selected fields by regular expression
@@ -316,12 +313,62 @@ field   num     sum   min     max     mean    stdev
 </code></pre>
 </li>
 </ol>
-<h2 id="csv2tab">csv2tab</h2>
-<h2 id="tab2csv">tab2csv</h2>
-<h2 id="space2tab">space2tab</h2>
+<h2 id="pretty">pretty</h2>
+<p>Usage</p>
+<pre><code>convert CSV to readable aligned table
+
+Usage:
+  csvtk pretty [flags]
+
+Flags:
+  -r, --align-right        align right
+  -s, --separator string   fields/columns separator (default &quot;   &quot;)
+
+</code></pre>
+
+<p>Examples:</p>
+<ol>
+<li>
+<p>default</p>
+<pre><code>$ csvtk pretty names.csv
+id   first_name   last_name   username
+11   Rob          Pike        rob
+2    Ken          Thompson    ken
+4    Robert       Griesemer   gri
+1    Robert       Thompson    abc
+NA   Robert       Abel        123
+</code></pre>
+</li>
+<li>
+<p>align right</p>
+<pre><code>$ csvtk pretty names.csv -r
+id   first_name   last_name   username
+11          Rob        Pike        rob
+ 2          Ken    Thompson        ken
+ 4       Robert   Griesemer        gri
+ 1       Robert    Thompson        abc
+NA       Robert        Abel        123
+</code></pre>
+</li>
+<li>
+<p>custom separator</p>
+<pre><code>$ csvtk pretty names.csv -s " | "
+id | first_name | last_name | username
+11 | Rob        | Pike      | rob
+2  | Ken        | Thompson  | ken
+4  | Robert     | Griesemer | gri
+1  | Robert     | Thompson  | abc
+NA | Robert     | Abel      | 123
+</code></pre>
+</li>
+</ol>
 <h2 id="transpose">transpose</h2>
 <p>Usage</p>
-<pre><code>
+<pre><code>transpose CSV data
+
+Usage:
+  csvtk transpose [flags]
+
 </code></pre>
 
 <p>Examples</p>
@@ -408,8 +455,19 @@ Flags:
 <p>Examples</p>
 <p>Matched parts will be <em>highlight</em></p>
 <ul>
-<li>By regular expression: <code>csvtk grep -f first_name -r -p Rob</code></li>
-<li>By pattern list: <code>csvtk grep -f first_name -P name_list.txt</code></li>
+<li>
+<p>By regular expression: <code>csvtk grep -f first_name -r -p Rob</code></p>
+<pre><code>$ names.csv | csvtk grep -f first_name -r -p Rob | csvtk pretty
+id   first_name   last_name   username
+11   Rob          Pike        rob
+4    Robert       Griesemer   gri
+1    Robert       Thompson    abc
+NA   Robert       Abel        123
+</code></pre>
+</li>
+<li>
+<p>By pattern list: <code>csvtk grep -f first_name -P name_list.txt</code></p>
+</li>
 </ul>
 <h2 id="join">join</h2>
 <p>Usage</p>
