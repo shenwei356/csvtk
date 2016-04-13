@@ -23,6 +23,7 @@ Another cross-platform, efficient and practical CSV/TSV toolkit.
 -  `tab2csv` convert tabular format to CSV
 -  `space2tab` convert space delimited format to CSV
 -  `transpose` transpose CSV data
+-  `pretty` convert CSV to readable aligned table (TODO)
 -  `csv2md` convert CSV to markdown format (TODO)
 
 **Set operations**
@@ -47,9 +48,13 @@ Another cross-platform, efficient and practical CSV/TSV toolkit.
 
 ## Installation
 
-Just [download](https://github.com/shenwei356/csvtk/releases) executable file
- of your operating system and rename it to `csvtk.exe` (Windows) or
- `csvtk` (other operating systems) for convenience.
+[Download Page](https://github.com/shenwei356/csvtk/releases)
+
+Just [download](https://github.com/shenwei356/csvtk/releases) gzip-compressed 
+executable file of your operating system, and uncompress it with `gzip -d *.gz` command,
+rename it to `csvtk.exe` (Windows) or `csvtk` (other operating systems) for convenience.
+
+You may need to add executable permision by `chmod a+x csvtk`.
 
 You can also add the directory of the executable file to environment variable
 `PATH`, so you can run `csvtk` anywhere.
