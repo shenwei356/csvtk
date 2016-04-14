@@ -18,7 +18,7 @@ Usage
 ```
 Another cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.2.8
+Version: 0.2.9
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -40,6 +40,7 @@ Usage:
 Available Commands:
   csv2tab     convert CSV to tabular format
   cut         select parts of fields
+  filter      filter data by values of selected fields with math expression
   grep        grep data by selected fields with patterns/regular expressions
   inter       intersection of multiple files
   join        join multiple CSV files by selected fields
@@ -164,6 +165,8 @@ Usage:
 
 Flags:
   -r, --align-right        align right
+  -W, --max-width int      max width
+  -w, --min-width int      min width
   -s, --separator string   fields/columns separator (default "   ")
 
 ```
@@ -232,7 +235,7 @@ Examples
 Usage
 
 ```
-elect parts of fields
+select parts of fields
 
 Usage:
   csvtk cut [flags]
@@ -322,6 +325,73 @@ Matched parts will be *highlight*
         NA   Robert       Abel        123
 
 - By pattern list: `csvtk grep -f first_name -P name_list.txt`
+
+## filter
+
+Usage
+
+```
+filter data by values of selected fields with math expression
+
+Usage:
+  csvtk filter [flags]
+
+Flags:
+      --any             print record if any of the field satisfy the condition
+  -f, --filter string   filter condition. e.g. -f "age>12" or -f "1,3<=2" or -F -f "c*!=0" --or
+  -F, --fuzzy-fields    using fuzzy fileds, e.g. *name or id123*
+
+```
+
+Examples
+
+1. single field
+
+        $ cat names.csv
+        id,first_name,last_name,username
+        11,"Rob","Pike",rob
+        2,Ken,Thompson,ken
+        4,"Robert","Griesemer","gri"
+        1,"Robert","Thompson","abc"
+        NA,"Robert","Abel","123"
+
+        $ cat names.csv | csvtk filter -f "id>0" | csvtk pretty
+        id   first_name   last_name   username
+        11   Rob          Pike        rob
+        2    Ken          Thompson    ken
+        4    Robert       Griesemer   gri
+        1    Robert       Thompson    abc
+
+2. multiple fields
+
+        $ cat digitals.tsv
+        4       5       6
+        1       2       3
+        7       8       0
+        8       1,000   4
+
+        $ cat digitals.tsv | csvtk -t -H filter -f "1-3>0"
+        4       5       6
+        1       2       3
+        8       1,000   4
+
+    using `--any` to print record if any of the field satisfy the condition
+
+        $  cat digitals.tsv | csvtk -t -H filter -f "1-3>0" --any
+        4       5       6
+        1       2       3
+        7       8       0
+        8       1,000   4
+
+3. fuzzy fields
+
+        $  cat names.csv | csvtk filter -F -f "i*!=0"
+        id,first_name,last_name,username
+        11,Rob,Pike,rob
+        2,Ken,Thompson,ken
+        4,Robert,Griesemer,gri
+        1,Robert,Thompson,abc
+
 
 ## join
 
@@ -436,7 +506,7 @@ Flags:
 
 Examples
 
-- In default, copy a column: `csvtk mutate -f id `
+- In default, copy a column: `csvtk mutate -f id -n newname`
 - extract prefix of data as group name (get "A" from "A.1" as group name):
   `csvtk mutate -f sample -n group -p "^(.+?)\."`
 

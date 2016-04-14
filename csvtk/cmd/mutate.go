@@ -30,7 +30,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// mutateCmd represents the seq command
+// mutateCmd represents the mutate command
 var mutateCmd = &cobra.Command{
 	Use:   "mutate",
 	Short: "create new column from selected fields by regular expression",

@@ -29,7 +29,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// transposeCmd represents the seq command
+// transposeCmd represents the transpose command
 var transposeCmd = &cobra.Command{
 	Use:   "transpose",
 	Short: "transpose CSV data",

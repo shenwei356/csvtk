@@ -30,7 +30,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// renameCmd represents the seq command
+// renameCmd represents the rename command
 var renameCmd = &cobra.Command{
 	Use:   "rename",
 	Short: "rename column names",

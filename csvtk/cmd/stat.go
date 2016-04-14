@@ -30,7 +30,7 @@ import (
 	"github.com/dustin/go-humanize"
 )
 
-// statCmd represents the seq command
+// statCmd represents the stat command
 var statCmd = &cobra.Command{
 	Use:   "stat",
 	Short: "summary of CSV file",

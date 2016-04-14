@@ -30,7 +30,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// cutCmd represents the seq command
+// cutCmd represents the cut command
 var cutCmd = &cobra.Command{
 	Use:   "cut",
 	Short: "select parts of fields",
@@ -100,6 +100,7 @@ var cutCmd = &cobra.Command{
 		checkFields := true
 		var items []string
 
+	LOOP:
 		for chunk := range csvReader.Ch {
 			checkError(chunk.Err)
 
@@ -110,7 +111,7 @@ var cutCmd = &cobra.Command{
 						for i, n := range record {
 							outfh.WriteString(fmt.Sprintf("%d\t%s\n", i+1, n))
 						}
-						break
+						break LOOP
 					}
 					colnames2fileds = make(map[string]int, len(record))
 					for i, col := range record {

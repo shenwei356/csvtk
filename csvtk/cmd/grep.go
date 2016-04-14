@@ -34,7 +34,7 @@ import (
 	"github.com/mattn/go-colorable"
 )
 
-// grepCmd represents the seq command
+// grepCmd represents the grep command
 var grepCmd = &cobra.Command{
 	Use:   "grep",
 	Short: "grep data by selected fields with patterns/regular expressions",

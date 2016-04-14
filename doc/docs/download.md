@@ -6,8 +6,10 @@
 
 ## Current Version
 
-- [csvtk v0.2.8](https://github.com/shenwei356/csvtk/releases/tag/v0.2.8)
-    - add subcommand `pretty` -- convert CSV to readable aligned table
+- [csvtk v0.2.9](https://github.com/shenwei356/csvtk/releases/tag/v0.2.9)
+    - add more flags to subcommand `pretty`
+    - fix bug of `csvtk cut -n`
+    - add subcommand `filter`
 
 ## Installation
 
@@ -33,6 +35,8 @@ You can also add the directory of the executable file to environment variable
 
 ## Previous Versions
 
+- [csvtk v0.2.8](https://github.com/shenwei356/csvtk/releases/tag/v0.2.8)
+    - add subcommand `pretty` -- convert CSV to readable aligned table
 - [csvtk v0.2.7](https://github.com/shenwei356/csvtk/releases/tag/v0.2.7)
     - fix highlight failing in windows
 - [csvtk v0.2.6](https://github.com/shenwei356/csvtk/releases/tag/v0.2.6)

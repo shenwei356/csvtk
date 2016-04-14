@@ -30,12 +30,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// joinCmd represents the seq command
+// joinCmd represents the join command
 var joinCmd = &cobra.Command{
 	Use:   "join",
 	Short: "join multiple CSV files by selected fields",
 	Long: ` join 2nd and later files to the first file by selected fields.
-	
+
 Multiple keys supported, but the orders are ignored.
 
 `,

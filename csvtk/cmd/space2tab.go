@@ -31,7 +31,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// space2tabCmd represents the seq command
+// space2tabCmd represents the space2tab command
 var space2tabCmd = &cobra.Command{
 	Use:   "space2tab",
 	Short: "convert space delimited format to CSV",

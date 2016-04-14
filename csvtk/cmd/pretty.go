@@ -29,7 +29,7 @@ import (
 	"github.com/tatsushid/go-prettytable"
 )
 
-// prettyCmd represents the seq command
+// prettyCmd represents the pretty command
 var prettyCmd = &cobra.Command{
 	Use:   "pretty",
 	Short: "convert CSV to readable aligned table",
@@ -46,6 +46,8 @@ var prettyCmd = &cobra.Command{
 
 		alignRight := getFlagBool(cmd, "align-right")
 		separator := getFlagString(cmd, "separator")
+		minWidth :=getFlagNonNegativeInt(cmd, "min-width")
+		maxWidth :=getFlagNonNegativeInt(cmd, "max-width")
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
@@ -73,7 +75,8 @@ var prettyCmd = &cobra.Command{
 		}
 		columns := make([]prettytable.Column, len(header))
 		for i, c := range header {
-			columns[i] = prettytable.Column{Header: c, AlignRight: alignRight}
+			columns[i] = prettytable.Column{Header: c, AlignRight: alignRight,
+			        MinWidth: minWidth, MaxWidth:maxWidth}
 		}
 		tbl, err := prettytable.NewTable(columns...)
 		checkError(err)
@@ -95,4 +98,6 @@ func init() {
 	RootCmd.AddCommand(prettyCmd)
 	prettyCmd.Flags().StringP("separator", "s", "   ", "fields/columns separator")
 	prettyCmd.Flags().BoolP("align-right", "r", false, "align right")
+	prettyCmd.Flags().IntP("min-width", "w", 0, "min width")
+	prettyCmd.Flags().IntP("max-width", "W", 0, "max width")
 }

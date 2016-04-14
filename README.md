@@ -1,6 +1,6 @@
 # csvtk
 
-Another cross-platform, efficient and practical CSV/TSV toolkit.
+Another cross-platform, efficient, practical and pretty CSV/TSV toolkit
 
 Yes, you could just use spreadsheet softwares like MS excel to
 do most of the job.
@@ -46,7 +46,7 @@ Hope it be helpful for you.
 -  `uniq` unique data without sorting
 -  `inter` intersection of multiple files
 -  `grep` grep data by selected fields with patterns/regular expressions
--  `filter` filter data by values of selected fields with math expression (TODO)
+-  `filter` filter data by values of selected fields with math expression
 -  `join` join multiple CSV files by selected fields
 
 **Edit**

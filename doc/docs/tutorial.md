@@ -182,6 +182,25 @@ What's a mess. Let's make it prettier!
         A.3      .13              .49          .12             .24               .00           Ctrl
         B.2      .13              .55          .16             .01               .03           Treatment
 
+1. Filter samples with abundance greater than 0 in all taxons (columns except for sample and group, you can also use `-f "2-6>0"`).
+
+        $ cat otu_table3.csv | csvtk filter -f "-sample,-group>0" | csvtk pretty
+        sample   Proteobacteria   Firmicutes   Bacteroidetes   Deferribacteres   Tenericutes   group
+        B.1      .16              .41          .33             .01               .01           Treatment
+        B.2      .13              .55          .16             .01               .03           Treatment
+        B.3      .22              .41          .29             .01               .02           Treatment
+
+1. Most of the time, we may want to remove samples with abundance of 0 in all taxons.
+
+        $ cat otu_table3.csv | csvtk filter -f "2-6>0" --any | csvtk pretty
+        sample   Proteobacteria   Firmicutes   Bacteroidetes   Deferribacteres   Tenericutes   group
+        A.1      .13              .42          .19             .17               .00           Ctrl
+        A.2      .29              .06          .62             .00               .00           Ctrl
+        A.3      .13              .49          .12             .24               .00           Ctrl
+        B.1      .16              .41          .33             .01               .01           Treatment
+        B.2      .13              .55          .16             .01               .03           Treatment
+        B.3      .22              .41          .29             .01               .02           Treatment
+
 
 <div id="disqus_thread"></div>
 <script>

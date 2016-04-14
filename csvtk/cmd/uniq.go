@@ -31,7 +31,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// uniqCmd represents the seq command
+// uniqCmd represents the uniq command
 var uniqCmd = &cobra.Command{
 	Use:   "uniq",
 	Short: "unique data without sorting",

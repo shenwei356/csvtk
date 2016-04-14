@@ -23,18 +23,18 @@ package cmd
 import (
 	"encoding/csv"
 	"fmt"
-	"regexp"
-	"runtime"
-
 	"github.com/brentp/xopen"
 	"github.com/spf13/cobra"
+	"regexp"
+	"runtime"
+	"strconv"
 )
 
-// replaceCmd represents the replace command
-var replaceCmd = &cobra.Command{
-	Use:   "replace",
-	Short: "replace data of selected fields by regular expression",
-	Long: `replace data of selected fields by regular expression
+// filterCmd represents the filter command
+var filterCmd = &cobra.Command{
+	Use:   "filter",
+	Short: "filter data by values of selected fields with math expression",
+	Long: `filter data by values of selected fields with math expression
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -45,20 +45,31 @@ var replaceCmd = &cobra.Command{
 		}
 		runtime.GOMAXPROCS(config.NumCPUs)
 
-		pattern := getFlagString(cmd, "pattern")
-		replacement := getFlagString(cmd, "replacement")
-		ignoreCase := getFlagBool(cmd, "ignore-case")
-		if pattern == "" {
-			checkError(fmt.Errorf("flags -p (--pattern) needed"))
+		filterStr := getFlagString(cmd, "filter")
+		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
+		any := getFlagBool(cmd, "any")
+		if filterStr == "" {
+			checkError(fmt.Errorf("flag -f (--filter) needed"))
 		}
-		p := pattern
-		if ignoreCase {
-			p = "(?i)" + p
+
+		if !reFilter.MatchString(filterStr) {
+			checkError(fmt.Errorf("invalid filter: %s", filterStr))
 		}
-		patternRegexp, err := regexp.Compile(p)
+		items := reFilter.FindAllStringSubmatch(filterStr, 1)
+		fieldStr, expression := items[0][1], items[0][2]
+		switch expression {
+		case ">":
+		case "<":
+		case "=":
+		case ">=":
+		case "<=":
+		case "!=", "<>":
+		default:
+			checkError(fmt.Errorf("invalid expression: %s", expression))
+		}
+		threshold, err := strconv.ParseFloat(items[0][3], 64)
 		checkError(err)
 
-		fieldStr := getFlagString(cmd, "fields")
 		fields, colnames, negativeFields, needParseHeaderRow := parseFields(cmd, fieldStr, config.NoHeaderRow)
 		var fieldsMap map[int]struct{}
 		if len(fields) > 0 {
@@ -75,8 +86,6 @@ var replaceCmd = &cobra.Command{
 			}
 			fields = fields2
 		}
-
-		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
@@ -99,8 +108,6 @@ var replaceCmd = &cobra.Command{
 			var colnamesMap map[string]*regexp.Regexp
 
 			checkFields := true
-
-			var record2 []string // for output
 
 			for chunk := range csvReader.Ch {
 				checkError(chunk.Err)
@@ -145,7 +152,9 @@ var replaceCmd = &cobra.Command{
 							fieldsMap[f] = struct{}{}
 						}
 
+						checkError(writer.Write(record))
 						parseHeaderRow = false
+						continue
 					}
 					if checkFields {
 						fields2 := []int{}
@@ -170,18 +179,68 @@ var replaceCmd = &cobra.Command{
 							fieldsMap[f] = struct{}{}
 						}
 
-						record2 = make([]string, len(record))
-
 						checkFields = false
+
 					}
 
-					for f := range record {
-						record2[f] = record[f]
-						if _, ok := fieldsMap[f+1]; ok {
-							record2[f] = patternRegexp.ReplaceAllString(record2[f], replacement)
+					flag := false
+					n := 0
+					for i, c := range record {
+						_, ok := fieldsMap[i+1]
+						if (negativeFields && ok) || (!negativeFields && !ok) {
+							continue
+						}
+						if !reDigitals.MatchString(c) {
+							flag = false
+							break
+						}
+						v, err := strconv.ParseFloat(removeComma(c), 64)
+						checkError(err)
+
+						switch expression {
+						case ">":
+							if v > threshold {
+								n++
+							}
+						case "<":
+							if v < threshold {
+								n++
+							}
+						case "=":
+							if v == threshold {
+								n++
+							}
+						case ">=":
+							if v >= threshold {
+								n++
+							}
+						case "<=":
+							if v <= threshold {
+								n++
+							}
+						case "!=", "<>":
+							if v != threshold {
+								n++
+							}
+						default:
+						}
+
+						if any {
+							if n == 1 {
+								flag = true
+								break
+							}
 						}
 					}
-					checkError(writer.Write(record2))
+					if (!negativeFields && n == len(fields)) ||
+						(negativeFields && n == len(record)-len(fields)) { // all satisfied
+						flag = true
+					}
+					if !flag {
+						continue
+					}
+
+					checkError(writer.Write(record))
 				}
 			}
 		}
@@ -191,14 +250,10 @@ var replaceCmd = &cobra.Command{
 }
 
 func init() {
-	RootCmd.AddCommand(replaceCmd)
-	replaceCmd.Flags().StringP("fields", "f", "1", `select only these fields. e.g -f 1,2 or -f columnA,columnB`)
-	replaceCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fileds, e.g. *name or id123*`)
-	replaceCmd.Flags().StringP("pattern", "p", "", "search regular expression")
-	replaceCmd.Flags().StringP("replacement", "r", "",
-		"replacement. supporting capture variables. "+
-			" e.g. $1 represents the text of the first submatch. "+
-			"ATTENTION: use SINGLE quote NOT double quotes in *nix OS or "+
-			"use the \\ escape character.")
-	replaceCmd.Flags().BoolP("ignore-case", "i", false, "ignore case")
+	RootCmd.AddCommand(filterCmd)
+	filterCmd.Flags().StringP("filter", "f", "", `filter condition. e.g. -f "age>12" or -f "1,3<=2" or -F -f "c*!=0" --or`)
+	filterCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fileds, e.g. *name or id123*`)
+	filterCmd.Flags().BoolP("any", "", false, `print record if any of the field satisfy the condition`)
 }
+
+var reFilter = regexp.MustCompile(`^(.+?)([!<=>]+)([\-\d\.e,E\+]+)$`)

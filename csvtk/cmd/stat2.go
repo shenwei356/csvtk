@@ -36,7 +36,7 @@ import (
 	"github.com/shenwei356/util/math"
 )
 
-// stat2Cmd represents the seq command
+// stat2Cmd represents the stat2 command
 var stat2Cmd = &cobra.Command{
 	Use:   "stat2",
 	Short: "summary of selected number fields",

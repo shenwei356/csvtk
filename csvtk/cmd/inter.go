@@ -31,7 +31,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// interCmd represents the seq command
+// interCmd represents the inter command
 var interCmd = &cobra.Command{
 	Use:   "inter",
 	Short: "intersection of multiple files",
