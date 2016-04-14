@@ -149,6 +149,8 @@
         
             <li><a href="#grep">grep</a></li>
         
+            <li><a href="#filter">filter</a></li>
+        
             <li><a href="#join">join</a></li>
         
             <li><a href="#rename">rename</a></li>
@@ -181,7 +183,7 @@
 <p>Usage</p>
 <pre><code>Another cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.2.8
+Version: 0.2.9
 
 Author: Wei Shen &lt;shenwei356@gmail.com&gt;
 
@@ -203,6 +205,7 @@ Usage:
 Available Commands:
   csv2tab     convert CSV to tabular format
   cut         select parts of fields
+  filter      filter data by values of selected fields with math expression
   grep        grep data by selected fields with patterns/regular expressions
   inter       intersection of multiple files
   join        join multiple CSV files by selected fields
@@ -322,6 +325,8 @@ Usage:
 
 Flags:
   -r, --align-right        align right
+  -W, --max-width int      max width
+  -w, --min-width int      min width
   -s, --separator string   fields/columns separator (default &quot;   &quot;)
 
 </code></pre>
@@ -385,7 +390,7 @@ $ csvtk transpose -t digitals.tsv
 </code></pre>
 <h2 id="cut">cut</h2>
 <p>Usage</p>
-<pre><code>elect parts of fields
+<pre><code>select parts of fields
 
 Usage:
   csvtk cut [flags]
@@ -469,6 +474,72 @@ NA   Robert       Abel        123
 <p>By pattern list: <code>csvtk grep -f first_name -P name_list.txt</code></p>
 </li>
 </ul>
+<h2 id="filter">filter</h2>
+<p>Usage</p>
+<pre><code>filter data by values of selected fields with math expression
+
+Usage:
+  csvtk filter [flags]
+
+Flags:
+      --any             print record if any of the field satisfy the condition
+  -f, --filter string   filter condition. e.g. -f &quot;age&gt;12&quot; or -f &quot;1,3&lt;=2&quot; or -F -f &quot;c*!=0&quot; --or
+  -F, --fuzzy-fields    using fuzzy fileds, e.g. *name or id123*
+
+</code></pre>
+
+<p>Examples</p>
+<ol>
+<li>
+<p>single field</p>
+<pre><code>$ cat names.csv
+id,first_name,last_name,username
+11,"Rob","Pike",rob
+2,Ken,Thompson,ken
+4,"Robert","Griesemer","gri"
+1,"Robert","Thompson","abc"
+NA,"Robert","Abel","123"
+
+$ cat names.csv | csvtk filter -f "id&gt;0" | csvtk pretty
+id   first_name   last_name   username
+11   Rob          Pike        rob
+2    Ken          Thompson    ken
+4    Robert       Griesemer   gri
+1    Robert       Thompson    abc
+</code></pre>
+</li>
+<li>
+<p>multiple fields</p>
+<pre><code>$ cat digitals.tsv
+4       5       6
+1       2       3
+7       8       0
+8       1,000   4
+
+$ cat digitals.tsv | csvtk -t -H filter -f "1-3&gt;0"
+4       5       6
+1       2       3
+8       1,000   4
+</code></pre>
+<p>using <code>--any</code> to print record if any of the field satisfy the condition</p>
+<pre><code>$  cat digitals.tsv | csvtk -t -H filter -f "1-3&gt;0" --any
+4       5       6
+1       2       3
+7       8       0
+8       1,000   4
+</code></pre>
+</li>
+<li>
+<p>fuzzy fields</p>
+<pre><code>$  cat names.csv | csvtk filter -F -f "i*!=0"
+id,first_name,last_name,username
+11,Rob,Pike,rob
+2,Ken,Thompson,ken
+4,Robert,Griesemer,gri
+1,Robert,Thompson,abc
+</code></pre>
+</li>
+</ol>
 <h2 id="join">join</h2>
 <p>Usage</p>
 <pre><code>join 2nd and later files to the first file by selected fields.
@@ -567,7 +638,7 @@ Flags:
 
 <p>Examples</p>
 <ul>
-<li>In default, copy a column: <code>csvtk mutate -f id</code></li>
+<li>In default, copy a column: <code>csvtk mutate -f id -n newname</code></li>
 <li>extract prefix of data as group name (get "A" from "A.1" as group name):
   <code>csvtk mutate -f sample -n group -p "^(.+?)\."</code></li>
 </ul>
