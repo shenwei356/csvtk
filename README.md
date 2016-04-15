@@ -28,7 +28,7 @@ Hope it be helpful for you.
   `-F -f "a.*"` for all fields with prefix "a.".
 
 
-## Subcommands (18 in total)
+## Subcommands (19 in total)
 
 **Information**
 
