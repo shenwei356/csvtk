@@ -18,7 +18,7 @@ Usage
 ```
 Another cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.2.9
+Version: 0.3
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -38,6 +38,7 @@ Usage:
   csvtk [command]
 
 Available Commands:
+  csv2md      convert CSV to markdown format
   csv2tab     convert CSV to tabular format
   cut         select parts of fields
   filter      filter data by values of selected fields with math expression
@@ -228,6 +229,66 @@ Examples
     4       1       7       8
     5       2       8       1,000
     6       3       0       4
+
+## csv2md
+
+Usage
+
+```
+convert CSV to markdown format
+
+Usage:
+  csvtk csv2md [flags]
+
+Flags:
+  -a, --alignments string   comma separated alignments. e.g. -a l,c,c,c or -a c
+  -w, --min-width int       min width (default 3)
+
+```
+
+Examples
+
+1. give single alignment symbol
+
+        $ cat names.csv | csvtk csv2md -a left
+        id |first_name|last_name|username
+        :--|:---------|:--------|:-------
+        11 |Rob       |Pike     |rob
+        2  |Ken       |Thompson |ken
+        4  |Robert    |Griesemer|gri
+        1  |Robert    |Thompson |abc
+        NA |Robert    |Abel     |12
+
+    result:
+
+    id |first_name|last_name|username
+    :--|:---------|:--------|:-------
+    11 |Rob       |Pike     |rob
+    2  |Ken       |Thompson |ken
+    4  |Robert    |Griesemer|gri
+    1  |Robert    |Thompson |abc
+    NA |Robert    |Abel     |12
+
+2. give alignment symbols of all fields
+
+        $ cat names.csv | csvtk csv2md -a c,l,l,l
+        id |first_name|last_name|username
+        :-:|:---------|:--------|:-------
+        11 |Rob       |Pike     |rob
+        2  |Ken       |Thompson |ken
+        4  |Robert    |Griesemer|gri
+        1  |Robert    |Thompson |abc
+        NA |Robert    |Abel     |123
+
+    result
+
+    id |first_name|last_name|username
+    :-:|:---------|:--------|:-------
+    11 |Rob       |Pike     |rob
+    2  |Ken       |Thompson |ken
+    4  |Robert    |Griesemer|gri
+    1  |Robert    |Thompson |abc
+    NA |Robert    |Abel     |123
 
 
 ## cut

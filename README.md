@@ -23,6 +23,10 @@ Hope it be helpful for you.
 - **Fast**,  **multiple-CPUs supported**
 - **Practical functions supported by N subcommands**
 - **Support STDIN and gziped input/output file, easy being used in pipe**
+- Most of the subcommands support **unselecting fields** and **fuzzy fields**,
+  e.g. `-f "-id,-name"` for all fields except "id" and "name",
+  `-F -f "a.*"` for all fields with prefix "a.".
+
 
 ## Subcommands (18 in total)
 
@@ -38,7 +42,7 @@ Hope it be helpful for you.
 -  `tab2csv` convert tabular format to CSV
 -  `space2tab` convert space delimited format to CSV
 -  `transpose` transpose CSV data
--  `csv2md` convert CSV to markdown format (TODO)
+-  `csv2md` convert CSV to markdown format
 
 **Set operations**
 
