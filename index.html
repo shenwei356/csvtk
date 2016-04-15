@@ -166,6 +166,9 @@ and also easy to integrated into analysis pipelines</strong>.
 <li><strong>Fast</strong>,  <strong>multiple-CPUs supported</strong></li>
 <li><strong>Practical functions supported by N subcommands</strong></li>
 <li><strong>Support STDIN and gziped input/output file, easy being used in pipe</strong></li>
+<li>Most of the subcommands support <strong>unselecting fields</strong> and <strong>fuzzy fields</strong>,
+  e.g. <code>-f "-id,-name"</code> for all fields except "id" and "name",
+  <code>-F -f "a.*"</code> for all fields with prefix "a.".</li>
 </ul>
 <h2 id="subcommands-18-in-total">Subcommands (18 in total)</h2>
 <p><strong>Information</strong></p>
@@ -180,7 +183,7 @@ and also easy to integrated into analysis pipelines</strong>.
 <li><code>tab2csv</code> convert tabular format to CSV</li>
 <li><code>space2tab</code> convert space delimited format to CSV</li>
 <li><code>transpose</code> transpose CSV data</li>
-<li><code>csv2md</code> convert CSV to markdown format (TODO)</li>
+<li><code>csv2md</code> convert CSV to markdown format</li>
 </ul>
 <p><strong>Set operations</strong></p>
 <ul>
@@ -445,5 +448,5 @@ propose new functions or ask for help.</p>
 
 <!--
 MkDocs version : 0.15.3
-Build Date UTC : 2016-04-14 17:12:12.154136
+Build Date UTC : 2016-04-15 09:44:41.956363
 -->

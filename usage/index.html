@@ -141,6 +141,8 @@
         
             <li><a href="#transpose">transpose</a></li>
         
+            <li><a href="#csv2md">csv2md</a></li>
+        
             <li><a href="#cut">cut</a></li>
         
             <li><a href="#uniq">uniq</a></li>
@@ -183,7 +185,7 @@
 <p>Usage</p>
 <pre><code>Another cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.2.9
+Version: 0.3
 
 Author: Wei Shen &lt;shenwei356@gmail.com&gt;
 
@@ -203,6 +205,7 @@ Usage:
   csvtk [command]
 
 Available Commands:
+  csv2md      convert CSV to markdown format
   csv2tab     convert CSV to tabular format
   cut         select parts of fields
   filter      filter data by values of selected fields with math expression
@@ -388,6 +391,132 @@ $ csvtk transpose -t digitals.tsv
 5       2       8       1,000
 6       3       0       4
 </code></pre>
+<h2 id="csv2md">csv2md</h2>
+<p>Usage</p>
+<pre><code>convert CSV to markdown format
+
+Usage:
+  csvtk csv2md [flags]
+
+Flags:
+  -a, --alignments string   comma separated alignments. e.g. -a l,c,c,c or -a c
+  -w, --min-width int       min width (default 3)
+
+</code></pre>
+
+<p>Examples</p>
+<ol>
+<li>
+<p>give single alignment symbol</p>
+<pre><code>$ cat names.csv | csvtk csv2md -a left
+id |first_name|last_name|username
+:--|:---------|:--------|:-------
+11 |Rob       |Pike     |rob
+2  |Ken       |Thompson |ken
+4  |Robert    |Griesemer|gri
+1  |Robert    |Thompson |abc
+NA |Robert    |Abel     |12
+</code></pre>
+<p>result:</p>
+<table>
+<thead>
+<tr>
+<th align="left">id</th>
+<th align="left">first_name</th>
+<th align="left">last_name</th>
+<th align="left">username</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">11</td>
+<td align="left">Rob</td>
+<td align="left">Pike</td>
+<td align="left">rob</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left">Ken</td>
+<td align="left">Thompson</td>
+<td align="left">ken</td>
+</tr>
+<tr>
+<td align="left">4</td>
+<td align="left">Robert</td>
+<td align="left">Griesemer</td>
+<td align="left">gri</td>
+</tr>
+<tr>
+<td align="left">1</td>
+<td align="left">Robert</td>
+<td align="left">Thompson</td>
+<td align="left">abc</td>
+</tr>
+<tr>
+<td align="left">NA</td>
+<td align="left">Robert</td>
+<td align="left">Abel</td>
+<td align="left">12</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>give alignment symbols of all fields</p>
+<pre><code>$ cat names.csv | csvtk csv2md -a c,l,l,l
+id |first_name|last_name|username
+:-:|:---------|:--------|:-------
+11 |Rob       |Pike     |rob
+2  |Ken       |Thompson |ken
+4  |Robert    |Griesemer|gri
+1  |Robert    |Thompson |abc
+NA |Robert    |Abel     |123
+</code></pre>
+<p>result</p>
+<table>
+<thead>
+<tr>
+<th align="center">id</th>
+<th align="left">first_name</th>
+<th align="left">last_name</th>
+<th align="left">username</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">11</td>
+<td align="left">Rob</td>
+<td align="left">Pike</td>
+<td align="left">rob</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="left">Ken</td>
+<td align="left">Thompson</td>
+<td align="left">ken</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="left">Robert</td>
+<td align="left">Griesemer</td>
+<td align="left">gri</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="left">Robert</td>
+<td align="left">Thompson</td>
+<td align="left">abc</td>
+</tr>
+<tr>
+<td align="center">NA</td>
+<td align="left">Robert</td>
+<td align="left">Abel</td>
+<td align="left">123</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ol>
 <h2 id="cut">cut</h2>
 <p>Usage</p>
 <pre><code>select parts of fields
