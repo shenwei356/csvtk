@@ -103,6 +103,12 @@ Sort by multiple keys   |   Yes    |  Yes      | bash sort like operations
 **Multiple sort**       |   Yes    |  --       | e.g. `-k 2:r -k 1:nr`
 **Pretty output**       |   Yes    |  --       | convert CSV to readable aligned table
 
+Similar tools:
+
+- [csvkit](http://csvkit.readthedocs.org/en/540/) - A suite of utilities for converting to and working with CSV, the king of tabular file formats. http://csvkit.rtfd.org/
+- [miller](https://github.com/johnkerl/miller) - Miller is like sed, awk, cut, join, and sort for 
+name-indexed data such as CSV and tabular JSON http://johnkerl.org/miller
+- [tsv-utils-dlang](https://github.com/eBay/tsv-utils-dlang) - Command line utilities for tab-separated value files written in the D programming language.
 
 ## Examples
 
