@@ -28,10 +28,10 @@ import (
 	"strings"
 
 	"github.com/brentp/xopen"
-	"github.com/shenwei356/breader"
-	"github.com/spf13/cobra"
 	"github.com/fatih/color"
 	"github.com/mattn/go-colorable"
+	"github.com/shenwei356/breader"
+	"github.com/spf13/cobra"
 )
 
 // grepCmd represents the grep command
@@ -51,12 +51,12 @@ var grepCmd = &cobra.Command{
 
 		fieldStr := getFlagString(cmd, "fields")
 		fields, colnames, negativeFields, needParseHeaderRow := parseFields(cmd, fieldStr, config.NoHeaderRow)
-		if !(len(fields) == 1 || len(colnames) == 1) {
-			checkError(fmt.Errorf("single fields needed"))
-		}
-		if negativeFields {
-			checkError(fmt.Errorf("unselect not allowed"))
-		}
+		// if !(len(fields) == 1 || len(colnames) == 1) {
+		// 	checkError(fmt.Errorf("single fields needed"))
+		// }
+		// if negativeFields {
+		// 	checkError(fmt.Errorf("unselect not allowed"))
+		// }
 		var fieldsMap map[int]struct{}
 		if len(fields) > 0 {
 			fields2 := make([]int, len(fields))
@@ -128,21 +128,20 @@ var grepCmd = &cobra.Command{
 			}
 		}
 
-		// fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
-		fuzzyFields := false
-		noHighlight := false
+		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
+		// fuzzyFields := false
+		noHighlight := getFlagBool(cmd, "no-highlight")
 		var writer *csv.Writer
 		if config.OutFile == "-" {
 			outfh := colorable.NewColorableStdout()
 			writer = csv.NewWriter(outfh)
-		}else{
+		} else {
 			noHighlight = true
 			outfh, err := xopen.Wopen(config.OutFile)
 			checkError(err)
 			defer outfh.Close()
 			writer = csv.NewWriter(outfh)
 		}
-
 
 		if config.OutTabs || config.Tabs {
 			writer.Comma = '\t'
@@ -161,9 +160,8 @@ var grepCmd = &cobra.Command{
 			var HeaderRow []string
 
 			checkFields := true
-			var items []string
 			var target string
-			var hit bool
+			var hitOne, hit bool
 
 			for chunk := range csvReader.Ch {
 				checkError(chunk.Err)
@@ -231,34 +229,38 @@ var grepCmd = &cobra.Command{
 						if len(fields) == 0 {
 							checkError(fmt.Errorf("no fields matched in file: %s", file))
 						}
-						items = make([]string, len(fields))
 
 						checkFields = false
 					}
 
-					for i, f := range fields {
-						items[i] = record[f-1]
-					}
-
-					target = items[0]
 					hit = false
+					for _, f := range fields {
+						target = record[f-1]
+						hitOne = false
 
-					if useRegexp {
-						for _, re := range patternsMap {
-							if re.MatchString(target) {
-								hit = true
-								break
+						if useRegexp {
+							for _, re := range patternsMap {
+								if re.MatchString(target) {
+									hitOne = true
+									break
+								}
+							}
+						} else {
+							k := target
+							if ignoreCase {
+								k = strings.ToLower(k)
+							}
+							if _, ok := patternsMap[k]; ok {
+								hitOne = true
 							}
 						}
-					} else {
-						k := target
-						if ignoreCase {
-							k = strings.ToLower(k)
-						}
-						if _, ok := patternsMap[k]; ok {
+
+						if hitOne {
 							hit = true
+							break
 						}
 					}
+
 					if invert {
 						if hit {
 							continue
@@ -270,22 +272,23 @@ var grepCmd = &cobra.Command{
 					}
 
 					if !noHighlight {
-						record2 :=make([]string, len(record)) //with color
-						for i, c :=range record {
-							if i+1 == fields[0] {
+						record2 := make([]string, len(record)) //with color
+						for i, c := range record {
+							if _, ok := fieldsMap[i+1]; (!negativeFields && ok) || (negativeFields && !ok) {
 								if useRegexp {
 									v := ""
 									for _, re := range patternsMap {
-										if re.MatchString(target) {
+										if re.MatchString(record[i]) {
 											v = re.ReplaceAllString(c, redText(re.FindAllString(c, 1)[0]))
-											break
+										} else {
+											v = c
 										}
 									}
 									record2[i] = v
 								} else {
 									record2[i] = redText(c)
 								}
-							}else {
+							} else {
 								record2[i] = c
 							}
 						}
@@ -301,12 +304,15 @@ var grepCmd = &cobra.Command{
 }
 
 var redText = color.New(color.FgHiRed).SprintFunc()
+
 func init() {
 	RootCmd.AddCommand(grepCmd)
-	grepCmd.Flags().StringP("fields", "f", "1", `key field, column name or index`)
+	grepCmd.Flags().StringP("fields", "f", "1", `comma separated key fields, column name or index. e.g. -f 1-3 or -f id,id2 or -F -f "group*"`)
+	grepCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g. *name or id123*`)
 	grepCmd.Flags().StringSliceP("pattern", "p", []string{""}, `query pattern (multiple values supported)`)
 	grepCmd.Flags().StringP("pattern-file", "P", "", `pattern files (could also be CSV format)`)
 	grepCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
 	grepCmd.Flags().BoolP("use-regexp", "r", false, `patterns are regular expression`)
 	grepCmd.Flags().BoolP("invert", "v", false, `invert match`)
+	grepCmd.Flags().BoolP("no-highlight", "n", false, `no highlight`)
 }

@@ -18,7 +18,7 @@ Usage
 ```
 Another cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.3
+Version: 0.3.1
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -363,9 +363,11 @@ Usage:
   csvtk grep [flags]
 
 Flags:
-  -f, --fields string         key field, column name or index (default "1")
+  -f, --fields string         comma separated key fields, column name or index. e.g. -f 1-3 or -f id,id2 or -F -f "group*" (default "1")
+  -F, --fuzzy-fields          using fuzzy fields, e.g. *name or id123*
   -i, --ignore-case           ignore case
   -v, --invert                invert match
+  -n, --no-highlight          no highlight
   -p, --pattern value         query pattern (multiple values supported) (default [])
   -P, --pattern-file string   pattern files (could also be CSV format)
   -r, --use-regexp            patterns are regular expression
