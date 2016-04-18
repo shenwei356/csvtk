@@ -6,8 +6,8 @@
 
 ## Current Version
 
-- [csvtk v0.3](https://github.com/shenwei356/csvtk/releases/tag/v0.3)
-    - add subcommand `csv2md`
+- [csvtk v0.3.1](https://github.com/shenwei356/csvtk/releases/tag/v0.3.1)
+    - add support of search multiple fields for `grep`
 
 ## Installation
 
@@ -33,6 +33,8 @@ You can also add the directory of the executable file to environment variable
 
 ## Previous Versions
 
+- [csvtk v0.3](https://github.com/shenwei356/csvtk/releases/tag/v0.3)
+    - add subcommand `csv2md`
 - [csvtk v0.2.9](https://github.com/shenwei356/csvtk/releases/tag/v0.2.9)
     - add more flags to subcommand `pretty`
     - fix bug of `csvtk cut -n`
