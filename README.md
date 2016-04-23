@@ -116,11 +116,12 @@ name-indexed data such as CSV and tabular JSON http://johnkerl.org/miller
 **Attention**
 
 1. The CSV parser requires all the lines have same number of fields/columns.
- Even lines with spaces will cause error.
-2. By default, csvtk think your files have header row, if not, use `-H`.
-3. By default, lines starting with `#` will be ignored, if the header row
- starts with `#`, please assign `-C` another rare symbol, e.g. `&`.
-4. By default, csvtk handles CSV files, use `-t` for tab-delimited files.
+    Even lines with spaces will cause error.
+2. By default, csvtk thinks your files have header row, if not, use "-H".
+3. By default, lines starting with '#' will be ignored, if the header row
+    starts with '#', please assign "-C" another rare symbol, e.g. '$'.
+4. By default, csvtk handles CSV files, use "-t" for tab-delimited files.
+5. If " exists in tab-delimited files, use "-l".
 
 More [examples](http://shenwei356.github.io/csvtk/usage/) and [tutorial](http://shenwei356.github.io/csvtk/tutorial/)
 
@@ -150,7 +151,7 @@ Examples
     - By exactly matching: `csvtk grep -f first_name -p Robert -p Rob`
     - By regular expression: `csvtk grep -f first_name -r -p Rob`
     - By pattern list: `csvtk grep -f first_name -P name_list.txt`
-
+    - Remore rows containing missing data (NA): `csvtk grep -F -f "*" -r -p "^$" -v `
 
 
 1. Rename column names (`rename` and `rename2`)

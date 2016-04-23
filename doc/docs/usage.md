@@ -5,11 +5,12 @@
 **Attention**
 
 1. The CSV parser requires all the lines have same number of fields/columns.
- Even lines with spaces will cause error.
-2. By default, csvtk think your files have header row, if not, use `-H`.
-3. By default, lines starting with `#` will be ignored, if the header row
- starts with `#`, please assign `-C` another rare symbol, e.g. `&`.
-4. By default, csvtk handles CSV files, use `-t` for tab-delimited files.
+    Even lines with spaces will cause error.
+2. By default, csvtk thinks your files have header row, if not, use "-H".
+3. By default, lines starting with '#' will be ignored, if the header row
+    starts with '#', please assign "-C" another rare symbol, e.g. '$'.
+4. By default, csvtk handles CSV files, use "-t" for tab-delimited files.
+5. If " exists in tab-delimited files, use "-l".
 
 ## csvkit
 
@@ -29,10 +30,11 @@ Attention:
 
   1. The CSV parser requires all the lines have same number of fields/columns.
      Even lines with spaces will cause error.
-  2. By default, csvtk think your files have header row, if not, use "-H".
+  2. By default, csvtk thinks your files have header row, if not, use "-H".
   3. By default, lines starting with '#' will be ignored, if the header row
      starts with '#', please assign "-C" another rare symbol, e.g. '$'.
   4. By default, csvtk handles CSV files, use "-t" for tab-delimited files.
+  5. If " exists in tab-delimited files, use "-l".
 
 Usage:
   csvtk [command]
@@ -388,6 +390,7 @@ Matched parts will be *highlight*
         NA   Robert       Abel        123
 
 - By pattern list: `csvtk grep -f first_name -P name_list.txt`
+- Remore rows containing missing data (NA): `csvtk grep -F -f "*" -r -p "^$" -v `
 
 ## filter
 
