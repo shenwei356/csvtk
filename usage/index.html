@@ -175,11 +175,12 @@
 <p><strong>Attention</strong></p>
 <ol>
 <li>The CSV parser requires all the lines have same number of fields/columns.
- Even lines with spaces will cause error.</li>
-<li>By default, csvtk think your files have header row, if not, use <code>-H</code>.</li>
-<li>By default, lines starting with <code>#</code> will be ignored, if the header row
- starts with <code>#</code>, please assign <code>-C</code> another rare symbol, e.g. <code>&amp;</code>.</li>
-<li>By default, csvtk handles CSV files, use <code>-t</code> for tab-delimited files.</li>
+    Even lines with spaces will cause error.</li>
+<li>By default, csvtk thinks your files have header row, if not, use "-H".</li>
+<li>By default, lines starting with '#' will be ignored, if the header row
+    starts with '#', please assign "-C" another rare symbol, e.g. '$'.</li>
+<li>By default, csvtk handles CSV files, use "-t" for tab-delimited files.</li>
+<li>If " exists in tab-delimited files, use "-l".</li>
 </ol>
 <h2 id="csvkit">csvkit</h2>
 <p>Usage</p>
@@ -604,6 +605,7 @@ NA   Robert       Abel        123
 <li>
 <p>By pattern list: <code>csvtk grep -f first_name -P name_list.txt</code></p>
 </li>
+<li>Remore rows containing missing data (NA): <code>csvtk grep -F -f "*" -r -p "^$" -v</code></li>
 </ul>
 <h2 id="filter">filter</h2>
 <p>Usage</p>

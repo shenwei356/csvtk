@@ -311,11 +311,12 @@ name-indexed data such as CSV and tabular JSON http://johnkerl.org/miller</li>
 <p><strong>Attention</strong></p>
 <ol>
 <li>The CSV parser requires all the lines have same number of fields/columns.
- Even lines with spaces will cause error.</li>
-<li>By default, csvtk think your files have header row, if not, use <code>-H</code>.</li>
-<li>By default, lines starting with <code>#</code> will be ignored, if the header row
- starts with <code>#</code>, please assign <code>-C</code> another rare symbol, e.g. <code>&amp;</code>.</li>
-<li>By default, csvtk handles CSV files, use <code>-t</code> for tab-delimited files.</li>
+    Even lines with spaces will cause error.</li>
+<li>By default, csvtk thinks your files have header row, if not, use "-H".</li>
+<li>By default, lines starting with '#' will be ignored, if the header row
+    starts with '#', please assign "-C" another rare symbol, e.g. '$'.</li>
+<li>By default, csvtk handles CSV files, use "-t" for tab-delimited files.</li>
+<li>If " exists in tab-delimited files, use "-l".</li>
 </ol>
 <p>More <a href="http://shenwei356.github.io/csvtk/usage/">examples</a> and <a href="http://shenwei356.github.io/csvtk/tutorial/">tutorial</a></p>
 <p>Examples</p>
@@ -348,6 +349,7 @@ NA   Robert       Abel        123
 <li>By exactly matching: <code>csvtk grep -f first_name -p Robert -p Rob</code></li>
 <li>By regular expression: <code>csvtk grep -f first_name -r -p Rob</code></li>
 <li>By pattern list: <code>csvtk grep -f first_name -P name_list.txt</code></li>
+<li>Remore rows containing missing data (NA): <code>csvtk grep -F -f "*" -r -p "^$" -v</code></li>
 </ul>
 </li>
 <li>
@@ -456,5 +458,5 @@ propose new functions or ask for help.</p>
 
 <!--
 MkDocs version : 0.15.3
-Build Date UTC : 2016-04-18 16:52:42.791731
+Build Date UTC : 2016-04-23 12:54:19.677114
 -->
