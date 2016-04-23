@@ -197,10 +197,11 @@ Attention:
 
   1. The CSV parser requires all the lines have same number of fields/columns.
      Even lines with spaces will cause error.
-  2. By default, csvtk think your files have header row, if not, use &quot;-H&quot;.
+  2. By default, csvtk thinks your files have header row, if not, use &quot;-H&quot;.
   3. By default, lines starting with '#' will be ignored, if the header row
      starts with '#', please assign &quot;-C&quot; another rare symbol, e.g. '$'.
   4. By default, csvtk handles CSV files, use &quot;-t&quot; for tab-delimited files.
+  5. If &quot; exists in tab-delimited files, use &quot;-l&quot;.
 
 Usage:
   csvtk [command]
