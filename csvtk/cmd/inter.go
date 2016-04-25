@@ -199,8 +199,8 @@ var interCmd = &cobra.Command{
 					}
 				}
 
-				saveDataOfFirstFile = false
 			}
+			saveDataOfFirstFile = false
 		}
 
 		if needParseHeaderRow {

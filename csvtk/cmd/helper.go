@@ -456,7 +456,7 @@ func parseCSVfile(cmd *cobra.Command, config Config, file string,
 
 func removeComma(s string) string {
 	newSlice := []byte{}
-	for i:=0; i<len(s); i++ {
+	for i := 0; i < len(s); i++ {
 		switch s[i] {
 		case ',':
 		default:
