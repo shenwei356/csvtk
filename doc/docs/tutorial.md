@@ -15,7 +15,7 @@ and also easy to integrated into analysis pipelines**.
 
 Hope it be helpful for you.
 
-## Analyze OTU table
+## Analyzing OTU table
 
 ### Data
 

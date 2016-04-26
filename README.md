@@ -13,7 +13,7 @@ apply similar operations with different datasets or purposes.
 and also easy to integrated into analysis pipelines**.
  It could save you much time of writting scripts.
 
-Hope it be helpful for you.
+Hope it be helpful to you.
 
 
 ## Features
@@ -23,12 +23,14 @@ Hope it be helpful for you.
 - **Fast**,  **multiple-CPUs supported**
 - **Practical functions supported by N subcommands**
 - **Support STDIN and gziped input/output file, easy being used in pipe**
-- Most of the subcommands support **unselecting fields** and **fuzzy fields**,
+- Most of the subcommands support ***unselecting fields*** and ***fuzzy fields***,
   e.g. `-f "-id,-name"` for all fields except "id" and "name",
   `-F -f "a.*"` for all fields with prefix "a.".
 
 
-## Subcommands (19 in total)
+## Subcommands
+
+19 in total.
 
 **Information**
 
@@ -137,6 +139,20 @@ Examples
         1    Robert       Thompson    abc
         NA   Robert       Abel        123
 
+1. Summary of selected number fields: num, sum, min, max, mean, stdev (`stat2`)
+
+        $ cat digitals.tsv
+        4       5       6
+        1       2       3
+        7       8       0
+        8       1,000   4
+
+        $ cat digitals.tsv | csvtk stat2 -t -H -f 1-3
+        field   num     sum   min     max     mean    stdev
+        1         4      20     1       8        5     3.16
+        2         4   1,015     2   1,000   253.75   497.51
+        3         4      13     0       6     3.25      2.5
+        
 1. Select fields/columns (`cut`)
 
     - By index: `csvtk cut -f 1,2`
@@ -181,19 +197,12 @@ Examples
     - All files have same key column: `csvtk join -f id file1.csv file2.csv`
     - Files have different key columns: `csvtk join -f "username;username;name" names.csv phone.csv adress.csv -k`
 
-1. Summary of selected number fields: num, sum, min, max, mean, stdev (`stat2`)
+1. Filter by numbers (`filter`)
 
-        $ cat digitals.tsv
-        4       5       6
-        1       2       3
-        7       8       0
-        8       1,000   4
-
-        $ cat digitals.tsv | csvtk stat2 -t -H -f 1-3
-        field   num     sum   min     max     mean    stdev
-        1         4      20     1       8        5     3.16
-        2         4   1,015     2   1,000   253.75   497.51
-        3         4      13     0       6     3.25      2.5
+    - single field: `csvtk filter -f "id>0"`
+    - multiple fields: `csvtk filter -f "1-3>0"`
+    - using `--any` to print record if any of the field satisfy the condition: `csvtk filter -f "1-3>0" --any`
+    - fuzzy fields: `csvtk filter -F -f "A*!=0"`
 
 ## Contact
 
