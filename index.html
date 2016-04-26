@@ -131,7 +131,7 @@
         
             <li><a href="#features">Features</a></li>
         
-            <li><a href="#subcommands-19-in-total">Subcommands (19 in total)</a></li>
+            <li><a href="#subcommands">Subcommands</a></li>
         
             <li><a href="#installation">Installation</a></li>
         
@@ -158,7 +158,7 @@ apply similar operations with different datasets or purposes.</p>
 <p><code>csvtk</code> is <strong>convenient for rapid investigation
 and also easy to integrated into analysis pipelines</strong>.
  It could save you much time of writting scripts.</p>
-<p>Hope it be helpful for you.</p>
+<p>Hope it be helpful to you.</p>
 <h2 id="features">Features</h2>
 <ul>
 <li><strong>Cross-platform</strong> (Linux/Windows/Mac OS X/OpenBSD/FreeBSD)</li>
@@ -166,11 +166,12 @@ and also easy to integrated into analysis pipelines</strong>.
 <li><strong>Fast</strong>,  <strong>multiple-CPUs supported</strong></li>
 <li><strong>Practical functions supported by N subcommands</strong></li>
 <li><strong>Support STDIN and gziped input/output file, easy being used in pipe</strong></li>
-<li>Most of the subcommands support <strong>unselecting fields</strong> and <strong>fuzzy fields</strong>,
+<li>Most of the subcommands support <strong><em>unselecting fields</em></strong> and <strong><em>fuzzy fields</em></strong>,
   e.g. <code>-f "-id,-name"</code> for all fields except "id" and "name",
   <code>-F -f "a.*"</code> for all fields with prefix "a.".</li>
 </ul>
-<h2 id="subcommands-19-in-total">Subcommands (19 in total)</h2>
+<h2 id="subcommands">Subcommands</h2>
+<p>19 in total.</p>
 <p><strong>Information</strong></p>
 <ul>
 <li><code>stat</code> summary of CSV file</li>
@@ -333,6 +334,21 @@ NA   Robert       Abel        123
 </code></pre>
 </li>
 <li>
+<p>Summary of selected number fields: num, sum, min, max, mean, stdev (<code>stat2</code>)</p>
+<pre><code>$ cat digitals.tsv
+4       5       6
+1       2       3
+7       8       0
+8       1,000   4
+
+$ cat digitals.tsv | csvtk stat2 -t -H -f 1-3
+field   num     sum   min     max     mean    stdev
+1         4      20     1       8        5     3.16
+2         4   1,015     2   1,000   253.75   497.51
+3         4      13     0       6     3.25      2.5
+</code></pre>
+</li>
+<li>
 <p>Select fields/columns (<code>cut</code>)</p>
 <ul>
 <li>By index: <code>csvtk cut -f 1,2</code></li>
@@ -390,19 +406,13 @@ NA   Robert       Abel        123
 </ul>
 </li>
 <li>
-<p>Summary of selected number fields: num, sum, min, max, mean, stdev (<code>stat2</code>)</p>
-<pre><code>$ cat digitals.tsv
-4       5       6
-1       2       3
-7       8       0
-8       1,000   4
-
-$ cat digitals.tsv | csvtk stat2 -t -H -f 1-3
-field   num     sum   min     max     mean    stdev
-1         4      20     1       8        5     3.16
-2         4   1,015     2   1,000   253.75   497.51
-3         4      13     0       6     3.25      2.5
-</code></pre>
+<p>Filter by numbers (<code>filter</code>)</p>
+<ul>
+<li>single field: <code>csvtk filter -f "id&gt;0"</code></li>
+<li>multiple fields: <code>csvtk filter -f "1-3&gt;0"</code></li>
+<li>using <code>--any</code> to print record if any of the field satisfy the condition: <code>csvtk filter -f "1-3&gt;0" --any</code></li>
+<li>fuzzy fields: <code>csvtk filter -F -f "A*!=0"</code></li>
+</ul>
 </li>
 </ol>
 <h2 id="contact">Contact</h2>
@@ -458,5 +468,5 @@ propose new functions or ask for help.</p>
 
 <!--
 MkDocs version : 0.15.3
-Build Date UTC : 2016-04-26 08:38:54.222000
+Build Date UTC : 2016-04-26 16:16:23.332781
 -->
