@@ -103,7 +103,14 @@ var grepCmd = &cobra.Command{
 		}
 
 		if patternFile != "" {
-			reader, err := breader.NewDefaultBufferedReader(patternFile)
+			fn := func(line string) (interface{}, bool, error) {
+				line = strings.TrimRight(line, "\r\n")
+				if line == "" {
+					return line, false, nil
+				}
+				return line, true, nil
+			}
+			reader, err := breader.NewBufferedReader(patternFile, runtime.NumCPU(), 1000, fn)
 			checkError(err)
 			for chunk := range reader.Ch {
 				checkError(chunk.Err)
@@ -280,6 +287,7 @@ var grepCmd = &cobra.Command{
 									for _, re := range patternsMap {
 										if re.MatchString(record[i]) {
 											v = re.ReplaceAllString(c, redText(re.FindAllString(c, 1)[0]))
+											break
 										} else {
 											v = c
 										}

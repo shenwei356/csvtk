@@ -19,7 +19,7 @@ Usage
 ```
 Another cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.3.1
+Version: 0.3.2
 
 Author: Wei Shen <shenwei356@gmail.com>
 
