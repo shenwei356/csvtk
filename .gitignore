@@ -26,3 +26,4 @@ _testmain.go
 doc/site/*
 *.Rhistory
 csvtk/csvtk*
+csvtk/binaries*

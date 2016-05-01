@@ -6,8 +6,8 @@
 
 ## Current Version
 
-- [csvtk v0.3.3](https://github.com/shenwei356/csvtk/releases/tag/v0.3.3)
-    - fix bug of `csvtk grep -t -P`
+- [csvtk v0.3.4](https://github.com/shenwei356/csvtk/releases/tag/v0.3.4)
+    - fix bug of `csvtk replace` that head row should not be edited.
 
 ## Installation
 
@@ -26,13 +26,15 @@ You can also add the directory of the executable file to environment variable
 
 2. For Linux, type:
 
-        chmod a+x /PATH/OF/FASTCOV/csvtk
-        echo export PATH=\$PATH:/PATH/OF/FASTCOV >> ~/.bashrc
+        chmod a+x /PATH/OF/CSVTK/csvtk
+        echo export PATH=\$PATH:/PATH/OF/csvtk >> ~/.bashrc
 
     or simply copy it to `/usr/local/bin`
 
 ## Previous Versions
 
+- [csvtk v0.3.3](https://github.com/shenwei356/csvtk/releases/tag/v0.3.3)
+    - fix bug of `csvtk grep -t -P`
 - [csvtk v0.3.2](https://github.com/shenwei356/csvtk/releases/tag/v0.3.2)
     - fix bug of `inter`
 - [csvtk v0.3.1](https://github.com/shenwei356/csvtk/releases/tag/v0.3.1)

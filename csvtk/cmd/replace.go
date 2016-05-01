@@ -95,7 +95,8 @@ var replaceCmd = &cobra.Command{
 			csvReader.Run()
 
 			parseHeaderRow := needParseHeaderRow // parsing header row
-			var colnames2fileds map[string]int   // column name -> field
+			parseHeaderRow2 := needParseHeaderRow
+			var colnames2fileds map[string]int // column name -> field
 			var colnamesMap map[string]*regexp.Regexp
 
 			checkFields := true
@@ -173,6 +174,12 @@ var replaceCmd = &cobra.Command{
 						record2 = make([]string, len(record))
 
 						checkFields = false
+					}
+
+					if parseHeaderRow2 { // do not replace head line
+						checkError(writer.Write(record))
+						parseHeaderRow2 = false
+						continue
 					}
 
 					for f := range record {
