@@ -31,6 +31,10 @@ You can also add the directory of the executable file to environment variable
 
     or simply copy it to `/usr/local/bin`
 
+For Go developer, just one command:
+
+    go get -u github.com/shenwei356/csvtk/csvtk
+
 ## Previous Versions
 
 - [csvtk v0.3.3](https://github.com/shenwei356/csvtk/releases/tag/v0.3.3)
