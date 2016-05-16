@@ -6,8 +6,8 @@
 
 ## Current Version
 
-- [csvtk v0.3.4](https://github.com/shenwei356/csvtk/releases/tag/v0.3.4)
-    - fix bug of `csvtk replace` that head row should not be edited.
+- [csvtk v0.3.5](https://github.com/shenwei356/csvtk/releases/tag/v0.3.5)
+    - fix minor bug of `csv2md`
 
 ## Installation
 
@@ -37,6 +37,8 @@ For Go developer, just one command:
 
 ## Previous Versions
 
+- [csvtk v0.3.4](https://github.com/shenwei356/csvtk/releases/tag/v0.3.4)
+    - fix bug of `csvtk replace` that head row should not be edited.
 - [csvtk v0.3.3](https://github.com/shenwei356/csvtk/releases/tag/v0.3.3)
     - fix bug of `csvtk grep -t -P`
 - [csvtk v0.3.2](https://github.com/shenwei356/csvtk/releases/tag/v0.3.2)

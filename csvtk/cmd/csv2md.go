@@ -47,6 +47,9 @@ var csv2mdCmd = &cobra.Command{
 		separator := "|"
 		aligns := getFlagCommaSeparatedStrings(cmd, "alignments")
 		minWidth := getFlagNonNegativeInt(cmd, "min-width")
+		if minWidth < 3 {
+			checkError(fmt.Errorf("value of -w (--min-width) should not be less than 3"))
+		}
 		if len(aligns) == 0 {
 			checkError(fmt.Errorf("flag -a (--alignments) needed"))
 		}
@@ -160,5 +163,5 @@ var csv2mdCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(csv2mdCmd)
 	csv2mdCmd.Flags().StringP("alignments", "a", "l", `comma separated alignments. e.g. -a l,c,c,c or -a c`)
-	csv2mdCmd.Flags().IntP("min-width", "w", 3, "min width")
+	csv2mdCmd.Flags().IntP("min-width", "w", 3, "min width (at least 3)")
 }
