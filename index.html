@@ -208,11 +208,12 @@ and also easy to integrated into analysis pipelines</strong>.
 </ul>
 <h2 id="installation">Installation</h2>
 <p><a href="https://github.com/shenwei356/csvtk/releases">Download Page</a></p>
-<p>Just <a href="https://github.com/shenwei356/csvtk/releases">download</a> gzip-compressed
-executable file of your operating system, and uncompress it with <code>gzip -d *.gz</code> command,
-rename it to <code>csvtk.exe</code> (Windows) or <code>csvtk</code> (other operating systems) for convenience.</p>
-<p>You may need to add executable permision by <code>chmod a+x csvtk</code>.</p>
-<p>You can also add the directory of the executable file to environment variable
+<p><code>csvtk</code> is implemented in <a href="https://golang.org/">Golang</a> programming language,
+ executable binary files <strong>for most popular operating systems</strong> are freely available
+  in <a href="https://github.com/shenwei356/csvtk/releases">release</a> page.</p>
+<p>Just <a href="https://github.com/shenwei356/csvtk/releases">download</a> compressed
+executable file of your operating system, and uncompress it with <code>tar -zxvf *.tar.gz</code> command.</p>
+<p>You can add the directory of the executable file to environment variable
 <code>PATH</code>, so you can run <code>csvtk</code> anywhere.</p>
 <ol>
 <li>
@@ -220,8 +221,8 @@ rename it to <code>csvtk.exe</code> (Windows) or <code>csvtk</code> (other opera
 </li>
 <li>
 <p>For Linux, type:</p>
-<pre><code>chmod a+x /PATH/OF/FASTCOV/csvtk
-echo export PATH=\$PATH:/PATH/OF/FASTCOV &gt;&gt; ~/.bashrc
+<pre><code>chmod a+x /PATH/OF/CSVTK/csvtk
+echo export PATH=\$PATH:/PATH/OF/CSVTK &gt;&gt; ~/.bashrc
 </code></pre>
 <p>or simply copy it to <code>/usr/local/bin</code></p>
 </li>
@@ -471,5 +472,5 @@ propose new functions or ask for help.</p>
 
 <!--
 MkDocs version : 0.15.3
-Build Date UTC : 2016-05-07 15:11:47.987923
+Build Date UTC : 2016-05-24 11:31:39.756336
 -->
