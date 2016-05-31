@@ -8,6 +8,7 @@
 
 - [csvtk v0.3.5](https://github.com/shenwei356/csvtk/releases/tag/v0.3.5)
     - fix minor bug of `csv2md`
+    - add subcommand `version` which could check for update
 
 ## Installation
 
@@ -35,7 +36,7 @@ You can add the directory of the executable file to environment variable
 For Go developer, just one command:
 
     go get -u github.com/shenwei356/csvtk/csvtk
- 
+
 ## Previous Versions
 
 - [csvtk v0.3.4](https://github.com/shenwei356/csvtk/releases/tag/v0.3.4)
