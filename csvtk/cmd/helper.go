@@ -33,6 +33,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// VERSION of csvtk
+var VERSION = "0.3.5"
+
 func checkError(err error) {
 	if err != nil {
 		log.Error(err)

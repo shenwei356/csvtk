@@ -32,9 +32,9 @@ import (
 var RootCmd = &cobra.Command{
 	Use:   "csvtk",
 	Short: "Another cross-platform, efficient and practical CSV/TSV toolkit",
-	Long: `Another cross-platform, efficient and practical CSV/TSV toolkit
+	Long: fmt.Sprintf(`Another cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.3.6
+Version: %s
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -51,7 +51,7 @@ Attention:
   4. By default, csvtk handles CSV files, use "-t" for tab-delimited files.
   5. If " exists in tab-delimited files, use "-l".
 
-`,
+`, VERSION),
 }
 
 // Execute adds all child commands to the root command sets flags appropriately.
