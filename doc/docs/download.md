@@ -6,9 +6,8 @@
 
 ## Current Version
 
-- [csvtk v0.3.5](https://github.com/shenwei356/csvtk/releases/tag/v0.3.5)
-    - fix minor bug of `csv2md`
-    - add subcommand `version` which could check for update
+- [csvtk v0.3.5.1](https://github.com/shenwei356/csvtk/releases/tag/v0.3.5.1)
+    - fix minor bug of reading lines ending with `\r\n` from a dependency package
 
 ## Installation
 
@@ -39,6 +38,9 @@ For Go developer, just one command:
 
 ## Previous Versions
 
+- [csvtk v0.3.5](https://github.com/shenwei356/csvtk/releases/tag/v0.3.5)
+    - fix minor bug of `csv2md`
+    - add subcommand `version` which could check for update
 - [csvtk v0.3.4](https://github.com/shenwei356/csvtk/releases/tag/v0.3.4)
     - fix bug of `csvtk replace` that head row should not be edited.
 - [csvtk v0.3.3](https://github.com/shenwei356/csvtk/releases/tag/v0.3.3)

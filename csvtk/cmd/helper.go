@@ -34,7 +34,7 @@ import (
 )
 
 // VERSION of csvtk
-var VERSION = "0.3.5"
+var VERSION = "0.3.5.1"
 
 func checkError(err error) {
 	if err != nil {

@@ -25,7 +25,7 @@ import (
 	"io"
 
 	"github.com/brentp/xopen"
-	"github.com/mzimmerman/multicorecsv"
+	"github.com/shenwei356/multicorecsv"
 )
 
 // CSVRecordsChunk is chunk of CSV records
