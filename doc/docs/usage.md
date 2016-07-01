@@ -19,7 +19,7 @@ Usage
 ```
 Another cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.3.5
+Version: 0.3.5.2
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -473,6 +473,7 @@ Usage:
 
 Flags:
   -f, --fields string    Semicolon seperated key fields of all files, if given one, we think all the files have the same key columns. e.g -f 1;2 or -f A,B;C,D or -f id (default "1")
+      --fill string      fill content for unmatched data
   -F, --fuzzy-fields     using fuzzy fileds, e.g. *name or id123*
   -i, --ignore-case      ignore case
   -k, --keep-unmatched   keep unmatched data of the first file

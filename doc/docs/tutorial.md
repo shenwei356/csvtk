@@ -2,18 +2,20 @@
 
 ## Forewords
 
+Another cross-platform, efficient, practical and pretty CSV/TSV toolkit
+
 Yes, you could just use spreadsheet softwares like MS excel to
 do most of the job.
 
-Howerver it's all by clicking and typing, which is **not
-automatically and time-consuming to repeate**, especially when we want to
+However it's all by clicking and typing, which is **not
+automatically and time-consuming to repeat**, especially when we want to
 apply similar operations with different datasets or purposes.
 
 `csvtk` is **convenient for rapid investigation
 and also easy to integrated into analysis pipelines**.
- It could save you much time of writting scripts.
+ It could save you much time of writing scripts.
 
-Hope it be helpful for you.
+Hope it be helpful to you.
 
 ## Analyzing OTU table
 
@@ -107,7 +109,7 @@ What's a mess. Let's make it prettier!
         B.2        .13              .55          .16             .01               .03
         B.3        .22              .41          .29             .01               .02
 
-1. Rename first column
+1. Rename name of the first column
 
         $ csvtk rename -f 1 -n "sample" otu_table.gAB.t.csv -o otu_table.gAB.t.r.csv
 

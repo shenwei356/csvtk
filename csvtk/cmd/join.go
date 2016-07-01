@@ -62,6 +62,7 @@ Multiple keys supported, but the orders are ignored.
 
 		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
 		keepUnmatched := getFlagBool(cmd, "keep-unmatched")
+		fill := getFlagString(cmd, "fill")
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
@@ -137,7 +138,7 @@ Multiple keys supported, but the orders are ignored.
 				} else {
 					if keepUnmatched {
 						for i := 1; i <= len(data[0])-len(fieldsMap); i++ {
-							record = append(record, "")
+							record = append(record, fill)
 						}
 						Data2 = append(Data2, record)
 					}
@@ -165,4 +166,5 @@ func init() {
 	joinCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
 	joinCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fileds, e.g. *name or id123*`)
 	joinCmd.Flags().BoolP("keep-unmatched", "k", false, `keep unmatched data of the first file`)
+	joinCmd.Flags().StringP("fill", "", "", `fill content for unmatched data`)
 }

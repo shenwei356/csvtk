@@ -26,8 +26,8 @@ import (
 	"github.com/brentp/xopen"
 	"github.com/spf13/cobra"
 
-	"github.com/tatsushid/go-prettytable"
 	"github.com/dustin/go-humanize"
+	"github.com/tatsushid/go-prettytable"
 )
 
 // statCmd represents the stat command
@@ -46,10 +46,9 @@ var statCmd = &cobra.Command{
 		checkError(err)
 		defer outfh.Close()
 
-
 		tbl, err := prettytable.NewTable([]prettytable.Column{
-		    {Header: "file"},
-		    {Header: "num_cols", AlignRight: true},
+			{Header: "file"},
+			{Header: "num_cols", AlignRight: true},
 			{Header: "num_rows", AlignRight: true}}...)
 		checkError(err)
 		tbl.Separator = "   "
@@ -73,8 +72,11 @@ var statCmd = &cobra.Command{
 					once = false
 				}
 			}
-			if !config.NoHeaderRow {
+			if numRows > 0 && !config.NoHeaderRow {
 				numRows--
+			}
+			if numRows < 0 {
+				numRows = 0
 			}
 			tbl.AddRow(
 				file,

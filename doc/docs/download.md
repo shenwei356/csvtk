@@ -6,8 +6,9 @@
 
 ## Current Version
 
-- [csvtk v0.3.5.1](https://github.com/shenwei356/csvtk/releases/tag/v0.3.5.1)
-    - fix minor bug of reading lines ending with `\r\n` from a dependency package
+- [csvtk v0.3.5.2](https://github.com/shenwei356/csvtk/releases/tag/v0.3.6)
+    - add flag `--fill` for `csvtk join`, so we can fill the unmatched data
+    - fix typo
 
 ## Installation
 
@@ -38,6 +39,8 @@ For Go developer, just one command:
 
 ## Previous Versions
 
+- [csvtk v0.3.5.1](https://github.com/shenwei356/csvtk/releases/tag/v0.3.5.1)
+    - fix minor bug of reading lines ending with `\r\n` from a dependency package
 - [csvtk v0.3.5](https://github.com/shenwei356/csvtk/releases/tag/v0.3.5)
     - fix minor bug of `csv2md`
     - add subcommand `version` which could check for update

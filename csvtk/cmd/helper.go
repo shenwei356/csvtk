@@ -34,7 +34,7 @@ import (
 )
 
 // VERSION of csvtk
-var VERSION = "0.3.5.1"
+const VERSION = "0.3.5.2"
 
 func checkError(err error) {
 	if err != nil {
@@ -297,7 +297,7 @@ func parseFields(cmd *cobra.Command,
 				negativeFields = true
 			} else {
 				if negativeFields {
-					checkError(fmt.Errorf(`filed should not fixed with positive and negative fields`))
+					checkError(fmt.Errorf(`filed should not mixed with positive and negative fields`))
 				}
 			}
 		}
@@ -305,7 +305,7 @@ func parseFields(cmd *cobra.Command,
 		if negativeFields {
 			for _, f := range fields {
 				if f > 0 {
-					checkError(fmt.Errorf(`filed should not fixed with positive and negative fields`))
+					checkError(fmt.Errorf(`filed should not mixed with positive and negative fields`))
 				}
 			}
 		}

@@ -5,13 +5,13 @@ Another cross-platform, efficient, practical and pretty CSV/TSV toolkit
 Yes, you could just use spreadsheet softwares like MS excel to
 do most of the job.
 
-Howerver it's all by clicking and typing, which is **not
-automatically and time-consuming to repeate**, especially when we want to
+However it's all by clicking and typing, which is **not
+automatically and time-consuming to repeat**, especially when we want to
 apply similar operations with different datasets or purposes.
 
 `csvtk` is **convenient for rapid investigation
 and also easy to integrated into analysis pipelines**.
- It could save you much time of writting scripts.
+ It could save you much time of writing scripts.
 
 Hope it be helpful to you.
 
@@ -92,7 +92,7 @@ You can add the directory of the executable file to environment variable
 For Go developer, just one command:
 
     go get -u github.com/shenwei356/csvtk/csvtk
-    
+
 ## Compared to `csvkit`
 
 [csvkit](http://csvkit.readthedocs.org/en/540/)
@@ -114,7 +114,7 @@ Similar tools:
 
 - [csvkit](http://csvkit.readthedocs.org/en/540/) - A suite of utilities for converting to and working with CSV, the king of tabular file formats. http://csvkit.rtfd.org/
 - [xsv](https://github.com/BurntSushi/xsv) - A fast CSV toolkit written in Rust.
-- [miller](https://github.com/johnkerl/miller) - Miller is like sed, awk, cut, join, and sort for 
+- [miller](https://github.com/johnkerl/miller) - Miller is like sed, awk, cut, join, and sort for
 name-indexed data such as CSV and tabular JSON http://johnkerl.org/miller
 - [tsv-utils-dlang](https://github.com/eBay/tsv-utils-dlang) - Command line utilities for tab-separated value files written in the D programming language.
 
@@ -157,7 +157,7 @@ Examples
         1         4      20     1       8        5     3.16
         2         4   1,015     2   1,000   253.75   497.51
         3         4      13     0       6     3.25      2.5
-        
+
 1. Select fields/columns (`cut`)
 
     - By index: `csvtk cut -f 1,2`
