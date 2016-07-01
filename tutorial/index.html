@@ -140,15 +140,16 @@
 
 <h1 id="tutorial">Tutorial</h1>
 <h2 id="forewords">Forewords</h2>
+<p>Another cross-platform, efficient, practical and pretty CSV/TSV toolkit</p>
 <p>Yes, you could just use spreadsheet softwares like MS excel to
 do most of the job.</p>
-<p>Howerver it's all by clicking and typing, which is <strong>not
-automatically and time-consuming to repeate</strong>, especially when we want to
+<p>However it's all by clicking and typing, which is <strong>not
+automatically and time-consuming to repeat</strong>, especially when we want to
 apply similar operations with different datasets or purposes.</p>
 <p><code>csvtk</code> is <strong>convenient for rapid investigation
 and also easy to integrated into analysis pipelines</strong>.
- It could save you much time of writting scripts.</p>
-<p>Hope it be helpful for you.</p>
+ It could save you much time of writing scripts.</p>
+<p>Hope it be helpful to you.</p>
 <h2 id="analyzing-otu-table">Analyzing OTU table</h2>
 <h3 id="data">Data</h3>
 <p>Here is mock a OTU table from 16S sequencing result.
@@ -241,7 +242,7 @@ B.3        .22              .41          .29             .01               .02
 </code></pre>
 </li>
 <li>
-<p>Rename first column</p>
+<p>Rename name of the first column</p>
 <pre><code>$ csvtk rename -f 1 -n "sample" otu_table.gAB.t.csv -o otu_table.gAB.t.r.csv
 
 $ csvtk pretty otu_table.gAB.t.r.csv
