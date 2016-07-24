@@ -1,20 +1,10 @@
-# csvtk
+# csvtk - another cross-platform, efficient, practical and pretty CSV/TSV toolkit
 
-Another cross-platform, efficient, practical and pretty CSV/TSV toolkit
-
-Yes, you could just use spreadsheet softwares like MS excel to
-do most of the job.
-
-However it's all by clicking and typing, which is **not
-automatically and time-consuming to repeat**, especially when we want to
-apply similar operations with different datasets or purposes.
+[![Latest Stable Version](https://img.shields.io/github/release/shenwei356/csvtk.svg?style=flat)](https://github.com/shenwei356/csvtk/releases)
 
 `csvtk` is **convenient for rapid investigation
 and also easy to integrated into analysis pipelines**.
  It could save you much time of writing scripts.
-
-Hope it be helpful to you.
-
 
 ## Features
 

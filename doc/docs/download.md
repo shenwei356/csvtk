@@ -19,19 +19,22 @@
   in [release](https://github.com/shenwei356/csvtk/releases) page.
 
 Just [download](https://github.com/shenwei356/csvtk/releases) compressed
-executable file of your operating system, and uncompress it with `tar -zxvf *.tar.gz` command.
+executable file of your operating system,
+and uncompress it with `tar -zxvf *.tar.gz` command or other tools.
+And then:
 
-You can add the directory of the executable file to environment variable
-`PATH`, so you can run `csvtk` anywhere.
+1. **For Linux-like systems**
+    1. If you have root privilege simply copy it to `/usr/local/bin`:
 
-1. For windows, the simplest way is copy it to `C:\WINDOWS\system32`.
+            sudo cp csvtk /usr/local/bin/
 
-2. For Linux, type:
+    1. Or add the directory of the executable file to environment variable
+    `PATH`:
 
-        chmod a+x /PATH/OF/CSVTK/csvtk
-        echo export PATH=\$PATH:/PATH/OF/CSVTK >> ~/.bashrc
+            echo export PATH=\$PATH:/PATH/OF/csvtk >> ~/.bashrc
 
-    or simply copy it to `/usr/local/bin`
+
+1. **For windows**, just copy `csvtk.exe` to `C:\WINDOWS\system32`.
 
 For Go developer, just one command:
 
