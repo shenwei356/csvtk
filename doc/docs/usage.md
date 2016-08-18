@@ -19,7 +19,7 @@ Usage
 ```
 Another cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.3.5.2
+Version: 0.3.6
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -536,6 +536,25 @@ Usage
 ```
 replace data of selected fields by regular expression
 
+Note that the replacement supports capture variables.
+e.g. $1 represents the text of the first submatch.
+ATTENTION: use SINGLE quote NOT double quotes in *nix OS.
+
+Examples: Adding space to all bases.
+
+    csvtk replace -p "(.)" -r '$1 ' -s
+
+Or use the \ escape character.
+
+    csvtk replace -p "(.)" -r "\$1 " -s
+
+more on: http://shenwei356.github.io/csvtk/usage/#replace
+
+Special repalcement symbols:
+
+        {nr}    Record number, starting from 1
+        {kv}    Corresponding value of the key ($1) by key-value file
+
 Usage:
   csvtk replace [flags]
 
@@ -543,6 +562,7 @@ Flags:
   -f, --fields string        select only these fields. e.g -f 1,2 or -f columnA,columnB (default "1")
   -F, --fuzzy-fields         using fuzzy fileds, e.g. *name or id123*
   -i, --ignore-case          ignore case
+  -k, --kv-file string       tab-delimited key-value file for replacing key with value when using "{kv}" in -r (--replacement)
   -p, --pattern string       search regular expression
   -r, --replacement string   replacement. supporting capture variables.  e.g. $1 represents the text of the first submatch. ATTENTION: use SINGLE quote NOT double quotes in *nix OS or use the \ escape character.
 
@@ -551,6 +571,26 @@ Flags:
 Examples
 
 - remove Chinese charactors:  `csvtk replace -F -f "*_name" -p "\p{Han}+" -r ""`
+- replace by key-value files: `csvtk replace -f 1 -p "(.+)" -r "value of $1 is {kv}" -k kv.tsv`
+
+        $ cat data.tsv
+        name    id
+        A       ID001
+        B       ID002
+        C       ID004
+
+        $ cat alias.tsv
+        001     Tom
+        002     Bob
+        003     Jim
+
+        $ csvtk replace -t -f 2  -p "ID(.+)" -r "N: {nr}, alias: {kv}" -k alias.tsv  data.tsv
+        [INFO] read key-value file: alias.tsv
+        [INFO] 3 pairs of key-value loaded
+        name    id
+        A       N: 1, alias: Tom
+        B       N: 2, alias: Bob
+        C       N: 3, alias: 004
 
 ## mutate
 

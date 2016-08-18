@@ -25,6 +25,8 @@ import (
 	"fmt"
 	"regexp"
 	"runtime"
+	"strconv"
+	"strings"
 
 	"github.com/brentp/xopen"
 	"github.com/spf13/cobra"
@@ -35,6 +37,26 @@ var replaceCmd = &cobra.Command{
 	Use:   "replace",
 	Short: "replace data of selected fields by regular expression",
 	Long: `replace data of selected fields by regular expression
+
+Note that the replacement supports capture variables.
+e.g. $1 represents the text of the first submatch.
+ATTENTION: use SINGLE quote NOT double quotes in *nix OS.
+
+Examples: Adding space to all bases.
+
+    csvtk replace -p "(.)" -r '$1 ' -s
+
+Or use the \ escape character.
+
+    csvtk replace -p "(.)" -r "\$1 " -s
+
+more on: http://shenwei356.github.io/csvtk/usage/#replace
+
+Special repalcement symbols:
+
+	{nr}	Record number, starting from 1
+	{kv}	Corresponding value of the key ($1) by key-value file
+
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -51,12 +73,51 @@ var replaceCmd = &cobra.Command{
 		if pattern == "" {
 			checkError(fmt.Errorf("flags -p (--pattern) needed"))
 		}
+
 		p := pattern
 		if ignoreCase {
 			p = "(?i)" + p
 		}
 		patternRegexp, err := regexp.Compile(p)
 		checkError(err)
+
+		kvFile := getFlagString(cmd, "kv-file")
+
+		var replaceWithNR bool
+		if reNR.MatchString(replacement) {
+			replaceWithNR = true
+		}
+
+		var replaceWithKV bool
+		var kvs map[string]string
+		if reKV.MatchString(replacement) {
+			replaceWithKV = true
+			if !regexp.MustCompile(`\(.+\)`).MatchString(pattern) {
+				checkError(fmt.Errorf(`value of -p (--pattern) must contains "(" and ")" to capture data which is used specify the KEY`))
+			}
+			if kvFile == "" {
+				checkError(fmt.Errorf(`since repalcement symbol "{kv}"/"{KV}" found in value of flag -r (--replacement), tab-delimited key-value file should be given by flag -k (--kv-file)`))
+			}
+			log.Infof("read key-value file: %s", kvFile)
+			var err error
+			kvs, err = readKVs(kvFile)
+			if err != nil {
+				checkError(fmt.Errorf("read key-value file: %s", err))
+			}
+			if len(kvs) == 0 {
+				checkError(fmt.Errorf("no valid data in key-value file: %s", kvFile))
+			}
+
+			if ignoreCase {
+				kvs2 := make(map[string]string, len(kvs))
+				for k, v := range kvs {
+					kvs2[strings.ToLower(k)] = v
+				}
+				kvs = kvs2
+			}
+
+			log.Infof("%d pairs of key-value loaded", len(kvs))
+		}
 
 		fieldStr := getFlagString(cmd, "fields")
 		fields, colnames, negativeFields, needParseHeaderRow := parseFields(cmd, fieldStr, config.NoHeaderRow)
@@ -102,7 +163,10 @@ var replaceCmd = &cobra.Command{
 			checkFields := true
 
 			var record2 []string // for output
-
+			var r string
+			var found []string
+			var k string
+			nr := 0
 			for chunk := range csvReader.Ch {
 				checkError(chunk.Err)
 
@@ -181,11 +245,33 @@ var replaceCmd = &cobra.Command{
 						parseHeaderRow2 = false
 						continue
 					}
-
+					nr++
 					for f := range record {
 						record2[f] = record[f]
 						if _, ok := fieldsMap[f+1]; ok {
-							record2[f] = patternRegexp.ReplaceAllString(record2[f], replacement)
+
+							r = replacement
+
+							if replaceWithNR {
+								r = reNR.ReplaceAllString(r, strconv.Itoa(nr))
+							}
+
+							if replaceWithKV {
+								found = patternRegexp.FindStringSubmatch(record2[f])
+								if len(found) > 0 {
+									k = string(found[1])
+									if ignoreCase {
+										k = strings.ToLower(k)
+									}
+									if _, ok = kvs[k]; ok {
+										r = reKV.ReplaceAllString(r, kvs[k])
+									} else {
+										r = reKV.ReplaceAllString(r, found[1])
+									}
+								}
+							}
+
+							record2[f] = patternRegexp.ReplaceAllString(record2[f], r)
 						}
 					}
 					checkError(writer.Write(record2))
@@ -208,4 +294,9 @@ func init() {
 			"ATTENTION: use SINGLE quote NOT double quotes in *nix OS or "+
 			"use the \\ escape character.")
 	replaceCmd.Flags().BoolP("ignore-case", "i", false, "ignore case")
+	replaceCmd.Flags().StringP("kv-file", "k", "",
+		`tab-delimited key-value file for replacing key with value when using "{kv}" in -r (--replacement)`)
 }
+
+var reNR = regexp.MustCompile(`\{(NR|nr)\}`)
+var reKV = regexp.MustCompile(`\{(KV|kv)\}`)
