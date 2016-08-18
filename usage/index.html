@@ -210,7 +210,7 @@
 <p>Usage</p>
 <pre><code>Another cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.3.5.2
+Version: 0.3.6
 
 Author: Wei Shen &lt;shenwei356@gmail.com&gt;
 
@@ -763,6 +763,25 @@ Flags:
 <p>Usage</p>
 <pre><code>replace data of selected fields by regular expression
 
+Note that the replacement supports capture variables.
+e.g. $1 represents the text of the first submatch.
+ATTENTION: use SINGLE quote NOT double quotes in *nix OS.
+
+Examples: Adding space to all bases.
+
+    csvtk replace -p &quot;(.)&quot; -r '$1 ' -s
+
+Or use the \ escape character.
+
+    csvtk replace -p &quot;(.)&quot; -r &quot;\$1 &quot; -s
+
+more on: http://shenwei356.github.io/csvtk/usage/#replace
+
+Special repalcement symbols:
+
+        {nr}    Record number, starting from 1
+        {kv}    Corresponding value of the key ($1) by key-value file
+
 Usage:
   csvtk replace [flags]
 
@@ -770,6 +789,7 @@ Flags:
   -f, --fields string        select only these fields. e.g -f 1,2 or -f columnA,columnB (default &quot;1&quot;)
   -F, --fuzzy-fields         using fuzzy fileds, e.g. *name or id123*
   -i, --ignore-case          ignore case
+  -k, --kv-file string       tab-delimited key-value file for replacing key with value when using &quot;{kv}&quot; in -r (--replacement)
   -p, --pattern string       search regular expression
   -r, --replacement string   replacement. supporting capture variables.  e.g. $1 represents the text of the first submatch. ATTENTION: use SINGLE quote NOT double quotes in *nix OS or use the \ escape character.
 
@@ -778,6 +798,26 @@ Flags:
 <p>Examples</p>
 <ul>
 <li>remove Chinese charactors:  <code>csvtk replace -F -f "*_name" -p "\p{Han}+" -r ""</code></li>
+<li>replace by key-value files: <code>csvtk replace -f 1 -p "(.+)" -r "value of $1 is {kv}" -k kv.tsv</code><pre><code>$ cat data.tsv
+name    id
+A       ID001
+B       ID002
+C       ID004
+
+$ cat alias.tsv
+001     Tom
+002     Bob
+003     Jim
+
+$ csvtk replace -t -f 2  -p "ID(.+)" -r "N: {nr}, alias: {kv}" -k alias.tsv  data.tsv
+[INFO] read key-value file: alias.tsv
+[INFO] 3 pairs of key-value loaded
+name    id
+A       N: 1, alias: Tom
+B       N: 2, alias: Bob
+C       N: 3, alias: 004
+</code></pre>
+</li>
 </ul>
 <h2 id="mutate">mutate</h2>
 <p>Usage</p>
