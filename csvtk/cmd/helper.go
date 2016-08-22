@@ -396,7 +396,7 @@ func parseCSVfile(cmd *cobra.Command, config Config, file string,
 				colnamesMap = make(map[string]*regexp.Regexp, len(colnames))
 				for _, col := range colnames {
 					if negativeFields {
-						colnamesMap[col[1:]] = fuzzyField2Regexp(col)
+						colnamesMap[col[1:]] = fuzzyField2Regexp(col[1:])
 					} else {
 						colnamesMap[col] = fuzzyField2Regexp(col)
 					}
@@ -416,7 +416,7 @@ func parseCSVfile(cmd *cobra.Command, config Config, file string,
 						} else {
 							_, ok = colnamesMap[col]
 						}
-						if (negativeFields && !ok) || (!negativeFields && ok) {
+						if ok {
 							fields = append(fields, colnames2fileds[col])
 						}
 					}

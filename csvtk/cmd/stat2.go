@@ -24,16 +24,16 @@ import (
 	"fmt"
 	"regexp"
 	"runtime"
-	"strconv"
 	"sort"
+	"strconv"
 
 	"github.com/brentp/xopen"
-	"github.com/spf13/cobra"
-	"github.com/gonum/floats"
-	"github.com/tatsushid/go-prettytable"
 	"github.com/dustin/go-humanize"
+	"github.com/gonum/floats"
 	"github.com/gonum/stat"
 	"github.com/shenwei356/util/math"
+	"github.com/spf13/cobra"
+	"github.com/tatsushid/go-prettytable"
 )
 
 // stat2Cmd represents the stat2 command
@@ -78,7 +78,6 @@ var stat2Cmd = &cobra.Command{
 		checkError(err)
 		defer outfh.Close()
 
-
 		file := files[0]
 		csvReader, err := newCSVReaderByConfig(config, file)
 		checkError(err)
@@ -106,7 +105,7 @@ var stat2Cmd = &cobra.Command{
 					colnamesMap = make(map[string]*regexp.Regexp, len(colnames))
 					for _, col := range colnames {
 						if negativeFields {
-							colnamesMap[col[1:]] = fuzzyField2Regexp(col)
+							colnamesMap[col[1:]] = fuzzyField2Regexp(col[1:])
 						} else {
 							colnamesMap[col] = fuzzyField2Regexp(col)
 						}
@@ -181,8 +180,8 @@ var stat2Cmd = &cobra.Command{
 			}
 		}
 		tbl, err := prettytable.NewTable([]prettytable.Column{
-		    {Header: "field"},
-		    {Header: "num", AlignRight: true},
+			{Header: "field"},
+			{Header: "num", AlignRight: true},
 			{Header: "sum", AlignRight: true},
 			{Header: "min", AlignRight: true},
 			{Header: "max", AlignRight: true},
@@ -208,11 +207,11 @@ var stat2Cmd = &cobra.Command{
 			tbl.AddRow(
 				fieldS,
 				humanize.Comma(int64(len(data[f]))),
-				humanize.Commaf(math.Round(floats.Sum(data[f]),2)),
-				humanize.Commaf(math.Round(floats.Min(data[f]),2)),
-				humanize.Commaf(math.Round(floats.Max(data[f]),2)),
-				humanize.Commaf(math.Round(mean,2)),
-				humanize.Commaf(math.Round(stdev,2)))
+				humanize.Commaf(math.Round(floats.Sum(data[f]), 2)),
+				humanize.Commaf(math.Round(floats.Min(data[f]), 2)),
+				humanize.Commaf(math.Round(floats.Max(data[f]), 2)),
+				humanize.Commaf(math.Round(mean, 2)),
+				humanize.Commaf(math.Round(stdev, 2)))
 		}
 		outfh.Write(tbl.Bytes())
 	},

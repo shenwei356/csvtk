@@ -110,7 +110,7 @@ var renameCmd = &cobra.Command{
 						colnamesMap = make(map[string]*regexp.Regexp, len(colnames))
 						for _, col := range colnames {
 							if negativeFields {
-								colnamesMap[col[1:]] = fuzzyField2Regexp(col)
+								colnamesMap[col[1:]] = fuzzyField2Regexp(col[1:])
 							} else {
 								colnamesMap[col] = fuzzyField2Regexp(col)
 							}
