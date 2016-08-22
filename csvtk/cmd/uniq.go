@@ -122,7 +122,7 @@ var uniqCmd = &cobra.Command{
 								} else {
 									_, ok = colnamesMap[col]
 								}
-								if (negativeFields && !ok) || (!negativeFields && ok) {
+								if ok {
 									fields = append(fields, colnames2fileds[col])
 								}
 							}
