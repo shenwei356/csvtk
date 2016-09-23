@@ -24,7 +24,7 @@ import (
 	"encoding/csv"
 	"runtime"
 
-	"github.com/brentp/xopen"
+	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
 )
 

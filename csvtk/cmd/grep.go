@@ -27,7 +27,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/brentp/xopen"
+	"github.com/shenwei356/xopen"
 	"github.com/fatih/color"
 	"github.com/mattn/go-colorable"
 	"github.com/shenwei356/breader"
@@ -318,7 +318,7 @@ func init() {
 	grepCmd.Flags().StringP("fields", "f", "1", `comma separated key fields, column name or index. e.g. -f 1-3 or -f id,id2 or -F -f "group*"`)
 	grepCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g. *name or id123*`)
 	grepCmd.Flags().StringSliceP("pattern", "p", []string{""}, `query pattern (multiple values supported)`)
-	grepCmd.Flags().StringP("pattern-file", "P", "", `pattern files (could also be CSV format)`)
+	grepCmd.Flags().StringP("pattern-file", "P", "", `pattern files (one pattern per line)`)
 	grepCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
 	grepCmd.Flags().BoolP("use-regexp", "r", false, `patterns are regular expression`)
 	grepCmd.Flags().BoolP("invert", "v", false, `invert match`)

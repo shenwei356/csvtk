@@ -27,7 +27,7 @@ import (
 	"sort"
 	"strconv"
 
-	"github.com/brentp/xopen"
+	"github.com/shenwei356/xopen"
 	"github.com/dustin/go-humanize"
 	"github.com/gonum/floats"
 	"github.com/gonum/stat"

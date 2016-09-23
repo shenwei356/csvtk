@@ -25,7 +25,7 @@ import (
 	"fmt"
 	"runtime"
 
-	"github.com/brentp/xopen"
+	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
 )
 

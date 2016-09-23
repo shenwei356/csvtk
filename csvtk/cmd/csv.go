@@ -24,7 +24,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/brentp/xopen"
+	"github.com/shenwei356/xopen"
 	"github.com/shenwei356/multicorecsv"
 )
 

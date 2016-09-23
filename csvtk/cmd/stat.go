@@ -23,7 +23,7 @@ package cmd
 import (
 	"runtime"
 
-	"github.com/brentp/xopen"
+	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
 
 	"github.com/dustin/go-humanize"
