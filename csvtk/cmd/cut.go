@@ -203,6 +203,7 @@ var cutCmd = &cobra.Command{
 					for i, of := range orderedFieldss {
 						fields[i] = of.field
 					}
+
 					items = make([]string, len(fields))
 
 					checkFields = false
@@ -226,14 +227,3 @@ func init() {
 	cutCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g. -f *name or -f id123*`)
 	cutCmd.Flags().BoolP("colnames", "n", false, `print column names`)
 }
-
-type orderedField struct {
-	field int
-	order int
-}
-
-type orderedFields []orderedField
-
-func (s orderedFields) Len() int           { return len(s) }
-func (s orderedFields) Less(i, j int) bool { return s[i].order < s[j].order }
-func (s orderedFields) Swap(i, j int)      { s[i], s[j] = s[j], s[i] }

@@ -38,7 +38,7 @@ var plotCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(plotCmd)
 
-	plotCmd.PersistentFlags().StringP("title", "t", "", "Figure title")
+	plotCmd.PersistentFlags().StringP("title", "", "", "Figure title")
 	plotCmd.PersistentFlags().StringP("xlab", "x", "", "x label text")
 	plotCmd.PersistentFlags().StringP("ylab", "y", "", "y label text")
 	plotCmd.PersistentFlags().Float64P("width", "", 8, "Figure width")

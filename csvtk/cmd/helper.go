@@ -25,6 +25,7 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -70,6 +71,15 @@ func getFlagInt(cmd *cobra.Command, flag string) int {
 
 func getFlagPositiveInt(cmd *cobra.Command, flag string) int {
 	value, err := cmd.Flags().GetInt(flag)
+	checkError(err)
+	if value <= 0 {
+		checkError(fmt.Errorf("value of flag --%s should be greater than 0", flag))
+	}
+	return value
+}
+
+func getFlagPositiveFloat64(cmd *cobra.Command, flag string) float64 {
+	value, err := cmd.Flags().GetFloat64(flag)
 	checkError(err)
 	if value <= 0 {
 		checkError(fmt.Errorf("value of flag --%s should be greater than 0", flag))
@@ -356,6 +366,8 @@ func parseCSVfile(cmd *cobra.Command, config Config, file string,
 	fieldStr string, fuzzyFields bool) ([]string, [][]string, []int) {
 	fields, colnames, negativeFields, needParseHeaderRow := parseFields(cmd, fieldStr, config.NoHeaderRow)
 	var fieldsMap map[int]struct{}
+	var fieldsOrder map[int]int      // for set the order of fields
+	var colnamesOrder map[string]int // for set the order of fields
 	if len(fields) > 0 {
 		fields2 := make([]int, len(fields))
 		fieldsMap = make(map[int]struct{}, len(fields))
@@ -369,6 +381,18 @@ func parseCSVfile(cmd *cobra.Command, config Config, file string,
 			}
 		}
 		fields = fields2
+
+		if !negativeFields {
+			fieldsOrder = make(map[int]int, len(fields))
+			i := 0
+			for _, f := range fields {
+				fieldsOrder[f] = i
+				i++
+			}
+		}
+	} else {
+		fieldsOrder = make(map[int]int, len(colnames))
+		colnamesOrder = make(map[string]int, len(colnames))
 	}
 
 	csvReader, err := newCSVReaderByConfig(config, file)
@@ -394,11 +418,14 @@ func parseCSVfile(cmd *cobra.Command, config Config, file string,
 					colnames2fileds[col] = i + 1
 				}
 				colnamesMap = make(map[string]*regexp.Regexp, len(colnames))
+				i := 0
 				for _, col := range colnames {
 					if negativeFields {
 						colnamesMap[col[1:]] = fuzzyField2Regexp(col[1:])
 					} else {
 						colnamesMap[col] = fuzzyField2Regexp(col)
+						colnamesOrder[col] = i
+						i++
 					}
 				}
 
@@ -418,6 +445,7 @@ func parseCSVfile(cmd *cobra.Command, config Config, file string,
 						}
 						if ok {
 							fields = append(fields, colnames2fileds[col])
+							fieldsOrder[colnames2fileds[col]] = colnamesOrder[col]
 						}
 					}
 				}
@@ -428,7 +456,12 @@ func parseCSVfile(cmd *cobra.Command, config Config, file string,
 				}
 
 				parseHeaderRow = false
-				HeaderRow = record
+
+				items := make([]string, len(fields))
+				for i, f := range fields {
+					items[i] = record[f-1]
+				}
+				HeaderRow = items
 				continue
 			}
 			if checkFields {
@@ -446,13 +479,29 @@ func parseCSVfile(cmd *cobra.Command, config Config, file string,
 					}
 				}
 				fields = fields2
+
 				if len(fields) == 0 {
 					checkError(fmt.Errorf("no fields matched in file: %s", file))
 				}
+
+				// sort fields
+				orderedFieldss := make([]orderedField, len(fields))
+				for i, f := range fields {
+					orderedFieldss[i] = orderedField{field: f, order: fieldsOrder[f]}
+				}
+				sort.Sort(orderedFields(orderedFieldss))
+				for i, of := range orderedFieldss {
+					fields[i] = of.field
+				}
+
 				checkFields = false
 			}
 
-			Data = append(Data, record)
+			items := make([]string, len(fields))
+			for i, f := range fields {
+				items[i] = record[f-1]
+			}
+			Data = append(Data, items)
 		}
 	}
 	return HeaderRow, Data, fields
@@ -500,3 +549,14 @@ func readKVs(file string) (map[string]string, error) {
 	}
 	return kvs, nil
 }
+
+type orderedField struct {
+	field int
+	order int
+}
+
+type orderedFields []orderedField
+
+func (s orderedFields) Len() int           { return len(s) }
+func (s orderedFields) Less(i, j int) bool { return s[i].order < s[j].order }
+func (s orderedFields) Swap(i, j int)      { s[i], s[j] = s[j], s[i] }
