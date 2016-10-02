@@ -38,9 +38,17 @@ var plotCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(plotCmd)
 
+	plotCmd.PersistentFlags().StringP("data-field", "f", "1", `column index or column name of data`)
+	plotCmd.PersistentFlags().StringP("group-field", "g", "", `column index or column name of group`)
+
 	plotCmd.PersistentFlags().StringP("title", "", "", "Figure title")
 	plotCmd.PersistentFlags().StringP("xlab", "x", "", "x label text")
 	plotCmd.PersistentFlags().StringP("ylab", "y", "", "y label text")
 	plotCmd.PersistentFlags().Float64P("width", "", 8, "Figure width")
-	plotCmd.PersistentFlags().Float64P("height", "", 6, "Figure height")
+	plotCmd.PersistentFlags().Float64P("height", "", 4, "Figure height")
+
+	plotCmd.PersistentFlags().IntP("title-size", "", 16, "title font size")
+	plotCmd.PersistentFlags().IntP("label-size", "", 12, "label font size")
+	plotCmd.PersistentFlags().Float64P("axis-width", "", 1.5, "axis width")
+	plotCmd.PersistentFlags().Float64P("tick-width", "", 1.5, "axis tick width")
 }

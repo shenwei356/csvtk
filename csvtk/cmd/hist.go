@@ -28,6 +28,7 @@ import (
 
 	"github.com/gonum/plot"
 	"github.com/gonum/plot/plotter"
+	"github.com/gonum/plot/plotutil"
 	"github.com/gonum/plot/vg"
 	"github.com/spf13/cobra"
 )
@@ -59,7 +60,6 @@ var histCmd = &cobra.Command{
 			if dataFieldStr[0] == '-' {
 				checkError(fmt.Errorf("unselect not allowed for flag --group-field"))
 			}
-
 			fieldStr = dataFieldStr + "," + groupFieldStr
 		} else {
 			fieldStr = dataFieldStr
@@ -72,15 +72,18 @@ var histCmd = &cobra.Command{
 		runtime.GOMAXPROCS(config.NumCPUs)
 
 		title := getFlagString(cmd, "title")
-		if title == "" {
-			title = "Histogram"
-		}
-
+		titleSize := getFlagPositiveInt(cmd, "title-size")
+		labelSize := getFlagPositiveInt(cmd, "label-size")
 		width := getFlagPositiveFloat64(cmd, "width")
 		height := getFlagPositiveFloat64(cmd, "height")
-		bins := getFlagPositiveInt(cmd, "bins")
+		axisWidth := getFlagPositiveFloat64(cmd, "axis-width")
+		tickWidth := getFlagPositiveFloat64(cmd, "tick-width")
 		xlab := getFlagString(cmd, "xlab")
 		ylab := getFlagString(cmd, "ylab")
+		if ylab == "" {
+			ylab = "Count"
+		}
+
 		if config.OutFile == "-" {
 			config.OutFile = "hist.png"
 		}
@@ -89,6 +92,16 @@ var histCmd = &cobra.Command{
 		headerRow, data, fields := parseCSVfile(cmd, config, file, fieldStr, false)
 
 		// =======================================
+
+		if title == "" {
+			title = "Histogram"
+		}
+
+		if xlab == "" && groupFieldStr == "" {
+			xlab = headerRow[0]
+		}
+
+		bins := getFlagPositiveInt(cmd, "bins")
 
 		v := make(plotter.Values, len(data))
 		var f float64
@@ -111,15 +124,23 @@ var histCmd = &cobra.Command{
 		}
 
 		p.Title.Text = title
+		p.Title.TextStyle.Font.Size = vg.Length(titleSize)
 		p.X.Label.Text = xlab
 		p.Y.Label.Text = ylab
+		p.X.Label.TextStyle.Font.Size = vg.Length(labelSize)
+		p.Y.Label.TextStyle.Font.Size = vg.Length(labelSize)
+		p.X.Width = vg.Length(axisWidth)
+		p.Y.Width = vg.Length(axisWidth)
+		p.X.Tick.Width = vg.Length(tickWidth)
+		p.Y.Tick.Width = vg.Length(tickWidth)
 
 		h, err := plotter.NewHist(v, bins)
 		if err != nil {
 			checkError(err)
 		}
 
-		h.Normalize(1)
+		// h.Normalize(1)
+		h.FillColor = plotutil.Color(0)
 		p.Add(h)
 
 		// Save the plot to a PNG file.
@@ -132,7 +153,5 @@ var histCmd = &cobra.Command{
 
 func init() {
 	plotCmd.AddCommand(histCmd)
-	histCmd.Flags().StringP("data-field", "f", "1", `field index or column name of data`)
-	histCmd.Flags().StringP("group-field", "g", "", `field index or column name of group`)
 	histCmd.Flags().IntP("bins", "", 50, `number of bins`)
 }
