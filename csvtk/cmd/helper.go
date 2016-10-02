@@ -28,14 +28,14 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/shenwei356/xopen"
 	"github.com/shenwei356/breader"
 	"github.com/shenwei356/util/stringutil"
+	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
 )
 
 // VERSION of csvtk
-const VERSION = "0.3.7"
+const VERSION = "0.3.8"
 
 func checkError(err error) {
 	if err != nil {

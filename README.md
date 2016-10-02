@@ -96,8 +96,8 @@ Features                |  csvtk   |  csvkit   |   Note
 Read    Gzip            |   Yes    |  Yes      |
 Fields ranges           |   Yes    |  Yes      | e.g. `-f 1-4,6`
 **Unselect fileds**     |   Yes    |  --       | e.g. `-1` for excluding first column
-**Fuzzy fields**        |   Yes    |  --       | e.g. `ab*` for columns with prefix "ab"
-Order-specific fields   |   --     |  Yes      | it means `1,2` is different from `2,1`
+**Fuzzy fields**        |   Yes    |  --       | e.g. `ab*` for columns with name prefix "ab"
+Order-specific fields   |   Yes    |  Yes      | it means `-f 1,2` is different from `-f 2,1`
 **Rename columns**      |   Yes    |  --       | rename with new name(s) or from existed names
 Sort by multiple keys   |   Yes    |  Yes      | bash sort like operations
 **Sort by number**      |   Yes    |  --       | e.g. `-k 1:n`

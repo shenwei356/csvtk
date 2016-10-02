@@ -305,8 +305,9 @@ Usage:
 
 Flags:
   -n, --colnames        print column names
-  -f, --fields string   select only these fields. e.g -f 1,2 or -f columnA,columnB
-  -F, --fuzzy-fields    using fuzzy fields, e.g. *name or id123*
+  -f, --fields string   select only these fields. e.g -f 1,2 or -f columnA,columnB, or -f -columnA for unselect columnA
+  -F, --fuzzy-fields    using fuzzy fields, e.g. -f *name or -f id123*
+
 
 ```
 

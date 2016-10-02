@@ -25,6 +25,7 @@ import (
 	"fmt"
 	"regexp"
 	"runtime"
+	"sort"
 
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
@@ -62,6 +63,9 @@ var cutCmd = &cobra.Command{
 		}
 		fields, colnames, negativeFields, needParseHeaderRow := parseFields(cmd, fieldStr, config.NoHeaderRow)
 		var fieldsMap map[int]struct{}
+		var fieldsOrder map[int]int      // for set the order of fields
+		var colnamesOrder map[string]int // for set the order of fields
+
 		if len(fields) > 0 {
 			fields2 := make([]int, len(fields))
 			fieldsMap = make(map[int]struct{}, len(fields))
@@ -75,6 +79,18 @@ var cutCmd = &cobra.Command{
 				}
 			}
 			fields = fields2
+
+			if !negativeFields {
+				fieldsOrder = make(map[int]int, len(fields))
+				i := 0
+				for _, f := range fields {
+					fieldsOrder[f] = i
+					i++
+				}
+			}
+		} else {
+			fieldsOrder = make(map[int]int, len(colnames))
+			colnamesOrder = make(map[string]int, len(colnames))
 		}
 
 		outfh, err := xopen.Wopen(config.OutFile)
@@ -118,11 +134,14 @@ var cutCmd = &cobra.Command{
 						colnames2fileds[col] = i + 1
 					}
 					colnamesMap = make(map[string]*regexp.Regexp, len(colnames))
+					i := 0
 					for _, col := range colnames {
 						if negativeFields {
 							colnamesMap[col[1:]] = fuzzyField2Regexp(col[1:])
 						} else {
 							colnamesMap[col] = fuzzyField2Regexp(col)
+							colnamesOrder[col] = i
+							i++
 						}
 					}
 
@@ -142,8 +161,10 @@ var cutCmd = &cobra.Command{
 							}
 							if ok {
 								fields = append(fields, colnames2fileds[col])
+								fieldsOrder[colnames2fileds[col]] = colnamesOrder[col]
 							}
 						}
+
 					}
 
 					fieldsMap = make(map[int]struct{}, len(fields))
@@ -168,8 +189,19 @@ var cutCmd = &cobra.Command{
 						}
 					}
 					fields = fields2
+
 					if len(fields) == 0 {
 						checkError(fmt.Errorf("no fields matched in file: %s", file))
+					}
+
+					// sort fields
+					orderedFieldss := make([]orderedField, len(fields))
+					for i, f := range fields {
+						orderedFieldss[i] = orderedField{field: f, order: fieldsOrder[f]}
+					}
+					sort.Sort(orderedFields(orderedFieldss))
+					for i, of := range orderedFieldss {
+						fields[i] = of.field
 					}
 					items = make([]string, len(fields))
 
@@ -190,7 +222,18 @@ var cutCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(cutCmd)
-	cutCmd.Flags().StringP("fields", "f", "", `select only these fields. e.g -f 1,2 or -f columnA,columnB`)
-	cutCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g. *name or id123*`)
+	cutCmd.Flags().StringP("fields", "f", "", `select only these fields. e.g -f 1,2 or -f columnA,columnB, or -f -columnA for unselect columnA`)
+	cutCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g. -f *name or -f id123*`)
 	cutCmd.Flags().BoolP("colnames", "n", false, `print column names`)
 }
+
+type orderedField struct {
+	field int
+	order int
+}
+
+type orderedFields []orderedField
+
+func (s orderedFields) Len() int           { return len(s) }
+func (s orderedFields) Less(i, j int) bool { return s[i].order < s[j].order }
+func (s orderedFields) Swap(i, j int)      { s[i], s[j] = s[j], s[i] }

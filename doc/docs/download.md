@@ -6,8 +6,24 @@
 
 ## Current Version
 
-- [csvtk v0.3.7](https://github.com/shenwei356/csvtk/releases/tag/v0.3.7)
-    - fix a serious bug of using negative field of column name, e.g. `-f "-id"`
+[csvtk v0.3.8](https://github.com/shenwei356/csvtk/releases/tag/v0.3.8)
+
+- new feature: `csvtk cut` supports ordered fields output. e.g., `csvtk cut -f 2,1`
+  outputs the 2nd column in from of 1th column.
+
+Links:
+
+- **Linux**
+    - [![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_386.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.3.8/csvtk_linux_386.tar.gz)
+    - [![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_amd64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.3.8/csvtk_linux_amd64.tar.gz)
+    - [![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_arm.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.3.8/csvtk_linux_arm.tar.gz)
+    - [![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_arm64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.3.8/csvtk_linux_arm64.tar.gz)
+- **Mac OS X**
+    - [![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_darwin_386.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.3.8/csvtk_darwin_386.tar.gz)
+    - [![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_darwin_amd64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.3.8/csvtk_darwin_amd64.tar.gz)
+- **Windows**
+    - [![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_windows_386.exe.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.3.8/csvtk_windows_386.exe.tar.gz)
+    - [![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_windows_amd64.exe.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.3.8/csvtk_windows_amd64.exe.tar.gz)
 
 ## Installation
 
@@ -41,6 +57,8 @@ For Go developer, just one command:
 
 ## Previous Versions
 
+- [csvtk v0.3.7](https://github.com/shenwei356/csvtk/releases/tag/v0.3.7)
+    - fix a serious bug of using negative field of column name, e.g. `-f "-id"`
 - [csvtk v0.3.6](https://github.com/shenwei356/csvtk/releases/tag/v0.3.6)
     - `csvtk replace` support replacement symbols `{nr}` (record number)
       and `{kv}` (corresponding value of the key ($1) by key-value file)
