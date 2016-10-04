@@ -21,6 +21,11 @@
 package cmd
 
 import (
+	"fmt"
+	"strconv"
+	"strings"
+
+	"github.com/gonum/plot/vg"
 	"github.com/spf13/cobra"
 )
 
@@ -30,9 +35,12 @@ var plotCmd = &cobra.Command{
 	Short: "plot common figures",
 	Long: `plot common figures
 
+Notes:
+
+  1. File format is determined by the out file (-o/--out-file) suffix.
+     Supported formats: eps, jpg|jpeg, pdf, png, svg, and tif|tiff
+
 `,
-	Run: func(cmd *cobra.Command, args []string) {
-	},
 }
 
 func init() {
@@ -44,6 +52,12 @@ func init() {
 	plotCmd.PersistentFlags().StringP("title", "", "", "Figure title")
 	plotCmd.PersistentFlags().StringP("xlab", "x", "", "x label text")
 	plotCmd.PersistentFlags().StringP("ylab", "y", "", "y label text")
+
+	plotCmd.PersistentFlags().StringP("x-min", "", "", `minimum value of X axis`)
+	plotCmd.PersistentFlags().StringP("x-max", "", "", `maximum value of X axis`)
+	plotCmd.PersistentFlags().StringP("y-min", "", "", `minimum value of Y axis`)
+	plotCmd.PersistentFlags().StringP("y-max", "", "", `maximum value of Y axis`)
+
 	plotCmd.PersistentFlags().Float64P("width", "", 8, "Figure width")
 	plotCmd.PersistentFlags().Float64P("height", "", 4, "Figure height")
 
@@ -51,4 +65,81 @@ func init() {
 	plotCmd.PersistentFlags().IntP("label-size", "", 12, "label font size")
 	plotCmd.PersistentFlags().Float64P("axis-width", "", 1.5, "axis width")
 	plotCmd.PersistentFlags().Float64P("tick-width", "", 1.5, "axis tick width")
+}
+
+func getPlotConfigs(cmd *cobra.Command) *plotConfigs {
+	config := new(plotConfigs)
+
+	config.dataFieldStr = getFlagString(cmd, "data-field")
+	if strings.Index(config.dataFieldStr, ",") >= 0 {
+		checkError(fmt.Errorf("only one field allowed for flag --data-field"))
+	}
+	if config.dataFieldStr[0] == '-' {
+		checkError(fmt.Errorf("unselect not allowed for flag --data-field"))
+	}
+
+	config.groupFieldStr = getFlagString(cmd, "group-field")
+	if len(config.groupFieldStr) > 0 {
+		if strings.Index(config.groupFieldStr, ",") >= 0 {
+			checkError(fmt.Errorf("only one field allowed for flag --group-field"))
+		}
+		if config.dataFieldStr[0] == '-' {
+			checkError(fmt.Errorf("unselect not allowed for flag --group-field"))
+		}
+		config.fieldStr = config.dataFieldStr + "," + config.groupFieldStr
+	} else {
+		config.fieldStr = config.dataFieldStr
+	}
+
+	config.title = getFlagString(cmd, "title")
+	config.titleSize = vg.Length(getFlagPositiveInt(cmd, "title-size"))
+	config.labelSize = vg.Length(getFlagPositiveInt(cmd, "label-size"))
+	config.width = vg.Length(getFlagPositiveFloat64(cmd, "width"))
+	config.height = vg.Length(getFlagPositiveFloat64(cmd, "height"))
+	config.axisWidth = vg.Length(getFlagPositiveFloat64(cmd, "axis-width"))
+	config.tickWidth = vg.Length(getFlagPositiveFloat64(cmd, "tick-width"))
+	config.xlab = getFlagString(cmd, "xlab")
+	config.ylab = getFlagString(cmd, "ylab")
+
+	var err error
+
+	config.xminStr = getFlagString(cmd, "x-min")
+	if config.xminStr != "" {
+		config.xmin, err = strconv.ParseFloat(config.xminStr, 64)
+		if err != nil {
+			checkError(fmt.Errorf("value of flag --%s should be float", "x-min"))
+		}
+	}
+	config.xmaxStr = getFlagString(cmd, "x-max")
+	if config.xmaxStr != "" {
+		config.xmax, err = strconv.ParseFloat(config.xmaxStr, 64)
+		if err != nil {
+			checkError(fmt.Errorf("value of flag --%s should be float", "x-max"))
+		}
+	}
+	config.yminStr = getFlagString(cmd, "y-min")
+	if config.yminStr != "" {
+		config.ymin, err = strconv.ParseFloat(config.yminStr, 64)
+		if err != nil {
+			checkError(fmt.Errorf("value of flag --%s should be float", "y-min"))
+		}
+	}
+	config.ymaxStr = getFlagString(cmd, "y-max")
+	if config.ymaxStr != "" {
+		config.ymax, err = strconv.ParseFloat(config.ymaxStr, 64)
+		if err != nil {
+			checkError(fmt.Errorf("value of flag --%s should be float", "y-max"))
+		}
+	}
+
+	return config
+}
+
+type plotConfigs struct {
+	dataFieldStr, groupFieldStr, fieldStr string
+	title, xlab, ylab                     string
+	titleSize, labelSize                  vg.Length
+	width, height, axisWidth, tickWidth   vg.Length
+	xmin, xmax, ymin, ymax                float64
+	xminStr, xmaxStr, yminStr, ymaxStr    string
 }

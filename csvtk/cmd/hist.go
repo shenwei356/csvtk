@@ -24,7 +24,6 @@ import (
 	"fmt"
 	"runtime"
 	"strconv"
-	"strings"
 
 	"github.com/gonum/plot"
 	"github.com/gonum/plot/plotter"
@@ -42,28 +41,7 @@ var histCmd = &cobra.Command{
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
-		var fieldStr string
-
-		dataFieldStr := getFlagString(cmd, "data-field")
-		if strings.Index(dataFieldStr, ",") >= 0 {
-			checkError(fmt.Errorf("only one field allowed for flag --data-field"))
-		}
-		if dataFieldStr[0] == '-' {
-			checkError(fmt.Errorf("unselect not allowed for flag --data-field"))
-		}
-
-		groupFieldStr := getFlagString(cmd, "group-field")
-		if len(groupFieldStr) > 0 {
-			if strings.Index(groupFieldStr, ",") >= 0 {
-				checkError(fmt.Errorf("only one field allowed for flag --group-field"))
-			}
-			if dataFieldStr[0] == '-' {
-				checkError(fmt.Errorf("unselect not allowed for flag --group-field"))
-			}
-			fieldStr = dataFieldStr + "," + groupFieldStr
-		} else {
-			fieldStr = dataFieldStr
-		}
+		plotConfig := getPlotConfigs(cmd)
 
 		files := getFileList(args)
 		if len(files) > 1 {
@@ -71,37 +49,32 @@ var histCmd = &cobra.Command{
 		}
 		runtime.GOMAXPROCS(config.NumCPUs)
 
-		title := getFlagString(cmd, "title")
-		titleSize := getFlagPositiveInt(cmd, "title-size")
-		labelSize := getFlagPositiveInt(cmd, "label-size")
-		width := getFlagPositiveFloat64(cmd, "width")
-		height := getFlagPositiveFloat64(cmd, "height")
-		axisWidth := getFlagPositiveFloat64(cmd, "axis-width")
-		tickWidth := getFlagPositiveFloat64(cmd, "tick-width")
-		xlab := getFlagString(cmd, "xlab")
-		ylab := getFlagString(cmd, "ylab")
-		if ylab == "" {
-			ylab = "Count"
-		}
-
-		if config.OutFile == "-" {
-			config.OutFile = "hist.png"
-		}
-
 		file := files[0]
-		headerRow, data, fields := parseCSVfile(cmd, config, file, fieldStr, false)
+		headerRow, data, fields := parseCSVfile(cmd, config, file, plotConfig.fieldStr, false)
 
 		// =======================================
 
-		if title == "" {
-			title = "Histogram"
+		if plotConfig.groupFieldStr != "" {
+			log.Warning("flag -g (--group-field) ignored for command hist")
 		}
-
-		if xlab == "" && groupFieldStr == "" {
-			xlab = headerRow[0]
+		if plotConfig.ylab == "" {
+			plotConfig.ylab = "Count"
+		}
+		if config.OutFile == "-" {
+			config.OutFile = "hist.png"
+		}
+		if plotConfig.title == "" {
+			plotConfig.title = "Histogram"
+		}
+		if plotConfig.xlab == "" && plotConfig.groupFieldStr == "" && len(headerRow) > 0 {
+			plotConfig.xlab = headerRow[0]
 		}
 
 		bins := getFlagPositiveInt(cmd, "bins")
+		colorIndex := getFlagPositiveInt(cmd, "color-index")
+		if colorIndex > 7 {
+			checkError(fmt.Errorf("unsupported color index"))
+		}
 
 		v := make(plotter.Values, len(data))
 		var f float64
@@ -123,29 +96,42 @@ var histCmd = &cobra.Command{
 			checkError(err)
 		}
 
-		p.Title.Text = title
-		p.Title.TextStyle.Font.Size = vg.Length(titleSize)
-		p.X.Label.Text = xlab
-		p.Y.Label.Text = ylab
-		p.X.Label.TextStyle.Font.Size = vg.Length(labelSize)
-		p.Y.Label.TextStyle.Font.Size = vg.Length(labelSize)
-		p.X.Width = vg.Length(axisWidth)
-		p.Y.Width = vg.Length(axisWidth)
-		p.X.Tick.Width = vg.Length(tickWidth)
-		p.Y.Tick.Width = vg.Length(tickWidth)
-
 		h, err := plotter.NewHist(v, bins)
 		if err != nil {
 			checkError(err)
 		}
 
 		// h.Normalize(1)
-		h.FillColor = plotutil.Color(0)
+		h.FillColor = plotutil.Color(colorIndex - 1)
 		p.Add(h)
 
+		p.Title.Text = plotConfig.title
+		p.Title.TextStyle.Font.Size = plotConfig.titleSize
+		p.X.Label.Text = plotConfig.xlab
+		p.Y.Label.Text = plotConfig.ylab
+		p.X.Label.TextStyle.Font.Size = plotConfig.labelSize
+		p.Y.Label.TextStyle.Font.Size = plotConfig.labelSize
+		p.X.Width = plotConfig.axisWidth
+		p.Y.Width = plotConfig.axisWidth
+		p.X.Tick.Width = plotConfig.tickWidth
+		p.Y.Tick.Width = plotConfig.tickWidth
+
+		if plotConfig.xminStr != "" {
+			p.X.Min = plotConfig.xmin
+		}
+		if plotConfig.xmaxStr != "" {
+			p.X.Max = plotConfig.xmax
+		}
+		if plotConfig.yminStr != "" {
+			p.Y.Min = plotConfig.ymin
+		}
+		if plotConfig.ymaxStr != "" {
+			p.Y.Max = plotConfig.ymax
+		}
+
 		// Save the plot to a PNG file.
-		if err := p.Save(vg.Length(width*float64(vg.Inch)),
-			vg.Length(height*float64(vg.Inch)), config.OutFile); err != nil {
+		if err := p.Save(plotConfig.width*vg.Inch,
+			plotConfig.height*vg.Inch, config.OutFile); err != nil {
 			checkError(err)
 		}
 	},
@@ -154,4 +140,5 @@ var histCmd = &cobra.Command{
 func init() {
 	plotCmd.AddCommand(histCmd)
 	histCmd.Flags().IntP("bins", "", 50, `number of bins`)
+	histCmd.Flags().IntP("color-index", "", 1, `color index, 1-7`)
 }
