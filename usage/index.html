@@ -961,7 +961,7 @@ group information is the "Group" column.
 </ul>
 <h2 id="plot-line">plot line</h2>
 <p>Usage</p>
-<pre><code>line plot
+<pre><code>line plot and scatter plot
 
 Usage:
   csvtk plot line [flags]
@@ -971,7 +971,9 @@ Flags:
   -y, --data-field-y string   column index or column name of Y for command line
       --legend-left           locate legend along the left edge of the plot
       --legend-top            locate legend along the top edge of the plot
-      --line-width float      line-width (default 1.5)
+      --line-width float      line width (default 1.5)
+      --point-size float      point size (default 3)
+      --scatter               only plot points
 
 </code></pre>
 
@@ -992,6 +994,9 @@ A       2.0     2
 <code>csvtk -t plot line ../testdata/xy.tsv -x X -y Y -g Group --title "Line plot"</code>
 <img alt="lineplot.png" src="../testdata/figures/lineplot.png" /></p>
 </li>
+<li>plot scatter
+<code>csvtk -t plot line ../testdata/xy.tsv -x X -y Y -g Group --title "Scatter" --scatter</code>
+<img alt="scatter.png" src="../testdata/figures/scatter.png" /></li>
 </ul>
 <div id="disqus_thread"></div>
 
