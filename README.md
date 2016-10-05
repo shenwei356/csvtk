@@ -66,7 +66,7 @@ and also easy to integrated into analysis pipelines**.
 - `plot` see [usage](http://bioinf.shenwei.me/csvtk/usage/#plot)
     - `plot hist` histogram
     - `plot box` boxplot
-    - `plot line` line plot
+    - `plot line` line plot and scatter plot
 
 ## Installation
 
@@ -226,6 +226,9 @@ Examples
     - plot line plot with X-Y data
     `csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group`
     ![lineplot.png](testdata/figures/lineplot.png)
+    - plot scatter plot with X-Y data
+    `csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group`
+    ![scatter.png](testdata/figures/scatter.png)
 
 ## Contact
 

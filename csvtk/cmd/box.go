@@ -61,9 +61,6 @@ var boxCmd = &cobra.Command{
 		if config.OutFile == "-" {
 			config.OutFile = "boxplot.png"
 		}
-		if plotConfig.title == "" {
-			plotConfig.title = "Box plot"
-		}
 
 		groups := make(map[string]plotter.Values)
 		groupOrderMap := make(map[string]int)

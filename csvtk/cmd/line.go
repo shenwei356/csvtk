@@ -36,8 +36,8 @@ import (
 // lineCmd represents the line command
 var lineCmd = &cobra.Command{
 	Use:   "line",
-	Short: "line plot",
-	Long: `line plot
+	Short: "line plot and scatter plot",
+	Long: `line plot and scatter plot
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -51,6 +51,8 @@ var lineCmd = &cobra.Command{
 		runtime.GOMAXPROCS(config.NumCPUs)
 
 		lineWidth := vg.Points(getFlagPositiveFloat64(cmd, "line-width"))
+		pointSize := vg.Length(getFlagPositiveFloat64(cmd, "point-size"))
+		scatter := getFlagBool(cmd, "scatter")
 		dataFieldXStr := getFlagString(cmd, "data-field-x")
 		if dataFieldXStr == "" {
 			checkError(fmt.Errorf("flag -x (--data-field-x) needed"))
@@ -92,12 +94,12 @@ var lineCmd = &cobra.Command{
 		// =======================================
 
 		if config.OutFile == "-" {
-			config.OutFile = "lineplot.png"
+			if scatter {
+				config.OutFile = "scater.png"
+			} else {
+				config.OutFile = "lineplot.png"
+			}
 		}
-		if plotConfig.title == "" {
-			plotConfig.title = "Line plot"
-		}
-
 		groups := make(map[string]plotter.XYs)
 		var x, y float64
 		var err error
@@ -139,20 +141,34 @@ var lineCmd = &cobra.Command{
 
 		i := 0
 		for g, v := range groups {
-			lines, points, err := plotter.NewLinePoints(v)
-			checkError(err)
+			if !scatter {
+				lines, points, err := plotter.NewLinePoints(v)
+				checkError(err)
+				lines.Color = plotutil.Color(i)
+				lines.LineStyle.Dashes = plotutil.Dashes(i)
+				lines.LineStyle.Width = lineWidth
+				points.Shape = plotutil.Shape(i)
+				points.Color = plotutil.Color(i)
+				points.Radius = pointSize
+				p.Add(lines, points)
+				p.Legend.Add(g, lines, points)
+			} else {
+				points, err := plotter.NewScatter(v)
+				checkError(err)
+				points.Shape = plotutil.Shape(i)
+				points.Color = plotutil.Color(i)
+				points.Radius = pointSize
+				p.Add(points)
+				p.Legend.Add(g, points)
+			}
 
-			lines.Color = plotutil.Color(i)
-			lines.LineStyle.Dashes = plotutil.Dashes(i)
-			lines.LineStyle.Width = lineWidth
-			points.Shape = plotutil.Shape(i)
-			points.Color = plotutil.Color(i)
 			i++
-
-			p.Add(lines, points)
-			p.Legend.Add(g, lines, points)
 		}
-		p.Legend.Padding = vg.Length(lineWidth)
+		if lineWidth > pointSize {
+			p.Legend.Padding = vg.Length(lineWidth)
+		} else {
+			p.Legend.Padding = vg.Length(pointSize)
+		}
 		p.Legend.Top = getFlagBool(cmd, "legend-top")
 		p.Legend.Left = getFlagBool(cmd, "legend-left")
 
@@ -207,7 +223,11 @@ func init() {
 	plotCmd.AddCommand(lineCmd)
 	lineCmd.Flags().StringP("data-field-x", "x", "", `column index or column name of X for command line`)
 	lineCmd.Flags().StringP("data-field-y", "y", "", `column index or column name of Y for command line`)
-	lineCmd.Flags().Float64P("line-width", "", 1.5, "line-width")
+
 	lineCmd.Flags().BoolP("legend-top", "", false, "locate legend along the top edge of the plot")
 	lineCmd.Flags().BoolP("legend-left", "", false, "locate legend along the left edge of the plot")
+
+	lineCmd.Flags().BoolP("scatter", "", false, "only plot points")
+	lineCmd.Flags().Float64P("line-width", "", 1.5, "line width")
+	lineCmd.Flags().Float64P("point-size", "", 3, "point size")
 }

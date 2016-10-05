@@ -63,9 +63,6 @@ var histCmd = &cobra.Command{
 		if config.OutFile == "-" {
 			config.OutFile = "histogram.png"
 		}
-		if plotConfig.title == "" {
-			plotConfig.title = "Histogram"
-		}
 		if plotConfig.xlab == "" && plotConfig.groupFieldStr == "" && len(headerRow) > 0 {
 			plotConfig.xlab = headerRow[0]
 		}

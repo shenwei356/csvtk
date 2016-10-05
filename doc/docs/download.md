@@ -9,11 +9,11 @@
 [csvtk v0.3.8](https://github.com/shenwei356/csvtk/releases/tag/v0.3.8)
 
 - new feature: `csvtk cut` supports ordered fields output. e.g., `csvtk cut -f 2,1`
-  outputs the 2nd column in from of 1th column.
+  outputs the 2nd column in front of 1th column.
 - new commands: `csvtk plot` can plot three types of plots by subcommands:
     - `csvtk plot hist`: histogram
     - `csvtk plot box`: boxplot
-    - `csvtk plot line`: line plot
+    - `csvtk plot line`: line plot and scatter plot
 
 Links:
 

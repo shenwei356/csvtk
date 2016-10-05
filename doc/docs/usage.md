@@ -713,7 +713,7 @@ Examples
         Group A   100      51.00
 
 - plot histogram with data of the second column:
- `csvtk -t plot hist ../testdata/grouped_data.tsv.gz -f 2`
+ `csvtk -t plot hist ../testdata/grouped_data.tsv.gz -f 2 --title Histogram`
 ![histogram.png](testdata/figures/histogram.png)
 
 ## plot box
@@ -736,7 +736,7 @@ Examples
 
 - plot boxplot with data of the "GC Content" (third) column,
 group information is the "Group" column.
-`csvtk -t plot box ../testdata/grouped_data.tsv.gz -g "Group" -f "GC Content"  --width 3`
+`csvtk -t plot box ../testdata/grouped_data.tsv.gz -g "Group" -f "GC Content"  --width 3 --title "Box plot"`
 ![boxplot.png](testdata/figures/boxplot.png)
 - plot horiz boxplot with data of the "Length" (second) column,
 group information is the "Group" column.
@@ -748,7 +748,7 @@ group information is the "Group" column.
 Usage
 
 ```
-line plot
+line plot and scatter plot
 
 Usage:
   csvtk plot line [flags]
@@ -758,7 +758,9 @@ Flags:
   -y, --data-field-y string   column index or column name of Y for command line
       --legend-left           locate legend along the left edge of the plot
       --legend-top            locate legend along the top edge of the plot
-      --line-width float      line-width (default 1.5)
+      --line-width float      line width (default 1.5)
+      --point-size float      point size (default 3)
+      --scatter               only plot points
 
 ```
 
@@ -774,9 +776,11 @@ Examples
         A       2.0     2
 
 - plot line plot with X-Y data
-`csvtk -t plot line ../testdata/xy.tsv -x X -y Y -g Group`
+`csvtk -t plot line ../testdata/xy.tsv -x X -y Y -g Group --title "Line plot"`
 ![lineplot.png](testdata/figures/lineplot.png)
-
+- plot scatter
+`csvtk -t plot line ../testdata/xy.tsv -x X -y Y -g Group --title "Scatter" --scatter`
+![scatter.png](testdata/figures/scatter.png)
 
 
 <div id="disqus_thread"></div>
