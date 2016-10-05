@@ -184,9 +184,10 @@ and also easy to integrated into analysis pipelines</strong>.
 <li>Most of the subcommands support <strong><em>unselecting fields</em></strong> and <strong><em>fuzzy fields</em></strong>,
   e.g. <code>-f "-id,-name"</code> for all fields except "id" and "name",
   <code>-F -f "a.*"</code> for all fields with prefix "a.".</li>
+<li><strong>Support common plots</strong> (see <a href="http://bioinf.shenwei.me/csvtk/usage/#plot">usage</a>)</li>
 </ul>
 <h2 id="subcommands">Subcommands</h2>
-<p>19 in total.</p>
+<p>20 in total.</p>
 <p><strong>Information</strong></p>
 <ul>
 <li><code>stat</code> summary of CSV file</li>
@@ -220,6 +221,15 @@ and also easy to integrated into analysis pipelines</strong>.
 <p><strong>Ordering</strong></p>
 <ul>
 <li><code>sort</code> sort by selected fields</li>
+</ul>
+<p><strong>Ploting</strong></p>
+<ul>
+<li><code>plot</code> see <a href="http://bioinf.shenwei.me/csvtk/usage/#plot">usage</a><ul>
+<li><code>plot hist</code> histogram</li>
+<li><code>plot box</code> boxplot</li>
+<li><code>plot line</code> line plot</li>
+</ul>
+</li>
 </ul>
 <h2 id="installation">Installation</h2>
 <p><a href="https://github.com/shenwei356/csvtk/releases">Download Page</a></p>
@@ -279,13 +289,13 @@ echo export PATH=\$PATH:/PATH/OF/CSVTK &gt;&gt; ~/.bashrc
 <td align="left"><strong>Fuzzy fields</strong></td>
 <td align="center">Yes</td>
 <td align="center">--</td>
-<td align="left">e.g. <code>ab*</code> for columns with prefix "ab"</td>
+<td align="left">e.g. <code>ab*</code> for columns with name prefix "ab"</td>
 </tr>
 <tr>
 <td align="left">Order-specific fields</td>
-<td align="center">--</td>
 <td align="center">Yes</td>
-<td align="left">it means <code>1,2</code> is different from <code>2,1</code></td>
+<td align="center">Yes</td>
+<td align="left">it means <code>-f 1,2</code> is different from <code>-f 2,1</code></td>
 </tr>
 <tr>
 <td align="left"><strong>Rename columns</strong></td>
@@ -431,6 +441,25 @@ field   num     sum   min     max     mean    stdev
 <li>multiple fields: <code>csvtk filter -f "1-3&gt;0"</code></li>
 <li>using <code>--any</code> to print record if any of the field satisfy the condition: <code>csvtk filter -f "1-3&gt;0" --any</code></li>
 <li>fuzzy fields: <code>csvtk filter -F -f "A*!=0"</code></li>
+</ul>
+</li>
+<li>
+<p>ploting</p>
+<ul>
+<li>plot histogram with data of the second column:
+ <code>csvtk -t plot hist testdata/grouped_data.tsv.gz -f 2</code>
+<img alt="histogram.png" src="./testdata/figures/histogram.png" /></li>
+<li>plot boxplot with data of the "GC Content" (third) column,
+group information is the "Group" column.
+<code>csvtk -t plot box testdata/grouped_data.tsv.gz -g "Group" -f "GC Content"  --width 3</code>
+<img alt="boxplot.png" src="./testdata/figures/boxplot.png" /></li>
+<li>plot horiz boxplot with data of the "Length" (second) column,
+group information is the "Group" column.
+<code>csvtk -t plot box testdata/grouped_data.tsv.gz -g "Group" -f "Length"  --height 3 --width 5 --horiz --title "Horiz box plot"</code>
+<img alt="boxplot2.png" src="./testdata/figures/boxplot2.png" /></li>
+<li>plot line plot with X-Y data
+<code>csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group</code>
+<img alt="lineplot.png" src="./testdata/figures/lineplot.png" /></li>
 </ul>
 </li>
 </ol>
