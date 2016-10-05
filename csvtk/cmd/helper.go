@@ -372,7 +372,7 @@ func fuzzyField2Regexp(field string) *regexp.Regexp {
 }
 
 func parseCSVfile(cmd *cobra.Command, config Config, file string,
-	fieldStr string, fuzzyFields bool) ([]string, [][]string, []int) {
+	fieldStr string, fuzzyFields bool) ([]string, []int, [][]string, []string, [][]string) {
 	fields, colnames, negativeFields, needParseHeaderRow := parseFields(cmd, fieldStr, config.NoHeaderRow)
 	var fieldsMap map[int]struct{}
 	var fieldsOrder map[int]int      // for set the order of fields
@@ -413,7 +413,9 @@ func parseCSVfile(cmd *cobra.Command, config Config, file string,
 	var colnamesMap map[string]*regexp.Regexp
 
 	var HeaderRow []string
+	var HeaderRowAll []string
 	var Data [][]string
+	var DataAll [][]string
 
 	checkFields := true
 
@@ -477,9 +479,13 @@ func parseCSVfile(cmd *cobra.Command, config Config, file string,
 
 				items := make([]string, len(fields))
 				for i, f := range fields {
+					if f > len(record) {
+						continue
+					}
 					items[i] = record[f-1]
 				}
 				HeaderRow = items
+				HeaderRowAll = record
 				continue
 			}
 			if checkFields {
@@ -520,9 +526,15 @@ func parseCSVfile(cmd *cobra.Command, config Config, file string,
 				items[i] = record[f-1]
 			}
 			Data = append(Data, items)
+			if fieldStr != "*" {
+				DataAll = append(DataAll, record)
+			}
 		}
 	}
-	return HeaderRow, Data, fields
+	if fieldStr != "*" {
+		return HeaderRow, fields, Data, HeaderRowAll, DataAll
+	}
+	return HeaderRow, fields, Data, HeaderRowAll, Data
 }
 
 func removeComma(s string) string {

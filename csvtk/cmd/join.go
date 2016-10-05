@@ -84,7 +84,7 @@ Multiple keys supported, but the orders are ignored.
 		var key string
 		var items []string
 		for i, file := range files {
-			headerRow, data, fields := parseCSVfile(cmd, config,
+			_, fields, _, headerRow, data := parseCSVfile(cmd, config,
 				file, allFields[i], fuzzyFields)
 			if firstFile {
 				HeaderRow, Data, Fields = headerRow, data, fields
@@ -100,7 +100,6 @@ Multiple keys supported, but the orders are ignored.
 			for _, f := range fields {
 				fieldsMap[f] = struct{}{}
 			}
-
 			// csv to map
 			keysMaps := make(map[string][]string)
 			items = make([]string, len(fields))

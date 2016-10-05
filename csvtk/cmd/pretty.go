@@ -46,18 +46,17 @@ var prettyCmd = &cobra.Command{
 
 		alignRight := getFlagBool(cmd, "align-right")
 		separator := getFlagString(cmd, "separator")
-		minWidth :=getFlagNonNegativeInt(cmd, "min-width")
-		maxWidth :=getFlagNonNegativeInt(cmd, "max-width")
+		minWidth := getFlagNonNegativeInt(cmd, "min-width")
+		maxWidth := getFlagNonNegativeInt(cmd, "max-width")
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
 		defer outfh.Close()
 
-
 		file := files[0]
 		fieldStr := "*"
 		fuzzyFields := true
-		headerRow, data, _ := parseCSVfile(cmd, config,
+		headerRow, _, data, _, _ := parseCSVfile(cmd, config,
 			file, fieldStr, fuzzyFields)
 
 		var header []string
@@ -65,7 +64,7 @@ var prettyCmd = &cobra.Command{
 		if len(headerRow) > 0 {
 			header = headerRow
 			datas = data
-		} else{
+		} else {
 			if len(data) == 0 {
 				checkError(fmt.Errorf("no data found in file: %s", file))
 			} else if len(data) > 0 {
@@ -76,16 +75,16 @@ var prettyCmd = &cobra.Command{
 		columns := make([]prettytable.Column, len(header))
 		for i, c := range header {
 			columns[i] = prettytable.Column{Header: c, AlignRight: alignRight,
-			        MinWidth: minWidth, MaxWidth:maxWidth}
+				MinWidth: minWidth, MaxWidth: maxWidth}
 		}
 		tbl, err := prettytable.NewTable(columns...)
 		checkError(err)
 		tbl.Separator = separator
 		for _, record := range datas {
 			// have to do this stupid convertion
-			record2:=make([]interface{}, len(record))
+			record2 := make([]interface{}, len(record))
 			for i, r := range record {
-				record2[i]=r
+				record2[i] = r
 			}
 			tbl.AddRow(record2...)
 		}

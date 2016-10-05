@@ -28,8 +28,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/shenwei356/xopen"
 	"github.com/shenwei356/util/stringutil"
+	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
 )
 
@@ -88,7 +88,7 @@ var sortCmd = &cobra.Command{
 		}
 
 		file := files[0]
-		headerRow, data, _ := parseCSVfile(cmd, config,
+		headerRow, _, _, _, data := parseCSVfile(cmd, config,
 			file, fieldsStr, fuzzyFields)
 		if len(data) == 0 {
 			checkError(fmt.Errorf("no data to sort"))

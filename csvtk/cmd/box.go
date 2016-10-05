@@ -51,7 +51,7 @@ var boxCmd = &cobra.Command{
 		runtime.GOMAXPROCS(config.NumCPUs)
 
 		file := files[0]
-		headerRow, data, fields := parseCSVfile(cmd, config, file, plotConfig.fieldStr, false)
+		headerRow, fields, data, _, _ := parseCSVfile(cmd, config, file, plotConfig.fieldStr, false)
 
 		// =======================================
 
