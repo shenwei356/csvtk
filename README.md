@@ -20,11 +20,12 @@ and also easy to integrated into analysis pipelines**.
 - Most of the subcommands support ***unselecting fields*** and ***fuzzy fields***,
   e.g. `-f "-id,-name"` for all fields except "id" and "name",
   `-F -f "a.*"` for all fields with prefix "a.".
+- **Support common plots** (see [usage](http://bioinf.shenwei.me/csvtk/usage/#plot))
 
 
 ## Subcommands
 
-19 in total.
+20 in total.
 
 **Information**
 
@@ -59,6 +60,13 @@ and also easy to integrated into analysis pipelines**.
 **Ordering**
 
 -  `sort` sort by selected fields
+
+**Ploting**
+
+- `plot` see [usage](http://bioinf.shenwei.me/csvtk/usage/#plot)
+    - `plot hist` histogram
+    - `plot box` boxplot
+    - `plot line` line plot
 
 ## Installation
 
@@ -202,6 +210,22 @@ Examples
     - multiple fields: `csvtk filter -f "1-3>0"`
     - using `--any` to print record if any of the field satisfy the condition: `csvtk filter -f "1-3>0" --any`
     - fuzzy fields: `csvtk filter -F -f "A*!=0"`
+
+1. ploting
+    - plot histogram with data of the second column:
+     `csvtk -t plot hist testdata/grouped_data.tsv.gz -f 2`
+    ![histogram.png](testdata/figures/histogram.png)
+    - plot boxplot with data of the "GC Content" (third) column,
+    group information is the "Group" column.
+    `csvtk -t plot box testdata/grouped_data.tsv.gz -g "Group" -f "GC Content"  --width 3`
+    ![boxplot.png](testdata/figures/boxplot.png)
+    -  plot horiz boxplot with data of the "Length" (second) column,
+    group information is the "Group" column.
+    `csvtk -t plot box testdata/grouped_data.tsv.gz -g "Group" -f "Length"  --height 3 --width 5 --horiz --title "Horiz box plot"`
+    ![boxplot2.png](testdata/figures/boxplot2.png)
+    - plot line plot with X-Y data
+    `csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group`
+    ![lineplot.png](testdata/figures/lineplot.png)
 
 ## Contact
 

@@ -50,19 +50,19 @@ func init() {
 	plotCmd.PersistentFlags().StringP("group-field", "g", "", `column index or column name of group`)
 
 	plotCmd.PersistentFlags().StringP("title", "", "", "Figure title")
-	plotCmd.PersistentFlags().StringP("xlab", "x", "", "x label text")
-	plotCmd.PersistentFlags().StringP("ylab", "y", "", "y label text")
+	plotCmd.PersistentFlags().StringP("xlab", "", "", "x label text")
+	plotCmd.PersistentFlags().StringP("ylab", "", "", "y label text")
 
 	plotCmd.PersistentFlags().StringP("x-min", "", "", `minimum value of X axis`)
 	plotCmd.PersistentFlags().StringP("x-max", "", "", `maximum value of X axis`)
 	plotCmd.PersistentFlags().StringP("y-min", "", "", `minimum value of Y axis`)
 	plotCmd.PersistentFlags().StringP("y-max", "", "", `maximum value of Y axis`)
 
-	plotCmd.PersistentFlags().Float64P("width", "", 8, "Figure width")
-	plotCmd.PersistentFlags().Float64P("height", "", 4, "Figure height")
+	plotCmd.PersistentFlags().Float64P("width", "", 6, "Figure width")
+	plotCmd.PersistentFlags().Float64P("height", "", 4.5, "Figure height")
 
 	plotCmd.PersistentFlags().IntP("title-size", "", 16, "title font size")
-	plotCmd.PersistentFlags().IntP("label-size", "", 12, "label font size")
+	plotCmd.PersistentFlags().IntP("label-size", "", 14, "label font size")
 	plotCmd.PersistentFlags().Float64P("axis-width", "", 1.5, "axis width")
 	plotCmd.PersistentFlags().Float64P("tick-width", "", 1.5, "axis tick width")
 }
@@ -83,7 +83,7 @@ func getPlotConfigs(cmd *cobra.Command) *plotConfigs {
 		if strings.Index(config.groupFieldStr, ",") >= 0 {
 			checkError(fmt.Errorf("only one field allowed for flag --group-field"))
 		}
-		if config.dataFieldStr[0] == '-' {
+		if config.groupFieldStr[0] == '-' {
 			checkError(fmt.Errorf("unselect not allowed for flag --group-field"))
 		}
 		config.fieldStr = config.dataFieldStr + "," + config.groupFieldStr

@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-gox -os="windows darwin linux";
+gox -os="windows darwin linux" -arch="386 amd64";
 
 dir=binaries
 mkdir -p $dir;

@@ -91,7 +91,16 @@ func getFlagNonNegativeInt(cmd *cobra.Command, flag string) int {
 	value, err := cmd.Flags().GetInt(flag)
 	checkError(err)
 	if value < 0 {
-		checkError(fmt.Errorf("value of flag --%s should be greater than 0", flag))
+		checkError(fmt.Errorf("value of flag --%s should be greater than or equal to 0", flag))
+	}
+	return value
+}
+
+func getFlagNonNegativeFloat64(cmd *cobra.Command, flag string) float64 {
+	value, err := cmd.Flags().GetFloat64(flag)
+	checkError(err)
+	if value < 0 {
+		checkError(fmt.Errorf("value of flag --%s should be greater than or equal to ", flag))
 	}
 	return value
 }
@@ -456,6 +465,15 @@ func parseCSVfile(cmd *cobra.Command, config Config, file string,
 				}
 
 				parseHeaderRow = false
+
+				orderedFieldss := make([]orderedField, len(fields))
+				for i, f := range fields {
+					orderedFieldss[i] = orderedField{field: f, order: fieldsOrder[f]}
+				}
+				sort.Sort(orderedFields(orderedFieldss))
+				for i, of := range orderedFieldss {
+					fields[i] = of.field
+				}
 
 				items := make([]string, len(fields))
 				for i, f := range fields {

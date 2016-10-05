@@ -19,7 +19,7 @@ Usage
 ```
 Another cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.3.6
+Version: 0.3.8
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -48,6 +48,7 @@ Available Commands:
   inter       intersection of multiple files
   join        join multiple CSV files by selected fields
   mutate      create new column from selected fields by regular expression
+  plot        plot common figures
   pretty      convert CSV to readable aligned table
   rename      rename column names
   rename2     rename column names by regular expression
@@ -59,6 +60,7 @@ Available Commands:
   tab2csv     convert tabular format to CSV
   transpose   transpose CSV data
   uniq        unique data without sorting
+  version     print version information and check for update
 
 Flags:
   -c, --chunk-size int         chunk size of CSV reader (default 50)
@@ -71,8 +73,6 @@ Flags:
   -o, --out-file string        out file ("-" for stdout, suffix .gz for gzipped out) (default "-")
   -T, --out-tabs               specifies that the output is delimited with tabs. Overrides "-D"
   -t, --tabs                   specifies that the input CSV file is delimited with tabs. Overrides "-d"
-
-Use "csvtk [command] --help" for more information about a command.
 
 ```
 
@@ -639,6 +639,143 @@ Examples
 - By multiple columns: `csvtk sort -k 1,2` or `csvtk sort -k 1 -k 2` or `csvtk sort -k last_name,age`
 - Sort by number: `csvtk sort -k 1:n` or  `csvtk sort -k 1:nr` for reverse number
 - Complex sort: `csvtk sort -k region -k age:n -k id:nr`
+
+## plot
+
+Usage
+
+```
+plot common figures
+
+Notes:
+
+  1. File format is determined by the out file (-o/--out-file) suffix.
+     Supported formats: eps, jpg|jpeg, pdf, png, svg, and tif|tiff
+
+Usage:
+  csvtk plot [command]
+
+Available Commands:
+  box         plot boxplot
+  hist        plot histogram
+  line        line plot
+
+Flags:
+      --axis-width float     axis width (default 1.5)
+  -f, --data-field string    column index or column name of data (default "1")
+  -g, --group-field string   column index or column name of group
+      --height float         Figure height (default 4.5)
+  -h, --help                 help for plot
+      --label-size int       label font size (default 14)
+      --tick-width float     axis tick width (default 1.5)
+      --title string         Figure title
+      --title-size int       title font size (default 16)
+      --width float          Figure width (default 6)
+      --x-max string         maximum value of X axis
+      --x-min string         minimum value of X axis
+      --xlab string          x label text
+      --y-max string         maximum value of Y axis
+      --y-min string         minimum value of Y axis
+      --ylab string          y label text
+
+```
+***Note that most of the flags of `plot` are global flags of the subcommands
+`hist`, `box` and `line`***
+
+***File format is determined by the out file (-o/--out-file) suffix.
+Supported formats: eps, jpg|jpeg, pdf, png, svg, and tif|tiff***
+
+## plot hist
+
+Usage
+
+```
+plot histogram
+
+Usage:
+  csvtk plot hist [flags]
+
+Flags:
+      --bins int          number of bins (default 50)
+      --color-index int   color index, 1-7 (default 1)
+
+```
+
+Examples
+
+- example data
+
+        $ zcat ../testdata/grouped_data.tsv.gz | head -n 5 | csvtk -t pretty
+        Group     Length   GC Content
+        Group A   97       57.73
+        Group A   95       49.47
+        Group A   97       49.48
+        Group A   100      51.00
+
+- plot histogram with data of the second column:
+ `csvtk -t plot hist ../testdata/grouped_data.tsv.gz -f 2`
+![histogram.png](testdata/figures/histogram.png)
+
+## plot box
+
+Usage
+
+```
+plot boxplot
+
+Usage:
+  csvtk plot box [flags]
+
+Flags:
+      --box-width float   box width
+      --horiz             horize box plot
+
+```
+
+Examples
+
+- plot boxplot with data of the "GC Content" (third) column,
+group information is the "Group" column.
+`csvtk -t plot box ../testdata/grouped_data.tsv.gz -g "Group" -f "GC Content"  --width 3`
+![boxplot.png](testdata/figures/boxplot.png)
+- plot horiz boxplot with data of the "Length" (second) column,
+group information is the "Group" column.
+`csvtk -t plot box ../testdata/grouped_data.tsv.gz -g "Group" -f "Length"  --height 3 --width 5 --horiz --title "Horiz box plot"`
+![boxplot2.png](testdata/figures/boxplot2.png)
+
+## plot line
+
+Usage
+
+```
+line plot
+
+Usage:
+  csvtk plot line [flags]
+
+Flags:
+  -x, --data-field-x string   column index or column name of X for command line
+  -y, --data-field-y string   column index or column name of Y for command line
+      --legend-left           locate legend along the left edge of the plot
+      --legend-top            locate legend along the top edge of the plot
+      --line-width float      line-width (default 1.5)
+
+```
+
+Examples
+
+- example data
+
+        $ head -n 5 ../testdata/xy.tsv
+        Group   X       Y
+        A       0       1
+        A       1       1.3
+        A       1.5     1.5
+        A       2.0     2
+
+- plot line plot with X-Y data
+`csvtk -t plot line ../testdata/xy.tsv -x X -y Y -g Group`
+![lineplot.png](testdata/figures/lineplot.png)
 
 
 

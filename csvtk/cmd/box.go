@@ -23,20 +23,21 @@ package cmd
 import (
 	"fmt"
 	"runtime"
+	"sort"
 	"strconv"
 
 	"github.com/gonum/plot"
 	"github.com/gonum/plot/plotter"
-	"github.com/gonum/plot/plotutil"
 	"github.com/gonum/plot/vg"
+	"github.com/shenwei356/util/stringutil"
 	"github.com/spf13/cobra"
 )
 
-// histCmd represents the hist command
-var histCmd = &cobra.Command{
-	Use:   "hist",
-	Short: "plot histogram",
-	Long: `plot histogram
+// boxCmd represents the box command
+var boxCmd = &cobra.Command{
+	Use:   "box",
+	Short: "plot boxplot",
+	Long: `plot boxplot
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -54,32 +55,24 @@ var histCmd = &cobra.Command{
 
 		// =======================================
 
-		if plotConfig.groupFieldStr != "" {
-			log.Warning("flag -g (--group-field) ignored for command hist")
-		}
-		if plotConfig.ylab == "" {
-			plotConfig.ylab = "Count"
-		}
+		horiz := getFlagBool(cmd, "horiz")
+		w := vg.Length(getFlagNonNegativeFloat64(cmd, "box-width"))
+
 		if config.OutFile == "-" {
-			config.OutFile = "histogram.png"
+			config.OutFile = "boxplot.png"
 		}
 		if plotConfig.title == "" {
-			plotConfig.title = "Histogram"
-		}
-		if plotConfig.xlab == "" && plotConfig.groupFieldStr == "" && len(headerRow) > 0 {
-			plotConfig.xlab = headerRow[0]
+			plotConfig.title = "Box plot"
 		}
 
-		bins := getFlagPositiveInt(cmd, "bins")
-		colorIndex := getFlagPositiveInt(cmd, "color-index")
-		if colorIndex > 7 {
-			checkError(fmt.Errorf("unsupported color index"))
-		}
-
-		v := make(plotter.Values, len(data))
+		groups := make(map[string]plotter.Values)
+		groupOrderMap := make(map[string]int)
 		var f float64
 		var err error
-		for i, d := range data {
+		var ok bool
+		var order int
+		var groupName string
+		for _, d := range data {
 			f, err = strconv.ParseFloat(d[0], 64)
 			if err != nil {
 				if len(headerRow) > 0 {
@@ -88,7 +81,24 @@ var histCmd = &cobra.Command{
 					checkError(fmt.Errorf("fail to parse data: %s at column: %d. please choose the right column by flag -f (--data-field)", d[0], fields[0]))
 				}
 			}
-			v[i] = f
+			if len(d) > 1 {
+				groupName = d[1]
+			} else {
+				if len(headerRow) > 0 {
+					groupName = headerRow[0]
+				} else {
+					groupName = ""
+				}
+			}
+			if _, ok = groups[groupName]; !ok {
+				groups[groupName] = make(plotter.Values, 0)
+			}
+			groups[groupName] = append(groups[groupName], f)
+
+			if _, ok = groupOrderMap[groupName]; !ok {
+				groupOrderMap[groupName] = order
+				order++
+			}
 		}
 
 		p, err := plot.New()
@@ -96,14 +106,63 @@ var histCmd = &cobra.Command{
 			checkError(err)
 		}
 
-		h, err := plotter.NewHist(v, bins)
-		if err != nil {
-			checkError(err)
+		var groupOrders []stringutil.StringCount
+		for g := range groupOrderMap {
+			groupOrders = append(groupOrders, stringutil.StringCount{Key: g, Count: groupOrderMap[g]})
+		}
+		sort.Sort(stringutil.StringCountList(groupOrders))
+
+		if !horiz {
+			if w == 0 {
+				w = vg.Points(float64(plotConfig.width*vg.Inch) / float64(len(groupOrders)) / 2.5)
+			}
+		} else {
+			if w == 0 {
+				w = vg.Points(float64(plotConfig.height*vg.Inch) / float64(len(groupOrders)) / 2.5)
+			}
 		}
 
-		// h.Normalize(1)
-		h.FillColor = plotutil.Color(colorIndex - 1)
-		p.Add(h)
+		groupNames := make([]string, len(groupOrders))
+		for i, group := range groupOrders {
+			groupNames[i] = group.Key
+			b, err := plotter.NewBoxPlot(w, float64(i), groups[group.Key])
+			checkError(err)
+			if horiz {
+				b.Horizontal = true
+			}
+			p.Add(b)
+		}
+
+		if !horiz {
+			p.NominalX(groupNames...)
+			// p.HideX()
+		} else {
+			p.NominalY(groupNames...)
+			// p.HideY()
+		}
+		if !horiz {
+			if plotConfig.ylab == "" {
+				if len(headerRow) > 0 {
+					plotConfig.ylab = headerRow[0]
+				} else {
+					plotConfig.ylab = "Values"
+				}
+			}
+			if plotConfig.xlab == "" {
+				if len(headerRow) > 0 {
+					plotConfig.xlab = headerRow[1]
+				} else {
+					plotConfig.xlab = "Groups"
+				}
+			}
+		} else {
+			if plotConfig.xlab == "" {
+				plotConfig.xlab = "Values"
+			}
+			if plotConfig.ylab == "" && plotConfig.groupFieldStr != "" && len(headerRow) > 0 {
+				plotConfig.ylab = headerRow[0]
+			}
+		}
 
 		p.Title.Text = plotConfig.title
 		p.Title.TextStyle.Font.Size = plotConfig.titleSize
@@ -117,16 +176,16 @@ var histCmd = &cobra.Command{
 		p.Y.Tick.Width = plotConfig.tickWidth
 
 		if plotConfig.xminStr != "" {
-			p.X.Min = plotConfig.xmin
+			log.Warning("flag --x-min ignored for command box")
 		}
 		if plotConfig.xmaxStr != "" {
-			p.X.Max = plotConfig.xmax
+			log.Warning("flag --x-max ignored for command box")
 		}
 		if plotConfig.yminStr != "" {
-			p.Y.Min = plotConfig.ymin
+			log.Warning("flag --y-min ignored for command box")
 		}
 		if plotConfig.ymaxStr != "" {
-			p.Y.Max = plotConfig.ymax
+			log.Warning("flag --y-max ignored for command box")
 		}
 
 		// Save the plot to a PNG file.
@@ -138,7 +197,8 @@ var histCmd = &cobra.Command{
 }
 
 func init() {
-	plotCmd.AddCommand(histCmd)
-	histCmd.Flags().IntP("bins", "", 50, `number of bins`)
-	histCmd.Flags().IntP("color-index", "", 1, `color index, 1-7`)
+	plotCmd.AddCommand(boxCmd)
+
+	boxCmd.Flags().Float64P("box-width", "", 0, "box width")
+	boxCmd.Flags().BoolP("horiz", "", false, "horize box plot")
 }
