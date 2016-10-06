@@ -6,14 +6,12 @@
 
 ## Current Version
 
-[csvtk v0.3.8](https://github.com/shenwei356/csvtk/releases/tag/v0.3.8)
+[csvtk v0.3.8.1](https://github.com/shenwei356/csvtk/releases/tag/v0.3.8.1)
 
-- new feature: `csvtk cut` supports ordered fields output. e.g., `csvtk cut -f 2,1`
-  outputs the 2nd column in front of 1th column.
-- new commands: `csvtk plot` can plot three types of plots by subcommands:
-    - `csvtk plot hist`: histogram
-    - `csvtk plot box`: boxplot
-    - `csvtk plot line`: line plot and scatter plot
+- fix bug of flag parsing library [pflag](https://github.com/spf13/pflag),
+ [detail](https://github.com/spf13/pflag/pull/98).
+ The bug affected the `csvtk grep -r -p`, when value of `-p` contain "[" and "]"
+ at the beginning or end, they are wrongly parsed.
 
 Links:
 
@@ -61,6 +59,13 @@ For Go developer, just one command:
 
 ## Previous Versions
 
+- [csvtk v0.3.8](https://github.com/shenwei356/csvtk/releases/tag/v0.3.8)
+    - new feature: `csvtk cut` supports ordered fields output. e.g., `csvtk cut -f 2,1`
+      outputs the 2nd column in front of 1th column.
+    - new commands: `csvtk plot` can plot three types of plots by subcommands:
+        - `csvtk plot hist`: histogram
+        - `csvtk plot box`: boxplot
+        - `csvtk plot line`: line plot and scatter plot
 - [csvtk v0.3.7](https://github.com/shenwei356/csvtk/releases/tag/v0.3.7)
     - fix a serious bug of using negative field of column name, e.g. `-f "-id"`
 - [csvtk v0.3.6](https://github.com/shenwei356/csvtk/releases/tag/v0.3.6)

@@ -27,10 +27,10 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/shenwei356/xopen"
 	"github.com/fatih/color"
 	"github.com/mattn/go-colorable"
 	"github.com/shenwei356/breader"
+	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
 )
 
@@ -244,7 +244,6 @@ var grepCmd = &cobra.Command{
 					for _, f := range fields {
 						target = record[f-1]
 						hitOne = false
-
 						if useRegexp {
 							for _, re := range patternsMap {
 								if re.MatchString(target) {
