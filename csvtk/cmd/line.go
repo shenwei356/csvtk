@@ -23,6 +23,7 @@ package cmd
 import (
 	"fmt"
 	"runtime"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -30,6 +31,7 @@ import (
 	"github.com/gonum/plot/plotter"
 	"github.com/gonum/plot/plotutil"
 	"github.com/gonum/plot/vg"
+	"github.com/shenwei356/util/stringutil"
 	"github.com/spf13/cobra"
 )
 
@@ -53,6 +55,11 @@ var lineCmd = &cobra.Command{
 		lineWidth := vg.Points(getFlagPositiveFloat64(cmd, "line-width"))
 		pointSize := vg.Length(getFlagPositiveFloat64(cmd, "point-size"))
 		scatter := getFlagBool(cmd, "scatter")
+		colorIndex := getFlagPositiveInt(cmd, "color-index")
+		if colorIndex > 7 {
+			checkError(fmt.Errorf("unsupported color index"))
+		}
+
 		dataFieldXStr := getFlagString(cmd, "data-field-x")
 		if dataFieldXStr == "" {
 			checkError(fmt.Errorf("flag -x (--data-field-x) needed"))
@@ -61,7 +68,7 @@ var lineCmd = &cobra.Command{
 			checkError(fmt.Errorf("only one field allowed for flag -x (--data-field-x)"))
 		}
 		if dataFieldXStr[0] == '-' {
-			checkError(fmt.Errorf("unselect not allowed for flag -x (--data-field-x)"))
+			checkError(fmt.Errorf("unselect not allowed for flag -y (--data-field-x)"))
 		}
 
 		dataFieldYStr := getFlagString(cmd, "data-field-y")
@@ -95,15 +102,17 @@ var lineCmd = &cobra.Command{
 
 		if config.OutFile == "-" {
 			if scatter {
-				config.OutFile = "scater.png"
+				config.OutFile = "scatter.png"
 			} else {
 				config.OutFile = "lineplot.png"
 			}
 		}
 		groups := make(map[string]plotter.XYs)
+		groupOrderMap := make(map[string]int)
 		var x, y float64
 		var err error
 		var ok bool
+		var order int
 		var groupName string
 		for _, d := range data {
 			x, err = strconv.ParseFloat(d[0], 64)
@@ -132,6 +141,10 @@ var lineCmd = &cobra.Command{
 				groups[groupName] = make(plotter.XYs, 0)
 			}
 			groups[groupName] = append(groups[groupName], struct{ X, Y float64 }{X: x, Y: y})
+			if _, ok = groupOrderMap[groupName]; !ok {
+				groupOrderMap[groupName] = order
+				order++
+			}
 		}
 
 		p, err := plot.New()
@@ -139,8 +152,16 @@ var lineCmd = &cobra.Command{
 			checkError(err)
 		}
 
-		i := 0
-		for g, v := range groups {
+		var groupOrders []stringutil.StringCount
+		for g := range groupOrderMap {
+			groupOrders = append(groupOrders, stringutil.StringCount{Key: g, Count: groupOrderMap[g]})
+		}
+		sort.Sort(stringutil.StringCountList(groupOrders))
+
+		i := colorIndex - 1
+		for _, gor := range groupOrders {
+			v := groups[gor.Key]
+			g := gor.Key
 			if !scatter {
 				lines, points, err := plotter.NewLinePoints(v)
 				checkError(err)
@@ -230,4 +251,5 @@ func init() {
 	lineCmd.Flags().BoolP("scatter", "", false, "only plot points")
 	lineCmd.Flags().Float64P("line-width", "", 1.5, "line width")
 	lineCmd.Flags().Float64P("point-size", "", 3, "point size")
+	lineCmd.Flags().IntP("color-index", "", 1, `color index, 1-7`)
 }
