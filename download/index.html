@@ -163,16 +163,12 @@
  executable binary files <strong>for most popular operating system</strong> are freely available
   in <a href="https://github.com/shenwei356/csvtk/releases">release</a> page.</p>
 <h2 id="current-version">Current Version</h2>
-<p><a href="https://github.com/shenwei356/csvtk/releases/tag/v0.3.8">csvtk v0.3.8</a></p>
+<p><a href="https://github.com/shenwei356/csvtk/releases/tag/v0.3.8.1">csvtk v0.3.8.1</a></p>
 <ul>
-<li>new feature: <code>csvtk cut</code> supports ordered fields output. e.g., <code>csvtk cut -f 2,1</code>
-  outputs the 2nd column in front of 1th column.</li>
-<li>new commands: <code>csvtk plot</code> can plot three types of plots by subcommands:<ul>
-<li><code>csvtk plot hist</code>: histogram</li>
-<li><code>csvtk plot box</code>: boxplot</li>
-<li><code>csvtk plot line</code>: line plot and scatter plot</li>
-</ul>
-</li>
+<li>fix bug of flag parsing library <a href="https://github.com/spf13/pflag">pflag</a>,
+ <a href="https://github.com/spf13/pflag/pull/98">detail</a>.
+ The bug affected the <code>csvtk grep -r -p</code>, when value of <code>-p</code> contain "[" and "]"
+ at the beginning or end, they are wrongly parsed.</li>
 </ul>
 <p>Links:</p>
 <ul>
@@ -229,6 +225,17 @@ And then:</p>
 </code></pre>
 <h2 id="previous-versions">Previous Versions</h2>
 <ul>
+<li><a href="https://github.com/shenwei356/csvtk/releases/tag/v0.3.8">csvtk v0.3.8</a><ul>
+<li>new feature: <code>csvtk cut</code> supports ordered fields output. e.g., <code>csvtk cut -f 2,1</code>
+  outputs the 2nd column in front of 1th column.</li>
+<li>new commands: <code>csvtk plot</code> can plot three types of plots by subcommands:<ul>
+<li><code>csvtk plot hist</code>: histogram</li>
+<li><code>csvtk plot box</code>: boxplot</li>
+<li><code>csvtk plot line</code>: line plot and scatter plot</li>
+</ul>
+</li>
+</ul>
+</li>
 <li><a href="https://github.com/shenwei356/csvtk/releases/tag/v0.3.7">csvtk v0.3.7</a><ul>
 <li>fix a serious bug of using negative field of column name, e.g. <code>-f "-id"</code></li>
 </ul>
