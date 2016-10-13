@@ -88,7 +88,7 @@ var sortCmd = &cobra.Command{
 		}
 
 		file := files[0]
-		headerRow, _, _, _, data := parseCSVfile(cmd, config,
+		_, _, _, headerRow, data := parseCSVfile(cmd, config,
 			file, fieldsStr, fuzzyFields)
 		if len(data) == 0 {
 			checkError(fmt.Errorf("no data to sort"))
