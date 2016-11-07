@@ -19,7 +19,7 @@ Usage
 ```
 Another cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.3.8
+Version: 0.4.1
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -518,11 +518,6 @@ Usage:
   csvtk rename2 [flags]
 
 Flags:
-  -f, --fields string        select only these fields. e.g -f 1,2 or -f columnA,columnB
-  -F, --fuzzy-fields         using fuzzy fileds, e.g. *name or id123*
-  -i, --ignore-case          ignore case
-  -p, --pattern string       search regular expression
-  -r, --replacement string   renamement. supporting capture variables.  e.g. $1 represents the text of the first submatch. ATTENTION: use SINGLE quote NOT double quotes in *nix OS or use the \ escape character.
 
 ```
 
@@ -563,9 +558,11 @@ Flags:
   -f, --fields string        select only these fields. e.g -f 1,2 or -f columnA,columnB (default "1")
   -F, --fuzzy-fields         using fuzzy fileds, e.g. *name or id123*
   -i, --ignore-case          ignore case
+  -K, --keep-key             keep the key as value when no value found for the key
   -k, --kv-file string       tab-delimited key-value file for replacing key with value when using "{kv}" in -r (--replacement)
   -p, --pattern string       search regular expression
   -r, --replacement string   replacement. supporting capture variables.  e.g. $1 represents the text of the first submatch. ATTENTION: use SINGLE quote NOT double quotes in *nix OS or use the \ escape character.
+
 
 ```
 

@@ -75,7 +75,7 @@ and also easy to integrated into analysis pipelines**.
 
 [Download Page](https://github.com/shenwei356/csvtk/releases)
 
-`csvtk` is implemented in [Golang](https://golang.org/) programming language,
+`csvtk` is implemented in [Go](https://golang.org/) programming language,
  executable binary files **for most popular operating systems** are freely available
   in [release](https://github.com/shenwei356/csvtk/releases) page.
 

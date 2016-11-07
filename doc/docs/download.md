@@ -1,34 +1,43 @@
 # Download
 
-`csvtk` is implemented in [Golang](https://golang.org/) programming language,
+`csvtk` is implemented in [Go](https://golang.org/) programming language,
  executable binary files **for most popular operating system** are freely available
   in [release](https://github.com/shenwei356/csvtk/releases) page.
 
 ## Current Version
 
-[csvtk v0.3.9](https://github.com/shenwei356/csvtk/releases/tag/v0.3.9)
+[csvtk v0.4.1](https://github.com/shenwei356/csvtk/releases/tag/v0.4.1)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.4.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.4.1)
 
-- fix bug: header row incomplete in `csvtk sort` result
+- Nothing changed. Just fix the links due to inappropriate deployment of v0.4.0
 
 Links:
 
 - **Linux**
-    - [![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_386.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.3.9/csvtk_linux_386.tar.gz)
-    - [![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_amd64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.3.9/csvtk_linux_amd64.tar.gz)
-    - [![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_arm.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.3.9/csvtk_linux_arm.tar.gz)
-    - [![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_arm64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.3.9/csvtk_linux_arm64.tar.gz)
+    - [![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_386.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.4.0/csvtk_linux_386.tar.gz)
+    [csvtk_linux_386.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.4.0/csvtk_linux_386.tar.gz)
+    - [![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_amd64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.4.0/csvtk_linux_amd64.tar.gz)
+    [csvtk_linux_amd64.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.4.0/csvtk_linux_amd64.tar.gz)
+    - [![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_arm.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.4.0/csvtk_linux_arm.tar.gz)
+    [csvtk_linux_arm.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.4.0/csvtk_linux_arm.tar.gz)
+    - [![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_arm64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.4.0/csvtk_linux_arm64.tar.gz)
+    [csvtk_linux_arm64.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.4.0/csvtk_linux_arm64.tar.gz)
 - **Mac OS X**
-    - [![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_darwin_386.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.3.9/csvtk_darwin_386.tar.gz)
-    - [![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_darwin_amd64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.3.9/csvtk_darwin_amd64.tar.gz)
+    - [![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_darwin_386.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.4.0/csvtk_darwin_386.tar.gz)
+      [csvtk_darwin_386.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.4.0/csvtk_darwin_386.tar.gz)
+    - [![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_darwin_amd64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.4.0/csvtk_darwin_amd64.tar.gz)
+      [csvtk_darwin_amd64.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.4.0/csvtk_darwin_amd64.tar.gz)
 - **Windows**
-    - [![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_windows_386.exe.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.3.9/csvtk_windows_386.exe.tar.gz)
-    - [![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_windows_amd64.exe.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.3.9/csvtk_windows_amd64.exe.tar.gz)
+    - [![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_windows_386.exe.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.4.0/csvtk_windows_386.exe.tar.gz)
+    [csvtk_windows_386.exe.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.4.0/csvtk_windows_386.exe.tar.gz)
+    - [![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_windows_amd64.exe.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.4.0/csvtk_windows_amd64.exe.tar.gz)
+    [csvtk_windows_amd64.exe.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.4.0/csvtk_windows_amd64.exe.tar.gz)
 
 ## Installation
 
 [Download Page](https://github.com/shenwei356/csvtk/releases)
 
-`csvtk` is implemented in [Golang](https://golang.org/) programming language,
+`csvtk` is implemented in [Go](https://golang.org/) programming language,
  executable binary files **for most popular operating systems** are freely available
   in [release](https://github.com/shenwei356/csvtk/releases) page.
 
@@ -56,12 +65,21 @@ For Go developer, just one command:
 
 ## Previous Versions
 
+- [csvtk v0.4.0](https://github.com/shenwei356/csvtk/releases/tag/v0.4.0)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.4.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.4.0)
+    - add flag for `csvtk replace`: `-K` (`--keep-key`) keep the key as value when
+    no value found for the key. This is open in default in previous versions.
+- [csvtk v0.3.9](https://github.com/shenwei356/csvtk/releases/tag/v0.3.9)
+  [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.3.9/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.4.0)
+    - fix bug: header row incomplete in `csvtk sort` result
 - [csvtk v0.3.8.1](https://github.com/shenwei356/csvtk/releases/tag/v0.3.8.1)
+  [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.3.8.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.3.8.1)
     - fix bug of flag parsing library [pflag](https://github.com/spf13/pflag),
     [detail](https://github.com/spf13/pflag/pull/98).
     The bug affected the `csvtk grep -r -p`, when value of `-p` contain "[" and "]"
     at the beginning or end, they are wrongly parsed.
 - [csvtk v0.3.8](https://github.com/shenwei356/csvtk/releases/tag/v0.3.8)
+  [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.3.8/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.3.8)
     - new feature: `csvtk cut` supports ordered fields output. e.g., `csvtk cut -f 2,1`
       outputs the 2nd column in front of 1th column.
     - new commands: `csvtk plot` can plot three types of plots by subcommands:
@@ -69,54 +87,74 @@ For Go developer, just one command:
         - `csvtk plot box`: boxplot
         - `csvtk plot line`: line plot and scatter plot
 - [csvtk v0.3.7](https://github.com/shenwei356/csvtk/releases/tag/v0.3.7)
+  [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.3.7/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.3.7)
     - fix a serious bug of using negative field of column name, e.g. `-f "-id"`
 - [csvtk v0.3.6](https://github.com/shenwei356/csvtk/releases/tag/v0.3.6)
+  [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.3.6/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.3.6)
     - `csvtk replace` support replacement symbols `{nr}` (record number)
       and `{kv}` (corresponding value of the key ($1) by key-value file)
-- [csvtk v0.3.5.2](https://github.com/shenwei356/csvtk/releases/tag/v0.3.6)
+- [csvtk v0.3.5.2](https://github.com/shenwei356/csvtk/releases/tag/v0.5.2)
+  [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.3.5.2/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.3.5.2)
     - add flag `--fill` for `csvtk join`, so we can fill the unmatched data
     - fix typo
 - [csvtk v0.3.5.1](https://github.com/shenwei356/csvtk/releases/tag/v0.3.5.1)
+  [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.3.5.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.3.5.1)
     - fix minor bug of reading lines ending with `\r\n` from a dependency package
 - [csvtk v0.3.5](https://github.com/shenwei356/csvtk/releases/tag/v0.3.5)
+  [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.3.5/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.3.5)
     - fix minor bug of `csv2md`
     - add subcommand `version` which could check for update
 - [csvtk v0.3.4](https://github.com/shenwei356/csvtk/releases/tag/v0.3.4)
+  [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.3.4/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.3.4)
     - fix bug of `csvtk replace` that head row should not be edited.
 - [csvtk v0.3.3](https://github.com/shenwei356/csvtk/releases/tag/v0.3.3)
+  [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.3.3/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.3.3)
     - fix bug of `csvtk grep -t -P`
 - [csvtk v0.3.2](https://github.com/shenwei356/csvtk/releases/tag/v0.3.2)
+  [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.3.2/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.3.2)
     - fix bug of `inter`
 - [csvtk v0.3.1](https://github.com/shenwei356/csvtk/releases/tag/v0.3.1)
+  [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.3.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.3.1)
     - add support of search multiple fields for `grep`
 - [csvtk v0.3](https://github.com/shenwei356/csvtk/releases/tag/v0.3)
+  [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.3/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.3)
     - add subcommand `csv2md`
 - [csvtk v0.2.9](https://github.com/shenwei356/csvtk/releases/tag/v0.2.9)
+  [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.2.9/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.2.9)
     - add more flags to subcommand `pretty`
     - fix bug of `csvtk cut -n`
     - add subcommand `filter`
 - [csvtk v0.2.8](https://github.com/shenwei356/csvtk/releases/tag/v0.2.8)
+  [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.2.8/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.2.8)
     - add subcommand `pretty` -- convert CSV to readable aligned table
 - [csvtk v0.2.7](https://github.com/shenwei356/csvtk/releases/tag/v0.2.7)
+  [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.2.7/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.2.7)
     - fix highlight failing in windows
 - [csvtk v0.2.6](https://github.com/shenwei356/csvtk/releases/tag/v0.2.6)
+  [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.2.6/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.2.6)
     - fix one error message of `grep`
     - highlight matched fields in result of `grep`
 - [csvtk v0.2.5](https://github.com/shenwei356/csvtk/releases/tag/v0.2.5)
+  [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.2.5/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.2.5)
     - fix bug of `stat` that failed to considerate files with header row
     - add subcommand `stat2` - summary of selected number fields
     - make the output of `stat` prettier
 - [csvtk v0.2.4](https://github.com/shenwei356/csvtk/releases/tag/v0.2.4)
+  [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.2.4/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.2.4)
     - fix bug of handling comment lines
     - add some notes before using csvtk
 - [csvtk v0.2.3](https://github.com/shenwei356/csvtk/releases/tag/v0.2.3)
+  [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.2.3/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.2.3)
     - add flag `--colnames` to `cut`
     - flag `-f` (`--fields`) of `join` supports single value now
 - [csvtk v0.2.2](https://github.com/shenwei356/csvtk/releases/tag/v0.2.2)
+  [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.2.2/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.2.2)
     - add flag `--keep-unmathed` to `join`
 - [csvtk v0.2](https://github.com/shenwei356/csvtk/releases/tag/v0.2)
+  [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.2/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.2)
     - finish almost functions
 - [csvtk v0.2.1](https://github.com/shenwei356/csvtk/releases/tag/v0.2.1)
+  [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.2.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.2.1)
     - fix bug of `mutate`
 
 

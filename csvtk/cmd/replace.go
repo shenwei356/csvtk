@@ -82,6 +82,7 @@ Special repalcement symbols:
 		checkError(err)
 
 		kvFile := getFlagString(cmd, "kv-file")
+		keepKey := getFlagBool(cmd, "keep-key")
 
 		var replaceWithNR bool
 		if reNR.MatchString(replacement) {
@@ -265,8 +266,10 @@ Special repalcement symbols:
 									}
 									if _, ok = kvs[k]; ok {
 										r = reKV.ReplaceAllString(r, kvs[k])
-									} else {
+									} else if keepKey {
 										r = reKV.ReplaceAllString(r, found[1])
+									} else {
+										r = reKV.ReplaceAllString(r, "")
 									}
 								}
 							}
@@ -296,6 +299,7 @@ func init() {
 	replaceCmd.Flags().BoolP("ignore-case", "i", false, "ignore case")
 	replaceCmd.Flags().StringP("kv-file", "k", "",
 		`tab-delimited key-value file for replacing key with value when using "{kv}" in -r (--replacement)`)
+	replaceCmd.Flags().BoolP("keep-key", "K", false, "keep the key as value when no value found for the key")
 }
 
 var reNR = regexp.MustCompile(`\{(NR|nr)\}`)
