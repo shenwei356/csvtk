@@ -82,6 +82,7 @@ var grepCmd = &cobra.Command{
 		ignoreCase := getFlagBool(cmd, "ignore-case")
 		useRegexp := getFlagBool(cmd, "use-regexp")
 		invert := getFlagBool(cmd, "invert")
+		verbose := getFlagBool(cmd, "verbose")
 
 		patternsMap := make(map[string]*regexp.Regexp)
 		for _, pattern := range patterns {
@@ -169,6 +170,7 @@ var grepCmd = &cobra.Command{
 			checkFields := true
 			var target string
 			var hitOne, hit bool
+			var n int64
 
 			for chunk := range csvReader.Ch {
 				checkError(chunk.Err)
@@ -238,6 +240,12 @@ var grepCmd = &cobra.Command{
 						}
 
 						checkFields = false
+					}
+
+					n++
+
+					if verbose && n%1000000 == 0 {
+						log.Infof("processed records: %d", n)
 					}
 
 					hit = false
@@ -322,4 +330,5 @@ func init() {
 	grepCmd.Flags().BoolP("use-regexp", "r", false, `patterns are regular expression`)
 	grepCmd.Flags().BoolP("invert", "v", false, `invert match`)
 	grepCmd.Flags().BoolP("no-highlight", "n", false, `no highlight`)
+	grepCmd.Flags().BoolP("verbose", "", false, `verbose output`)
 }
