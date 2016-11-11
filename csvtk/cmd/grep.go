@@ -26,6 +26,7 @@ import (
 	"regexp"
 	"runtime"
 	"strings"
+	"sync"
 
 	"github.com/fatih/color"
 	"github.com/mattn/go-colorable"
@@ -111,7 +112,7 @@ var grepCmd = &cobra.Command{
 				}
 				return line, true, nil
 			}
-			reader, err := breader.NewBufferedReader(patternFile, runtime.NumCPU(), 1000, fn)
+			reader, err := breader.NewBufferedReader(patternFile, config.NumCPUs, config.ChunkSize, fn)
 			checkError(err)
 			for chunk := range reader.Ch {
 				checkError(chunk.Err)
@@ -168,9 +169,19 @@ var grepCmd = &cobra.Command{
 			var HeaderRow []string
 
 			checkFields := true
-			var target string
-			var hitOne, hit bool
 			var n int64
+
+			ch := make(chan []string, config.NumCPUs)
+			done := make(chan int)
+			go func() {
+				for record := range ch {
+					checkError(writer.Write(record))
+				}
+				done <- 1
+			}()
+
+			var wg sync.WaitGroup
+			tokens := make(chan int, config.NumCPUs)
 
 			for chunk := range csvReader.Ch {
 				checkError(chunk.Err)
@@ -248,70 +259,84 @@ var grepCmd = &cobra.Command{
 						log.Infof("processed records: %d", n)
 					}
 
-					hit = false
-					for _, f := range fields {
-						target = record[f-1]
-						hitOne = false
-						if useRegexp {
-							for _, re := range patternsMap {
-								if re.MatchString(target) {
-									hitOne = true
-									break
-								}
-							}
-						} else {
-							k := target
-							if ignoreCase {
-								k = strings.ToLower(k)
-							}
-							if _, ok := patternsMap[k]; ok {
-								hitOne = true
-							}
-						}
+					tokens <- 1
+					wg.Add(1)
+					go func(fields []int, record []string) {
+						defer func() {
+							wg.Done()
+							<-tokens
+						}()
 
-						if hitOne {
-							hit = true
-							break
-						}
-					}
-
-					if invert {
-						if hit {
-							continue
-						}
-					} else {
-						if !hit {
-							continue
-						}
-					}
-
-					if !noHighlight {
-						record2 := make([]string, len(record)) //with color
-						for i, c := range record {
-							if _, ok := fieldsMap[i+1]; (!negativeFields && ok) || (negativeFields && !ok) {
-								if useRegexp {
-									v := ""
-									for _, re := range patternsMap {
-										if re.MatchString(record[i]) {
-											v = re.ReplaceAllString(c, redText(re.FindAllString(c, 1)[0]))
-											break
-										} else {
-											v = c
-										}
+						var target string
+						var hitOne, hit bool
+						for _, f := range fields {
+							target = record[f-1]
+							hitOne = false
+							if useRegexp {
+								for _, re := range patternsMap {
+									if re.MatchString(target) {
+										hitOne = true
+										break
 									}
-									record2[i] = v
-								} else {
-									record2[i] = redText(c)
 								}
 							} else {
-								record2[i] = c
+								k := target
+								if ignoreCase {
+									k = strings.ToLower(k)
+								}
+								if _, ok := patternsMap[k]; ok {
+									hitOne = true
+								}
+							}
+
+							if hitOne {
+								hit = true
+								break
 							}
 						}
-						record = record2
-					}
-					checkError(writer.Write(record))
+
+						if invert {
+							if hit {
+								return
+							}
+						} else {
+							if !hit {
+								return
+							}
+						}
+
+						if !noHighlight {
+							record2 := make([]string, len(record)) //with color
+							for i, c := range record {
+								if _, ok := fieldsMap[i+1]; (!negativeFields && ok) || (negativeFields && !ok) {
+									if useRegexp {
+										v := ""
+										for _, re := range patternsMap {
+											if re.MatchString(record[i]) {
+												v = re.ReplaceAllString(c, redText(re.FindAllString(c, 1)[0]))
+												break
+											} else {
+												v = c
+											}
+										}
+										record2[i] = v
+									} else {
+										record2[i] = redText(c)
+									}
+								} else {
+									record2[i] = c
+								}
+							}
+							record = record2
+						}
+
+						ch <- record
+					}(fields, record)
 				}
 			}
+			wg.Wait()
+			close(ch)
+			<-done
 		}
 		writer.Flush()
 		checkError(writer.Error())
