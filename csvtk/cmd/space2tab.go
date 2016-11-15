@@ -25,9 +25,9 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/shenwei356/xopen"
 	"github.com/shenwei356/breader"
 	"github.com/shenwei356/util/stringutil"
+	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
 )
 

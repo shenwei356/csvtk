@@ -27,11 +27,11 @@ import (
 	"sort"
 	"strconv"
 
-	"github.com/shenwei356/xopen"
 	"github.com/dustin/go-humanize"
 	"github.com/gonum/floats"
 	"github.com/gonum/stat"
 	"github.com/shenwei356/util/math"
+	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
 	"github.com/tatsushid/go-prettytable"
 )

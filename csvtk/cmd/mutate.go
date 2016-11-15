@@ -223,5 +223,5 @@ func init() {
 	mutateCmd.Flags().StringP("pattern", "p", "^(.+)$", `search regular expression with capture bracket. e.g.`)
 	mutateCmd.Flags().StringP("name", "n", "", `new column name`)
 	mutateCmd.Flags().BoolP("ignore-case", "i", false, "ignore case")
-	mutateCmd.Flags().BoolP("na", "", false, "for unmatched data, use blank instead of orginal data")
+	mutateCmd.Flags().BoolP("na", "", false, "for unmatched data, use blank instead of original data")
 }

@@ -24,8 +24,8 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/shenwei356/xopen"
 	"github.com/shenwei356/multicorecsv"
+	"github.com/shenwei356/xopen"
 )
 
 // CSVRecordsChunk is chunk of CSV records

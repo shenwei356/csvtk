@@ -52,7 +52,7 @@ Or use the \ escape character.
 
 more on: http://shenwei356.github.io/csvtk/usage/#replace
 
-Special repalcement symbols:
+Special replacement symbols:
 
 	{nr}	Record number, starting from 1
 	{kv}	Corresponding value of the key ($1) by key-value file
@@ -97,7 +97,7 @@ Special repalcement symbols:
 				checkError(fmt.Errorf(`value of -p (--pattern) must contains "(" and ")" to capture data which is used specify the KEY`))
 			}
 			if kvFile == "" {
-				checkError(fmt.Errorf(`since repalcement symbol "{kv}"/"{KV}" found in value of flag -r (--replacement), tab-delimited key-value file should be given by flag -k (--kv-file)`))
+				checkError(fmt.Errorf(`since replacement symbol "{kv}"/"{KV}" found in value of flag -r (--replacement), tab-delimited key-value file should be given by flag -k (--kv-file)`))
 			}
 			log.Infof("read key-value file: %s", kvFile)
 			var err error

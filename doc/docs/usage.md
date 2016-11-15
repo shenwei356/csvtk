@@ -473,7 +473,7 @@ Usage:
   csvtk join [flags]
 
 Flags:
-  -f, --fields string    Semicolon seperated key fields of all files, if given one, we think all the files have the same key columns. e.g -f 1;2 or -f A,B;C,D or -f id (default "1")
+  -f, --fields string    Semicolon separated key fields of all files, if given one, we think all the files have the same key columns. e.g -f 1;2 or -f A,B;C,D or -f id (default "1")
       --fill string      fill content for unmatched data
   -F, --fuzzy-fields     using fuzzy fileds, e.g. *name or id123*
   -i, --ignore-case      ignore case
@@ -603,7 +603,7 @@ Usage:
 Flags:
   -f, --fields string    select only these fields. e.g -f 1,2 or -f columnA,columnB (default "1")
   -i, --ignore-case      ignore case
-      --na               for unmatched data, use blank instead of orginal data
+      --na               for unmatched data, use blank instead of original data
   -n, --name string      new column name
   -p, --pattern string   search regular expression with capture bracket. e.g. (default "^(.+)$")
 

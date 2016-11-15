@@ -174,7 +174,7 @@ func getFlagStringSlice(cmd *cobra.Command, flag string) []string {
 	return value
 }
 
-// Config is the struct containing all gloabl flags
+// Config is the struct containing all global flags
 type Config struct {
 	ChunkSize int
 	NumCPUs   int

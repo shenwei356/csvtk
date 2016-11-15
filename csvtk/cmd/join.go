@@ -160,7 +160,7 @@ Multiple keys supported, but the orders are ignored.
 
 func init() {
 	RootCmd.AddCommand(joinCmd)
-	joinCmd.Flags().StringP("fields", "f", "1", "Semicolon seperated key fields of all files, "+
+	joinCmd.Flags().StringP("fields", "f", "1", "Semicolon separated key fields of all files, "+
 		"if given one, we think all the files have the same key columns. e.g -f 1;2 or -f A,B;C,D or -f id")
 	joinCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
 	joinCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fileds, e.g. *name or id123*`)

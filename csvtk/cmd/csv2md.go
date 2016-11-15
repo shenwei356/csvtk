@@ -149,7 +149,7 @@ var csv2mdCmd = &cobra.Command{
 		}
 		tbl.AddRow(record2...)
 		for _, record := range datas {
-			// have to do this stupid convertion
+			// have to do this stupid conversion
 			record2 := make([]interface{}, len(record))
 			for i, c := range record {
 				record2[i] = c
