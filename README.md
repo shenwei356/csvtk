@@ -37,7 +37,7 @@ and also easy to integrated into analysis pipelines**.
 -  `stat` summary of CSV file
 -  `stat2` summary of selected number fields
 
-**Format convertion**
+**Format conversion**
 
 -  `pretty` convert CSV to readable aligned table
 -  `csv2tab` convert CSV to tabular format
