@@ -46,16 +46,16 @@ executable file of your operating system,
 and uncompress it with `tar -zxvf *.tar.gz` command or other tools.
 And then:
 
-1. **For Linux-like systems**
+1. For Unix-like systems
     1. If you have root privilege simply copy it to `/usr/local/bin`:
 
             sudo cp csvtk /usr/local/bin/
 
-    1. Or add the directory of the executable file to environment variable
+    1. Or add the current directory of the executable file to environment variable
     `PATH`:
 
-            echo export PATH=\$PATH:/PATH/OF/csvtk >> ~/.bashrc
-
+            echo export PATH=\$PATH:\"$(pwd)\" >> ~/.bashrc
+            source ~/.bashrc
 
 1. **For windows**, just copy `csvtk.exe` to `C:\WINDOWS\system32`.
 

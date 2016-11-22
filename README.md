@@ -87,14 +87,18 @@ executable file of your operating system, and uncompress it with `tar -zxvf *.ta
 You can add the directory of the executable file to environment variable
 `PATH`, so you can run `csvtk` anywhere.
 
-1. For windows, the simplest way is copy it to `C:\WINDOWS\system32`.
+1. For Unix-like systems
+    1. If you have root privilege simply copy it to `/usr/local/bin`:
 
-2. For Linux, type:
+            sudo cp csvtk /usr/local/bin/
 
-        chmod a+x /PATH/OF/CSVTK/csvtk
-        echo export PATH=\$PATH:/PATH/OF/CSVTK >> ~/.bashrc
+    1. Or add the current directory of the executable file to environment variable
+    `PATH`:
 
-    or simply copy it to `/usr/local/bin`
+            echo export PATH=\$PATH:\"$(pwd)\" >> ~/.bashrc
+            source ~/.bashrc
+
+1. **For windows**, just copy `csvtk.exe` to `C:\WINDOWS\system32`.
 
 For Go developer, just one command:
 

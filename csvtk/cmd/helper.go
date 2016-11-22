@@ -51,7 +51,7 @@ func getFileList(args []string) []string {
 		files = append(files, "-")
 	} else {
 		for _, file := range files {
-			if file == "-" {
+			if isStdin(file) {
 				continue
 			}
 			if _, err := os.Stat(file); os.IsNotExist(err) {
@@ -590,3 +590,7 @@ type orderedFields []orderedField
 func (s orderedFields) Len() int           { return len(s) }
 func (s orderedFields) Less(i, j int) bool { return s[i].order < s[j].order }
 func (s orderedFields) Swap(i, j int)      { s[i], s[j] = s[j], s[i] }
+
+func isStdin(file string) bool {
+	return file == "-"
+}
