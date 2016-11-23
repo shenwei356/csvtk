@@ -37,8 +37,12 @@ var plotCmd = &cobra.Command{
 
 Notes:
 
-  1. File format is determined by the out file (-o/--out-file) suffix.
+  1. Output file can be set by flag -o/--out-file.
+  2. File format is determined by the out file suffix.
      Supported formats: eps, jpg|jpeg, pdf, png, svg, and tif|tiff
+  3. If flag -o/--out-file not set (default), image is written to stdout,
+     you can display the image by pipping to "display" command of Imagemagic
+     or just redirect to file.
 
 `,
 }
@@ -65,6 +69,9 @@ func init() {
 	plotCmd.PersistentFlags().IntP("label-size", "", 14, "label font size")
 	plotCmd.PersistentFlags().Float64P("axis-width", "", 1.5, "axis width")
 	plotCmd.PersistentFlags().Float64P("tick-width", "", 1.5, "axis tick width")
+
+	plotCmd.PersistentFlags().StringP("format", "", "png", `image format for stdout when flag -o/--out-file not given. available values: eps, jpg|jpeg, pdf, png, svg, and tif|tiff.`)
+
 }
 
 func getPlotConfigs(cmd *cobra.Command) *plotConfigs {
@@ -132,6 +139,13 @@ func getPlotConfigs(cmd *cobra.Command) *plotConfigs {
 		}
 	}
 
+	config.format = getFlagString(cmd, "format")
+	switch strings.ToLower(config.format) {
+	case "eps", "jpg", "jpeg", "pdf", "png", "svg", "tif", "tiff":
+	default:
+		checkError(fmt.Errorf("invalid image format. available format: eps, jpg|jpeg, pdf, png, svg, and tif|tiff"))
+	}
+
 	return config
 }
 
@@ -142,4 +156,5 @@ type plotConfigs struct {
 	width, height, axisWidth, tickWidth   vg.Length
 	xmin, xmax, ymin, ymax                float64
 	xminStr, xmaxStr, yminStr, ymaxStr    string
+	format                                string
 }

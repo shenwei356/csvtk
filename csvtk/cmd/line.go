@@ -22,6 +22,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 	"runtime"
 	"sort"
 	"strconv"
@@ -40,6 +41,15 @@ var lineCmd = &cobra.Command{
 	Use:   "line",
 	Short: "line plot and scatter plot",
 	Long: `line plot and scatter plot
+
+Notes:
+
+  1. Output file can be set by flag -o/--out-file.
+  2. File format is determined by the out file suffix.
+     Supported formats: eps, jpg|jpeg, pdf, png, svg, and tif|tiff
+  3. If flag -o/--out-file not set (default), image is written to stdout,
+     you can display the image by pipping to "display" command of Imagemagic
+     or just redirect to file.
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -100,13 +110,6 @@ var lineCmd = &cobra.Command{
 
 		// =======================================
 
-		if config.OutFile == "-" {
-			if scatter {
-				config.OutFile = "scatter.png"
-			} else {
-				config.OutFile = "lineplot.png"
-			}
-		}
 		groups := make(map[string]plotter.XYs)
 		groupOrderMap := make(map[string]int)
 		var x, y float64
@@ -232,10 +235,18 @@ var lineCmd = &cobra.Command{
 			p.Y.Max = plotConfig.ymax
 		}
 
-		// Save the plot to a PNG file.
-		if err := p.Save(plotConfig.width*vg.Inch,
-			plotConfig.height*vg.Inch, config.OutFile); err != nil {
+		// Save image
+		if isStdin(config.OutFile) {
+			fh, err := p.WriterTo(plotConfig.width*vg.Inch,
+				plotConfig.height*vg.Inch,
+				plotConfig.format)
 			checkError(err)
+			_, err = fh.WriteTo(os.Stdout)
+			checkError(err)
+		} else {
+			checkError(p.Save(plotConfig.width*vg.Inch,
+				plotConfig.height*vg.Inch,
+				config.OutFile))
 		}
 	},
 }

@@ -55,8 +55,8 @@ more on: http://shenwei356.github.io/csvtk/usage/#replace
 Special replacement symbols:
 
 	{nr}	Record number, starting from 1
-	{kv}	Corresponding value of the key ($1) by key-value file
-
+	{kv}	Corresponding value of the key (captured variable $n) by key-value file,
+	        n can be specified by flag -I (--key-capt-idx) (default: 1)
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -83,6 +83,8 @@ Special replacement symbols:
 
 		kvFile := getFlagString(cmd, "kv-file")
 		keepKey := getFlagBool(cmd, "keep-key")
+		keyCaptIdx := getFlagPositiveInt(cmd, "key-capt-idx")
+		keyMissRepl := getFlagString(cmd, "key-miss-repl")
 
 		var replaceWithNR bool
 		if reNR.MatchString(replacement) {
@@ -166,6 +168,7 @@ Special replacement symbols:
 			var record2 []string // for output
 			var r string
 			var found []string
+			var founds [][]string
 			var k string
 			nr := 0
 			for chunk := range csvReader.Ch {
@@ -258,18 +261,25 @@ Special replacement symbols:
 							}
 
 							if replaceWithKV {
-								found = patternRegexp.FindStringSubmatch(record2[f])
-								if len(found) > 0 {
-									k = string(found[1])
+								founds = patternRegexp.FindAllStringSubmatch(record2[f], -1)
+								if len(founds) > 1 {
+									checkError(fmt.Errorf(`pattern "%s" matches multiple targets in "%s", this will cause chaos`, p, record2[f]))
+								}
+								if len(founds) > 0 {
+									found = founds[0]
+									if keyCaptIdx > len(found)-1 {
+										checkError(fmt.Errorf("value of flag -I (--key-capt-idx) overflows"))
+									}
+									k = string(found[keyCaptIdx])
 									if ignoreCase {
 										k = strings.ToLower(k)
 									}
 									if _, ok = kvs[k]; ok {
 										r = reKV.ReplaceAllString(r, kvs[k])
 									} else if keepKey {
-										r = reKV.ReplaceAllString(r, found[1])
+										r = reKV.ReplaceAllString(r, found[keyCaptIdx])
 									} else {
-										r = reKV.ReplaceAllString(r, "")
+										r = reKV.ReplaceAllString(r, keyMissRepl)
 									}
 								}
 							}
@@ -294,12 +304,15 @@ func init() {
 	replaceCmd.Flags().StringP("replacement", "r", "",
 		"replacement. supporting capture variables. "+
 			" e.g. $1 represents the text of the first submatch. "+
-			"ATTENTION: use SINGLE quote NOT double quotes in *nix OS or "+
-			"use the \\ escape character.")
+			"ATTENTION: for *nix OS, use SINGLE quote NOT double quotes or "+
+			`use the \ escape character. Record number is also supported by "{nr}".`+
+			`use ${1} instead of $1 when {kv} given!`)
 	replaceCmd.Flags().BoolP("ignore-case", "i", false, "ignore case")
 	replaceCmd.Flags().StringP("kv-file", "k", "",
 		`tab-delimited key-value file for replacing key with value when using "{kv}" in -r (--replacement)`)
 	replaceCmd.Flags().BoolP("keep-key", "K", false, "keep the key as value when no value found for the key")
+	replaceCmd.Flags().IntP("key-capt-idx", "I", 1, "capture variable index of key (1-based)")
+	replaceCmd.Flags().StringP("key-miss-repl", "", "", "replacement for key with no corresponding value")
 }
 
 var reNR = regexp.MustCompile(`\{(NR|nr)\}`)

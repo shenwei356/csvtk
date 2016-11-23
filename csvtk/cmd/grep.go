@@ -21,6 +21,7 @@
 package cmd
 
 import (
+	"bytes"
 	"encoding/csv"
 	"fmt"
 	"regexp"
@@ -84,6 +85,7 @@ var grepCmd = &cobra.Command{
 		useRegexp := getFlagBool(cmd, "use-regexp")
 		invert := getFlagBool(cmd, "invert")
 		verbose := getFlagBool(cmd, "verbose")
+		noHighlight := getFlagBool(cmd, "no-highlight")
 
 		patternsMap := make(map[string]*regexp.Regexp)
 		for _, pattern := range patterns {
@@ -105,6 +107,7 @@ var grepCmd = &cobra.Command{
 		}
 
 		if patternFile != "" {
+			noHighlight = true
 			fn := func(line string) (interface{}, bool, error) {
 				line = strings.TrimRight(line, "\r\n")
 				if line == "" {
@@ -139,7 +142,6 @@ var grepCmd = &cobra.Command{
 
 		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
 		// fuzzyFields := false
-		noHighlight := getFlagBool(cmd, "no-highlight")
 		var writer *csv.Writer
 		if config.OutFile == "-" {
 			outfh := colorable.NewColorableStdout()
@@ -269,6 +271,7 @@ var grepCmd = &cobra.Command{
 
 						var target string
 						var hitOne, hit bool
+						var reHit *regexp.Regexp
 						for _, f := range fields {
 							target = record[f-1]
 							hitOne = false
@@ -276,6 +279,7 @@ var grepCmd = &cobra.Command{
 								for _, re := range patternsMap {
 									if re.MatchString(target) {
 										hitOne = true
+										reHit = re
 										break
 									}
 								}
@@ -306,20 +310,22 @@ var grepCmd = &cobra.Command{
 						}
 
 						if !noHighlight {
+							var j int
+							var buf bytes.Buffer
 							record2 := make([]string, len(record)) //with color
 							for i, c := range record {
 								if _, ok := fieldsMap[i+1]; (!negativeFields && ok) || (negativeFields && !ok) {
 									if useRegexp {
-										v := ""
-										for _, re := range patternsMap {
-											if re.MatchString(record[i]) {
-												v = re.ReplaceAllString(c, redText(re.FindAllString(c, 1)[0]))
-												break
-											} else {
-												v = c
-											}
+										j = 0
+										buf.Reset()
+										for _, f := range reHit.FindAllStringIndex(c, -1) {
+											buf.WriteString(c[j:f[0]])
+											buf.WriteString(redText(c[f[0]:f[1]]))
+											j = f[1]
 										}
-										record2[i] = v
+										buf.WriteString(c[j:len(c)])
+
+										record2[i] = buf.String()
 									} else {
 										record2[i] = redText(c)
 									}

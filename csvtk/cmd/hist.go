@@ -22,6 +22,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 	"runtime"
 	"strconv"
 
@@ -37,6 +38,15 @@ var histCmd = &cobra.Command{
 	Use:   "hist",
 	Short: "plot histogram",
 	Long: `plot histogram
+
+Notes:
+
+  1. Output file can be set by flag -o/--out-file.
+  2. File format is determined by the out file suffix.
+     Supported formats: eps, jpg|jpeg, pdf, png, svg, and tif|tiff
+  3. If flag -o/--out-file not set (default), image is written to stdout,
+     you can display the image by pipping to "display" command of Imagemagic
+     or just redirect to file.
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -60,9 +70,7 @@ var histCmd = &cobra.Command{
 		if plotConfig.ylab == "" {
 			plotConfig.ylab = "Count"
 		}
-		if config.OutFile == "-" {
-			config.OutFile = "histogram.png"
-		}
+
 		if plotConfig.xlab == "" && plotConfig.groupFieldStr == "" && len(headerRow) > 0 {
 			plotConfig.xlab = headerRow[0]
 		}
@@ -126,10 +134,18 @@ var histCmd = &cobra.Command{
 			p.Y.Max = plotConfig.ymax
 		}
 
-		// Save the plot to a PNG file.
-		if err := p.Save(plotConfig.width*vg.Inch,
-			plotConfig.height*vg.Inch, config.OutFile); err != nil {
+		// Save image
+		if isStdin(config.OutFile) {
+			fh, err := p.WriterTo(plotConfig.width*vg.Inch,
+				plotConfig.height*vg.Inch,
+				plotConfig.format)
 			checkError(err)
+			_, err = fh.WriteTo(os.Stdout)
+			checkError(err)
+		} else {
+			checkError(p.Save(plotConfig.width*vg.Inch,
+				plotConfig.height*vg.Inch,
+				config.OutFile))
 		}
 	},
 }
