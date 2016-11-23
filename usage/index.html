@@ -212,7 +212,7 @@
 <p>Usage</p>
 <pre><code>Another cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.4.1
+Version: 0.4.2
 
 Author: Wei Shen &lt;shenwei356@gmail.com&gt;
 
@@ -866,8 +866,12 @@ Flags:
 
 Notes:
 
-  1. File format is determined by the out file (-o/--out-file) suffix.
+  1. Output file can be set by flag -o/--out-file.
+  2. File format is determined by the out file suffix.
      Supported formats: eps, jpg|jpeg, pdf, png, svg, and tif|tiff
+  3. If flag -o/--out-file not set (default), image is written to stdout,
+     you can display the image by pipping to &quot;display&quot; command of Imagemagic
+     or just redirect to file.
 
 Usage:
   csvtk plot [command]
@@ -875,14 +879,14 @@ Usage:
 Available Commands:
   box         plot boxplot
   hist        plot histogram
-  line        line plot
+  line        line plot and scatter plot
 
 Flags:
       --axis-width float     axis width (default 1.5)
   -f, --data-field string    column index or column name of data (default &quot;1&quot;)
+      --format string        image format for stdout when flag -o/--out-file not given. available values: eps, jpg|jpeg, pdf, png, svg, and tif|tiff. (default &quot;png&quot;)
   -g, --group-field string   column index or column name of group
       --height float         Figure height (default 4.5)
-  -h, --help                 help for plot
       --label-size int       label font size (default 14)
       --tick-width float     axis tick width (default 1.5)
       --title string         Figure title
@@ -899,11 +903,27 @@ Flags:
 
 <p><strong><em>Note that most of the flags of <code>plot</code> are global flags of the subcommands
 <code>hist</code>, <code>box</code> and <code>line</code></em></strong></p>
-<p><strong><em>File format is determined by the out file (-o/--out-file) suffix.
-Supported formats: eps, jpg|jpeg, pdf, png, svg, and tif|tiff</em></strong></p>
+<p><strong>Notes of image output</strong></p>
+<ol>
+<li>Output file can be set by flag -o/--out-file.</li>
+<li>File format is determined by the out file suffix.
+   Supported formats: eps, jpg|jpeg, pdf, png, svg, and tif|tiff</li>
+<li>If flag -o/--out-file not set (default), image is written to stdout,
+   you can display the image by pipping to "display" command of Imagemagic
+   or just redirect to file.</li>
+</ol>
 <h2 id="plot-hist">plot hist</h2>
 <p>Usage</p>
 <pre><code>plot histogram
+
+Notes:
+
+  1. Output file can be set by flag -o/--out-file.
+  2. File format is determined by the out file suffix.
+     Supported formats: eps, jpg|jpeg, pdf, png, svg, and tif|tiff
+  3. If flag -o/--out-file not set (default), image is written to stdout,
+     you can display the image by pipping to &quot;display&quot; command of Imagemagic
+     or just redirect to file.
 
 Usage:
   csvtk plot hist [flags]
@@ -928,13 +948,24 @@ Group A   100      51.00
 </li>
 <li>
 <p>plot histogram with data of the second column:
- <code>csvtk -t plot hist ../testdata/grouped_data.tsv.gz -f 2 --title Histogram</code>
+ <code>csvtk -t plot hist ../testdata/grouped_data.tsv.gz -f 2 --title Histogram -o histogram.png</code>
 <img alt="histogram.png" src="../testdata/figures/histogram.png" /></p>
 </li>
+<li>You can also write image to stdout and pipe to "display" command of Imagemagic:
+<code>csvtk -t plot hist ../testdata/grouped_data.tsv.gz -f 2 | display</code></li>
 </ul>
 <h2 id="plot-box">plot box</h2>
 <p>Usage</p>
 <pre><code>plot boxplot
+
+Notes:
+
+  1. Output file can be set by flag -o/--out-file.
+  2. File format is determined by the out file suffix.
+     Supported formats: eps, jpg|jpeg, pdf, png, svg, and tif|tiff
+  3. If flag -o/--out-file not set (default), image is written to stdout,
+     you can display the image by pipping to &quot;display&quot; command of Imagemagic
+     or just redirect to file.
 
 Usage:
   csvtk plot box [flags]
@@ -949,16 +980,25 @@ Flags:
 <ul>
 <li>plot boxplot with data of the "GC Content" (third) column,
 group information is the "Group" column.
-<code>csvtk -t plot box ../testdata/grouped_data.tsv.gz -g "Group" -f "GC Content"  --width 3 --title "Box plot"</code>
+<code>csvtk -t plot box ../testdata/grouped_data.tsv.gz -g "Group" -f "GC Content"  --width 3 --title "Box plot &gt; boxplot.png"</code>
 <img alt="boxplot.png" src="../testdata/figures/boxplot.png" /></li>
 <li>plot horiz boxplot with data of the "Length" (second) column,
 group information is the "Group" column.
-<code>csvtk -t plot box ../testdata/grouped_data.tsv.gz -g "Group" -f "Length"  --height 3 --width 5 --horiz --title "Horiz box plot"</code>
+<code>csvtk -t plot box ../testdata/grouped_data.tsv.gz -g "Group" -f "Length"  --height 3 --width 5 --horiz --title "Horiz box plot &gt; boxplot2.png"</code>
 <img alt="boxplot2.png" src="../testdata/figures/boxplot2.png" /></li>
 </ul>
 <h2 id="plot-line">plot line</h2>
 <p>Usage</p>
 <pre><code>line plot and scatter plot
+
+Notes:
+
+  1. Output file can be set by flag -o/--out-file.
+  2. File format is determined by the out file suffix.
+     Supported formats: eps, jpg|jpeg, pdf, png, svg, and tif|tiff
+  3. If flag -o/--out-file not set (default), image is written to stdout,
+     you can display the image by pipping to &quot;display&quot; command of Imagemagic
+     or just redirect to file.
 
 Usage:
   csvtk plot line [flags]
@@ -988,11 +1028,11 @@ A       2.0     2
 </li>
 <li>
 <p>plot line plot with X-Y data
-<code>csvtk -t plot line ../testdata/xy.tsv -x X -y Y -g Group --title "Line plot"</code>
+<code>csvtk -t plot line ../testdata/xy.tsv -x X -y Y -g Group --title "Line plot" &gt; lineplot.png</code>
 <img alt="lineplot.png" src="../testdata/figures/lineplot.png" /></p>
 </li>
 <li>plot scatter
-<code>csvtk -t plot line ../testdata/xy.tsv -x X -y Y -g Group --title "Scatter" --scatter</code>
+<code>csvtk -t plot line ../testdata/xy.tsv -x X -y Y -g Group --title "Scatter" --scatter &gt; lineplot.png</code>
 <img alt="scatter.png" src="../testdata/figures/scatter.png" /></li>
 </ul>
 <div id="disqus_thread"></div>
