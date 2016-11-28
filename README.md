@@ -236,7 +236,7 @@ Examples
     `csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group`
     ![lineplot.png](testdata/figures/lineplot.png)
     - plot scatter plot with X-Y data
-    `csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group`
+    `csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group --scatter `
     ![scatter.png](testdata/figures/scatter.png)
 
 ## Contact

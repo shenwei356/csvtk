@@ -45,15 +45,16 @@ var mutateCmd = &cobra.Command{
 		}
 		runtime.GOMAXPROCS(config.NumCPUs)
 
-		name := getFlagString(cmd, "name")
-		if name == "" {
-			checkError(fmt.Errorf("falg -n (--name) needed"))
-		}
 		ignoreCase := getFlagBool(cmd, "ignore-case")
 		naUnmatched := getFlagBool(cmd, "na")
 		pattern := getFlagString(cmd, "pattern")
 		if !regexp.MustCompile(`\(.+\)`).MatchString(pattern) {
 			checkError(fmt.Errorf(`value of -p (--pattern) must contains "(" and ")" to capture data which is used to create new column`))
+		}
+
+		name := getFlagString(cmd, "name")
+		if !config.NoHeaderRow && name == "" {
+			checkError(fmt.Errorf("falg -n (--name) needed"))
 		}
 
 		p := pattern
