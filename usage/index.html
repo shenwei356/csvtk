@@ -1347,11 +1347,13 @@ Group A   100      51.00
 </li>
 <li>
 <p>plot histogram with data of the second column:
- <code>csvtk -t plot hist testdata/grouped_data.tsv.gz -f 2 --title Histogram -o histogram.png</code>
-<img alt="histogram.png" src="../testdata/figures/histogram.png" /></p>
+<code>csvtk -t plot hist testdata/grouped_data.tsv.gz -f 2 --title Histogram -o histogram.png</code></p>
+<p><img alt="histogram.png" src="../testdata/figures/histogram.png" /></p>
 </li>
-<li>You can also write image to stdout and pipe to "display" command of Imagemagic:
-<code>csvtk -t plot hist testdata/grouped_data.tsv.gz -f 2 | display</code></li>
+<li>
+<p>You can also write image to stdout and pipe to "display" command of Imagemagic:
+<code>csvtk -t plot hist testdata/grouped_data.tsv.gz -f 2 | display</code></p>
+</li>
 </ul>
 <h2 id="plot-box">plot box</h2>
 <p>Usage</p>
@@ -1377,14 +1379,18 @@ Flags:
 
 <p>Examples</p>
 <ul>
-<li>plot boxplot with data of the "GC Content" (third) column,
+<li>
+<p>plot boxplot with data of the "GC Content" (third) column,
 group information is the "Group" column.
-<code>csvtk -t plot box testdata/grouped_data.tsv.gz -g "Group" -f "GC Content"  --width 3 --title "Box plot &gt; boxplot.png"</code>
-<img alt="boxplot.png" src="../testdata/figures/boxplot.png" /></li>
-<li>plot horiz boxplot with data of the "Length" (second) column,
+<code>csvtk -t plot box testdata/grouped_data.tsv.gz -g "Group" -f "GC Content"  --width 3 --title "Box plot &gt; boxplot.png"</code></p>
+<p><img alt="boxplot.png" src="../testdata/figures/boxplot.png" /></p>
+</li>
+<li>
+<p>plot horiz boxplot with data of the "Length" (second) column,
 group information is the "Group" column.
-<code>csvtk -t plot box testdata/grouped_data.tsv.gz -g "Group" -f "Length"  --height 3 --width 5 --horiz --title "Horiz box plot &gt; boxplot2.png"</code>
-<img alt="boxplot2.png" src="../testdata/figures/boxplot2.png" /></li>
+<code>csvtk -t plot box testdata/grouped_data.tsv.gz -g "Group" -f "Length"  --height 3 --width 5 --horiz --title "Horiz box plot &gt; boxplot2.png"</code></p>
+<p><img alt="boxplot2.png" src="../testdata/figures/boxplot2.png" /></p>
+</li>
 </ul>
 <h2 id="plot-line">plot line</h2>
 <p>Usage</p>
@@ -1427,12 +1433,14 @@ A       2.0     2
 </li>
 <li>
 <p>plot line plot with X-Y data
-<code>csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group --title "Line plot" &gt; lineplot.png</code>
-<img alt="lineplot.png" src="../testdata/figures/lineplot.png" /></p>
+<code>csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group --title "Line plot" &gt; lineplot.png</code></p>
+<p><img alt="lineplot.png" src="../testdata/figures/lineplot.png" /></p>
 </li>
-<li>plot scatter
-<code>csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group --title "Scatter" --scatter &gt; lineplot.png</code>
-<img alt="scatter.png" src="../testdata/figures/scatter.png" /></li>
+<li>
+<p>plot scatter
+<code>csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group --title "Scatter" --scatter &gt; lineplot.png</code></p>
+<p><img alt="scatter.png" src="../testdata/figures/scatter.png" /></p>
+</li>
 </ul>
 <div id="disqus_thread"></div>
 
