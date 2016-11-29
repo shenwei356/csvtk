@@ -25,17 +25,20 @@ import (
 	"fmt"
 	"regexp"
 	"runtime"
+	"sort"
+	"strconv"
 	"strings"
 
+	"github.com/shenwei356/util/stringutil"
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
 )
 
-// uniqCmd represents the uniq command
-var uniqCmd = &cobra.Command{
-	Use:   "uniq",
-	Short: "unique data without sorting",
-	Long: `unique data without sorting
+// freqCmd represents the freq command
+var freqCmd = &cobra.Command{
+	Use:   "freq",
+	Short: "frequencies of selected fields",
+	Long: `frequencies of selected fields
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -44,8 +47,11 @@ var uniqCmd = &cobra.Command{
 		if len(files) > 1 {
 			checkError(fmt.Errorf("no more than one file should be given"))
 		}
-
 		runtime.GOMAXPROCS(config.NumCPUs)
+
+		sortByFreq := getFlagBool(cmd, "sort-by-freq")
+		sortByKey := getFlagBool(cmd, "sort-by-key")
+		reverse := getFlagBool(cmd, "reverse")
 
 		fieldStr := getFlagString(cmd, "fields")
 		fields, colnames, negativeFields, needParseHeaderRow := parseFields(cmd, fieldStr, config.NoHeaderRow)
@@ -78,7 +84,8 @@ var uniqCmd = &cobra.Command{
 			writer.Comma = config.OutDelimiter
 		}
 
-		keysMaps := make(map[string]struct{}, 10000)
+		counter := make(map[string]int, 10000)
+		data := make(map[string][]string, 10000)
 
 		file := files[0]
 		csvReader, err := newCSVReaderByConfig(config, file)
@@ -86,9 +93,9 @@ var uniqCmd = &cobra.Command{
 		csvReader.Run()
 
 		parseHeaderRow := needParseHeaderRow // parsing header row
-		var colnames2fileds map[string]int   // column name -> field
+		printHeaderRow := needParseHeaderRow
+		var colnames2fileds map[string]int // column name -> field
 		var colnamesMap map[string]*regexp.Regexp
-		var HeaderRow []string
 
 		checkFields := true
 		var items []string
@@ -138,9 +145,6 @@ var uniqCmd = &cobra.Command{
 					}
 
 					parseHeaderRow = false
-					HeaderRow = record
-					checkError(writer.Write(HeaderRow))
-					continue
 				}
 				if checkFields {
 					fields2 := []int{}
@@ -169,22 +173,77 @@ var uniqCmd = &cobra.Command{
 					items[i] = record[f-1]
 				}
 
-				key = strings.Join(items, "_shenwei356_")
-				if _, ok := keysMaps[key]; ok {
+				if printHeaderRow {
+					checkError(writer.Write(append(items, "frequency")))
+					printHeaderRow = false
 					continue
 				}
-				keysMaps[key] = struct{}{}
-				checkError(writer.Write(record))
+
+				key = strings.Join(items, "_shenwei356_")
+				counter[key]++
+				if counter[key] == 1 {
+					items2 := make([]string, len(items))
+					copy(items2, items)
+					data[key] = items2
+				}
+
 			}
 		}
+
+		if sortByFreq {
+			counts := make([]stringutil.StringCount, len(counter))
+			i := 0
+			for key, count := range counter {
+				counts[i] = stringutil.StringCount{Key: key, Count: count}
+				i++
+			}
+			if reverse {
+				sort.Sort(stringutil.ReversedStringCountList{counts})
+			} else {
+				sort.Sort(stringutil.StringCountList(counts))
+			}
+			for _, count := range counts {
+				items = data[count.Key]
+				items = append(items, strconv.Itoa(counter[count.Key]))
+				checkError(writer.Write(items))
+			}
+		} else if sortByKey {
+			keys := make([]string, len(counter))
+			i := 0
+			for key := range counter {
+				keys[i] = key
+				i++
+			}
+
+			sort.Strings(keys)
+			if reverse {
+				stringutil.ReverseStringSliceInplace(keys)
+			}
+
+			for _, key := range keys {
+				items = data[key]
+				items = append(items, strconv.Itoa(counter[key]))
+				checkError(writer.Write(items))
+			}
+		} else {
+			for key, count := range counter {
+				items = data[key]
+				items = append(items, strconv.Itoa(count))
+				checkError(writer.Write(items))
+			}
+		}
+
 		writer.Flush()
 		checkError(writer.Error())
 	},
 }
 
 func init() {
-	RootCmd.AddCommand(uniqCmd)
-	uniqCmd.Flags().StringP("fields", "f", "1", `select only these fields. e.g -f 1,2 or -f columnA,columnB`)
-	uniqCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
-	uniqCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fileds, e.g. *name or id123*`)
+	RootCmd.AddCommand(freqCmd)
+	freqCmd.Flags().StringP("fields", "f", "1", `select only these fields. e.g -f 1,2 or -f columnA,columnB`)
+	freqCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
+	freqCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fileds, e.g. *name or id123*`)
+	freqCmd.Flags().BoolP("sort-by-freq", "n", false, `sort by frequency`)
+	freqCmd.Flags().BoolP("sort-by-key", "k", false, `sort by key`)
+	freqCmd.Flags().BoolP("reverse", "r", false, `reverse order while sorting`)
 }

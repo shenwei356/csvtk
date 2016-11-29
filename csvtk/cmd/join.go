@@ -42,11 +42,10 @@ Multiple keys supported, but the orders are ignored.
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
 		files := getFileList(args)
-		runtime.GOMAXPROCS(config.NumCPUs)
-
 		if len(files) < 2 {
 			checkError(fmt.Errorf("two or more files needed"))
 		}
+		runtime.GOMAXPROCS(config.NumCPUs)
 
 		allFields := getFlagSemicolonSeparatedStrings(cmd, "fields")
 		if len(allFields) == 1 {

@@ -1,6 +1,6 @@
 # csvtk - another cross-platform, efficient, practical and pretty CSV/TSV toolkit
 
-**Documents:** [http://bioinf.shenwei.me/csvtk](http://bioinf.shenwei.me/csvtk/) 
+**Documents:** [http://bioinf.shenwei.me/csvtk](http://bioinf.shenwei.me/csvtk/)
 ( [**Usage**](http://bioinf.shenwei.me/csvtk/usage/)  and [**Tutorial**](http://bioinf.shenwei.me/csvtk/tutorial/))
 
 **Source code:**  [https://github.com/shenwei356/csvtk](https://github.com/shenwei356/csvtk) [![GitHub stars](https://img.shields.io/github/stars/shenwei356/csvtk.svg?style=social&label=Star&?maxAge=2592000)](https://github.com/shenwei356/csvtk)
@@ -30,7 +30,7 @@ and also easy to integrated into analysis pipelines**.
 
 ## Subcommands
 
-20 in total.
+21 in total.
 
 **Information**
 
@@ -50,6 +50,7 @@ and also easy to integrated into analysis pipelines**.
 
 -  `cut` select parts of fields
 -  `uniq` unique data without sorting
+-  `freq` frequencies of selected fields
 -  `inter` intersection of multiple files
 -  `grep` grep data by selected fields with patterns/regular expressions
 -  `filter` filter data by values of selected fields with math expression
