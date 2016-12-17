@@ -560,7 +560,7 @@ Usage:
 Flags:
   -n, --colnames        print column names
   -f, --fields string   select only these fields. e.g -f 1,2 or -f columnA,columnB, or -f -columnA for unselect columnA
-  -F, --fuzzy-fields    using fuzzy fields, e.g. -f *name or -f id123*
+  -F, --fuzzy-fields    using fuzzy fields, e.g. -f &quot;*name or -f id123*&quot;
 
 
 </code></pre>
@@ -947,7 +947,7 @@ Usage:
   csvtk join [flags]
 
 Flags:
-  -f, --fields string    Semicolon separated key fields of all files, if given one, we think all the files have the same key columns. e.g -f 1;2 or -f A,B;C,D or -f id (default &quot;1&quot;)
+  -f, --fields string    Semicolon separated key fields of all files, if given one, we think all the files have the same key columns. Fields of different files should be separated by &quot;;&quot;, e.g -f &quot;1;2&quot; or -f &quot;A,B;C,D&quot; or -f id (default &quot;1&quot;)
       --fill string      fill content for unmatched data
   -F, --fuzzy-fields     using fuzzy fileds, e.g. *name or id123*
   -i, --ignore-case      ignore case
