@@ -15,11 +15,13 @@
 
 Links:
 
+***64-bit versions are highly recommended.***
+
 - **Linux**
     - [![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_386.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.4.4/csvtk_linux_386.tar.gz)
     [csvtk_linux_386.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.4.4/csvtk_linux_386.tar.gz)
     - [![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_amd64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.4.4/csvtk_linux_amd64.tar.gz)
-    [csvtk_linux_amd64.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.4.4/csvtk_linux_amd64.tar.gz)
+    [**csvtk_linux_amd64.tar.gz**](https://github.com/shenwei356/csvtk/releases/download/v0.4.4/csvtk_linux_amd64.tar.gz)
     - [![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_arm.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.4.4/csvtk_linux_arm.tar.gz)
     [csvtk_linux_arm.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.4.4/csvtk_linux_arm.tar.gz)
     - [![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_arm64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.4.4/csvtk_linux_arm64.tar.gz)
@@ -28,12 +30,12 @@ Links:
     - [![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_darwin_386.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.4.4/csvtk_darwin_386.tar.gz)
       [csvtk_darwin_386.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.4.4/csvtk_darwin_386.tar.gz)
     - [![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_darwin_amd64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.4.4/csvtk_darwin_amd64.tar.gz)
-      [csvtk_darwin_amd64.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.4.4/csvtk_darwin_amd64.tar.gz)
+      [**csvtk_darwin_amd64.tar.gz**](https://github.com/shenwei356/csvtk/releases/download/v0.4.4/csvtk_darwin_amd64.tar.gz)
 - **Windows**
     - [![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_windows_386.exe.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.4.4/csvtk_windows_386.exe.tar.gz)
     [csvtk_windows_386.exe.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.4.4/csvtk_windows_386.exe.tar.gz)
     - [![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_windows_amd64.exe.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.4.4/csvtk_windows_amd64.exe.tar.gz)
-    [csvtk_windows_amd64.exe.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.4.4/csvtk_windows_amd64.exe.tar.gz)
+    [**csvtk_windows_amd64.exe.tar.gz**](https://github.com/shenwei356/csvtk/releases/download/v0.4.4/csvtk_windows_amd64.exe.tar.gz)
 
 ## Installation
 
@@ -56,7 +58,7 @@ And then:
     1. Or add the current directory of the executable file to environment variable
     `PATH`:
 
-            echo export PATH=\$PATH:\"$(pwd)\" >> ~/.bashrc
+            echo export PATH=\"$(pwd)\":\$PATH >> ~/.bashrc
             source ~/.bashrc
 
 1. **For windows**, just copy `csvtk.exe` to `C:\WINDOWS\system32`.

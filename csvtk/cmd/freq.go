@@ -85,7 +85,6 @@ var freqCmd = &cobra.Command{
 		}
 
 		counter := make(map[string]int, 10000)
-		data := make(map[string][]string, 10000)
 
 		file := files[0]
 		csvReader, err := newCSVReaderByConfig(config, file)
@@ -181,12 +180,6 @@ var freqCmd = &cobra.Command{
 
 				key = strings.Join(items, "_shenwei356_")
 				counter[key]++
-				if counter[key] == 1 {
-					items2 := make([]string, len(items))
-					copy(items2, items)
-					data[key] = items2
-				}
-
 			}
 		}
 
@@ -203,7 +196,7 @@ var freqCmd = &cobra.Command{
 				sort.Sort(stringutil.StringCountList(counts))
 			}
 			for _, count := range counts {
-				items = data[count.Key]
+				items = strings.Split(count.Key, "_shenwei356_")
 				items = append(items, strconv.Itoa(counter[count.Key]))
 				checkError(writer.Write(items))
 			}
@@ -221,13 +214,13 @@ var freqCmd = &cobra.Command{
 			}
 
 			for _, key := range keys {
-				items = data[key]
+				items = strings.Split(key, "_shenwei356_")
 				items = append(items, strconv.Itoa(counter[key]))
 				checkError(writer.Write(items))
 			}
 		} else {
 			for key, count := range counter {
-				items = data[key]
+				items = strings.Split(key, "_shenwei356_")
 				items = append(items, strconv.Itoa(count))
 				checkError(writer.Write(items))
 			}

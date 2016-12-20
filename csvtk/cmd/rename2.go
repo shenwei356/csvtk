@@ -204,7 +204,7 @@ var rename2Cmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(rename2Cmd)
 	rename2Cmd.Flags().StringP("fields", "f", "", `select only these fields. e.g -f 1,2 or -f columnA,columnB`)
-	rename2Cmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fileds, e.g. *name or id123*`)
+	rename2Cmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fileds, e.g. "*name" or "id123*"`)
 	rename2Cmd.Flags().StringP("pattern", "p", "", "search regular expression")
 	rename2Cmd.Flags().StringP("replacement", "r", "",
 		"renamement. supporting capture variables. "+

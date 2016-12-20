@@ -309,7 +309,7 @@ Usage:
 Flags:
   -n, --colnames        print column names
   -f, --fields string   select only these fields. e.g -f 1,2 or -f columnA,columnB, or -f -columnA for unselect columnA
-  -F, --fuzzy-fields    using fuzzy fields, e.g. -f *name or -f id123*
+  -F, --fuzzy-fields    using fuzzy fields, e.g. -f "*name or -f id123*"
 
 
 ```
@@ -683,7 +683,7 @@ Usage:
   csvtk join [flags]
 
 Flags:
-  -f, --fields string    Semicolon separated key fields of all files, if given one, we think all the files have the same key columns. e.g -f 1;2 or -f A,B;C,D or -f id (default "1")
+  -f, --fields string    Semicolon separated key fields of all files, if given one, we think all the files have the same key columns. Fields of different files should be separated by ";", e.g -f "1;2" or -f "A,B;C,D" or -f id (default "1")
       --fill string      fill content for unmatched data
   -F, --fuzzy-fields     using fuzzy fileds, e.g. *name or id123*
   -i, --ignore-case      ignore case
@@ -1089,8 +1089,10 @@ Examples
         Group A   100      51.00
 
 - plot histogram with data of the second column:
- `csvtk -t plot hist testdata/grouped_data.tsv.gz -f 2 --title Histogram -o histogram.png`
-![histogram.png](testdata/figures/histogram.png)
+`csvtk -t plot hist testdata/grouped_data.tsv.gz -f 2 --title Histogram -o histogram.png`
+
+    ![histogram.png](testdata/figures/histogram.png)
+
 - You can also write image to stdout and pipe to "display" command of Imagemagic:
 `csvtk -t plot hist testdata/grouped_data.tsv.gz -f 2 | display `
 
@@ -1125,11 +1127,14 @@ Examples
 - plot boxplot with data of the "GC Content" (third) column,
 group information is the "Group" column.
 `csvtk -t plot box testdata/grouped_data.tsv.gz -g "Group" -f "GC Content"  --width 3 --title "Box plot > boxplot.png"`
-![boxplot.png](testdata/figures/boxplot.png)
+
+    ![boxplot.png](testdata/figures/boxplot.png)
+
 - plot horiz boxplot with data of the "Length" (second) column,
 group information is the "Group" column.
 `csvtk -t plot box testdata/grouped_data.tsv.gz -g "Group" -f "Length"  --height 3 --width 5 --horiz --title "Horiz box plot > boxplot2.png"`
-![boxplot2.png](testdata/figures/boxplot2.png)
+
+    ![boxplot2.png](testdata/figures/boxplot2.png)
 
 ## plot line
 
@@ -1174,10 +1179,14 @@ Examples
 
 - plot line plot with X-Y data
 `csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group --title "Line plot" > lineplot.png`
-![lineplot.png](testdata/figures/lineplot.png)
+
+    ![lineplot.png](testdata/figures/lineplot.png)
+
 - plot scatter
 `csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group --title "Scatter" --scatter > lineplot.png`
-![scatter.png](testdata/figures/scatter.png)
+
+    ![scatter.png](testdata/figures/scatter.png)
+
 
 
 <div id="disqus_thread"></div>

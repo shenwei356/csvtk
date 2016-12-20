@@ -252,7 +252,7 @@ var filterCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(filterCmd)
 	filterCmd.Flags().StringP("filter", "f", "", `filter condition. e.g. -f "age>12" or -f "1,3<=2" or -F -f "c*!=0" --or`)
-	filterCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fileds, e.g. *name or id123*`)
+	filterCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fileds, e.g. "*name" or "id123*"`)
 	filterCmd.Flags().BoolP("any", "", false, `print record if any of the field satisfy the condition`)
 }
 

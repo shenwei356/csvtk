@@ -186,5 +186,5 @@ func init() {
 	RootCmd.AddCommand(uniqCmd)
 	uniqCmd.Flags().StringP("fields", "f", "1", `select only these fields. e.g -f 1,2 or -f columnA,columnB`)
 	uniqCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
-	uniqCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fileds, e.g. *name or id123*`)
+	uniqCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fileds, e.g. "*name" or "id123*"`)
 }

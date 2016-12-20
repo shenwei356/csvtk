@@ -27,3 +27,4 @@ doc/site/*
 *.Rhistory
 csvtk/csvtk*
 csvtk/binaries*
+doc/site
