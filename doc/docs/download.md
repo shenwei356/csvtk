@@ -34,12 +34,14 @@ Windows|**64-bit**|[**csvtk_windows_amd64.exe.tar.gz**](https://github.com/shenw
  executable binary files **for most popular operating systems** are freely available
   in [release](https://github.com/shenwei356/csvtk/releases) page.
 
+#### Method 1: Download binaries
+
 Just [download](https://github.com/shenwei356/csvtk/releases) compressed
 executable file of your operating system,
-and uncompress it with `tar -zxvf xxx.tar.gz` command or other tools.
+and decompress it with `tar -zxvf *.tar.gz` command or other tools.
 And then:
 
-1. For Unix-like systems
+1. **For Linux-like systems**
     1. If you have root privilege simply copy it to `/usr/local/bin`:
 
             sudo cp csvtk /usr/local/bin/
@@ -47,14 +49,20 @@ And then:
     1. Or add the current directory of the executable file to environment variable
     `PATH`:
 
-            echo export PATH=\"$(pwd)\":\$PATH >> ~/.bashrc
+            echo export PATH=\$PATH:\"$(pwd)\" >> ~/.bashrc
             source ~/.bashrc
+
 
 1. **For windows**, just copy `csvtk.exe` to `C:\WINDOWS\system32`.
 
-For Go developer, just one command:
+#### Method 2: Install using conda
+
+    conda install csvtk
+
+#### Method 3: For Go developer
 
     go get -u github.com/shenwei356/csvtk/csvtk
+
 
 ## Previous Versions
 

@@ -1,14 +1,15 @@
 # csvtk - another cross-platform, efficient, practical and pretty CSV/TSV toolkit
 
-**Documents:** [http://bioinf.shenwei.me/csvtk](http://bioinf.shenwei.me/csvtk/)
+- **Documents:** [http://bioinf.shenwei.me/csvtk](http://bioinf.shenwei.me/csvtk/)
 ( [**Usage**](http://bioinf.shenwei.me/csvtk/usage/)  and [**Tutorial**](http://bioinf.shenwei.me/csvtk/tutorial/))
-
-**Source code:**  [https://github.com/shenwei356/csvtk](https://github.com/shenwei356/csvtk) [![GitHub stars](https://img.shields.io/github/stars/shenwei356/csvtk.svg?style=social&label=Star&?maxAge=2592000)](https://github.com/shenwei356/csvtk)
+- **Source code:**  [https://github.com/shenwei356/csvtk](https://github.com/shenwei356/csvtk) [![GitHub stars](https://img.shields.io/github/stars/shenwei356/csvtk.svg?style=social&label=Star&?maxAge=2592000)](https://github.com/shenwei356/csvtk)
 [![license](https://img.shields.io/github/license/shenwei356/csvtk.svg?maxAge=2592000)](https://github.com/shenwei356/csvtk/blob/master/LICENSE)
 [![Go Report Card](https://goreportcard.com/badge/github.com/shenwei356/csvtk)](https://goreportcard.com/report/github.com/shenwei356/csvtk)
-
-**Latest version:** [![Latest Stable Version](https://img.shields.io/github/release/shenwei356/csvtk.svg?style=flat)](https://github.com/shenwei356/csvtk/releases)
+- **Latest version:** [![Latest Stable Version](https://img.shields.io/github/release/shenwei356/csvtk.svg?style=flat)](https://github.com/shenwei356/csvtk/releases)
 [![Github Releases](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/total.svg?maxAge=3600)](http://bioinf.shenwei.me/csvtk/download/)
+
+
+## Table of Contents
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -91,13 +92,14 @@
  executable binary files **for most popular operating systems** are freely available
   in [release](https://github.com/shenwei356/csvtk/releases) page.
 
+#### Method 1: Download binaries
+
 Just [download](https://github.com/shenwei356/csvtk/releases) compressed
-executable file of your operating system, and uncompress it with `tar -zxvf *.tar.gz` command.
+executable file of your operating system,
+and decompress it with `tar -zxvf *.tar.gz` command or other tools.
+And then:
 
-You can add the directory of the executable file to environment variable
-`PATH`, so you can run `csvtk` anywhere.
-
-1. For Unix-like systems
+1. **For Linux-like systems**
     1. If you have root privilege simply copy it to `/usr/local/bin`:
 
             sudo cp csvtk /usr/local/bin/
@@ -108,11 +110,17 @@ You can add the directory of the executable file to environment variable
             echo export PATH=\$PATH:\"$(pwd)\" >> ~/.bashrc
             source ~/.bashrc
 
+
 1. **For windows**, just copy `csvtk.exe` to `C:\WINDOWS\system32`.
 
-For Go developer, just one command:
+#### Method 2: Install using conda
+
+    conda install csvtk
+
+#### Method 3: For Go developer
 
     go get -u github.com/shenwei356/csvtk/csvtk
+
 
 ## Compared to `csvkit`
 
