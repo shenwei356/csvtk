@@ -235,13 +235,14 @@
 <p><code>csvtk</code> is implemented in <a href="https://golang.org/">Go</a> programming language,
  executable binary files <strong>for most popular operating systems</strong> are freely available
   in <a href="https://github.com/shenwei356/csvtk/releases">release</a> page.</p>
+<h4 id="method-1-download-binaries">Method 1: Download binaries</h4>
 <p>Just <a href="https://github.com/shenwei356/csvtk/releases">download</a> compressed
 executable file of your operating system,
-and uncompress it with <code>tar -zxvf xxx.tar.gz</code> command or other tools.
+and decompress it with <code>tar -zxvf *.tar.gz</code> command or other tools.
 And then:</p>
 <ol>
 <li>
-<p>For Unix-like systems</p>
+<p><strong>For Linux-like systems</strong></p>
 <ol>
 <li>
 <p>If you have root privilege simply copy it to <code>/usr/local/bin</code>:</p>
@@ -251,7 +252,7 @@ And then:</p>
 <li>
 <p>Or add the current directory of the executable file to environment variable
 <code>PATH</code>:</p>
-<pre><code>echo export PATH=\"$(pwd)\":\$PATH &gt;&gt; ~/.bashrc
+<pre><code>echo export PATH=\$PATH:\"$(pwd)\" &gt;&gt; ~/.bashrc
 source ~/.bashrc
 </code></pre>
 </li>
@@ -261,7 +262,10 @@ source ~/.bashrc
 <p><strong>For windows</strong>, just copy <code>csvtk.exe</code> to <code>C:\WINDOWS\system32</code>.</p>
 </li>
 </ol>
-<p>For Go developer, just one command:</p>
+<h4 id="method-2-install-using-conda">Method 2: Install using conda</h4>
+<pre><code>conda install csvtk
+</code></pre>
+<h4 id="method-3-for-go-developer">Method 3: For Go developer</h4>
 <pre><code>go get -u github.com/shenwei356/csvtk/csvtk
 </code></pre>
 <h2 id="previous-versions">Previous Versions</h2>
