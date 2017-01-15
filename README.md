@@ -1,4 +1,4 @@
-# csvtk - another cross-platform, efficient, practical and pretty CSV/TSV toolkit
+# csvtk - a cross-platform, efficient, practical and pretty CSV/TSV toolkit
 
 - **Documents:** [http://bioinf.shenwei.me/csvtk](http://bioinf.shenwei.me/csvtk/)
 ( [**Usage**](http://bioinf.shenwei.me/csvtk/usage/)  and [**Tutorial**](http://bioinf.shenwei.me/csvtk/tutorial/))

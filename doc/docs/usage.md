@@ -17,7 +17,7 @@
 Usage
 
 ```
-Another cross-platform, efficient and practical CSV/TSV toolkit
+A cross-platform, efficient and practical CSV/TSV toolkit
 
 Version: 0.4.5
 
@@ -784,7 +784,7 @@ Examples:
         2    bob    basketball    beutiful   computer science
         2    bob    basketball    beutiful   computer science
         3    foo    football      cool       
-        4    wei    programming 
+        4    wei    programming
 
 ## rename
 
