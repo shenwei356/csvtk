@@ -100,42 +100,54 @@ Multiple keys supported, but the orders are ignored.
 				fieldsMap[f] = struct{}{}
 			}
 			// csv to map
-			keysMaps := make(map[string][]string)
+			keysMaps := make(map[string][][]string)
 			items = make([]string, len(fields))
+			var i, f int
+			var ok bool
 			for _, record := range data {
-				for i, f := range fields {
+				for i, f = range fields {
 					items[i] = record[f-1]
 				}
 				key = strings.Join(items, "_shenwei356_")
-				keysMaps[key] = record
+				if _, ok = keysMaps[key]; !ok {
+					keysMaps[key] = [][]string{}
+				}
+				keysMaps[key] = append(keysMaps[key], record)
 			}
 
 			Data2 := [][]string{}
+			var colname string
 			if withHeaderRow {
 				newHeaderRow := HeaderRow
-				for f, colname := range headerRow {
-					if _, ok := fieldsMap[f+1]; !ok {
+				for f, colname = range headerRow {
+					if _, ok = fieldsMap[f+1]; !ok {
 						newHeaderRow = append(newHeaderRow, colname)
 					}
 				}
 				HeaderRow = newHeaderRow
 			}
 			items = make([]string, len(Fields))
-			for _, record := range Data {
-				for i, f := range Fields {
-					items[i] = record[f-1]
+			var records [][]string
+			var record, record2 []string
+			for _, record0 := range Data {
+				for i, f = range Fields {
+					items[i] = record0[f-1]
 				}
 				key = strings.Join(items, "_shenwei356_")
-				if record2, ok := keysMaps[key]; ok {
-					for f, v := range record2 {
-						if _, ok := fieldsMap[f+1]; !ok {
-							record = append(record, v)
+				if records, ok = keysMaps[key]; ok {
+					for _, record2 = range records {
+						record = record0
+						for f, v := range record2 {
+							if _, ok = fieldsMap[f+1]; !ok {
+								record = append(record, v)
+							}
 						}
+						Data2 = append(Data2, record)
 					}
-					Data2 = append(Data2, record)
 				} else {
 					if keepUnmatched {
-						for i := 1; i <= len(data[0])-len(fieldsMap); i++ {
+						record = record0
+						for i = 1; i <= len(data[0])-len(fieldsMap); i++ {
 							record = append(record, fill)
 						}
 						Data2 = append(Data2, record)
