@@ -115,11 +115,7 @@ And then:
 
 #### Method 2: Install using conda
 
-    conda config --add channels conda-forge
-    conda config --add channels defaults
-    conda config --add channels r
-    conda config --add channels bioconda
-    conda install csvtk
+    conda install -c bioconda csvtk
 
 #### Method 3: For Go developer
 
