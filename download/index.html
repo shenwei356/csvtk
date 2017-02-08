@@ -163,50 +163,10 @@
  executable binary files <strong>for most popular operating system</strong> are freely available
   in <a href="https://github.com/shenwei356/csvtk/releases">release</a> page.</p>
 <h2 id="current-version">Current Version</h2>
-<p><a href="https://github.com/shenwei356/csvtk/releases/tag/v0.4.5">csvtk v0.4.5</a>
-<a href="https://github.com/shenwei356/csvtk/releases/tag/v0.4.5"><img alt="Github Releases (by Release)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/v0.4.5/total.svg" /></a></p>
+<p><a href="https://github.com/shenwei356/csvtk/releases/tag/v0.4.6">csvtk v0.4.6</a>
+<a href="https://github.com/shenwei356/csvtk/releases/tag/v0.4.6"><img alt="Github Releases (by Release)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/v0.4.6/total.svg" /></a></p>
 <ul>
-<li><code>csvtk join</code>: support the 2nd or later files with entries with same ID: e.g.:<pre><code>$ cat 1.csv
-name,attr
-foo,cool
-bar,handsome
-bob,beutiful
-
-$ cat 2.csv
-name,major
-bar,bioinformatics
-bob,microbiology
-bob,computer science
-
-$ cat 3.csv
-id,name,hobby
-1,bar,baseball
-2,bob,basketball
-3,foo,football
-4,wei,programming
-
-$ csvtk join 1.csv 2.csv  | csvtk pretty
-name   attr       major
-bar    handsome   bioinformatics
-bob    beutiful   microbiology
-bob    beutiful   computer science
-
-$ csvtk join 1.csv 2.csv 3.csv -f name -k | csvtk pretty
-name   attr       major               id   hobby
-foo    cool                           3    football
-bar    handsome   bioinformatics      1    baseball
-bob    beutiful   microbiology        2    basketball
-bob    beutiful   computer science    2    basketball
-
-$ csvtk join 3.csv 1.csv 2.csv -f name -k | csvtk pretty
-id   name   hobby         attr       major
-1    bar    baseball      handsome   bioinformatics
-2    bob    basketball    beutiful   computer science
-2    bob    basketball    beutiful   computer science
-3    foo    football      cool       
-4    wei    programming
-</code></pre>
-</li>
+<li><code>csvtk grep</code>: fix result highlight when flag <code>-v</code> is on.</li>
 </ul>
 <p>Links:</p>
 <table>
@@ -301,7 +261,7 @@ source ~/.bashrc
 <p><strong>For windows</strong>, just copy <code>csvtk.exe</code> to <code>C:\WINDOWS\system32</code>.</p>
 </li>
 </ol>
-<h4 id="method-2-install-using-conda">Method 2: Install using conda</h4>
+<h4 id="method-2-install-via-conda">Method 2: Install via conda <a href="http://bioinf.shenwei.me/csvtk/download/"><img alt="Install-with-conda" src="https://anaconda.org/bioconda/csvtk/badges/installer/conda.svg" /></a> <a href="https://anaconda.org/bioconda/csvtk"><img alt="Anaconda Cloud" src="https://anaconda.org/bioconda/csvtk/badges/version.svg" /></a> <a href="https://anaconda.org/bioconda/csvtk"><img alt="downloads" src="https://anaconda.org/bioconda/csvtk/badges/downloads.svg" /></a></h4>
 <pre><code>conda install -c bioconda csvtk
 </code></pre>
 <h4 id="method-3-for-go-developer">Method 3: For Go developer</h4>
@@ -309,6 +269,11 @@ source ~/.bashrc
 </code></pre>
 <h2 id="previous-versions">Previous Versions</h2>
 <ul>
+<li><a href="https://github.com/shenwei356/csvtk/releases/tag/v0.4.5">csvtk v0.4.5</a>
+<a href="https://github.com/shenwei356/csvtk/releases/tag/v0.4.5"><img alt="Github Releases (by Release)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/v0.4.5/total.svg" /></a><ul>
+<li><code>csvtk join</code>: support the 2nd or later files with entries with same ID.</li>
+</ul>
+</li>
 <li><a href="https://github.com/shenwei356/csvtk/releases/tag/v0.4.4">csvtk v0.4.4</a>
 <a href="https://github.com/shenwei356/csvtk/releases/tag/v0.4.4"><img alt="Github Releases (by Release)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/v0.4.4/total.svg" /></a><ul>
 <li>add command <code>csvtk freq</code>: frequencies of selected fields</li>
