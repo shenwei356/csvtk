@@ -9,6 +9,8 @@
 - **Latest version:** [![Latest Stable Version](https://img.shields.io/github/release/shenwei356/csvtk.svg?style=flat)](https://github.com/shenwei356/csvtk/releases)
 [![Github Releases](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/total.svg?maxAge=3600)](http://bioinf.shenwei.me/csvtk/download/)
 [![Cross-platform](https://img.shields.io/badge/platform-any-ec2eb4.svg?style=flat)](http://bioinf.shenwei.me/csvtk/download/)
+[![Install-with-conda](	https://anaconda.org/bioconda/csvtk/badges/installer/conda.svg)](http://bioinf.shenwei.me/csvtk/download/)
+[![Anaconda Cloud](	https://anaconda.org/bioconda/csvtk/badges/version.svg)](https://anaconda.org/bioconda/csvtk)
 
 
 ## Table of Contents
@@ -115,7 +117,7 @@ And then:
 
 1. **For windows**, just copy `csvtk.exe` to `C:\WINDOWS\system32`.
 
-#### Method 2: Install using conda
+#### Method 2: Install via conda
 
     conda install -c bioconda csvtk
 

@@ -6,51 +6,10 @@
 
 ## Current Version
 
-[csvtk v0.4.5](https://github.com/shenwei356/csvtk/releases/tag/v0.4.5)
-[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.4.5/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.4.5)
+[csvtk v0.4.6](https://github.com/shenwei356/csvtk/releases/tag/v0.4.6)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.4.6/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.4.6)
 
-- `csvtk join`: support the 2nd or later files with entries with same ID: e.g.:
-
-        $ cat 1.csv
-        name,attr
-        foo,cool
-        bar,handsome
-        bob,beutiful
-
-        $ cat 2.csv
-        name,major
-        bar,bioinformatics
-        bob,microbiology
-        bob,computer science
-
-        $ cat 3.csv
-        id,name,hobby
-        1,bar,baseball
-        2,bob,basketball
-        3,foo,football
-        4,wei,programming
-
-        $ csvtk join 1.csv 2.csv  | csvtk pretty
-        name   attr       major
-        bar    handsome   bioinformatics
-        bob    beutiful   microbiology
-        bob    beutiful   computer science
-
-        $ csvtk join 1.csv 2.csv 3.csv -f name -k | csvtk pretty
-        name   attr       major               id   hobby
-        foo    cool                           3    football
-        bar    handsome   bioinformatics      1    baseball
-        bob    beutiful   microbiology        2    basketball
-        bob    beutiful   computer science    2    basketball
-
-        $ csvtk join 3.csv 1.csv 2.csv -f name -k | csvtk pretty
-        id   name   hobby         attr       major
-        1    bar    baseball      handsome   bioinformatics
-        2    bob    basketball    beutiful   computer science
-        2    bob    basketball    beutiful   computer science
-        3    foo    football      cool       
-        4    wei    programming
-
+- `csvtk grep`: fix result highlight when flag `-v` is on.
 
 Links:
 
@@ -94,7 +53,7 @@ And then:
 
 1. **For windows**, just copy `csvtk.exe` to `C:\WINDOWS\system32`.
 
-#### Method 2: Install using conda
+#### Method 2: Install via conda [![Install-with-conda](https://anaconda.org/bioconda/csvtk/badges/installer/conda.svg)](http://bioinf.shenwei.me/csvtk/download/) [![Anaconda Cloud](	https://anaconda.org/bioconda/csvtk/badges/version.svg)](https://anaconda.org/bioconda/csvtk) [![downloads](https://anaconda.org/bioconda/csvtk/badges/downloads.svg)](https://anaconda.org/bioconda/csvtk)
 
     conda install -c bioconda csvtk
 
@@ -105,6 +64,9 @@ And then:
 
 ## Previous Versions
 
+- [csvtk v0.4.5](https://github.com/shenwei356/csvtk/releases/tag/v0.4.5)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.4.5/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.4.5)
+    - `csvtk join`: support the 2nd or later files with entries with same ID.
 - [csvtk v0.4.4](https://github.com/shenwei356/csvtk/releases/tag/v0.4.4)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.4.4/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.4.4)
     - add command `csvtk freq`: frequencies of selected fields

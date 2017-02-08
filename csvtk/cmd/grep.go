@@ -308,12 +308,15 @@ var grepCmd = &cobra.Command{
 								return
 							}
 						}
-
-						if !noHighlight {
+						if !noHighlight && hitOne {
 							var j int
 							var buf bytes.Buffer
 							record2 := make([]string, len(record)) //with color
 							for i, c := range record {
+								if len(c) == 0 {
+									record2[i] = c
+									continue
+								}
 								if _, ok := fieldsMap[i+1]; (!negativeFields && ok) || (negativeFields && !ok) {
 									if useRegexp {
 										j = 0
