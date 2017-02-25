@@ -211,9 +211,9 @@
 <li><strong>Support common plots</strong> (see <a href="http://bioinf.shenwei.me/csvtk/usage/#plot">usage</a>)</li>
 </ul>
 <h2 id="subcommands">Subcommands</h2>
-<p>21 in total.</p>
 <p><strong>Information</strong></p>
 <ul>
+<li><code>headers</code> print headers</li>
 <li><code>stat</code> summary of CSV file</li>
 <li><code>stat2</code> summary of selected number fields</li>
 </ul>
@@ -228,6 +228,8 @@
 </ul>
 <p><strong>Set operations</strong></p>
 <ul>
+<li><code>head</code> print first N records</li>
+<li><code>sample</code> sampling by proportion</li>
 <li><code>cut</code> select parts of fields</li>
 <li><code>uniq</code> unique data without sorting</li>
 <li><code>freq</code> frequencies of selected fields</li>
@@ -381,11 +383,11 @@ name-indexed data such as CSV and tabular JSON http://johnkerl.org/miller</li>
 <ol>
 <li>The CSV parser requires all the lines have same number of fields/columns.
     Even lines with spaces will cause error.</li>
-<li>By default, csvtk thinks your files have header row, if not, use "-H".</li>
-<li>By default, lines starting with '#' will be ignored, if the header row
-    starts with '#', please assign "-C" another rare symbol, e.g. '$'.</li>
-<li>By default, csvtk handles CSV files, use "-t" for tab-delimited files.</li>
-<li>If " exists in tab-delimited files, use "-l".</li>
+<li>By default, csvtk thinks your files have header row, if not, switch flag <code>-H</code> on.</li>
+<li>By default, lines starting with <code>#</code> will be ignored, if the header row
+    starts with <code>#</code>, please assign flag <code>-C</code> another rare symbol, e.g. <code>'$'</code></li>
+<li>By default, csvtk handles CSV files, use flag <code>-t</code> for tab-delimited files.</li>
+<li>If <code>"</code> exists in tab-delimited files, use flag <code>-l</code>.</li>
 </ol>
 <p>More <a href="http://shenwei356.github.io/csvtk/usage/">examples</a> and <a href="http://shenwei356.github.io/csvtk/tutorial/">tutorial</a></p>
 <p>Examples</p>

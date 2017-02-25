@@ -148,7 +148,11 @@
         
             <li><a href="#before-use">Before use</a></li>
         
-            <li><a href="#csvkit">csvkit</a></li>
+            <li><a href="#table-of-contents">Table of Contents</a></li>
+        
+            <li><a href="#csvtk">csvtk</a></li>
+        
+            <li><a href="#headers">headers</a></li>
         
             <li><a href="#stat">stat</a></li>
         
@@ -159,6 +163,8 @@
             <li><a href="#transpose">transpose</a></li>
         
             <li><a href="#csv2md">csv2md</a></li>
+        
+            <li><a href="#head">head</a></li>
         
             <li><a href="#cut">cut</a></li>
         
@@ -204,17 +210,69 @@
 <ol>
 <li>The CSV parser requires all the lines have same number of fields/columns.
     Even lines with spaces will cause error.</li>
-<li>By default, csvtk thinks your files have header row, if not, use "-H".</li>
-<li>By default, lines starting with '#' will be ignored, if the header row
-    starts with '#', please assign "-C" another rare symbol, e.g. '$'.</li>
-<li>By default, csvtk handles CSV files, use "-t" for tab-delimited files.</li>
-<li>If " exists in tab-delimited files, use "-l".</li>
+<li>By default, csvtk thinks your files have header row, if not, switch flag <code>-H</code> on.</li>
+<li>By default, lines starting with <code>#</code> will be ignored, if the header row
+    starts with <code>#</code>, please assign flag <code>-C</code> another rare symbol, e.g. <code>'$'</code></li>
+<li>By default, csvtk handles CSV files, use flag <code>-t</code> for tab-delimited files.</li>
+<li>If <code>"</code> exists in tab-delimited files, use flag <code>-l</code>.</li>
 </ol>
-<h2 id="csvkit">csvkit</h2>
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+<li><a href="#csvtk">csvtk</a></li>
+</ul>
+<p><strong>Information</strong></p>
+<ul>
+<li><a href="#headers">headers</a></li>
+<li><a href="#stat">stat</a></li>
+<li><a href="#stat2">stat2</a></li>
+</ul>
+<p><strong>Format conversion</strong></p>
+<ul>
+<li><a href="#pretty">pretty</a></li>
+<li><a href="#transpose">transpose</a></li>
+<li><a href="#csv2md">csv2md</a></li>
+</ul>
+<p><strong>Set operations</strong></p>
+<ul>
+<li><a href="#head">head</a></li>
+<li><a href="#sample">sample</a></li>
+<li><a href="#cut">cut</a></li>
+<li><a href="#uniq">uniq</a></li>
+<li><a href="#freq">freq</a></li>
+<li><a href="#inter">inter</a></li>
+<li><a href="#grep">grep</a></li>
+<li><a href="#filter">filter</a></li>
+<li><a href="#join">join</a></li>
+</ul>
+<p><strong>Edit</strong></p>
+<ul>
+<li><a href="#rename">rename</a></li>
+<li><a href="#rename2">rename2</a></li>
+<li><a href="#replace">replace</a></li>
+<li><a href="#mutate">mutate</a></li>
+</ul>
+<p><strong>Ordering</strong></p>
+<ul>
+<li><a href="#sort">sort</a></li>
+</ul>
+<p><strong>Ploting</strong></p>
+<ul>
+<li><a href="#plot">plot</a></li>
+<li><a href="#plot-hist">plot hist</a></li>
+<li><a href="#plot-box">plot box</a></li>
+<li><a href="#plot-line">plot line</a></li>
+</ul>
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+<h2 id="csvtk">csvtk</h2>
 <p>Usage</p>
 <pre><code>A cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.4.6
+Version: 0.5.0
 
 Author: Wei Shen &lt;shenwei356@gmail.com&gt;
 
@@ -241,6 +299,8 @@ Available Commands:
   filter      filter data by values of selected fields with math expression
   freq        frequencies of selected fields
   grep        grep data by selected fields with patterns/regular expressions
+  head        print first N records
+  headers     print headers
   inter       intersection of multiple files
   join        join multiple CSV files by selected fields
   mutate      create new column from selected fields by regular expression
@@ -249,6 +309,7 @@ Available Commands:
   rename      rename column names
   rename2     rename column names by regular expression
   replace     replace data of selected fields by regular expression
+  sample      sampling by proportion
   sort        sort by selected fields
   space2tab   convert space delimited format to CSV
   stat        summary of CSV file
@@ -270,8 +331,29 @@ Flags:
   -T, --out-tabs               specifies that the output is delimited with tabs. Overrides &quot;-D&quot;
   -t, --tabs                   specifies that the input CSV file is delimited with tabs. Overrides &quot;-d&quot;
 
-Use &quot;csvtk [command] --help&quot; for more information about a command.
+</code></pre>
 
+<h2 id="headers">headers</h2>
+<p>Usage</p>
+<pre><code>print headers
+
+Usage:
+  csvtk headers [flags]
+
+</code></pre>
+
+<p>Examples</p>
+<pre><code>$ csvtk headers testdata/*.csv  
+# testdata/1.csv
+1       name
+2       attr
+# testdata/2.csv
+1       name
+2       major
+# testdata/3.csv
+1       id
+2       name
+3       hobby
 </code></pre>
 
 <h2 id="stat">stat</h2>
@@ -550,6 +632,65 @@ NA |Robert    |Abel     |123
 </table>
 </li>
 </ol>
+<h2 id="head">head</h2>
+<p>Usage</p>
+<pre><code>print first N records
+
+Usage:
+  csvtk head [flags]
+
+Flags:
+  -n, --number int   print first N records (default 10)
+
+</code></pre>
+
+<p>Examples</p>
+<ol>
+<li>
+<p>with header line</p>
+<pre><code>$ csvtk head -n 2 testdata/1.csv
+name,attr
+foo,cool
+bar,handsome
+</code></pre>
+</li>
+<li>
+<p>no header line</p>
+<pre><code>$ csvtk head -H -n 2 testdata/1.csv
+name,attr
+foo,cool
+
+## sample
+
+Usage
+
+```
+sampling by proportion
+
+Usage:
+  csvtk sample [flags]
+
+Flags:
+  -p, --proportion float   sample by proportion
+  -s, --rand-seed int      rand seed (default 11)
+
+```
+
+Examples
+
+```
+$ seq 100 | csvtk sample -H -p 0.5 | wc -l
+46
+$ seq 100 | csvtk sample -H -p 0.5 | wc -l
+46
+$ seq 100 | csvtk sample -H -p 0.1 | wc -l
+10
+$ seq 100 | csvtk sample -H -p 0.1 | wc -l
+10
+```
+</code></pre>
+</li>
+</ol>
 <h2 id="cut">cut</h2>
 <p>Usage</p>
 <pre><code>select parts of fields
@@ -650,13 +791,14 @@ Robert,Abel,123
 </li>
 <li>
 <p>All fields: <code>csvtk cut -F -f "*"</code></p>
-<p>$ cat testdata/names.csv | csvtk cut -F -f "*"
+<pre><code>$ cat testdata/names.csv | csvtk cut -F -f "*"
 id,first_name,last_name,username
 11,Rob,Pike,rob
 2,Ken,Thompson,ken
 4,Robert,Griesemer,gri
 1,Robert,Thompson,abc
-NA,Robert,Abel,123</p>
+NA,Robert,Abel,123
+</code></pre>
 </li>
 <li>
 <p>Field ranges:</p>
@@ -1234,13 +1376,14 @@ Flags:
 <ul>
 <li>
 <p>data</p>
-<p>$ cat testdata/names.csv
+<pre><code>$ cat testdata/names.csv
 id,first_name,last_name,username
 11,"Rob","Pike",rob
 2,Ken,Thompson,ken
 4,"Robert","Griesemer","gri"
 1,"Robert","Thompson","abc"
-NA,"Robert","Abel","123"</p>
+NA,"Robert","Abel","123"
+</code></pre>
 </li>
 <li>
 <p>By single column : <code>csvtk sort -k 1</code> or <code>csvtk sort -k last_name</code></p>
