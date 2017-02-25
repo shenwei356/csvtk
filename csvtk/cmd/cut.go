@@ -46,21 +46,9 @@ var cutCmd = &cobra.Command{
 		}
 		runtime.GOMAXPROCS(config.NumCPUs)
 
-		printNames := getFlagBool(cmd, "colnames")
-		if printNames && config.NoHeaderRow {
-			checkError(fmt.Errorf("flag -n (--colnames) and -H (--no-header-row) should not given both"))
-		}
-
 		fieldStr := getFlagString(cmd, "fields")
-		if !printNames && fieldStr == "" {
-			checkError(fmt.Errorf("flag -f (--field) needed"))
-		}
 
 		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
-		if printNames {
-			fieldStr = "*"
-			fuzzyFields = true
-		}
 		fields, colnames, negativeFields, needParseHeaderRow := parseFields(cmd, fieldStr, config.NoHeaderRow)
 		var fieldsMap map[int]struct{}
 		var fieldsOrder map[int]int      // for set the order of fields
@@ -116,19 +104,11 @@ var cutCmd = &cobra.Command{
 		checkFields := true
 		var items []string
 
-	LOOP:
 		for chunk := range csvReader.Ch {
 			checkError(chunk.Err)
 
 			for _, record := range chunk.Data {
 				if parseHeaderRow { // parsing header row
-					if printNames {
-						outfh.WriteString(fmt.Sprintf("%s\t%s\n", "#field", "colname"))
-						for i, n := range record {
-							outfh.WriteString(fmt.Sprintf("%d\t%s\n", i+1, n))
-						}
-						break LOOP
-					}
 					colnames2fileds = make(map[string]int, len(record))
 					for i, col := range record {
 						colnames2fileds[col] = i + 1
@@ -225,5 +205,4 @@ func init() {
 	RootCmd.AddCommand(cutCmd)
 	cutCmd.Flags().StringP("fields", "f", "", `select only these fields. e.g -f 1,2 or -f columnA,columnB, or -f -columnA for unselect columnA`)
 	cutCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g. -f "*name" or "id123*"`)
-	cutCmd.Flags().BoolP("colnames", "n", false, `print column names`)
 }

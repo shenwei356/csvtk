@@ -36,7 +36,7 @@ import (
 )
 
 // VERSION of csvtk
-const VERSION = "0.4.6"
+const VERSION = "0.5.0"
 
 func checkError(err error) {
 	if err != nil {
@@ -488,6 +488,7 @@ func parseCSVfile(cmd *cobra.Command, config Config, file string,
 				HeaderRowAll = record
 				continue
 			}
+
 			if checkFields {
 				fields2 := []int{}
 				for f := range record {

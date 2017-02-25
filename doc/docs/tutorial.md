@@ -2,11 +2,8 @@
 
 ## Forewords
 
-A cross-platform, efficient, practical and pretty CSV/TSV toolkit
-
 Yes, you could just use spreadsheet softwares like MS excel to
 do most of the job.
-
 However it's all by clicking and typing, which is **not
 automatically and time-consuming to repeat**, especially when we want to
 apply similar operations with different datasets or purposes.
@@ -62,8 +59,8 @@ What's a mess. Let's make it prettier!
 
 1. Column names
 
-        $ csvtk cut -n otu_table.csv
-        #field  colname
+        $ csvtk headsers otu_table.csv
+        # otu_table.csv
         1       Taxonomy
         2       A.1
         3       A.2

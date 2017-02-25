@@ -6,20 +6,70 @@
 
 1. The CSV parser requires all the lines have same number of fields/columns.
     Even lines with spaces will cause error.
-2. By default, csvtk thinks your files have header row, if not, use "-H".
-3. By default, lines starting with '#' will be ignored, if the header row
-    starts with '#', please assign "-C" another rare symbol, e.g. '$'.
-4. By default, csvtk handles CSV files, use "-t" for tab-delimited files.
-5. If " exists in tab-delimited files, use "-l".
+2. By default, csvtk thinks your files have header row, if not, switch flag `-H` on.
+3. By default, lines starting with `#` will be ignored, if the header row
+    starts with `#`, please assign flag `-C` another rare symbol, e.g. `'$'`
+4. By default, csvtk handles CSV files, use flag `-t` for tab-delimited files.
+5. If `"` exists in tab-delimited files, use flag `-l`.
 
-## csvkit
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## Table of Contents
+
+- [csvtk](#csvtk)
+
+**Information**
+
+- [headers](#headers)
+- [stat](#stat)
+- [stat2](#stat2)
+
+**Format conversion**
+
+- [pretty](#pretty)
+- [transpose](#transpose)
+- [csv2md](#csv2md)
+
+**Set operations**
+
+- [head](#head)
+- [sample](#sample)
+- [cut](#cut)
+- [uniq](#uniq)
+- [freq](#freq)
+- [inter](#inter)
+- [grep](#grep)
+- [filter](#filter)
+- [join](#join)
+
+**Edit**
+
+- [rename](#rename)
+- [rename2](#rename2)
+- [replace](#replace)
+- [mutate](#mutate)
+
+**Ordering**
+
+- [sort](#sort)
+
+**Ploting**
+
+- [plot](#plot)
+- [plot hist](#plot-hist)
+- [plot box](#plot-box)
+- [plot line](#plot-line)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## csvtk
 
 Usage
 
 ```
 A cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.4.6
+Version: 0.5.0
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -46,6 +96,8 @@ Available Commands:
   filter      filter data by values of selected fields with math expression
   freq        frequencies of selected fields
   grep        grep data by selected fields with patterns/regular expressions
+  head        print first N records
+  headers     print headers
   inter       intersection of multiple files
   join        join multiple CSV files by selected fields
   mutate      create new column from selected fields by regular expression
@@ -54,6 +106,7 @@ Available Commands:
   rename      rename column names
   rename2     rename column names by regular expression
   replace     replace data of selected fields by regular expression
+  sample      sampling by proportion
   sort        sort by selected fields
   space2tab   convert space delimited format to CSV
   stat        summary of CSV file
@@ -75,8 +128,35 @@ Flags:
   -T, --out-tabs               specifies that the output is delimited with tabs. Overrides "-D"
   -t, --tabs                   specifies that the input CSV file is delimited with tabs. Overrides "-d"
 
-Use "csvtk [command] --help" for more information about a command.
+```
 
+## headers
+
+Usage
+
+```
+print headers
+
+Usage:
+  csvtk headers [flags]
+
+```
+
+Examples
+
+
+```
+$ csvtk headers testdata/*.csv  
+# testdata/1.csv
+1       name
+2       attr
+# testdata/2.csv
+1       name
+2       major
+# testdata/3.csv
+1       id
+2       name
+3       hobby
 ```
 
 ## stat
@@ -295,6 +375,64 @@ Examples
     1  |Robert    |Thompson |abc
     NA |Robert    |Abel     |123
 
+## head
+
+Usage
+
+```
+print first N records
+
+Usage:
+  csvtk head [flags]
+
+Flags:
+  -n, --number int   print first N records (default 10)
+
+```
+
+Examples
+
+1. with header line
+
+        $ csvtk head -n 2 testdata/1.csv
+        name,attr
+        foo,cool
+        bar,handsome
+
+2. no header line
+
+        $ csvtk head -H -n 2 testdata/1.csv
+        name,attr
+        foo,cool
+
+        ## sample
+
+        Usage
+
+        ```
+        sampling by proportion
+
+        Usage:
+          csvtk sample [flags]
+
+        Flags:
+          -p, --proportion float   sample by proportion
+          -s, --rand-seed int      rand seed (default 11)
+
+        ```
+
+        Examples
+
+        ```
+        $ seq 100 | csvtk sample -H -p 0.5 | wc -l
+        46
+        $ seq 100 | csvtk sample -H -p 0.5 | wc -l
+        46
+        $ seq 100 | csvtk sample -H -p 0.1 | wc -l
+        10
+        $ seq 100 | csvtk sample -H -p 0.1 | wc -l
+        10
+        ```
 
 ## cut
 
@@ -388,13 +526,13 @@ Examples
 
 - All fields: `csvtk cut -F -f "*"`
 
-    $ cat testdata/names.csv | csvtk cut -F -f "*"
-    id,first_name,last_name,username
-    11,Rob,Pike,rob
-    2,Ken,Thompson,ken
-    4,Robert,Griesemer,gri
-    1,Robert,Thompson,abc
-    NA,Robert,Abel,123
+        $ cat testdata/names.csv | csvtk cut -F -f "*"
+        id,first_name,last_name,username
+        11,Rob,Pike,rob
+        2,Ken,Thompson,ken
+        4,Robert,Griesemer,gri
+        1,Robert,Thompson,abc
+        NA,Robert,Abel,123
 
 - Field ranges:
     - `csvtk cut -f 2-4` for column 2,3,4
@@ -979,13 +1117,13 @@ Examples
 
 - data
 
-    $ cat testdata/names.csv
-    id,first_name,last_name,username
-    11,"Rob","Pike",rob
-    2,Ken,Thompson,ken
-    4,"Robert","Griesemer","gri"
-    1,"Robert","Thompson","abc"
-    NA,"Robert","Abel","123"
+        $ cat testdata/names.csv
+        id,first_name,last_name,username
+        11,"Rob","Pike",rob
+        2,Ken,Thompson,ken
+        4,"Robert","Griesemer","gri"
+        1,"Robert","Thompson","abc"
+        NA,"Robert","Abel","123"
 
 - By single column : `csvtk sort -k 1` or `csvtk sort -k last_name`
 

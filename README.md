@@ -44,10 +44,9 @@
 
 ## Subcommands
 
-21 in total.
-
 **Information**
 
+-  `headers` print headers
 -  `stat` summary of CSV file
 -  `stat2` summary of selected number fields
 
@@ -62,6 +61,8 @@
 
 **Set operations**
 
+-  `head` print first N records
+-  `sample` sampling by proportion
 -  `cut` select parts of fields
 -  `uniq` unique data without sorting
 -  `freq` frequencies of selected fields
@@ -157,11 +158,11 @@ name-indexed data such as CSV and tabular JSON http://johnkerl.org/miller
 
 1. The CSV parser requires all the lines have same number of fields/columns.
     Even lines with spaces will cause error.
-2. By default, csvtk thinks your files have header row, if not, use "-H".
-3. By default, lines starting with '#' will be ignored, if the header row
-    starts with '#', please assign "-C" another rare symbol, e.g. '$'.
-4. By default, csvtk handles CSV files, use "-t" for tab-delimited files.
-5. If " exists in tab-delimited files, use "-l".
+2. By default, csvtk thinks your files have header row, if not, switch flag `-H` on.
+3. By default, lines starting with `#` will be ignored, if the header row
+    starts with `#`, please assign flag `-C` another rare symbol, e.g. `'$'`
+4. By default, csvtk handles CSV files, use flag `-t` for tab-delimited files.
+5. If `"` exists in tab-delimited files, use flag `-l`.
 
 More [examples](http://shenwei356.github.io/csvtk/usage/) and [tutorial](http://shenwei356.github.io/csvtk/tutorial/)
 
