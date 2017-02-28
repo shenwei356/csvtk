@@ -44,6 +44,8 @@
 
 ## Subcommands
 
+24 subcommands in total.
+
 **Information**
 
 -  `headers` print headers
