@@ -1,7 +1,7 @@
-sample,Proteobacteria,Firmicutes,Bacteroidetes,Deferribacteres,Tenericutes
-A.1,.13,.42,.19,.17,.00
-A.2,.29,.06,.62,.00,.00
-A.3,.13,.49,.12,.24,.00
-B.1,.16,.41,.33,.01,.01
-B.2,.13,.55,.16,.01,.03
-B.3,.22,.41,.29,.01,.02
+sample,Proteobacteria,Firmicutes,Bacteroidetes,Deferribacteres
+A.1,.13,.42,.19,.17
+A.2,.29,.06,.62,.00
+A.3,.13,.49,.12,.24
+B.1,.16,.41,.33,.01
+B.2,.13,.55,.16,.01
+B.3,.22,.41,.29,.01
