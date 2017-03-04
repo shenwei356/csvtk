@@ -25,16 +25,19 @@ import (
 	"fmt"
 	"regexp"
 	"runtime"
+	"strconv"
+	"strings"
 
+	"github.com/Knetic/govaluate"
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
 )
 
-// mutateCmd represents the mutate command
-var mutateCmd = &cobra.Command{
-	Use:   "mutate",
-	Short: "create new column from selected fields by regular expression",
-	Long: `create new column from selected fields by regular expression
+// filter2Cmd represents the filter command
+var filter2Cmd = &cobra.Command{
+	Use:   "filter2",
+	Short: "filter rows by awk-like artithmetic/string expressions",
+	Long: `filter rows by awk-like artithmetic/string expressions
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -45,35 +48,35 @@ var mutateCmd = &cobra.Command{
 		}
 		runtime.GOMAXPROCS(config.NumCPUs)
 
-		ignoreCase := getFlagBool(cmd, "ignore-case")
-		naUnmatched := getFlagBool(cmd, "na")
-		pattern := getFlagString(cmd, "pattern")
-		if !regexp.MustCompile(`\(.+\)`).MatchString(pattern) {
-			checkError(fmt.Errorf(`value of -p (--pattern) must contains "(" and ")" to capture data which is used to create new column`))
+		filterStr := getFlagString(cmd, "filter")
+		fuzzyFields := false
+
+		if filterStr == "" {
+			checkError(fmt.Errorf("flag -f (--filter) needed"))
 		}
 
-		name := getFlagString(cmd, "name")
-		if !config.NoHeaderRow && name == "" {
-			checkError(fmt.Errorf("falg -n (--name) needed"))
+		if !reFilter2.MatchString(filterStr) {
+			checkError(fmt.Errorf("invalid filter: %s", filterStr))
 		}
 
-		p := pattern
-		if ignoreCase {
-			p = "(?i)" + p
+		fs := make([]string, 0)
+		for _, f := range reFilter2.FindAllStringSubmatch(filterStr, -1) {
+			fs = append(fs, f[1])
 		}
-		patternRegexp, err := regexp.Compile(p)
+
+		fieldStr := strings.Join(fs, ",")
+
+		filterStr = reFilter2VarField.ReplaceAllString(filterStr, "shenwei$1")
+		filterStr = reFilter2VarSymbol.ReplaceAllString(filterStr, "")
+		expression, err := govaluate.NewEvaluableExpression(filterStr)
 		checkError(err)
 
-		fieldStr := getFlagString(cmd, "fields")
+		usingColname := true
+
 		fields, colnames, negativeFields, needParseHeaderRow := parseFields(cmd, fieldStr, config.NoHeaderRow)
-		if !(len(fields) == 1 || len(colnames) == 1) {
-			checkError(fmt.Errorf("only single field allowed"))
-		}
-		if negativeFields {
-			checkError(fmt.Errorf("unselect not allowed"))
-		}
 		var fieldsMap map[int]struct{}
 		if len(fields) > 0 {
+			usingColname = false
 			fields2 := make([]int, len(fields))
 			fieldsMap = make(map[int]struct{}, len(fields))
 			for i, f := range fields {
@@ -87,9 +90,6 @@ var mutateCmd = &cobra.Command{
 			}
 			fields = fields2
 		}
-
-		// fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
-		fuzzyFields := false
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
@@ -111,10 +111,15 @@ var mutateCmd = &cobra.Command{
 			var colnames2fileds map[string]int   // column name -> field
 			var colnamesMap map[string]*regexp.Regexp
 
-			handleHeaderRow := needParseHeaderRow
-			checkFields := true
+			parameters := make(map[string]interface{}, len(colnamesMap))
 
-			var record2 []string // for output
+			checkFields := true
+			var flag bool
+			var col string
+			var fieldTmp int
+			var value string
+			var valueFloat float64
+			var result interface{}
 
 			for chunk := range csvReader.Ch {
 				checkError(chunk.Err)
@@ -162,7 +167,9 @@ var mutateCmd = &cobra.Command{
 							fieldsMap[f] = struct{}{}
 						}
 
+						checkError(writer.Write(record))
 						parseHeaderRow = false
+						continue
 					}
 					if checkFields {
 						for field := range fieldsMap {
@@ -195,29 +202,49 @@ var mutateCmd = &cobra.Command{
 						checkFields = false
 					}
 
-					record2 = record
-					for f := range record {
-						record2[f] = record[f]
-						if _, ok := fieldsMap[f+1]; ok {
-							if handleHeaderRow {
-								record2 = append(record2, name)
-								handleHeaderRow = false
+					flag = false
+
+					if !usingColname {
+						for _, fieldTmp = range fields {
+							value = record[fieldTmp-1]
+							if reDigitals.MatchString(value) {
+								valueFloat, _ = strconv.ParseFloat(removeComma(value), 64)
+								parameters[fmt.Sprintf("shenwei%d", fieldTmp)] = valueFloat
 							} else {
-								if patternRegexp.MatchString(record[f]) {
-									found := patternRegexp.FindAllStringSubmatch(record[f], -1)
-									record2 = append(record2, found[0][1])
-								} else {
-									if naUnmatched {
-										record2 = append(record2, "")
-									} else {
-										record2 = append(record2, record[f])
-									}
-								}
+								parameters[fmt.Sprintf("shenwei%d", fieldTmp)] = value
 							}
-							break
+						}
+					} else {
+						for col = range colnamesMap {
+							value = record[colnames2fileds[col]-1]
+							if reDigitals.MatchString(value) {
+								valueFloat, _ = strconv.ParseFloat(removeComma(value), 64)
+								parameters[col] = valueFloat
+							} else {
+								parameters[col] = value
+							}
 						}
 					}
-					checkError(writer.Write(record2))
+
+					result, err = expression.Evaluate(parameters)
+					if err != nil {
+						flag = false
+						continue
+					}
+					switch result.(type) {
+					case bool:
+						if result.(bool) == true {
+							flag = true
+						}
+					default:
+						checkError(fmt.Errorf("filter is not boolean expression: %s", filterStr))
+					}
+
+					if !flag {
+						continue
+					}
+
+					checkError(writer.Write(record))
 				}
 			}
 		}
@@ -227,10 +254,10 @@ var mutateCmd = &cobra.Command{
 }
 
 func init() {
-	RootCmd.AddCommand(mutateCmd)
-	mutateCmd.Flags().StringP("fields", "f", "1", `select only these fields. e.g -f 1,2 or -f columnA,columnB`)
-	mutateCmd.Flags().StringP("pattern", "p", "^(.+)$", `search regular expression with capture bracket. e.g.`)
-	mutateCmd.Flags().StringP("name", "n", "", `new column name`)
-	mutateCmd.Flags().BoolP("ignore-case", "i", false, "ignore case")
-	mutateCmd.Flags().BoolP("na", "", false, "for unmatched data, use blank instead of original data")
+	RootCmd.AddCommand(filter2Cmd)
+	filter2Cmd.Flags().StringP("filter", "f", "", `awk-like filter condition. e.g. -f '$age>12' or -f '$1 > $3' or -f '$name=="abc"'`)
 }
+
+var reFilter2 = regexp.MustCompile(`\$([^ +-/*&\|^%><!~=()]+)`)
+var reFilter2VarField = regexp.MustCompile(`\$(\d+)`)
+var reFilter2VarSymbol = regexp.MustCompile(`\$`)

@@ -104,6 +104,9 @@ var stat2Cmd = &cobra.Command{
 					}
 					colnamesMap = make(map[string]*regexp.Regexp, len(colnames))
 					for _, col := range colnames {
+						if _, ok := colnames2fileds[col]; !ok {
+							checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col, file))
+						}
 						if negativeFields {
 							colnamesMap[col[1:]] = fuzzyField2Regexp(col[1:])
 						} else {
@@ -141,6 +144,11 @@ var stat2Cmd = &cobra.Command{
 					isHeaderRow = true
 				}
 				if checkFields {
+					for field := range fieldsMap {
+						if field > len(record) {
+							checkError(fmt.Errorf(`field (%d) out of range (%d) in file: %s`, field, len(record), file))
+						}
+					}
 					fields2 := []int{}
 					for f := range record {
 						_, ok := fieldsMap[f+1]

@@ -23,18 +23,19 @@ package cmd
 import (
 	"encoding/csv"
 	"fmt"
-	"github.com/shenwei356/xopen"
-	"github.com/spf13/cobra"
 	"regexp"
 	"runtime"
 	"strconv"
+
+	"github.com/shenwei356/xopen"
+	"github.com/spf13/cobra"
 )
 
 // filterCmd represents the filter command
 var filterCmd = &cobra.Command{
 	Use:   "filter",
-	Short: "filter data by values of selected fields with math expression",
-	Long: `filter data by values of selected fields with math expression
+	Short: "filter rows by values of selected fields with artithmetic expression",
+	Long: `filter rows by values of selected fields with artithmetic expression
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -120,6 +121,9 @@ var filterCmd = &cobra.Command{
 						}
 						colnamesMap = make(map[string]*regexp.Regexp, len(colnames))
 						for _, col := range colnames {
+							if _, ok := colnames2fileds[col]; !ok {
+								checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col, file))
+							}
 							if negativeFields {
 								colnamesMap[col[1:]] = fuzzyField2Regexp(col[1:])
 							} else {
@@ -157,6 +161,11 @@ var filterCmd = &cobra.Command{
 						continue
 					}
 					if checkFields {
+						for field := range fieldsMap {
+							if field > len(record) {
+								checkError(fmt.Errorf(`field (%d) out of range (%d) in file: %s`, field, len(record), file))
+							}
+						}
 						fields2 := []int{}
 						for f := range record {
 							_, ok := fieldsMap[f+1]
@@ -251,7 +260,7 @@ var filterCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(filterCmd)
-	filterCmd.Flags().StringP("filter", "f", "", `filter condition. e.g. -f "age>12" or -f "1,3<=2" or -F -f "c*!=0" --or`)
+	filterCmd.Flags().StringP("filter", "f", "", `filter condition. e.g. -f "age>12" or -f "1,3<=2" or -F -f "c*!=0"`)
 	filterCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fileds, e.g. "*name" or "id123*"`)
 	filterCmd.Flags().BoolP("any", "", false, `print record if any of the field satisfy the condition`)
 }

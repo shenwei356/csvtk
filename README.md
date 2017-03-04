@@ -44,7 +44,7 @@
 
 ## Subcommands
 
-24 subcommands in total.
+25 subcommands in total.
 
 **Information**
 
@@ -70,7 +70,8 @@
 -  `freq` frequencies of selected fields
 -  `inter` intersection of multiple files
 -  `grep` grep data by selected fields with patterns/regular expressions
--  `filter` filter data by values of selected fields with math expression
+-  `filter` filter rows by values of selected fields with artithmetic expression
+-  `filter` filter rows by awk-like artithmetic/string expressions
 -  `join` join multiple CSV files by selected fields
 
 **Edit**

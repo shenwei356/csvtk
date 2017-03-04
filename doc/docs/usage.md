@@ -40,6 +40,7 @@
 - [inter](#inter)
 - [grep](#grep)
 - [filter](#filter)
+- [filter2](#filter)
 - [join](#join)
 
 **Edit**
@@ -746,15 +747,15 @@ Matched parts will be *highlight*
 Usage
 
 ```
-filter data by values of selected fields with math expression
+filter rows by values of selected fields with artithmetic expression
 
 Usage:
   csvtk filter [flags]
 
 Flags:
       --any             print record if any of the field satisfy the condition
-  -f, --filter string   filter condition. e.g. -f "age>12" or -f "1,3<=2" or -F -f "c*!=0" --or
-  -F, --fuzzy-fields    using fuzzy fileds, e.g. *name or id123*
+  -f, --filter string   filter condition. e.g. -f "age>12" or -f "1,3<=2" or -F -f "c*!=0"
+  -F, --fuzzy-fields    using fuzzy fileds, e.g. "*name" or "id123*"
 
 ```
 
@@ -807,6 +808,22 @@ Examples
         4,Robert,Griesemer,gri
         1,Robert,Thompson,abc
 
+## filter2
+
+Usage
+
+```
+filter rows by awk-like artithmetic/string expressions
+
+Usage:
+  csvtk filter2 [flags]
+
+Flags:
+  -f, --filter string   awk-like filter condition. e.g. -f '$age>12' or -f '$1 > $3' or -f '$name=="abc"'
+
+```
+
+Examples:
 
 ## join
 
