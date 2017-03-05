@@ -36,7 +36,7 @@ import (
 )
 
 // VERSION of csvtk
-const VERSION = "0.6.0dev"
+const VERSION = "0.6.0"
 
 func checkError(err error) {
 	if err != nil {

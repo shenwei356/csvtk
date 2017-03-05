@@ -39,6 +39,25 @@ var filter2Cmd = &cobra.Command{
 	Short: "filter rows by awk-like artithmetic/string expressions",
 	Long: `filter rows by awk-like artithmetic/string expressions
 
+The artithmetic/string expression is supported by:
+
+    https://github.com/Knetic/govaluate
+
+Supported operators and types:
+
+    Modifiers: + - / * & | ^ ** % >> <<
+    Comparators: > >= < <= == != =~ !~
+    Logical ops: || &&
+    Numeric constants, as 64-bit floating point (12345.678)
+    String constants (single quotes: 'foobar')
+    Date constants (single quotes)
+    Boolean constants: true false
+    Parenthesis to control order of evaluation ( )
+    Arrays (anything separated by , within parenthesis: (1, 2, 'foo'))
+    Prefixes: ! - ~
+    Ternary conditional: ? :
+    Null coalescence: ??
+
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)

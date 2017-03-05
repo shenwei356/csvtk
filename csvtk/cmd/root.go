@@ -43,13 +43,14 @@ Source code: https://github.com/shenwei356/csvtk
 
 Attention:
 
-  1. The CSV parser requires all the lines have same number of fields/columns.
-     Even lines with spaces will cause error.
-  2. By default, csvtk thinks your files have header row, if not, use "-H".
-  3. By default, lines starting with '#' will be ignored, if the header row
-     starts with '#', please assign "-C" another rare symbol, e.g. '$'.
-  4. By default, csvtk handles CSV files, use "-t" for tab-delimited files.
-  5. If " exists in tab-delimited files, use "-l".
+    1. The CSV parser requires all the lines have same number of fields/columns.
+       Even lines with spaces will cause error.
+    2. By default, csvtk thinks your files have header row, if not, switch flag "-H" on.
+    3. Column names better be unique.
+    4. By default, lines starting with "#" will be ignored, if the header row
+       starts with "#", please assign flag "-C" another rare symbol, e.g. '$'.
+    5. By default, csvtk handles CSV files, use flag "-t" for tab-delimited files.
+    6. If " exists in tab-delimited files, use flag "-l".
 
 `, VERSION),
 }

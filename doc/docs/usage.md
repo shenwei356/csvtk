@@ -7,10 +7,11 @@
 1. The CSV parser requires all the lines have same number of fields/columns.
     Even lines with spaces will cause error.
 2. By default, csvtk thinks your files have header row, if not, switch flag `-H` on.
-3. By default, lines starting with `#` will be ignored, if the header row
-    starts with `#`, please assign flag `-C` another rare symbol, e.g. `'$'`
-4. By default, csvtk handles CSV files, use flag `-t` for tab-delimited files.
-5. If `"` exists in tab-delimited files, use flag `-l`.
+3. Column names better be unique.
+4. By default, lines starting with `#` will be ignored, if the header row
+    starts with `#`, please assign flag `-C` another rare symbol, e.g. `'$'`.
+5. By default, csvtk handles CSV files, use flag `-t` for tab-delimited files.
+6. If `"` exists in tab-delimited files, use flag `-l`.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -40,7 +41,7 @@
 - [inter](#inter)
 - [grep](#grep)
 - [filter](#filter)
-- [filter2](#filter)
+- [filter2](#filter2)
 - [join](#join)
 
 **Edit**
@@ -70,7 +71,7 @@ Usage
 ```
 A cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.5.0
+Version: 0.6.0
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -79,13 +80,14 @@ Source code: https://github.com/shenwei356/csvtk
 
 Attention:
 
-  1. The CSV parser requires all the lines have same number of fields/columns.
-     Even lines with spaces will cause error.
-  2. By default, csvtk thinks your files have header row, if not, use "-H".
-  3. By default, lines starting with '#' will be ignored, if the header row
-     starts with '#', please assign "-C" another rare symbol, e.g. '$'.
-  4. By default, csvtk handles CSV files, use "-t" for tab-delimited files.
-  5. If " exists in tab-delimited files, use "-l".
+    1. The CSV parser requires all the lines have same number of fields/columns.
+       Even lines with spaces will cause error.
+    2. By default, csvtk thinks your files have header row, if not, switch flag "-H" on.
+    3. Column names better be unique.
+    4. By default, lines starting with "#" will be ignored, if the header row
+       starts with "#", please assign flag "-C" another rare symbol, e.g. '$'.
+    5. By default, csvtk handles CSV files, use flag "-t" for tab-delimited files.
+    6. If " exists in tab-delimited files, use flag "-l".
 
 Usage:
   csvtk [command]
@@ -94,11 +96,13 @@ Available Commands:
   csv2md      convert CSV to markdown format
   csv2tab     convert CSV to tabular format
   cut         select parts of fields
-  filter      filter data by values of selected fields with math expression
+  filter      filter rows by values of selected fields with artithmetic expression
+  filter2     filter rows by awk-like artithmetic/string expressions
   freq        frequencies of selected fields
   grep        grep data by selected fields with patterns/regular expressions
   head        print first N records
   headers     print headers
+  help        Help about any command
   inter       intersection of multiple files
   join        join multiple CSV files by selected fields
   mutate      create new column from selected fields by regular expression
@@ -145,9 +149,8 @@ Usage:
 
 Examples
 
-
 ```
-$ csvtk headers testdata/*.csv  
+$ csvtk headers testdata/*.csv$
 # testdata/1.csv
 1       name
 2       attr
@@ -176,7 +179,7 @@ Examples
 
 1. with header row
 
-        $ cat names.csv
+        $ cat testdata/names.csv
         id,first_name,last_name,username
         11,"Rob","Pike",rob
         2,Ken,Thompson,ken
@@ -184,19 +187,19 @@ Examples
         1,"Robert","Thompson","abc"
         NA,"Robert","Abel","123"
 
-        $ cat names.csv | csvtk stat
+        $ cat testdata/names.csv | csvtk stat
         file   num_cols   num_rows
         -             4          5
 
 2. no header row
 
-        $ cat digitals.tsv
+        $ cat  testdata/digitals.tsv
         4       5       6
         1       2       3
         7       8       0
         8       1,000   4
 
-        $ cat digitals.tsv | csvtk stat -t -H
+        $ cat  testdata/digitals.tsv | csvtk stat -t -H
         file   num_cols   num_rows
         -             3          4
 
@@ -224,16 +227,15 @@ Examples
         field   num   sum   min   max   mean   stdev
         1         5    15     1     5      3    1.58
 
-
 1. multiple fields
 
-        $ cat digitals.tsv
+        $ cat  testdata/digitals.tsv
         4       5       6
         1       2       3
         7       8       0
         8       1,000   4
 
-        $ cat digitals.tsv | csvtk stat2 -t -H -f 1-3
+        $ cat  testdata/digitals.tsv | csvtk stat2 -t -H -f 1-3
         field   num     sum   min     max     mean    stdev
         1         4      20     1       8        5     3.16
         2         4   1,015     2   1,000   253.75   497.51
@@ -262,7 +264,7 @@ Examples:
 
 1. default
 
-        $ csvtk pretty names.csv
+        $ csvtk pretty testdata/names.csv
         id   first_name   last_name   username
         11   Rob          Pike        rob
         2    Ken          Thompson    ken
@@ -272,7 +274,7 @@ Examples:
 
 2. align right
 
-        $ csvtk pretty names.csv -r
+        $ csvtk pretty testdata/names.csv -r
         id   first_name   last_name   username
         11          Rob        Pike        rob
          2          Ken    Thompson        ken
@@ -283,7 +285,7 @@ Examples:
 
 3. custom separator
 
-        $ csvtk pretty names.csv -s " | "
+        $ csvtk pretty testdata/names.csv -s " | "
         id | first_name | last_name | username
         11 | Rob        | Pike      | rob
         2  | Ken        | Thompson  | ken
@@ -305,13 +307,13 @@ Usage:
 
 Examples
 
-    $ cat digitals.tsv
-    4       5       6                                                                                  
-    1       2       3                                                                                  
+    $ cat  testdata/digitals.tsv
+    4       5       6$
+    1       2       3$
     7       8       0
     8       1,000   4
 
-    $ csvtk transpose -t digitals.tsv
+    $ csvtk transpose -t  testdata/digitals.tsv
     4       1       7       8
     5       2       8       1,000
     6       3       0       4
@@ -336,7 +338,7 @@ Examples
 
 1. give single alignment symbol
 
-        $ cat names.csv | csvtk csv2md -a left
+        $ cat testdata/names.csv | csvtk csv2md -a left
         id |first_name|last_name|username
         :--|:---------|:--------|:-------
         11 |Rob       |Pike     |rob
@@ -357,7 +359,7 @@ Examples
 
 2. give alignment symbols of all fields
 
-        $ cat names.csv | csvtk csv2md -a c,l,l,l
+        $ cat testdata/names.csv | csvtk csv2md -a c,l,l,l
         id |first_name|last_name|username
         :-:|:---------|:--------|:-------
         11 |Rob       |Pike     |rob
@@ -406,34 +408,37 @@ Examples
         name,attr
         foo,cool
 
-        ## sample
+## sample
 
-        Usage
+Usage
 
-        ```
-        sampling by proportion
+```
+sampling by proportion
 
-        Usage:
-          csvtk sample [flags]
+Usage:
+  csvtk sample [flags]
 
-        Flags:
-          -p, --proportion float   sample by proportion
-          -s, --rand-seed int      rand seed (default 11)
+Flags:
+  -p, --proportion float   sample by proportion
+  -s, --rand-seed int      rand seed (default 11)
 
-        ```
+```
 
-        Examples
+Examples
 
-        ```
-        $ seq 100 | csvtk sample -H -p 0.5 | wc -l
-        46
-        $ seq 100 | csvtk sample -H -p 0.5 | wc -l
-        46
-        $ seq 100 | csvtk sample -H -p 0.1 | wc -l
-        10
-        $ seq 100 | csvtk sample -H -p 0.1 | wc -l
-        10
-        ```
+```
+$ seq 100 | csvtk sample -H -p 0.5 | wc -l
+46
+
+$ seq 100 | csvtk sample -H -p 0.5 | wc -l
+46
+
+$ seq 100 | csvtk sample -H -p 0.1 | wc -l
+10
+
+$ seq 100 | csvtk sample -H -p 0.1 | wc -l
+10
+```
 
 ## cut
 
@@ -446,10 +451,8 @@ Usage:
   csvtk cut [flags]
 
 Flags:
-  -n, --colnames        print column names
   -f, --fields string   select only these fields. e.g -f 1,2 or -f columnA,columnB, or -f -columnA for unselect columnA
   -F, --fuzzy-fields    using fuzzy fields, e.g. -f "*name or -f id123*"
-
 
 ```
 
@@ -464,15 +467,6 @@ Examples
         4,"Robert","Griesemer","gri"
         1,"Robert","Thompson","abc"
         NA,"Robert","Abel","123"
-
-- Print colname names: `csvtk cut -n`
-
-        $ cat testdata/names.csv | csvtk cut -n
-        #field  colname
-        1       id
-        2       first_name
-        3       last_name
-        4       username
 
 - Select columns by column index: `csvtk cut -f 1,2`
 
@@ -515,7 +509,7 @@ Examples
             1,Thompson,abc
             NA,Abel,123
 
-- **Fuzzy fields**,  `csvtk cut -F -f "*_name,username"`
+- **Fuzzy fields** using wildcard character,  `csvtk cut -F -f "*_name,username"`
 
         $ cat testdata/names.csv | csvtk cut -F -f "*_name,username"
         first_name,last_name,username
@@ -659,7 +653,7 @@ Examples
 
 1. data without header row
 
-        $ cat testdata/digitals.tsv  | csvtk -t -H freq -f 1
+        $ cat testdata/ testdata/digitals.tsv  | csvtk -t -H freq -f 1
         8       1
         1       1
         4       1
@@ -730,9 +724,16 @@ Examples
 
 Matched parts will be *highlight*
 
+- By exact keys
+
+        $ cat testdata/names.csv | csvtk grep -f last_name -p Pike -p Abel | csvtk pretty
+        id   first_name   last_name   username
+        11   Rob          Pike        rob
+        NA   Robert       Abel        123
+
 - By regular expression: `csvtk grep -f first_name -r -p Rob`
 
-        $ cat names.csv | csvtk grep -f first_name -r -p Rob | csvtk pretty
+        $ cat testdata/names.csv | csvtk grep -f first_name -r -p Rob | csvtk pretty
         id   first_name   last_name   username
         11   Rob          Pike        rob
         4    Robert       Griesemer   gri
@@ -763,7 +764,7 @@ Examples
 
 1. single field
 
-        $ cat names.csv
+        $ cat testdata/names.csv
         id,first_name,last_name,username
         11,"Rob","Pike",rob
         2,Ken,Thompson,ken
@@ -771,7 +772,7 @@ Examples
         1,"Robert","Thompson","abc"
         NA,"Robert","Abel","123"
 
-        $ cat names.csv | csvtk filter -f "id>0" | csvtk pretty
+        $ cat testdata/names.csv | csvtk filter -f "id>0" | csvtk pretty
         id   first_name   last_name   username
         11   Rob          Pike        rob
         2    Ken          Thompson    ken
@@ -780,20 +781,20 @@ Examples
 
 2. multiple fields
 
-        $ cat digitals.tsv
+        $ cat  testdata/digitals.tsv
         4       5       6
         1       2       3
         7       8       0
         8       1,000   4
 
-        $ cat digitals.tsv | csvtk -t -H filter -f "1-3>0"
+        $ cat  testdata/digitals.tsv | csvtk -t -H filter -f "1-3>0"
         4       5       6
         1       2       3
         8       1,000   4
 
     using `--any` to print record if any of the field satisfy the condition
 
-        $  cat digitals.tsv | csvtk -t -H filter -f "1-3>0" --any
+        $  cat  testdata/digitals.tsv | csvtk -t -H filter -f "1-3>0" --any
         4       5       6
         1       2       3
         7       8       0
@@ -801,7 +802,7 @@ Examples
 
 3. fuzzy fields
 
-        $  cat names.csv | csvtk filter -F -f "i*!=0"
+        $  cat testdata/names.csv | csvtk filter -F -f "i*!=0"
         id,first_name,last_name,username
         11,Rob,Pike,rob
         2,Ken,Thompson,ken
@@ -815,15 +816,75 @@ Usage
 ```
 filter rows by awk-like artithmetic/string expressions
 
+The artithmetic/string expression is supported by:
+
+    https://github.com/Knetic/govaluate
+
+Supported operators and types:
+
+    Modifiers: + - / * & | ^ ** % >> <<
+    Comparators: > >= < <= == != =~ !~
+    Logical ops: || &&
+    Numeric constants, as 64-bit floating point (12345.678)
+    String constants (single quotes: 'foobar')
+    Date constants (single quotes)
+    Boolean constants: true false
+    Parenthesis to control order of evaluation ( )
+    Arrays (anything separated by , within parenthesis: (1, 2, 'foo'))
+    Prefixes: ! - ~
+    Ternary conditional: ? :
+    Null coalescence: ??
+
 Usage:
   csvtk filter2 [flags]
 
 Flags:
-  -f, --filter string   awk-like filter condition. e.g. '$age>12' or '$1 > $3' or '$name=="abc"' or '$1 % 2 == 0
+  -f, --filter string   awk-like filter condition. e.g. '$age>12' or '$1 > $3' or '$name=="abc"' or '$1 % 2 == 0'
 
 ```
 
 Examples:
+
+1. filter rows with `id` greater than 3:
+
+        $ cat testdata/names.csv
+        id,first_name,last_name,username
+        11,"Rob","Pike",rob
+        2,Ken,Thompson,ken
+        4,"Robert","Griesemer","gri"
+        1,"Robert","Thompson","abc"
+        NA,"Robert","Abel","123"
+
+        $ cat testdata/names.csv | csvtk filter2 -f '$id > 3'
+        id,first_name,last_name,username
+        11,Rob,Pike,rob
+        4,Robert,Griesemer,gri
+
+1. Artithmetic and string expressions
+
+        $ cat testdata/names.csv | csvtk filter2 -f '$id > 3 || $username=="ken"'
+        id,first_name,last_name,username
+        11,Rob,Pike,rob
+        2,Ken,Thompson,ken
+        4,Robert,Griesemer,gri
+
+1. More artithmetic expressions
+
+        $ cat testdata/digitals.tsv
+        4       5       6
+        1       2       3
+        7       8       0
+        8       1,000   4
+
+        $ cat testdata/digitals.tsv | csvtk filter2 -H -t -f '$1 > 2 && $2 % 2 == 0'
+        7       8       0
+        8       1,000   4
+
+        # comparison between fields and support
+        $ cat testdata/digitals.tsv | csvtk filter2 -H -t -f '$2 <= $3 || ( $1 / $2 > 0.5 )'
+        4       5       6
+        1       2       3
+        7       8       0
 
 ## join
 
@@ -891,9 +952,9 @@ Examples:
         ken,22222,nowhere
         shenwei,999999,another
 
-- Files have different key columns: `csvtk join -f "username;username;name" names.csv phone.csv adress.csv -k`. ***Note that fields are separated with `;` not `,`.***
+- Files have different key columns: `csvtk join -f "username;username;name" testdata/names.csv phone.csv adress.csv -k`. ***Note that fields are separated with `;` not `,`.***
 
-        $ csvtk join -f "username;name"  testdata/phones.csv testdata/region.csv  
+        $ csvtk join -f "username;name"  testdata/phones.csv testdata/region.csv
         username,phone,region
         gri,11111,somewhere
         ken,22222,nowhere
@@ -901,44 +962,44 @@ Examples:
 
 - The 2nd or later files have entries with same ID:
 
-        $ cat 1.csv
+        $ cat testdata/1.csv
         name,attr
         foo,cool
         bar,handsome
         bob,beutiful
 
-        $ cat 2.csv
+        $ cat testdata/2.csv
         name,major
         bar,bioinformatics
         bob,microbiology
         bob,computer science
 
-        $ cat 3.csv
+        $ cat testdata/3.csv
         id,name,hobby
         1,bar,baseball
         2,bob,basketball
         3,foo,football
         4,wei,programming
 
-        $ csvtk join 1.csv 2.csv  | csvtk pretty
+        $ csvtk join testdata/1.csv testdata/2.csv  | csvtk pretty
         name   attr       major
         bar    handsome   bioinformatics
         bob    beutiful   microbiology
         bob    beutiful   computer science
 
-        $ csvtk join 1.csv 2.csv 3.csv -f name -k | csvtk pretty
+        $ csvtk join testdata/{1,2,3}.csv -f name -k | csvtk pretty
         name   attr       major               id   hobby
         foo    cool                           3    football
         bar    handsome   bioinformatics      1    baseball
         bob    beutiful   microbiology        2    basketball
         bob    beutiful   computer science    2    basketball
 
-        $ csvtk join 3.csv 1.csv 2.csv -f name -k | csvtk pretty
+        $ csvtk join testdata/{3,1,2}.csv -f name -k | csvtk pretty
         id   name   hobby         attr       major
         1    bar    baseball      handsome   bioinformatics
         2    bob    basketball    beutiful   computer science
         2    bob    basketball    beutiful   computer science
-        3    foo    football      cool       
+        3    foo    football      cool$
         4    wei    programming
 
 ## rename
