@@ -71,7 +71,7 @@
 -  `inter` intersection of multiple files
 -  `grep` grep data by selected fields with patterns/regular expressions
 -  `filter` filter rows by values of selected fields with artithmetic expression
--  `filter` filter rows by awk-like artithmetic/string expressions
+-  `filter2` filter rows by awk-like artithmetic/string expressions
 -  `join` join multiple CSV files by selected fields
 
 **Edit**
