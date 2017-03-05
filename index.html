@@ -211,7 +211,7 @@
 <li><strong>Support common plots</strong> (see <a href="http://bioinf.shenwei.me/csvtk/usage/#plot">usage</a>)</li>
 </ul>
 <h2 id="subcommands">Subcommands</h2>
-<p>24 subcommands in total.</p>
+<p>25 subcommands in total.</p>
 <p><strong>Information</strong></p>
 <ul>
 <li><code>headers</code> print headers</li>
@@ -236,7 +236,8 @@
 <li><code>freq</code> frequencies of selected fields</li>
 <li><code>inter</code> intersection of multiple files</li>
 <li><code>grep</code> grep data by selected fields with patterns/regular expressions</li>
-<li><code>filter</code> filter data by values of selected fields with math expression</li>
+<li><code>filter</code> filter rows by values of selected fields with artithmetic expression</li>
+<li><code>filter</code> filter rows by awk-like artithmetic/string expressions</li>
 <li><code>join</code> join multiple CSV files by selected fields</li>
 </ul>
 <p><strong>Edit</strong></p>
@@ -385,8 +386,9 @@ name-indexed data such as CSV and tabular JSON http://johnkerl.org/miller</li>
 <li>The CSV parser requires all the lines have same number of fields/columns.
     Even lines with spaces will cause error.</li>
 <li>By default, csvtk thinks your files have header row, if not, switch flag <code>-H</code> on.</li>
+<li>Column names better be unique.</li>
 <li>By default, lines starting with <code>#</code> will be ignored, if the header row
-    starts with <code>#</code>, please assign flag <code>-C</code> another rare symbol, e.g. <code>'$'</code></li>
+    starts with <code>#</code>, please assign flag <code>-C</code> another rare symbol, e.g. <code>'$'</code>.</li>
 <li>By default, csvtk handles CSV files, use flag <code>-t</code> for tab-delimited files.</li>
 <li>If <code>"</code> exists in tab-delimited files, use flag <code>-l</code>.</li>
 </ol>
