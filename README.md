@@ -13,6 +13,24 @@
 [![Anaconda Cloud](	https://anaconda.org/bioconda/csvtk/badges/version.svg)](https://anaconda.org/bioconda/csvtk)
 
 
+## Introduction
+
+Similar to FASTA/Q format in field of Bioinformatics, 
+CSV/TSV formats are basic and ubiquitous file formats in both Bioinformatics and data sicence.
+
+People usually use spreadsheet softwares like MS Excel to do process table data.
+However it's all by clicking and typing, which is **not
+automatically and time-consuming to repeat**, especially when we want to
+apply similar operations with different datasets or purposes.
+
+***You can also accomplish some CSV/TSV manipulations using shell commands,
+but more codes are needed to handle the header line.***
+
+`csvtk` is **convenient for rapid data investigation
+and also easy to be integrated into analysis pipelines**.
+It could save you much time of writing Python/R scripts.
+
+
 ## Table of Contents
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->

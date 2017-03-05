@@ -1,19 +1,5 @@
 # Tutorial
 
-## Forewords
-
-Yes, you could use spreadsheet softwares like MS Excel to
-do most of the job.
-However it's all by clicking and typing, which is **not
-automatically and time-consuming to repeat**, especially when we want to
-apply similar operations with different datasets or purposes.
-
-`csvtk` is **convenient for rapid investigation
-and also easy to be integrated into analysis pipelines**.
- It could save you much time of writing scripts.
-
-Hope it be helpful to you.
-
 ## Analyzing OTU table
 
 ### Data
