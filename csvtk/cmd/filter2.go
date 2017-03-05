@@ -66,6 +66,7 @@ var filter2Cmd = &cobra.Command{
 
 		fieldStr := strings.Join(fs, ",")
 
+		filterStr0 := filterStr
 		filterStr = reFilter2VarField.ReplaceAllString(filterStr, "shenwei$1")
 		filterStr = reFilter2VarSymbol.ReplaceAllString(filterStr, "")
 		expression, err := govaluate.NewEvaluableExpression(filterStr)
@@ -237,7 +238,7 @@ var filter2Cmd = &cobra.Command{
 							flag = true
 						}
 					default:
-						checkError(fmt.Errorf("filter is not boolean expression: %s", filterStr))
+						checkError(fmt.Errorf("filter is not boolean expression: %s", filterStr0))
 					}
 
 					if !flag {
@@ -255,7 +256,7 @@ var filter2Cmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(filter2Cmd)
-	filter2Cmd.Flags().StringP("filter", "f", "", `awk-like filter condition. e.g. -f '$age>12' or -f '$1 > $3' or -f '$name=="abc"'`)
+	filter2Cmd.Flags().StringP("filter", "f", "", `awk-like filter condition. e.g. '$age>12' or '$1 > $3' or '$name=="abc"' or '$1 % 2 == 0'`)
 }
 
 var reFilter2 = regexp.MustCompile(`\$([^ +-/*&\|^%><!~=()]+)`)

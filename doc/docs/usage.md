@@ -819,7 +819,7 @@ Usage:
   csvtk filter2 [flags]
 
 Flags:
-  -f, --filter string   awk-like filter condition. e.g. -f '$age>12' or -f '$1 > $3' or -f '$name=="abc"'
+  -f, --filter string   awk-like filter condition. e.g. '$age>12' or '$1 > $3' or '$name=="abc"' or '$1 % 2 == 0
 
 ```
 

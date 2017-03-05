@@ -9,11 +9,13 @@
 [csvtk v0.6.0](https://github.com/shenwei356/csvtk/releases/tag/v0.6.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.6.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.6.0)
 
-- Better column name checking
-- Stricter field checking, fields out of range are not ignored now.
+- `csvtk grep`: **large performance improvement by discarding goroutine** (multiple threads),
+  and **keeping output in order of input**.
+- Better column name checking and **stricter field checking,
+  **fields out of range are not ignored now**.
   Affected commands include `cut`, `filter`, `freq`, `grep`, `inter`, `mutate`,
   `rename`, `rename2`, `replace`, `stat2`, and `uniq`.
-- New command: `csvtk filter2`, filtering rows by artithmetic/string expressions like `awk`
+- **New command: `csvtk filter2`, filtering rows by artithmetic/string expressions like `awk`**.
 
 Links:
 
