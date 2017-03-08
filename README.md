@@ -287,7 +287,7 @@ Examples
 
 ## Acknowledgements
 
-Thank [Zhiluo Deng](https://github.com/dawnmy) and 
+We are grateful to [Zhiluo Deng](https://github.com/dawnmy) and 
 [Li Peng](https://github.com/penglbio) for suggesting features and reporting bugs.
 
 ## Contact
