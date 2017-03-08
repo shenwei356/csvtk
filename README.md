@@ -41,6 +41,7 @@ It could save you much time of writing Python/R scripts.
 - [Installation](#installation)
 - [Compared to `csvkit`](#compared-to-csvkit)
 - [Examples](#examples)
+- [Acknowledgements](#acknowledgements)
 - [Contact](#contact)
 - [License](#license)
 
@@ -283,6 +284,11 @@ Examples
     - plot scatter plot with X-Y data
     `csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group --scatter `
     ![scatter.png](testdata/figures/scatter.png)
+
+## Acknowledgements
+
+Thank [Zhiluo Deng](https://github.com/dawnmy) and 
+[Li Peng](https://github.com/penglbio) for suggesting features and reporting bugs.
 
 ## Contact
 
