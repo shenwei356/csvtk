@@ -48,7 +48,9 @@ Multiple keys supported, but the orders are ignored.
 		runtime.GOMAXPROCS(config.NumCPUs)
 
 		allFields := getFlagSemicolonSeparatedStrings(cmd, "fields")
-		if len(allFields) == 1 {
+		if len(allFields) == 0 {
+			checkError(fmt.Errorf("flag -f (--fields) needed"))
+		} else if len(allFields) == 1 {
 			s := make([]string, len(files))
 			for i := range files {
 				s[i] = allFields[0]

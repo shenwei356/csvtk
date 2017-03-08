@@ -51,7 +51,7 @@ var renameCmd = &cobra.Command{
 
 		fieldStr := getFlagString(cmd, "fields")
 		if fieldStr == "" {
-			checkError(fmt.Errorf("flag -f (--field) needed"))
+			checkError(fmt.Errorf("flag -f (--fields) needed"))
 		}
 		names := getFlagCommaSeparatedStrings(cmd, "names")
 

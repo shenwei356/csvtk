@@ -54,6 +54,9 @@ var freqCmd = &cobra.Command{
 		reverse := getFlagBool(cmd, "reverse")
 
 		fieldStr := getFlagString(cmd, "fields")
+		if fieldStr == "" {
+			checkError(fmt.Errorf("flag -f (--fields) needed"))
+		}
 		fields, colnames, negativeFields, needParseHeaderRow := parseFields(cmd, fieldStr, config.NoHeaderRow)
 		var fieldsMap map[int]struct{}
 		if len(fields) > 0 {

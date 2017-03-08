@@ -64,7 +64,7 @@ var rename2Cmd = &cobra.Command{
 
 		fieldStr := getFlagString(cmd, "fields")
 		if fieldStr == "" {
-			checkError(fmt.Errorf("flag -f (--field) needed"))
+			checkError(fmt.Errorf("flag -f (--fields) needed"))
 		}
 		fields, colnames, negativeFields, needParseHeaderRow := parseFields(cmd, fieldStr, config.NoHeaderRow)
 		var fieldsMap map[int]struct{}

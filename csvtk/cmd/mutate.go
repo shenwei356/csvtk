@@ -65,6 +65,9 @@ var mutateCmd = &cobra.Command{
 		checkError(err)
 
 		fieldStr := getFlagString(cmd, "fields")
+		if fieldStr == "" {
+			checkError(fmt.Errorf("flag -f (--fields) needed"))
+		}
 		fields, colnames, negativeFields, needParseHeaderRow := parseFields(cmd, fieldStr, config.NoHeaderRow)
 		if !(len(fields) == 1 || len(colnames) == 1) {
 			checkError(fmt.Errorf("only single field allowed"))

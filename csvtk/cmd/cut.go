@@ -47,6 +47,9 @@ var cutCmd = &cobra.Command{
 		runtime.GOMAXPROCS(config.NumCPUs)
 
 		fieldStr := getFlagString(cmd, "fields")
+		if fieldStr == "" {
+			checkError(fmt.Errorf("flag -f (--fields) needed"))
+		}
 
 		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
 		fields, colnames, negativeFields, needParseHeaderRow := parseFields(cmd, fieldStr, config.NoHeaderRow)

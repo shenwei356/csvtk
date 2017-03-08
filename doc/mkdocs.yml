@@ -6,7 +6,7 @@ pages:
     - Usage: usage.md
     - Tutorial: tutorial.md
 - Links:
-    - Wei Shen's Bioinformatic tools: bioinf.md
+    - Other tools: bioinf.md
 theme: yeti
 
 repo_url: https://github.com/shenwei356/csvtk
