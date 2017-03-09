@@ -104,8 +104,10 @@ var stat2Cmd = &cobra.Command{
 					}
 					colnamesMap = make(map[string]*regexp.Regexp, len(colnames))
 					for _, col := range colnames {
-						if _, ok := colnames2fileds[col]; !ok {
-							checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col, file))
+						if !fuzzyFields {
+							if _, ok := colnames2fileds[col]; !ok {
+								checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col, file))
+							}
 						}
 						if negativeFields {
 							colnamesMap[col[1:]] = fuzzyField2Regexp(col[1:])

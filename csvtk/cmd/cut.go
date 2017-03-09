@@ -107,8 +107,14 @@ var cutCmd = &cobra.Command{
 		checkFields := true
 		var items []string
 
+		printMetaLine := true
 		for chunk := range csvReader.Ch {
 			checkError(chunk.Err)
+
+			if printMetaLine && len(csvReader.Reader.MetaLine) > 0 {
+				outfh.WriteString(fmt.Sprintf("sep=%s\n", string(writer.Comma)))
+				printMetaLine = false
+			}
 
 			for _, record := range chunk.Data {
 				if parseHeaderRow { // parsing header row
@@ -119,8 +125,10 @@ var cutCmd = &cobra.Command{
 					colnamesMap = make(map[string]*regexp.Regexp, len(colnames))
 					i := 0
 					for _, col := range colnames {
-						if _, ok := colnames2fileds[col]; !ok {
-							checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col, file))
+						if !fuzzyFields {
+							if _, ok := colnames2fileds[col]; !ok {
+								checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col, file))
+							}
 						}
 						if negativeFields {
 							colnamesMap[col[1:]] = fuzzyField2Regexp(col[1:])

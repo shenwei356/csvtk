@@ -58,8 +58,18 @@ var transposeCmd = &cobra.Command{
 
 			once := true
 
+			printMetaLine := true
 			for chunk := range csvReader.Ch {
 				checkError(chunk.Err)
+
+				if printMetaLine && len(csvReader.Reader.MetaLine) > 0 {
+					if config.OutTabs || config.Tabs {
+						outfh.WriteString(fmt.Sprintf("sep=%s\n", "\t"))
+					} else {
+						outfh.WriteString(fmt.Sprintf("sep=%s\n", string(config.OutDelimiter)))
+					}
+					printMetaLine = false
+				}
 
 				numRows += uint64(len(chunk.Data))
 				for _, record := range chunk.Data {

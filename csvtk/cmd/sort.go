@@ -87,7 +87,7 @@ var sortCmd = &cobra.Command{
 		}
 
 		file := files[0]
-		_, _, _, headerRow, data := parseCSVfile(cmd, config,
+		_, _, _, headerRow, data, metaLine := parseCSVfile(cmd, config,
 			file, fieldsStr, fuzzyFields)
 		if len(data) == 0 {
 			checkError(fmt.Errorf("no data to sort"))
@@ -125,6 +125,9 @@ var sortCmd = &cobra.Command{
 		}
 		sort.Sort(stringutil.MultiKeyStringSliceList(list))
 
+		if len(metaLine) > 0 {
+			outfh.WriteString(fmt.Sprintf("sep=%s\n", string(writer.Comma)))
+		}
 		if len(headerRow) > 0 {
 			checkError(writer.Write(headerRow))
 		}

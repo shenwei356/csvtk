@@ -85,7 +85,7 @@ Multiple keys supported, but the orders are ignored.
 		var key string
 		var items []string
 		for i, file := range files {
-			_, fields, _, headerRow, data := parseCSVfile(cmd, config,
+			_, fields, _, headerRow, data, _ := parseCSVfile(cmd, config,
 				file, allFields[i], fuzzyFields)
 			if firstFile {
 				HeaderRow, Data, Fields = headerRow, data, fields

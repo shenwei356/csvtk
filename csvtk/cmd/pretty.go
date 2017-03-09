@@ -56,7 +56,7 @@ var prettyCmd = &cobra.Command{
 		file := files[0]
 		fieldStr := "*"
 		fuzzyFields := true
-		headerRow, _, data, _, _ := parseCSVfile(cmd, config,
+		headerRow, _, data, _, _, _ := parseCSVfile(cmd, config,
 			file, fieldStr, fuzzyFields)
 
 		var header []string

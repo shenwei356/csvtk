@@ -36,7 +36,7 @@ import (
 )
 
 // VERSION of csvtk
-const VERSION = "0.6.1"
+const VERSION = "0.7.0-dev"
 
 func checkError(err error) {
 	if err != nil {
@@ -372,7 +372,7 @@ func fuzzyField2Regexp(field string) *regexp.Regexp {
 }
 
 func parseCSVfile(cmd *cobra.Command, config Config, file string,
-	fieldStr string, fuzzyFields bool) ([]string, []int, [][]string, []string, [][]string) {
+	fieldStr string, fuzzyFields bool) ([]string, []int, [][]string, []string, [][]string, []byte) {
 	fields, colnames, negativeFields, needParseHeaderRow := parseFields(cmd, fieldStr, config.NoHeaderRow)
 	var fieldsMap map[int]struct{}
 	var fieldsOrder map[int]int      // for set the order of fields
@@ -533,9 +533,9 @@ func parseCSVfile(cmd *cobra.Command, config Config, file string,
 		}
 	}
 	if fieldStr != "*" {
-		return HeaderRow, fields, Data, HeaderRowAll, DataAll
+		return HeaderRow, fields, Data, HeaderRowAll, DataAll, csvReader.Reader.MetaLine
 	}
-	return HeaderRow, fields, Data, HeaderRowAll, Data
+	return HeaderRow, fields, Data, HeaderRowAll, Data, csvReader.Reader.MetaLine
 }
 
 func removeComma(s string) string {

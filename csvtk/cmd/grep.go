@@ -24,6 +24,7 @@ import (
 	"bytes"
 	"encoding/csv"
 	"fmt"
+	"io"
 	"regexp"
 	"runtime"
 	"strings"
@@ -145,15 +146,18 @@ var grepCmd = &cobra.Command{
 		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
 		// fuzzyFields := false
 		var writer *csv.Writer
-		if config.OutFile == "-" {
-			outfh := colorable.NewColorableStdout()
-			writer = csv.NewWriter(outfh)
+		var outfhStd io.Writer
+		var outfhFile *xopen.Writer
+		isstdin := isStdin(config.OutFile)
+		if isstdin {
+			outfhStd = colorable.NewColorableStdout()
+			writer = csv.NewWriter(outfhStd)
 		} else {
 			noHighlight = true
-			outfh, err := xopen.Wopen(config.OutFile)
+			outfhFile, err := xopen.Wopen(config.OutFile)
 			checkError(err)
-			defer outfh.Close()
-			writer = csv.NewWriter(outfh)
+			defer outfhFile.Close()
+			writer = csv.NewWriter(outfhFile)
 		}
 
 		if config.OutTabs || config.Tabs {
@@ -175,8 +179,18 @@ var grepCmd = &cobra.Command{
 			checkFields := true
 			var n int64
 
+			printMetaLine := true
 			for chunk := range csvReader.Ch {
 				checkError(chunk.Err)
+
+				if printMetaLine && len(csvReader.Reader.MetaLine) > 0 {
+					if isstdin {
+						outfhStd.Write([]byte(fmt.Sprintf("sep=%s\n", string(writer.Comma))))
+					} else {
+						outfhFile.WriteString(fmt.Sprintf("sep=%s\n", string(writer.Comma)))
+					}
+					printMetaLine = false
+				}
 
 				for _, record := range chunk.Data {
 					if parseHeaderRow { // parsing header row
@@ -186,8 +200,10 @@ var grepCmd = &cobra.Command{
 						}
 						colnamesMap = make(map[string]*regexp.Regexp, len(colnames))
 						for _, col := range colnames {
-							if _, ok := colnames2fileds[col]; !ok {
-								checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col, file))
+							if !fuzzyFields {
+								if _, ok := colnames2fileds[col]; !ok {
+									checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col, file))
+								}
 							}
 							if negativeFields {
 								colnamesMap[col[1:]] = fuzzyField2Regexp(col[1:])
