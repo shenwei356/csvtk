@@ -69,7 +69,7 @@ func init() {
 	RootCmd.PersistentFlags().IntP("num-cpus", "j", runtime.NumCPU(), `number of CPUs to use (default value depends on your computer)`)
 
 	RootCmd.PersistentFlags().StringP("delimiter", "d", ",", `delimiting character of the input CSV file`)
-	RootCmd.PersistentFlags().StringP("out-delimiter", "D", ",", `delimiting character of the input CSV file`)
+	RootCmd.PersistentFlags().StringP("out-delimiter", "D", ",", `delimiting character of the output CSV file`)
 	// RootCmd.PersistentFlags().StringP("quote-char", "q", `"`, `character used to quote strings in the input CSV file`)
 	RootCmd.PersistentFlags().StringP("comment-char", "C", `#`, "lines starting with commment-character will be ignored. "+
 		`if your header row starts with '#', please assign "-C" another rare symbol, e.g. '$'`)
