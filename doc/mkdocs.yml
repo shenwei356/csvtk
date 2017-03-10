@@ -5,8 +5,7 @@ pages:
 - Documents:
     - Usage: usage.md
     - Tutorial: tutorial.md
-- Links:
-    - Other tools: bioinf.md
+- More tools: bioinf.md
 theme: yeti
 
 repo_url: https://github.com/shenwei356/csvtk
