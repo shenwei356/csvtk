@@ -25,6 +25,10 @@
         11,Rob,Pike,rob
         4,Robert,Griesemer,gri
 
+- `csvtk pretty` and `csvtk csv2md`: add attention that
+these commands treat the first row as header line and require them to be unique.
+
+
 Links:
 
 OS     |Arch      |File                                                                                                                             |Download Count
