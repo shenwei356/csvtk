@@ -249,6 +249,10 @@ Usage
 ```
 convert CSV to readable aligned table
 
+Attention:
+
+    csv2md treats the first row as header line and requires them to be unique
+
 Usage:
   csvtk pretty [flags]
 
@@ -325,12 +329,16 @@ Usage
 ```
 convert CSV to markdown format
 
+Attention:
+
+    csv2md treats the first row as header line and requires them to be unique
+
 Usage:
   csvtk csv2md [flags]
 
 Flags:
-  -a, --alignments string   comma separated alignments. e.g. -a l,c,c,c or -a c
-  -w, --min-width int       min width (default 3)
+  -a, --alignments string   comma separated alignments. e.g. -a l,c,c,c or -a c (default "l")
+  -w, --min-width int       min width (at least 3) (default 3)
 
 ```
 

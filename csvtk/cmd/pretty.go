@@ -35,6 +35,10 @@ var prettyCmd = &cobra.Command{
 	Short: "convert CSV to readable aligned table",
 	Long: `convert CSV to readable aligned table
 
+Attention:
+
+    pretty treats the first row as header line and requires them to be unique
+
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
@@ -56,7 +60,7 @@ var prettyCmd = &cobra.Command{
 		file := files[0]
 		fieldStr := "*"
 		fuzzyFields := true
-		headerRow, _, data, _, _, _ := parseCSVfile(cmd, config,
+		headerRow, _, _, _, data, _ := parseCSVfile(cmd, config,
 			file, fieldStr, fuzzyFields)
 
 		var header []string

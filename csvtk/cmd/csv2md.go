@@ -35,6 +35,10 @@ var csv2mdCmd = &cobra.Command{
 	Short: "convert CSV to markdown format",
 	Long: `convert CSV to markdown format
 
+Attention:
+
+    csv2md treats the first row as header line and requires them to be unique
+
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
@@ -70,7 +74,7 @@ var csv2mdCmd = &cobra.Command{
 		file := files[0]
 		fieldStr := "*"
 		fuzzyFields := true
-		headerRow, _, data, _, _, _ := parseCSVfile(cmd, config,
+		headerRow, _, _, _, data, _ := parseCSVfile(cmd, config,
 			file, fieldStr, fuzzyFields)
 
 		var header []string

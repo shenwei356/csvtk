@@ -36,7 +36,7 @@ import (
 )
 
 // VERSION of csvtk
-const VERSION = "0.7.0-dev"
+const VERSION = "0.7.0-dev1"
 
 func checkError(err error) {
 	if err != nil {
@@ -431,6 +431,11 @@ func parseCSVfile(cmd *cobra.Command, config Config, file string,
 				colnamesMap = make(map[string]*regexp.Regexp, len(colnames))
 				i := 0
 				for _, col := range colnames {
+					if !fuzzyFields {
+						if _, ok := colnames2fileds[col]; !ok {
+							checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col, file))
+						}
+					}
 					if negativeFields {
 						colnamesMap[col[1:]] = fuzzyField2Regexp(col[1:])
 					} else {
