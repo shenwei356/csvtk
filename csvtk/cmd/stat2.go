@@ -38,9 +38,10 @@ import (
 
 // stat2Cmd represents the stat2 command
 var stat2Cmd = &cobra.Command{
-	Use:   "stat2",
-	Short: "summary of selected number fields",
-	Long: `summary of selected number fields: num, sum, min, max, mean, stdev
+	Use:     "stats2",
+	Aliases: []string{"stats2"},
+	Short:   "summary of selected digital fields",
+	Long: `summary of selected digital fields: num, sum, min, max, mean, stdev
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {

@@ -32,8 +32,9 @@ import (
 
 // statCmd represents the stat command
 var statCmd = &cobra.Command{
-	Use:   "stat",
-	Short: "summary of CSV file",
+	Use:     "stats",
+	Aliases: []string{"stat"},
+	Short:   "summary of CSV file",
 	Long: `summary of CSV file
 
 `,

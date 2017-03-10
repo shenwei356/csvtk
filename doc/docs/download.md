@@ -10,6 +10,10 @@
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.7.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.7.0)
 
 - fig bug of "stricter field checking" in v0.6.0 and v0.6.1 when using flag `-F/--fuzzy-fields`
+- `csvtk pretty` and `csvtk csv2md`: add attention that
+  these commands treat the first row as header line and require them to be unique.
+- `csvtk stat` renamed to `csvtk stats`, old name is still available as an alias.
+- `csvtk stat2` renamed to `csvtk stats2`, old name is still available as an alias.
 - [issues/13](https://github.com/shenwei356/csvtk/issues/13) **seamlessly support data with meta line of separator declaration used by MS Excel**, e.g.,
 
         $ cat names_with_meta.csv
@@ -24,9 +28,6 @@
         id,first_name,last_name,username
         11,Rob,Pike,rob
         4,Robert,Griesemer,gri
-
-- `csvtk pretty` and `csvtk csv2md`: add attention that
-these commands treat the first row as header line and require them to be unique.
 
 
 Links:

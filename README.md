@@ -15,7 +15,7 @@
 
 ## Introduction
 
-Similar to FASTA/Q format in field of Bioinformatics, 
+Similar to FASTA/Q format in field of Bioinformatics,
 CSV/TSV formats are basic and ubiquitous file formats in both Bioinformatics and data sicence.
 
 People usually use spreadsheet softwares like MS Excel to do process table data.
@@ -68,8 +68,8 @@ It could save you much time of writing Python/R scripts.
 **Information**
 
 -  `headers` print headers
--  `stat` summary of CSV file
--  `stat2` summary of selected number fields
+-  `stats` summary of CSV file
+-  `stats2` summary of selected digital fields
 
 **Format conversion**
 
@@ -201,7 +201,7 @@ Examples
         1    Robert       Thompson    abc
         NA   Robert       Abel        123
 
-1. Summary of selected number fields: num, sum, min, max, mean, stdev (`stat2`)
+1. Summary of selected digital fields: num, sum, min, max, mean, stdev (`stat2`)
 
         $ cat digitals.tsv
         4       5       6
@@ -287,7 +287,7 @@ Examples
 
 ## Acknowledgements
 
-We are grateful to [Zhiluo Deng](https://github.com/dawnmy) and 
+We are grateful to [Zhiluo Deng](https://github.com/dawnmy) and
 [Li Peng](https://github.com/penglbio) for suggesting features and reporting bugs.
 
 ## Contact

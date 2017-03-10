@@ -22,8 +22,8 @@
 **Information**
 
 - [headers](#headers)
-- [stat](#stat)
-- [stat2](#stat2)
+- [stats](#stats)
+- [stats2](#stats2)
 
 **Format conversion**
 
@@ -71,7 +71,7 @@ Usage
 ```
 A cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.6.0
+Version: 0.7.0-dev2
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -114,8 +114,8 @@ Available Commands:
   sample      sampling by proportion
   sort        sort by selected fields
   space2tab   convert space delimited format to CSV
-  stat        summary of CSV file
-  stat2       summary of selected number fields
+  stats       summary of CSV file
+  stats2      summary of selected number fields
   tab2csv     convert tabular format to CSV
   transpose   transpose CSV data
   uniq        unique data without sorting
@@ -163,7 +163,7 @@ $ csvtk headers testdata/*.csv$
 3       hobby
 ```
 
-## stat
+## stats
 
 Usage
 
@@ -171,7 +171,10 @@ Usage
 summary of CSV file
 
 Usage:
-  csvtk stat [flags]
+  csvtk stats [flags]
+
+Aliases:
+  stats, stat
 
 ```
 
@@ -187,7 +190,7 @@ Examples
         1,"Robert","Thompson","abc"
         NA,"Robert","Abel","123"
 
-        $ cat testdata/names.csv | csvtk stat
+        $ cat testdata/names.csv | csvtk stats
         file   num_cols   num_rows
         -             4          5
 
@@ -199,7 +202,7 @@ Examples
         7       8       0
         8       1,000   4
 
-        $ cat  testdata/digitals.tsv | csvtk stat -t -H
+        $ cat  testdata/digitals.tsv | csvtk stats -t -H
         file   num_cols   num_rows
         -             3          4
 
@@ -208,10 +211,10 @@ Examples
 Usage
 
 ```
-summary of selected number fields: num, sum, min, max, mean, stdev
+summary of selected digital fields: num, sum, min, max, mean, stdev
 
 Usage:
-  csvtk stat2 [flags]
+  csvtk stats2 [flags]
 
 Flags:
   -f, --fields string   select only these fields. e.g -f 1,2 or -f columnA,columnB
@@ -223,7 +226,7 @@ Examples
 
 1. simplest one
 
-        $ seq 1 5 | csvtk stat2 -H -f 1
+        $ seq 1 5 | csvtk stats2 -H -f 1
         field   num   sum   min   max   mean   stdev
         1         5    15     1     5      3    1.58
 
@@ -235,7 +238,7 @@ Examples
         7       8       0
         8       1,000   4
 
-        $ cat  testdata/digitals.tsv | csvtk stat2 -t -H -f 1-3
+        $ cat  testdata/digitals.tsv | csvtk stats2 -t -H -f 1-3
         field   num     sum   min     max     mean    stdev
         1         4      20     1       8        5     3.16
         2         4   1,015     2   1,000   253.75   497.51
