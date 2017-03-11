@@ -4,7 +4,7 @@
     
     <url>
      <loc>/</loc>
-     <lastmod>2017-03-08</lastmod>
+     <lastmod>2017-03-11</lastmod>
      <changefreq>daily</changefreq>
     </url>
     
@@ -12,7 +12,7 @@
     
     <url>
      <loc>/download/</loc>
-     <lastmod>2017-03-08</lastmod>
+     <lastmod>2017-03-11</lastmod>
      <changefreq>daily</changefreq>
     </url>
     
@@ -21,26 +21,24 @@
         
     <url>
      <loc>/usage/</loc>
-     <lastmod>2017-03-08</lastmod>
+     <lastmod>2017-03-11</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/tutorial/</loc>
-     <lastmod>2017-03-08</lastmod>
+     <lastmod>2017-03-11</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     
 
     
-        
     <url>
      <loc>/bioinf/</loc>
-     <lastmod>2017-03-08</lastmod>
+     <lastmod>2017-03-11</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     
 
 </urlset>

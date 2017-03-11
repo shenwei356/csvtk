@@ -91,17 +91,8 @@
             
             
             
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Links <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                    
-                        
-<li >
-    <a href="../bioinf/">Other tools</a>
-</li>
-
-                    
-                    </ul>
+                <li >
+                    <a href="../bioinf/">More tools</a>
                 </li>
             
             
@@ -154,7 +145,7 @@
         
             <li><a href="#headers">headers</a></li>
         
-            <li><a href="#stat">stat</a></li>
+            <li><a href="#stats">stats</a></li>
         
             <li><a href="#stat2">stat2</a></li>
         
@@ -232,8 +223,8 @@
 <p><strong>Information</strong></p>
 <ul>
 <li><a href="#headers">headers</a></li>
-<li><a href="#stat">stat</a></li>
-<li><a href="#stat2">stat2</a></li>
+<li><a href="#stats">stats</a></li>
+<li><a href="#stats2">stats2</a></li>
 </ul>
 <p><strong>Format conversion</strong></p>
 <ul>
@@ -278,7 +269,7 @@
 <p>Usage</p>
 <pre><code>A cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.6.0
+Version: 0.7.0
 
 Author: Wei Shen &lt;shenwei356@gmail.com&gt;
 
@@ -321,8 +312,8 @@ Available Commands:
   sample      sampling by proportion
   sort        sort by selected fields
   space2tab   convert space delimited format to CSV
-  stat        summary of CSV file
-  stat2       summary of selected number fields
+  stats       summary of CSV file
+  stats2      summary of selected digital fields
   tab2csv     convert tabular format to CSV
   transpose   transpose CSV data
   uniq        unique data without sorting
@@ -335,7 +326,7 @@ Flags:
   -l, --lazy-quotes            if given, a quote may appear in an unquoted field and a non-doubled quote may appear in a quoted field
   -H, --no-header-row          specifies that the input CSV file does not have header row
   -j, --num-cpus int           number of CPUs to use (default value depends on your computer) (default 4)
-  -D, --out-delimiter string   delimiting character of the input CSV file (default &quot;,&quot;)
+  -D, --out-delimiter string   delimiting character of the output CSV file (default &quot;,&quot;)
   -o, --out-file string        out file (&quot;-&quot; for stdout, suffix .gz for gzipped out) (default &quot;-&quot;)
   -T, --out-tabs               specifies that the output is delimited with tabs. Overrides &quot;-D&quot;
   -t, --tabs                   specifies that the input CSV file is delimited with tabs. Overrides &quot;-d&quot;
@@ -365,12 +356,15 @@ Usage:
 3       hobby
 </code></pre>
 
-<h2 id="stat">stat</h2>
+<h2 id="stats">stats</h2>
 <p>Usage</p>
 <pre><code>summary of CSV file
 
 Usage:
-  csvtk stat [flags]
+  csvtk stats [flags]
+
+Aliases:
+  stats, stat
 
 </code></pre>
 
@@ -386,7 +380,7 @@ id,first_name,last_name,username
 1,"Robert","Thompson","abc"
 NA,"Robert","Abel","123"
 
-$ cat testdata/names.csv | csvtk stat
+$ cat testdata/names.csv | csvtk stats
 file   num_cols   num_rows
 -             4          5
 </code></pre>
@@ -399,7 +393,7 @@ file   num_cols   num_rows
 7       8       0
 8       1,000   4
 
-$ cat  testdata/digitals.tsv | csvtk stat -t -H
+$ cat  testdata/digitals.tsv | csvtk stats -t -H
 file   num_cols   num_rows
 -             3          4
 </code></pre>
@@ -407,10 +401,10 @@ file   num_cols   num_rows
 </ol>
 <h2 id="stat2">stat2</h2>
 <p>Usage</p>
-<pre><code>summary of selected number fields: num, sum, min, max, mean, stdev
+<pre><code>summary of selected digital fields: num, sum, min, max, mean, stdev
 
 Usage:
-  csvtk stat2 [flags]
+  csvtk stats2 [flags]
 
 Flags:
   -f, --fields string   select only these fields. e.g -f 1,2 or -f columnA,columnB
@@ -422,7 +416,7 @@ Flags:
 <ol>
 <li>
 <p>simplest one</p>
-<pre><code>$ seq 1 5 | csvtk stat2 -H -f 1
+<pre><code>$ seq 1 5 | csvtk stats2 -H -f 1
 field   num   sum   min   max   mean   stdev
 1         5    15     1     5      3    1.58
 </code></pre>
@@ -435,7 +429,7 @@ field   num   sum   min   max   mean   stdev
 7       8       0
 8       1,000   4
 
-$ cat  testdata/digitals.tsv | csvtk stat2 -t -H -f 1-3
+$ cat  testdata/digitals.tsv | csvtk stats2 -t -H -f 1-3
 field   num     sum   min     max     mean    stdev
 1         4      20     1       8        5     3.16
 2         4   1,015     2   1,000   253.75   497.51
@@ -446,6 +440,10 @@ field   num     sum   min     max     mean    stdev
 <h2 id="pretty">pretty</h2>
 <p>Usage</p>
 <pre><code>convert CSV to readable aligned table
+
+Attention:
+
+    csv2md treats the first row as header line and requires them to be unique
 
 Usage:
   csvtk pretty [flags]
@@ -519,12 +517,16 @@ $ csvtk transpose -t  testdata/digitals.tsv
 <p>Usage</p>
 <pre><code>convert CSV to markdown format
 
+Attention:
+
+    csv2md treats the first row as header line and requires them to be unique
+
 Usage:
   csvtk csv2md [flags]
 
 Flags:
-  -a, --alignments string   comma separated alignments. e.g. -a l,c,c,c or -a c
-  -w, --min-width int       min width (default 3)
+  -a, --alignments string   comma separated alignments. e.g. -a l,c,c,c or -a c (default &quot;l&quot;)
+  -w, --min-width int       min width (at least 3) (default 3)
 
 </code></pre>
 
@@ -785,7 +787,7 @@ Robert,Abel,123
 </code></pre>
 </li>
 <li>
-<p>All fields: <code>csvtk cut -F -f "*"</code></p>
+<p>All fields: <code>csvtk cut -F -f "*"</code> (only works when all colnames are unique)</p>
 <pre><code>$ cat testdata/names.csv | csvtk cut -F -f "*"
 id,first_name,last_name,username
 11,Rob,Pike,rob
