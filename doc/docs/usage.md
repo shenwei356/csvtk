@@ -71,7 +71,7 @@ Usage
 ```
 A cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.7.0-dev2
+Version: 0.7.0
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -115,7 +115,7 @@ Available Commands:
   sort        sort by selected fields
   space2tab   convert space delimited format to CSV
   stats       summary of CSV file
-  stats2      summary of selected number fields
+  stats2      summary of selected digital fields
   tab2csv     convert tabular format to CSV
   transpose   transpose CSV data
   uniq        unique data without sorting
@@ -530,7 +530,7 @@ Examples
         Robert,Thompson,abc
         Robert,Abel,123
 
-- All fields: `csvtk cut -F -f "*"`
+- All fields: `csvtk cut -F -f "*"` (only works when all colnames are unique)
 
         $ cat testdata/names.csv | csvtk cut -F -f "*"
         id,first_name,last_name,username

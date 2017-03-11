@@ -24,7 +24,8 @@ automatically and time-consuming to repeat**, especially when we want to
 apply similar operations with different datasets or purposes.
 
 ***You can also accomplish some CSV/TSV manipulations using shell commands,
-but more codes are needed to handle the header line.***
+but more codes are needed to handle the header line. Shell commands do not
+support selecting columns with column names either.***
 
 `csvtk` is **convenient for rapid data investigation
 and also easy to be integrated into analysis pipelines**.
@@ -59,7 +60,7 @@ It could save you much time of writing Python/R scripts.
   e.g. `-f "-id,-name"` for all fields except "id" and "name",
   `-F -f "a.*"` for all fields with prefix "a.".
 - **Support common plots** (see [usage](http://bioinf.shenwei.me/csvtk/usage/#plot))
-
+- Seamlessly support for data with meta line (e.g., `sep=,`) of separator declaration used by MS Excel
 
 ## Subcommands
 
@@ -176,6 +177,8 @@ name-indexed data such as CSV and tabular JSON http://johnkerl.org/miller
 
 ## Examples
 
+More [examples](http://shenwei356.github.io/csvtk/usage/) and [tutorial](http://shenwei356.github.io/csvtk/tutorial/).
+
 **Attention**
 
 1. The CSV parser requires all the lines have same number of fields/columns.
@@ -186,8 +189,6 @@ name-indexed data such as CSV and tabular JSON http://johnkerl.org/miller
     starts with `#`, please assign flag `-C` another rare symbol, e.g. `'$'`.
 5. By default, csvtk handles CSV files, use flag `-t` for tab-delimited files.
 6. If `"` exists in tab-delimited files, use flag `-l`.
-
-More [examples](http://shenwei356.github.io/csvtk/usage/) and [tutorial](http://shenwei356.github.io/csvtk/tutorial/)
 
 Examples
 

@@ -14,7 +14,7 @@
   these commands treat the first row as header line and require them to be unique.
 - `csvtk stat` renamed to `csvtk stats`, old name is still available as an alias.
 - `csvtk stat2` renamed to `csvtk stats2`, old name is still available as an alias.
-- [issues/13](https://github.com/shenwei356/csvtk/issues/13) **seamlessly support data with meta line of separator declaration used by MS Excel**, e.g.,
+- [issues/13](https://github.com/shenwei356/csvtk/issues/13) **seamlessly support for data with meta line of separator declaration used by MS Excel**, e.g.,
 
         $ cat names_with_meta.csv
         sep=,
