@@ -166,11 +166,11 @@ Sort by multiple keys   |   Yes    |  Yes      | bash sort like operations
 **Sort by number**      |   Yes    |  --       | e.g. `-k 1:n`
 **Multiple sort**       |   Yes    |  --       | e.g. `-k 2:r -k 1:nr`
 Pretty output           |   Yes    |  Yes      | convert CSV to readable aligned table
-unique rows             |   Yes    |  --       | unique data of selected fields
-freqency of rows        |   Yes    |  --       | frequencies of selected fields
-sampling                |   Yes    |  --       | sampling by proportion
-mutate fields           |   Yes    |  --       | create new columns from selected fields
-repalce                 |   Yes    |  --       | replace data of selected fields 
+**unique rows**         |   Yes    |  --       | unique data of selected fields
+**freqency of rows**    |   Yes    |  --       | frequencies of selected fields
+**sampling**            |   Yes    |  --       | sampling by proportion
+**mutate fields**       |   Yes    |  --       | create new columns from selected fields
+**repalce**             |   Yes    |  --       | replace data of selected fields 
 
 Similar tools:
 
