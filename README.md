@@ -166,11 +166,11 @@ Sort by multiple keys   |   Yes    |  Yes      | bash sort like operations
 **Sort by number**      |   Yes    |  --       | e.g. `-k 1:n`
 **Multiple sort**       |   Yes    |  --       | e.g. `-k 2:r -k 1:nr`
 Pretty output           |   Yes    |  Yes      | convert CSV to readable aligned table
-**unique rows**         |   Yes    |  --       | unique data of selected fields
-**freqency of rows**    |   Yes    |  --       | frequencies of selected fields
-**sampling**            |   Yes    |  --       | sampling by proportion
-**mutate fields**       |   Yes    |  --       | create new columns from selected fields
-**repalce**             |   Yes    |  --       | replace data of selected fields 
+**Unique data**         |   Yes    |  --       | unique data of selected fields
+**frequency**           |   Yes    |  --       | frequencies of selected fields
+**Sampling**            |   Yes    |  --       | sampling by proportion
+**Mutate fields**       |   Yes    |  --       | create new columns from selected fields
+**Repalce**             |   Yes    |  --       | replace data of selected fields 
 
 Similar tools:
 
@@ -238,16 +238,16 @@ Examples
     - Remore rows containing missing data (NA): `csvtk grep -F -f "*" -r -p "^$" -v `
 
 
-1. Rename column names (`rename` and `rename2`)
+1. **Rename column names** (`rename` and `rename2`)
 
     - Setting new names: `csvtk rename -f A,B -n a,b` or `csvtk rename -f 1-3 -n a,b,c`
     - Replacing with original names by regular express: `cat ../testdata/c.csv | ./csvtk rename2 -F -f "*" -p "(.*)" -r 'prefix_$1'` for adding prefix to all column names.
 
-1. Edit data with regular expression (`replace`)
+1. **Edit data with regular expression** (`replace`)
 
     - Remove Chinese charactors:  `csvtk replace -F -f "*_name" -p "\p{Han}+" -r ""`
 
-1. Create new column from selected fields by regular expression (`mutate`)
+1. **Create new column from selected fields by regular expression** (`mutate`)
 
     - In default, copy a column: `csvtk mutate -f id `
     - Extract prefix of data as group name (get "A" from "A.1" as group name):
@@ -260,35 +260,43 @@ Examples
     - Sort by number: `csvtk sort -k 1:n` or  `csvtk sort -k 1:nr` for reverse number
     - Complex sort: `csvtk sort -k region -k age:n -k id:nr`
 
-1. Join multiple files by keys (`join`)
+1. **Join multiple files by keys** (`join`)
 
     - All files have same key column: `csvtk join -f id file1.csv file2.csv`
     - Files have different key columns: `csvtk join -f "username;username;name" names.csv phone.csv adress.csv -k`
 
 1. Filter by numbers (`filter`)
 
-    - single field: `csvtk filter -f "id>0"`
-    - multiple fields: `csvtk filter -f "1-3>0"`
-    - using `--any` to print record if any of the field satisfy the condition: `csvtk filter -f "1-3>0" --any`
-    - fuzzy fields: `csvtk filter -F -f "A*!=0"`
+    - Single field: `csvtk filter -f "id>0"`
+    - **Multiple fields**: `csvtk filter -f "1-3>0"`
+    - Using `--any` to print record if any of the field satisfy the condition: `csvtk filter -f "1-3>0" --any`
+    - **fuzzy fields**: `csvtk filter -F -f "A*!=0"`
 
-1. ploting
+1. **Filter rows by awk-like artithmetic/string expressions** (`filter2`)
+
+    - Using field index: `csvtk filter2 -f '$3>0'`
+    - Using column names: `csvtk filter2 -f '$id > 0'`
+    - Both artithmetic and string expressions: `csvtk filter2 -f '$id > 3 || $username=="ken"'`
+    - More complicated: `csvtk filter2 -H -t -f '$1 > 2 && $2 % 2 == 0'`
+
+    
+1. Ploting
     - plot histogram with data of the second column:
-     `csvtk -t plot hist testdata/grouped_data.tsv.gz -f 2`
+     `csvtk -t plot hist testdata/grouped_data.tsv.gz -f 2 | display`
     ![histogram.png](testdata/figures/histogram.png)
     - plot boxplot with data of the "GC Content" (third) column,
     group information is the "Group" column.
-    `csvtk -t plot box testdata/grouped_data.tsv.gz -g "Group" -f "GC Content"  --width 3`
+    `csvtk -t plot box testdata/grouped_data.tsv.gz -g "Group" -f "GC Content" --width 3 | display`
     ![boxplot.png](testdata/figures/boxplot.png)
     -  plot horiz boxplot with data of the "Length" (second) column,
     group information is the "Group" column.
-    `csvtk -t plot box testdata/grouped_data.tsv.gz -g "Group" -f "Length"  --height 3 --width 5 --horiz --title "Horiz box plot"`
+    `csvtk -t plot box testdata/grouped_data.tsv.gz -g "Group" -f "Length"  --height 3 --width 5 --horiz --title "Horiz box plot" | display`
     ![boxplot2.png](testdata/figures/boxplot2.png)
     - plot line plot with X-Y data
-    `csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group`
+    `csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group | display`
     ![lineplot.png](testdata/figures/lineplot.png)
     - plot scatter plot with X-Y data
-    `csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group --scatter `
+    `csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group --scatter | display`
     ![scatter.png](testdata/figures/scatter.png)
 
 ## Acknowledgements
@@ -298,9 +306,7 @@ We are grateful to [Zhiluo Deng](https://github.com/dawnmy) and
 
 ## Contact
 
-Email me for any problem when using `csvtk`. shenwei356(at)gmail.com
-
-Or [create an issue](https://github.com/shenwei356/csvtk/issues) to report bugs,
+[create an issue](https://github.com/shenwei356/csvtk/issues) to report bugs,
 propose new functions or ask for help.
 
 Or [leave a comment](https://shenwei356.github.io/csvtk/usage/#disqus_thread).
