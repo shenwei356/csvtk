@@ -309,7 +309,7 @@ source ~/.bashrc
 <pre><code>go get -u github.com/shenwei356/csvtk/csvtk
 </code></pre>
 <h2 id="compared-to-csvkit">Compared to <code>csvkit</code></h2>
-<p><a href="http://csvkit.readthedocs.org/en/540/">csvkit</a></p>
+<p><a href="http://csvkit.readthedocs.org/">csvkit</a></p>
 <table>
 <thead>
 <tr>
@@ -324,7 +324,7 @@ source ~/.bashrc
 <td align="left">Read    Gzip</td>
 <td align="center">Yes</td>
 <td align="center">Yes</td>
-<td align="left"></td>
+<td align="left">read gzip files</td>
 </tr>
 <tr>
 <td align="left">Fields ranges</td>
@@ -345,7 +345,7 @@ source ~/.bashrc
 <td align="left">e.g. <code>ab*</code> for columns with name prefix "ab"</td>
 </tr>
 <tr>
-<td align="left">Order-specific fields</td>
+<td align="left">Reorder fields</td>
 <td align="center">Yes</td>
 <td align="center">Yes</td>
 <td align="left">it means <code>-f 1,2</code> is different from <code>-f 2,1</code></td>
@@ -375,16 +375,46 @@ source ~/.bashrc
 <td align="left">e.g. <code>-k 2:r -k 1:nr</code></td>
 </tr>
 <tr>
-<td align="left"><strong>Pretty output</strong></td>
+<td align="left">Pretty output</td>
+<td align="center">Yes</td>
+<td align="center">Yes</td>
+<td align="left">convert CSV to readable aligned table</td>
+</tr>
+<tr>
+<td align="left">unique rows</td>
 <td align="center">Yes</td>
 <td align="center">--</td>
-<td align="left">convert CSV to readable aligned table</td>
+<td align="left">unique data of selected fields</td>
+</tr>
+<tr>
+<td align="left">freqency of rows</td>
+<td align="center">Yes</td>
+<td align="center">--</td>
+<td align="left">frequencies of selected fields</td>
+</tr>
+<tr>
+<td align="left">sampling</td>
+<td align="center">Yes</td>
+<td align="center">--</td>
+<td align="left">sampling by proportion</td>
+</tr>
+<tr>
+<td align="left">mutate fields</td>
+<td align="center">Yes</td>
+<td align="center">--</td>
+<td align="left">create new columns from selected fields</td>
+</tr>
+<tr>
+<td align="left">repalce</td>
+<td align="center">Yes</td>
+<td align="center">--</td>
+<td align="left">replace data of selected fields</td>
 </tr>
 </tbody>
 </table>
 <p>Similar tools:</p>
 <ul>
-<li><a href="http://csvkit.readthedocs.org/en/540/">csvkit</a> - A suite of utilities for converting to and working with CSV, the king of tabular file formats. http://csvkit.rtfd.org/</li>
+<li><a href="http://csvkit.readthedocs.org/">csvkit</a> - A suite of utilities for converting to and working with CSV, the king of tabular file formats. http://csvkit.rtfd.org/</li>
 <li><a href="https://github.com/BurntSushi/xsv">xsv</a> - A fast CSV toolkit written in Rust.</li>
 <li><a href="https://github.com/johnkerl/miller">miller</a> - Miller is like sed, awk, cut, join, and sort for
 name-indexed data such as CSV and tabular JSON http://johnkerl.org/miller</li>
