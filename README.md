@@ -152,24 +152,29 @@ And then:
 
 ## Compared to `csvkit`
 
-[csvkit](http://csvkit.readthedocs.org/en/540/)
+[csvkit](http://csvkit.readthedocs.org/)
 
 Features                |  csvtk   |  csvkit   |   Note
 :-----------------------|:--------:|:---------:|:---------
-Read    Gzip            |   Yes    |  Yes      |
+Read    Gzip            |   Yes    |  Yes      | read gzip files
 Fields ranges           |   Yes    |  Yes      | e.g. `-f 1-4,6`
 **Unselect fileds**     |   Yes    |  --       | e.g. `-1` for excluding first column
 **Fuzzy fields**        |   Yes    |  --       | e.g. `ab*` for columns with name prefix "ab"
-Order-specific fields   |   Yes    |  Yes      | it means `-f 1,2` is different from `-f 2,1`
+Reorder fields          |   Yes    |  Yes      | it means `-f 1,2` is different from `-f 2,1`
 **Rename columns**      |   Yes    |  --       | rename with new name(s) or from existed names
 Sort by multiple keys   |   Yes    |  Yes      | bash sort like operations
 **Sort by number**      |   Yes    |  --       | e.g. `-k 1:n`
 **Multiple sort**       |   Yes    |  --       | e.g. `-k 2:r -k 1:nr`
-**Pretty output**       |   Yes    |  --       | convert CSV to readable aligned table
+Pretty output           |   Yes    |  Yes      | convert CSV to readable aligned table
+unique rows             |   Yes    |  --       | unique data of selected fields
+freqency of rows        |   Yes    |  --       | frequencies of selected fields
+sampling                |   Yes    |  --       | sampling by proportion
+mutate fields           |   Yes    |  --       | create new columns from selected fields
+repalce                 |   Yes    |  --       | replace data of selected fields 
 
 Similar tools:
 
-- [csvkit](http://csvkit.readthedocs.org/en/540/) - A suite of utilities for converting to and working with CSV, the king of tabular file formats. http://csvkit.rtfd.org/
+- [csvkit](http://csvkit.readthedocs.org/) - A suite of utilities for converting to and working with CSV, the king of tabular file formats. http://csvkit.rtfd.org/
 - [xsv](https://github.com/BurntSushi/xsv) - A fast CSV toolkit written in Rust.
 - [miller](https://github.com/johnkerl/miller) - Miller is like sed, awk, cut, join, and sort for
 name-indexed data such as CSV and tabular JSON http://johnkerl.org/miller
