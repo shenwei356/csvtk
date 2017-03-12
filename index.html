@@ -381,31 +381,31 @@ source ~/.bashrc
 <td align="left">convert CSV to readable aligned table</td>
 </tr>
 <tr>
-<td align="left"><strong>unique rows</strong></td>
+<td align="left"><strong>Unique data</strong></td>
 <td align="center">Yes</td>
 <td align="center">--</td>
 <td align="left">unique data of selected fields</td>
 </tr>
 <tr>
-<td align="left"><strong>freqency of rows</strong></td>
+<td align="left"><strong>frequency</strong></td>
 <td align="center">Yes</td>
 <td align="center">--</td>
 <td align="left">frequencies of selected fields</td>
 </tr>
 <tr>
-<td align="left"><strong>sampling</strong></td>
+<td align="left"><strong>Sampling</strong></td>
 <td align="center">Yes</td>
 <td align="center">--</td>
 <td align="left">sampling by proportion</td>
 </tr>
 <tr>
-<td align="left"><strong>mutate fields</strong></td>
+<td align="left"><strong>Mutate fields</strong></td>
 <td align="center">Yes</td>
 <td align="center">--</td>
 <td align="left">create new columns from selected fields</td>
 </tr>
 <tr>
-<td align="left"><strong>repalce</strong></td>
+<td align="left"><strong>Repalce</strong></td>
 <td align="center">Yes</td>
 <td align="center">--</td>
 <td align="left">replace data of selected fields</td>
@@ -482,20 +482,20 @@ field   num     sum   min     max     mean    stdev
 </ul>
 </li>
 <li>
-<p>Rename column names (<code>rename</code> and <code>rename2</code>)</p>
+<p><strong>Rename column names</strong> (<code>rename</code> and <code>rename2</code>)</p>
 <ul>
 <li>Setting new names: <code>csvtk rename -f A,B -n a,b</code> or <code>csvtk rename -f 1-3 -n a,b,c</code></li>
 <li>Replacing with original names by regular express: <code>cat ../testdata/c.csv | ./csvtk rename2 -F -f "*" -p "(.*)" -r 'prefix_$1'</code> for adding prefix to all column names.</li>
 </ul>
 </li>
 <li>
-<p>Edit data with regular expression (<code>replace</code>)</p>
+<p><strong>Edit data with regular expression</strong> (<code>replace</code>)</p>
 <ul>
 <li>Remove Chinese charactors:  <code>csvtk replace -F -f "*_name" -p "\p{Han}+" -r ""</code></li>
 </ul>
 </li>
 <li>
-<p>Create new column from selected fields by regular expression (<code>mutate</code>)</p>
+<p><strong>Create new column from selected fields by regular expression</strong> (<code>mutate</code>)</p>
 <ul>
 <li>In default, copy a column: <code>csvtk mutate -f id</code></li>
 <li>Extract prefix of data as group name (get "A" from "A.1" as group name):
@@ -512,7 +512,7 @@ field   num     sum   min     max     mean    stdev
 </ul>
 </li>
 <li>
-<p>Join multiple files by keys (<code>join</code>)</p>
+<p><strong>Join multiple files by keys</strong> (<code>join</code>)</p>
 <ul>
 <li>All files have same key column: <code>csvtk join -f id file1.csv file2.csv</code></li>
 <li>Files have different key columns: <code>csvtk join -f "username;username;name" names.csv phone.csv adress.csv -k</code></li>
@@ -521,31 +521,40 @@ field   num     sum   min     max     mean    stdev
 <li>
 <p>Filter by numbers (<code>filter</code>)</p>
 <ul>
-<li>single field: <code>csvtk filter -f "id&gt;0"</code></li>
-<li>multiple fields: <code>csvtk filter -f "1-3&gt;0"</code></li>
-<li>using <code>--any</code> to print record if any of the field satisfy the condition: <code>csvtk filter -f "1-3&gt;0" --any</code></li>
-<li>fuzzy fields: <code>csvtk filter -F -f "A*!=0"</code></li>
+<li>Single field: <code>csvtk filter -f "id&gt;0"</code></li>
+<li><strong>Multiple fields</strong>: <code>csvtk filter -f "1-3&gt;0"</code></li>
+<li>Using <code>--any</code> to print record if any of the field satisfy the condition: <code>csvtk filter -f "1-3&gt;0" --any</code></li>
+<li><strong>fuzzy fields</strong>: <code>csvtk filter -F -f "A*!=0"</code></li>
 </ul>
 </li>
 <li>
-<p>ploting</p>
+<p><strong>Filter rows by awk-like artithmetic/string expressions</strong> (<code>filter2</code>)</p>
+<ul>
+<li>Using field index: <code>csvtk filter2 -f '$3&gt;0'</code></li>
+<li>Using column names: <code>csvtk filter2 -f '$id &gt; 0'</code></li>
+<li>Both artithmetic and string expressions: <code>csvtk filter2 -f '$id &gt; 3 || $username=="ken"'</code></li>
+<li>More complicated: <code>csvtk filter2 -H -t -f '$1 &gt; 2 &amp;&amp; $2 % 2 == 0'</code></li>
+</ul>
+</li>
+<li>
+<p>Ploting</p>
 <ul>
 <li>plot histogram with data of the second column:
- <code>csvtk -t plot hist testdata/grouped_data.tsv.gz -f 2</code>
+ <code>csvtk -t plot hist testdata/grouped_data.tsv.gz -f 2 | display</code>
 <img alt="histogram.png" src="./testdata/figures/histogram.png" /></li>
 <li>plot boxplot with data of the "GC Content" (third) column,
 group information is the "Group" column.
-<code>csvtk -t plot box testdata/grouped_data.tsv.gz -g "Group" -f "GC Content"  --width 3</code>
+<code>csvtk -t plot box testdata/grouped_data.tsv.gz -g "Group" -f "GC Content" --width 3 | display</code>
 <img alt="boxplot.png" src="./testdata/figures/boxplot.png" /></li>
 <li>plot horiz boxplot with data of the "Length" (second) column,
 group information is the "Group" column.
-<code>csvtk -t plot box testdata/grouped_data.tsv.gz -g "Group" -f "Length"  --height 3 --width 5 --horiz --title "Horiz box plot"</code>
+<code>csvtk -t plot box testdata/grouped_data.tsv.gz -g "Group" -f "Length"  --height 3 --width 5 --horiz --title "Horiz box plot" | display</code>
 <img alt="boxplot2.png" src="./testdata/figures/boxplot2.png" /></li>
 <li>plot line plot with X-Y data
-<code>csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group</code>
+<code>csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group | display</code>
 <img alt="lineplot.png" src="./testdata/figures/lineplot.png" /></li>
 <li>plot scatter plot with X-Y data
-<code>csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group --scatter</code>
+<code>csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group --scatter | display</code>
 <img alt="scatter.png" src="./testdata/figures/scatter.png" /></li>
 </ul>
 </li>
@@ -554,8 +563,7 @@ group information is the "Group" column.
 <p>We are grateful to <a href="https://github.com/dawnmy">Zhiluo Deng</a> and
 <a href="https://github.com/penglbio">Li Peng</a> for suggesting features and reporting bugs.</p>
 <h2 id="contact">Contact</h2>
-<p>Email me for any problem when using <code>csvtk</code>. shenwei356(at)gmail.com</p>
-<p>Or <a href="https://github.com/shenwei356/csvtk/issues">create an issue</a> to report bugs,
+<p><a href="https://github.com/shenwei356/csvtk/issues">create an issue</a> to report bugs,
 propose new functions or ask for help.</p>
 <p>Or <a href="https://shenwei356.github.io/csvtk/usage/#disqus_thread">leave a comment</a>.</p>
 <h2 id="license">License</h2>
