@@ -6,6 +6,11 @@ os:
 
 go:
   - 1.8
+  
+before_install:
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+         brew install md5sha1sum;
+      fi
 
 script:
     - ./testdata/test.sh

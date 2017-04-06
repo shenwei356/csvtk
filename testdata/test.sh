@@ -6,7 +6,7 @@ test -e ssshtest || wget -q https://raw.githubusercontent.com/ryanlayer/ssshtest
 set -e
 
 
-# cd csvtk; go build; cd ..;
+cd csvtk; go build; cd ..;
 app=./csvtk/csvtk
 
 set +e
@@ -21,14 +21,14 @@ set +e
 # $3, delimiter
 # $4, has header row
 headers() {
-    seq $2 | awk '{print "c"$1}' | paste -sd $3
+    seq $2 | awk '{print "c"$1}' | paste -s -d $3
 }
 matrix() {
     if [ "$4" = true ]; then
         headers $1 $2 $3
     fi
     for i in $(seq $1); do
-        seq $(( $2*($i-1)+1 )) $(( $2*$i )) | paste -sd $3
+        seq $(( $2*($i-1)+1 )) $(( $2*$i )) | paste -s -d $3
     done
 }
 
