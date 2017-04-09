@@ -119,7 +119,7 @@ for n in $N; do                 # scales
                 }
                 run "cut -f $c $tab $headrow (n=$n)" fn
                 
-                if [ $n -lt $(echo $c | sed -e 's/,/\t/g' | cut -f 1) ]; then
+                if [ $n -lt $(echo $c | cut -d "," -f 1) ]; then
                     assert_in_stderr "out of range"
                     continue
                 else
