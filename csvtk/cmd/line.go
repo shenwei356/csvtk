@@ -83,7 +83,7 @@ Notes:
 
 		dataFieldYStr := getFlagString(cmd, "data-field-y")
 		if dataFieldYStr == "" {
-			checkError(fmt.Errorf("flag -x (--data-field-y) needed"))
+			checkError(fmt.Errorf("flag -y (--data-field-y) needed"))
 		}
 		if strings.Index(dataFieldYStr, ",") >= 0 {
 			checkError(fmt.Errorf("only one field allowed for flag -y (--data-field-y)"))
@@ -126,7 +126,11 @@ Notes:
 					checkError(fmt.Errorf("fail to parse X value: %s at column: %d. please choose the right column by flag --data-field-x", d[0], fields[0]))
 				}
 			}
-			y, err = strconv.ParseFloat(d[1], 64)
+			if len(d) > 1 {
+				y, err = strconv.ParseFloat(d[1], 64)
+			} else {
+				y, err = strconv.ParseFloat(d[0], 64)
+			}
 			if err != nil {
 				if len(headerRow) > 0 {
 					checkError(fmt.Errorf("fail to parse Y value: %s at column: %s. please choose the right column by flag --data-field-y", d[1], headerRow[1]))
@@ -197,7 +201,7 @@ Notes:
 		p.Legend.Left = getFlagBool(cmd, "legend-left")
 
 		if plotConfig.ylab == "" {
-			if len(headerRow) > 0 {
+			if len(headerRow) > 1 {
 				plotConfig.ylab = headerRow[1]
 			} else {
 				plotConfig.ylab = "Y Values"

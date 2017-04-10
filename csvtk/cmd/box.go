@@ -153,7 +153,7 @@ Notes:
 				}
 			}
 			if plotConfig.xlab == "" {
-				if len(headerRow) > 0 {
+				if len(headerRow) > 1 {
 					plotConfig.xlab = headerRow[1]
 				} else {
 					plotConfig.xlab = "Groups"
