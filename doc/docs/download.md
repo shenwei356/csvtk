@@ -6,40 +6,22 @@
 
 ## Current Version
 
-[csvtk v0.7.0](https://github.com/shenwei356/csvtk/releases/tag/v0.7.0)
-[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.7.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.7.0)
+[csvtk v0.7.1](https://github.com/shenwei356/csvtk/releases/tag/v0.7.1)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.7.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.7.1)
 
-- fig bug of "stricter field checking" in v0.6.0 and v0.6.1 when using flag `-F/--fuzzy-fields`
-- `csvtk pretty` and `csvtk csv2md`: add attention that
-  these commands treat the first row as header line and require them to be unique.
-- `csvtk stat` renamed to `csvtk stats`, old name is still available as an alias.
-- `csvtk stat2` renamed to `csvtk stats2`, old name is still available as an alias.
-- [issues/13](https://github.com/shenwei356/csvtk/issues/13) **seamlessly support for data with meta line of separator declaration used by MS Excel**, e.g.,
-
-        $ cat names_with_meta.csv
-        sep=,
-        id,first_name,last_name,username
-        11,"Rob","Pike",rob
-        2,Ken,Thompson,ken
-        ...
-
-        $ cat names_with_meta.csv | csvtk filter2 -f '$id > 2'
-        sep=,
-        id,first_name,last_name,username
-        11,Rob,Pike,rob
-        4,Robert,Griesemer,gri
+- `csvtk plot box` and `csvtk plot line`: fix bugs for special cases of input
 
 
 Links:
 
 OS     |Arch      |File, (mirror为中国用户下载镜像链接)                                                                                                                                                                              |Download Count
 :------|:---------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-Linux  |32-bit    |[csvtk_linux_386.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.7.0/csvtk_linux_386.tar.gz), ([mirror](http://app.shenwei.me/data/csvtk/csvtk_linux_386.tar.gz))                            |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_386.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.7.0/csvtk_linux_386.tar.gz)
-Linux  |**64-bit**|[**csvtk_linux_amd64.tar.gz**](https://github.com/shenwei356/csvtk/releases/download/v0.7.0/csvtk_linux_amd64.tar.gz), ([mirror](http://app.shenwei.me/data/csvtk/csvtk_linux_amd64.tar.gz))                  |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_amd64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.7.0/csvtk_linux_amd64.tar.gz)
-OS X   |32-bit    |[csvtk_darwin_386.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.7.0/csvtk_darwin_386.tar.gz), ([mirror](http://app.shenwei.me/data/csvtk/csvtk_darwin_386.tar.gz))                         |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_darwin_386.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.7.0/csvtk_darwin_386.tar.gz)
-OS X   |**64-bit**|[**csvtk_darwin_amd64.tar.gz**](https://github.com/shenwei356/csvtk/releases/download/v0.7.0/csvtk_darwin_amd64.tar.gz), ([mirror](http://app.shenwei.me/data/csvtk/csvtk_darwin_amd64.tar.gz))               |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_darwin_amd64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.7.0/csvtk_darwin_amd64.tar.gz)
-Windows|32-bit    |[csvtk_windows_386.exe.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.7.0/csvtk_windows_386.exe.tar.gz), ([mirror](http://app.shenwei.me/data/csvtk/csvtk_windows_386.exe.tar.gz))          |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_windows_386.exe.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.7.0/csvtk_windows_386.exe.tar.gz)
-Windows|**64-bit**|[**csvtk_windows_amd64.exe.tar.gz**](https://github.com/shenwei356/csvtk/releases/download/v0.7.0/csvtk_windows_amd64.exe.tar.gz), ([mirror](http://app.shenwei.me/data/csvtk/csvtk_windows_amd64.exe.tar.gz))|[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_windows_amd64.exe.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.7.0/csvtk_windows_amd64.exe.tar.gz)
+Linux  |32-bit    |[csvtk_linux_386.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.7.1/csvtk_linux_386.tar.gz), ([mirror](http://app.shenwei.me/data/csvtk/csvtk_linux_386.tar.gz))                            |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_386.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.7.1/csvtk_linux_386.tar.gz)
+Linux  |**64-bit**|[**csvtk_linux_amd64.tar.gz**](https://github.com/shenwei356/csvtk/releases/download/v0.7.1/csvtk_linux_amd64.tar.gz), ([mirror](http://app.shenwei.me/data/csvtk/csvtk_linux_amd64.tar.gz))                  |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_amd64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.7.1/csvtk_linux_amd64.tar.gz)
+OS X   |32-bit    |[csvtk_darwin_386.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.7.1/csvtk_darwin_386.tar.gz), ([mirror](http://app.shenwei.me/data/csvtk/csvtk_darwin_386.tar.gz))                         |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_darwin_386.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.7.1/csvtk_darwin_386.tar.gz)
+OS X   |**64-bit**|[**csvtk_darwin_amd64.tar.gz**](https://github.com/shenwei356/csvtk/releases/download/v0.7.1/csvtk_darwin_amd64.tar.gz), ([mirror](http://app.shenwei.me/data/csvtk/csvtk_darwin_amd64.tar.gz))               |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_darwin_amd64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.7.1/csvtk_darwin_amd64.tar.gz)
+Windows|32-bit    |[csvtk_windows_386.exe.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.7.1/csvtk_windows_386.exe.tar.gz), ([mirror](http://app.shenwei.me/data/csvtk/csvtk_windows_386.exe.tar.gz))          |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_windows_386.exe.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.7.1/csvtk_windows_386.exe.tar.gz)
+Windows|**64-bit**|[**csvtk_windows_amd64.exe.tar.gz**](https://github.com/shenwei356/csvtk/releases/download/v0.7.1/csvtk_windows_amd64.exe.tar.gz), ([mirror](http://app.shenwei.me/data/csvtk/csvtk_windows_amd64.exe.tar.gz))|[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_windows_amd64.exe.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.7.1/csvtk_windows_amd64.exe.tar.gz)
 
 ## Installation
 
@@ -81,6 +63,14 @@ And then:
 
 ## Previous Versions
 
+- [csvtk v0.7.0](https://github.com/shenwei356/csvtk/releases/tag/v0.7.0)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.7.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.7.0)
+    - fig bug of "stricter field checking" in v0.6.0 and v0.6.1 when using flag `-F/--fuzzy-fields`
+    - `csvtk pretty` and `csvtk csv2md`: add attention that
+      these commands treat the first row as header line and require them to be unique.
+    - `csvtk stat` renamed to `csvtk stats`, old name is still available as an alias.
+    - `csvtk stat2` renamed to `csvtk stats2`, old name is still available as an alias.
+    - [issues/13](https://github.com/shenwei356/csvtk/issues/13) **seamlessly support for data with meta line of separator declaration used by MS Excel**.
 - [csvtk v0.6.1](https://github.com/shenwei356/csvtk/releases/tag/v0.6.1)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.6.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.6.1)
     - `csvtk cut`: minor bug: panic when no fields given. i.e., `csvtk cut`.
