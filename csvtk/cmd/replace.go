@@ -319,7 +319,7 @@ Special replacement symbols:
 func init() {
 	RootCmd.AddCommand(replaceCmd)
 	replaceCmd.Flags().StringP("fields", "f", "1", `select only these fields. e.g -f 1,2 or -f columnA,columnB`)
-	replaceCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fileds, e.g. "*name" or "id123*"`)
+	replaceCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
 	replaceCmd.Flags().StringP("pattern", "p", "", "search regular expression")
 	replaceCmd.Flags().StringP("replacement", "r", "",
 		"replacement. supporting capture variables. "+

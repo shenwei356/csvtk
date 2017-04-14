@@ -231,5 +231,5 @@ var stat2Cmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(stat2Cmd)
 	stat2Cmd.Flags().StringP("fields", "f", "", `select only these fields. e.g -f 1,2 or -f columnA,columnB`)
-	stat2Cmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g. "*name" or "id123*"`)
+	stat2Cmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
 }

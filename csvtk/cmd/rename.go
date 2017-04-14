@@ -218,6 +218,6 @@ var renameCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(renameCmd)
 	renameCmd.Flags().StringP("fields", "f", "", `select only these fields. e.g -f 1,2 or -f columnA,columnB`)
-	renameCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fileds, e.g. "*name" or "id123*"`)
+	renameCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
 	renameCmd.Flags().StringP("names", "n", "", "comma separated new names")
 }

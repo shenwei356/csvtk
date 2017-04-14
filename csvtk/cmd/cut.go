@@ -223,5 +223,5 @@ var cutCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(cutCmd)
 	cutCmd.Flags().StringP("fields", "f", "", `select only these fields. e.g -f 1,2 or -f columnA,columnB, or -f -columnA for unselect columnA`)
-	cutCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g. -f "*name" or "id123*"`)
+	cutCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
 }

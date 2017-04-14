@@ -10,7 +10,7 @@
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.7.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.7.1)
 
 - `csvtk plot box` and `csvtk plot line`: fix bugs for special cases of input
-
+- compile with go1.8.1
 
 Links:
 

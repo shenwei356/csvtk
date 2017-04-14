@@ -218,7 +218,7 @@ Usage:
 
 Flags:
   -f, --fields string   select only these fields. e.g -f 1,2 or -f columnA,columnB
-  -F, --fuzzy-fields    using fuzzy fields, e.g. *name or id123*
+  -F, --fuzzy-fields    using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
 
 ```
 
@@ -463,7 +463,7 @@ Usage:
 
 Flags:
   -f, --fields string   select only these fields. e.g -f 1,2 or -f columnA,columnB, or -f -columnA for unselect columnA
-  -F, --fuzzy-fields    using fuzzy fields, e.g. -f "*name or -f id123*"
+  -F, --fuzzy-fields    using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
 
 ```
 
@@ -573,7 +573,7 @@ Usage:
 
 Flags:
   -f, --fields string   select only these fields. e.g -f 1,2 or -f columnA,columnB (default "1")
-  -F, --fuzzy-fields    using fuzzy fileds, e.g. *name or id123*
+  -F, --fuzzy-fields    using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
   -i, --ignore-case     ignore case
 
 ```
@@ -618,7 +618,7 @@ Usage:
 
 Flags:
   -f, --fields string   select only these fields. e.g -f 1,2 or -f columnA,columnB (default "1")
-  -F, --fuzzy-fields    using fuzzy fileds, e.g. *name or id123*
+  -F, --fuzzy-fields    using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
   -i, --ignore-case     ignore case
   -r, --reverse         reverse order while sorting
   -n, --sort-by-freq    sort by frequency
@@ -682,7 +682,7 @@ Usage:
 
 Flags:
   -f, --fields string   select only these fields. e.g -f 1,2 or -f columnA,columnB (default "1")
-  -F, --fuzzy-fields    using fuzzy fileds, e.g. *name or id123*
+  -F, --fuzzy-fields    using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
   -i, --ignore-case     ignore case
 
 ```
@@ -721,7 +721,7 @@ Usage:
 
 Flags:
   -f, --fields string         comma separated key fields, column name or index. e.g. -f 1-3 or -f id,id2 or -F -f "group*" (default "1")
-  -F, --fuzzy-fields          using fuzzy fields, e.g. *name or id123*
+  -F, --fuzzy-fields          using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
   -i, --ignore-case           ignore case
   -v, --invert                invert match
   -n, --no-highlight          no highlight
@@ -767,7 +767,7 @@ Usage:
 Flags:
       --any             print record if any of the field satisfy the condition
   -f, --filter string   filter condition. e.g. -f "age>12" or -f "1,3<=2" or -F -f "c*!=0"
-  -F, --fuzzy-fields    using fuzzy fileds, e.g. "*name" or "id123*"
+  -F, --fuzzy-fields    using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
 
 ```
 
@@ -912,7 +912,7 @@ Usage:
 Flags:
   -f, --fields string    Semicolon separated key fields of all files, if given one, we think all the files have the same key columns. Fields of different files should be separated by ";", e.g -f "1;2" or -f "A,B;C,D" or -f id (default "1")
       --fill string      fill content for unmatched data
-  -F, --fuzzy-fields     using fuzzy fileds, e.g. *name or id123*
+  -F, --fuzzy-fields     using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
   -i, --ignore-case      ignore case
   -k, --keep-unmatched   keep unmatched data of the first file
 
@@ -1010,7 +1010,7 @@ Examples:
         1    bar    baseball      handsome   bioinformatics
         2    bob    basketball    beutiful   computer science
         2    bob    basketball    beutiful   computer science
-        3    foo    football      cool$
+        3    foo    football      cool
         4    wei    programming
 
 ## rename
@@ -1025,7 +1025,7 @@ Usage:
 
 Flags:
   -f, --fields string   select only these fields. e.g -f 1,2 or -f columnA,columnB
-  -F, --fuzzy-fields    using fuzzy fileds, e.g. *name or id123*
+  -F, --fuzzy-fields    using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
   -n, --names string    comma separated new names
 
 ```
@@ -1112,7 +1112,7 @@ Usage:
 
 Flags:
   -f, --fields string          select only these fields. e.g -f 1,2 or -f columnA,columnB (default "1")
-  -F, --fuzzy-fields           using fuzzy fileds, e.g. *name or id123*
+  -F, --fuzzy-fields           using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
   -i, --ignore-case            ignore case
   -K, --keep-key               keep the key as value when no value found for the key
   -I, --key-capt-idx int       capture variable index of key (1-based) (default 1)
