@@ -10,8 +10,7 @@ for f in csvtk_*; do
     mkdir -p $dir/$f;
     mv $f $dir/$f;
     cd $dir/$f;
-    # https://github.com/shenwei356/brename/
-    brename -p '_[^\.]+';
+    mv $f $(echo $f | perl -pe 's/_[^\.]+//g');
     tar -zcf $f.tar.gz csvtk*;
     mv *.tar.gz ../;
     cd ..;
