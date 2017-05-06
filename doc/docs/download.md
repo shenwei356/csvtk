@@ -14,6 +14,8 @@
 
 Links:
 
+***Tip: run `taxonkit version` to check update !!!***
+
 OS     |Arch      |File, (mirror为中国用户下载镜像链接)                                                                                                                                                                              |Download Count
 :------|:---------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Linux  |32-bit    |[csvtk_linux_386.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.7.1/csvtk_linux_386.tar.gz), ([mirror](http://app.shenwei.me/data/csvtk/csvtk_linux_386.tar.gz))                            |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_386.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.7.1/csvtk_linux_386.tar.gz)
