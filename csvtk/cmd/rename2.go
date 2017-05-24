@@ -127,8 +127,14 @@ var rename2Cmd = &cobra.Command{
 						colnamesMap = make(map[string]*regexp.Regexp, len(colnames))
 						for _, col := range colnames {
 							if !fuzzyFields {
-								if _, ok := colnames2fileds[col]; !ok {
-									checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col, file))
+								if negativeFields {
+									if _, ok := colnames2fileds[col[1:]]; !ok {
+										checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col[1:], file))
+									}
+								} else {
+									if _, ok := colnames2fileds[col]; !ok {
+										checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col, file))
+									}
 								}
 							}
 							if negativeFields {

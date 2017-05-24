@@ -260,8 +260,9 @@ func NewCSVWriterChanByConfig(config Config) (chan []string, error) {
 }
 
 var reFields = regexp.MustCompile(`([^,]+)(,[^,]+)*,?`)
-var reDigitals = regexp.MustCompile(`^[\-\d\.e,E\+]+$`)
-var reDigitalRange = regexp.MustCompile(`^([\-\d]+?)\-([\-\d]+?)$`)
+var reDigitals = regexp.MustCompile(`^[\-\+\d\.,]+$|^[\-\+\d\.,]*[eE][\-\+\d]+$`)
+var reIntegers = regexp.MustCompile(`^[\-\+\d]+$`)
+var reIntegerRange = regexp.MustCompile(`^([\-\d]+?)\-([\-\d]+?)$`)
 
 func getFlagFields(cmd *cobra.Command, flag string) string {
 	fieldsStr, err := cmd.Flags().GetString(flag)
@@ -284,11 +285,11 @@ func parseFields(cmd *cobra.Command,
 	var parseHeaderRow bool
 	var negativeFields bool
 	firstField := reFields.FindAllStringSubmatch(fieldsStr, -1)[0][1]
-	if reDigitals.MatchString(firstField) {
+	if reIntegers.MatchString(firstField) {
 		fields = []int{}
 		fieldsStrs := strings.Split(fieldsStr, ",")
 		for _, s := range fieldsStrs {
-			found := reDigitalRange.FindAllStringSubmatch(s, -1)
+			found := reIntegerRange.FindAllStringSubmatch(s, -1)
 			if len(found) > 0 { // field range
 				start, err := strconv.Atoi(found[0][1])
 				checkError(err)
@@ -317,7 +318,7 @@ func parseFields(cmd *cobra.Command,
 				negativeFields = true
 			} else {
 				if negativeFields {
-					checkError(fmt.Errorf(`filed should not mixed with positive and negative fields`))
+					checkError(fmt.Errorf(`fields should not be mixed with positive and negative fields`))
 				}
 			}
 		}
@@ -325,7 +326,7 @@ func parseFields(cmd *cobra.Command,
 		if negativeFields {
 			for _, f := range fields {
 				if f > 0 {
-					checkError(fmt.Errorf(`filed should not mixed with positive and negative fields`))
+					checkError(fmt.Errorf(`fields should not be mixed with positive and negative fields`))
 				}
 			}
 		}
@@ -432,8 +433,14 @@ func parseCSVfile(cmd *cobra.Command, config Config, file string,
 				i := 0
 				for _, col := range colnames {
 					if !fuzzyFields {
-						if _, ok := colnames2fileds[col]; !ok {
-							checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col, file))
+						if negativeFields {
+							if _, ok := colnames2fileds[col[1:]]; !ok {
+								checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col[1:], file))
+							}
+						} else {
+							if _, ok := colnames2fileds[col]; !ok {
+								checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col, file))
+							}
 						}
 					}
 					if negativeFields {
@@ -558,10 +565,11 @@ func removeComma(s string) string {
 func readKVs(file string) (map[string]string, error) {
 	type KV [2]string
 	fn := func(line string) (interface{}, bool, error) {
-		if len(line) == 0 {
+		strings.TrimRight(line, "\r\n")
+		if line == "" {
 			return nil, false, nil
 		}
-		items := strings.Split(strings.TrimRight(line, "\r\n"), "\t")
+		items := strings.Split(line, "\t")
 		if len(items) < 2 {
 			return nil, false, nil
 		}
