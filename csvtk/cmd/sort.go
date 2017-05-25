@@ -28,6 +28,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/pkg/errors"
+	"github.com/shenwei356/breader"
 	"github.com/shenwei356/util/stringutil"
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
@@ -48,24 +50,69 @@ var sortCmd = &cobra.Command{
 		}
 		runtime.GOMAXPROCS(config.NumCPUs)
 
+		levels := getFlagStringSlice(cmd, "levels")
 		keys := getFlagStringSlice(cmd, "keys")
+		ignoreCase := getFlagBool(cmd, "ignore-case")
+
+		levelsMap := make(map[string]map[string]int)
+		var items []string
+		for _, level := range levels {
+			items = strings.Split(level, ":")
+			if len(items) != 2 {
+				checkError(fmt.Errorf("invalid level information format: %s", level))
+			}
+
+			m := make(map[string]int)
+			reader, err := breader.NewDefaultBufferedReader(items[1])
+			checkError(errors.Wrap(err, "read level file"))
+			var i int
+			for chunk := range reader.Ch {
+				checkError(chunk.Err)
+				for _, data := range chunk.Data {
+					line := data.(string)
+					if line == "" {
+						continue
+					}
+					i++
+					if ignoreCase {
+						m[strings.ToLower(line)] = i
+					} else {
+						m[line] = i
+					}
+				}
+			}
+			if _, ok := levelsMap[items[0]]; ok {
+				log.Warningf("overide user-defined level for field %s", items[0])
+			}
+			levelsMap[items[0]] = m
+		}
+
 		sortTypes := []sortType{}
 		fieldsStrs := []string{}
-		var items []string
 		for _, key := range keys {
 			items = strings.Split(key, ":")
 			if len(items) == 1 {
 				fieldsStrs = append(fieldsStrs, items[0])
-				sortTypes = append(sortTypes, sortType{items[0], false, false})
+				sortTypes = append(sortTypes, sortType{FieldStr: items[0], Number: false, Reverse: false})
 			} else {
 				fieldsStrs = append(fieldsStrs, items[0])
 				switch items[1] {
 				case "n":
-					sortTypes = append(sortTypes, sortType{items[0], true, false})
+					sortTypes = append(sortTypes, sortType{FieldStr: items[0], Number: true, Reverse: false})
 				case "r":
-					sortTypes = append(sortTypes, sortType{items[0], false, true})
+					sortTypes = append(sortTypes, sortType{FieldStr: items[0], Number: false, Reverse: true})
 				case "nr", "rn":
-					sortTypes = append(sortTypes, sortType{items[0], true, true})
+					sortTypes = append(sortTypes, sortType{FieldStr: items[0], Number: true, Reverse: true})
+				case "u":
+					if _, ok := levelsMap[items[0]]; !ok {
+						checkError(fmt.Errorf("level file not provided for field: %s", items[0]))
+					}
+					sortTypes = append(sortTypes, sortType{FieldStr: items[0], Number: false, Reverse: false, UserDefined: true, Levels: levelsMap[items[0]]})
+				case "ur", "ru":
+					if _, ok := levelsMap[items[0]]; !ok {
+						checkError(fmt.Errorf("level file not provided for field: %s", items[0]))
+					}
+					sortTypes = append(sortTypes, sortType{FieldStr: items[0], Number: false, Reverse: true, UserDefined: true, Levels: levelsMap[items[0]]})
 				default:
 					checkError(fmt.Errorf("invalid sort type: %s", items[1]))
 				}
@@ -116,7 +163,13 @@ var sortCmd = &cobra.Command{
 				checkError(err)
 				field--
 			}
-			sortTypes2[i] = stringutil.SortType{Index: field, Number: t.Number, Reverse: t.Reverse}
+			sortTypes2[i] = stringutil.SortType{Index: field,
+				IgnoreCase:  ignoreCase,
+				Number:      t.Number,
+				Reverse:     t.Reverse,
+				UserDefined: t.UserDefined,
+				Levels:      t.Levels,
+			}
 		}
 
 		list = make([]stringutil.MultiKeyStringSlice, len(data))
@@ -141,12 +194,16 @@ var sortCmd = &cobra.Command{
 }
 
 type sortType struct {
-	FieldStr string
-	Number   bool
-	Reverse  bool
+	FieldStr    string
+	Number      bool
+	Reverse     bool
+	UserDefined bool
+	Levels      map[string]int
 }
 
 func init() {
 	RootCmd.AddCommand(sortCmd)
-	sortCmd.Flags().StringSliceP("keys", "k", []string{"1"}, `keys. sort type supported, "n" for number and "r" for reverse. e.g. "-k 1" or "-k A:r" or ""-k 1:nr -k 2"`)
+	sortCmd.Flags().StringSliceP("keys", "k", []string{"1"}, `keys (multiple values supported). sort type supported, "n" for number and "r" for reverse. e.g., "-k 1" or "-k A:r" or ""-k 1:nr -k 2"`)
+	sortCmd.Flags().StringSliceP("levels", "L", []string{}, `user-defined level file (one level per line, multiple values supported). format: <field>:<level-file>.  e.g., "-L name:level.txt"`)
+	sortCmd.Flags().BoolP("ignore-case", "i", false, "ignore-case")
 }
