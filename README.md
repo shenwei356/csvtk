@@ -64,7 +64,7 @@ It could save you much time of writing Python/R scripts.
 
 ## Subcommands
 
-25 subcommands in total.
+26 subcommands in total.
 
 **Information**
 
@@ -100,6 +100,7 @@ It could save you much time of writing Python/R scripts.
 -  `rename2` rename column names by regular expression
 -  `replace` replace data of selected fields by regular expression
 -  `mutate` create new columns from selected fields by regular expression
+-  `gather` gather columns into key-value pairs
 
 **Ordering**
 
@@ -170,7 +171,7 @@ Pretty output           |   Yes    |  Yes      | convert CSV to readable aligned
 **frequency**           |   Yes    |  --       | frequencies of selected fields
 **Sampling**            |   Yes    |  --       | sampling by proportion
 **Mutate fields**       |   Yes    |  --       | create new columns from selected fields
-**Repalce**             |   Yes    |  --       | replace data of selected fields 
+**Repalce**             |   Yes    |  --       | replace data of selected fields
 
 Similar tools:
 
@@ -279,7 +280,7 @@ Examples
     - Both artithmetic and string expressions: `csvtk filter2 -f '$id > 3 || $username=="ken"'`
     - More complicated: `csvtk filter2 -H -t -f '$1 > 2 && $2 % 2 == 0'`
 
-    
+
 1. Ploting
     - plot histogram with data of the second column:
      `csvtk -t plot hist testdata/grouped_data.tsv.gz -f 2 | display`

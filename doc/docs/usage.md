@@ -50,6 +50,7 @@
 - [rename2](#rename2)
 - [replace](#replace)
 - [mutate](#mutate)
+- [gather](#gather)
 
 **Ordering**
 
@@ -71,7 +72,7 @@ Usage
 ```
 A cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.7.0
+Version: 0.8.0
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -99,6 +100,7 @@ Available Commands:
   filter      filter rows by values of selected fields with artithmetic expression
   filter2     filter rows by awk-like artithmetic/string expressions
   freq        frequencies of selected fields
+  gather      gather columns into key-value pairs
   grep        grep data by selected fields with patterns/regular expressions
   head        print first N records
   headers     print headers
@@ -131,7 +133,7 @@ Flags:
   -D, --out-delimiter string   delimiting character of the output CSV file (default ",")
   -o, --out-file string        out file ("-" for stdout, suffix .gz for gzipped out) (default "-")
   -T, --out-tabs               specifies that the output is delimited with tabs. Overrides "-D"
-  -t, --tabs                   specifies that the input CSV file is delimited with tabs. Overrides "-d"
+  -t, --tabs                   specifies that the input CSV file is delimited with tabs. Overrides "-d" and "-D"
 
 ```
 
@@ -725,9 +727,10 @@ Flags:
   -i, --ignore-case           ignore case
   -v, --invert                invert match
   -n, --no-highlight          no highlight
-  -p, --pattern value         query pattern (multiple values supported) (default [])
-  -P, --pattern-file string   pattern files (could also be CSV format)
+  -p, --pattern stringSlice   query pattern (multiple values supported)
+  -P, --pattern-file string   pattern files (one pattern per line)
   -r, --use-regexp            patterns are regular expression
+      --verbose               verbose output
 
 ```
 
@@ -1187,6 +1190,52 @@ Examples
         ken,22222,k
         shenwei,999999,s
 
+## gather
+
+Usage
+
+```
+gather columns into key-value pairs
+
+Usage:
+  csvtk gather [flags]
+
+Flags:
+  -f, --fields string   fields for gathering. e.g -f 1,2 or -f columnA,columnB, or -f -columnA for unselect columnA
+  -F, --fuzzy-fields    using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
+  -k, --key string      name of key column to create in output
+  -v, --value string    name of key column to create in output
+
+```
+
+Examples:
+
+    $ cat testdata/names.csv
+    id,first_name,last_name,username
+    11,"Rob","Pike",rob
+    2,Ken,Thompson,ken
+    4,"Robert","Griesemer","gri"
+    1,"Robert","Thompson","abc"
+    NA,"Robert","Abel","123
+
+    $ cat testdata/names.csv | csvtk gather -k item -v value -f -1
+    id,item,value
+    11,first_name,Rob
+    11,last_name,Pike
+    11,username,rob
+    2,first_name,Ken
+    2,last_name,Thompson
+    2,username,ken
+    4,first_name,Robert
+    4,last_name,Griesemer
+    4,username,gri
+    1,first_name,Robert
+    1,last_name,Thompson
+    1,username,abc
+    NA,first_name,Robert
+    NA,last_name,Abel
+    NA,username,123
+
 ## sort
 
 Usage
@@ -1265,6 +1314,33 @@ Examples
         NA,Robert,Abel,123
         1,Robert,Thompson,abc
         4,Robert,Griesemer,gri
+
+- By ***user-defined order***
+
+        # user-defined order/level
+        $ cat testdata/size_level.txt
+        tiny
+        mini
+        small
+        medium
+        big
+
+        # original data
+        $ cat testdata/size.csv
+        id,size
+        1,Huge
+        2,Tiny
+        3,Big
+        4,Small
+        5,Medium
+
+        $ csvtk sort -k 2:u -i -L 2:testdata/size_level.txt testdata/size.csv
+        id,size
+        2,Tiny
+        4,Small
+        5,Medium
+        3,Big
+        1,Huge
 
 ## plot
 

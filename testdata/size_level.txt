@@ -1,0 +1,5 @@
+tiny
+mini
+small
+medium
+big
