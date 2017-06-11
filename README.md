@@ -64,7 +64,7 @@ It could save you much time of writing Python/R scripts.
 
 ## Subcommands
 
-26 subcommands in total.
+27 subcommands in total.
 
 **Information**
 
@@ -100,6 +100,7 @@ It could save you much time of writing Python/R scripts.
 -  `rename2` rename column names by regular expression
 -  `replace` replace data of selected fields by regular expression
 -  `mutate` create new columns from selected fields by regular expression
+-  `mutate2` create new column from selected fields by awk-like artithmetic/string
 -  `gather` gather columns into key-value pairs
 
 **Ordering**
