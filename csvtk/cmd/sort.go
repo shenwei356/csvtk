@@ -95,6 +95,9 @@ var sortCmd = &cobra.Command{
 				fieldsStrs = append(fieldsStrs, items[0])
 				sortTypes = append(sortTypes, sortType{FieldStr: items[0], Number: false, Reverse: false})
 			} else {
+				if items[0] == "" {
+					checkError(fmt.Errorf(`invalid key: "%s"`, key))
+				}
 				fieldsStrs = append(fieldsStrs, items[0])
 				switch items[1] {
 				case "n":
