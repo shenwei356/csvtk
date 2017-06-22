@@ -142,6 +142,8 @@
         
             <li><a href="#installation">Installation</a></li>
         
+            <li><a href="#bash-completion">Bash-completion</a></li>
+        
             <li><a href="#previous-versions">Previous Versions</a></li>
         
     
@@ -154,17 +156,11 @@
  executable binary files <strong>for most popular operating system</strong> are freely available
   in <a href="https://github.com/shenwei356/csvtk/releases">release</a> page.</p>
 <h2 id="current-version">Current Version</h2>
-<p><a href="https://github.com/shenwei356/csvtk/releases/tag/v0.8.0">csvtk v0.8.0</a>
-<a href="https://github.com/shenwei356/csvtk/releases/tag/v0.8.0"><img alt="Github Releases (by Release)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/v0.8.0/total.svg" /></a></p>
+<p><a href="https://github.com/shenwei356/csvtk/releases/tag/v0.9.0">csvtk v0.9.0</a>
+<a href="https://github.com/shenwei356/csvtk/releases/tag/v0.9.0"><img alt="Github Releases (by Release)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/v0.9.0/total.svg" /></a></p>
 <ul>
-<li><strong>new command <code>csvtk gather</code> for gathering columns into key-value pairs</strong>.</li>
-<li><code>csvtk sort</code>: support <strong>sorting by user-defined order</strong>.</li>
-<li>fix bug of <em>unselecting field</em>: wrongly reporting error of fields not existing.
-affected commands: <code>cut</code>, <code>filter</code>, <code>fitler2</code>, <code>freq</code>, <code>grep</code>, <code>inter</code>, <code>mutate</code>,
-<code>rename</code>, <code>rename2</code>, <code>replace</code>, <code>stats2</code>, <code>uniq</code>.</li>
-<li>update help message of flag <code>-F/--fuzzy-fields</code>.</li>
-<li>update help message of global flag <code>-t</code>, which overrides both <code>-d</code> and <code>-D</code>.
-  If you want other delimiter for tabular input, use <code>-t $'\t' -D "delimiter"</code>.</li>
+<li>add subcommand <code>csvtk mutate2</code>: create new column from selected fields by <strong>awk-like artithmetic/string expressions</strong></li>
+<li>add new command <code>genautocomplete</code> to generate <strong>shell autocompletion</strong> script!</li>
 </ul>
 <p>Links:</p>
 <p><strong><em>Tip: run <code>csvtk version</code> to check update !!!</em></strong></p>
@@ -181,38 +177,38 @@ affected commands: <code>cut</code>, <code>filter</code>, <code>fitler2</code>, 
 <tr>
 <td align="left">Linux</td>
 <td align="left">32-bit</td>
-<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.8.0/csvtk_linux_386.tar.gz">csvtk_linux_386.tar.gz</a>, (<a href="http://app.shenwei.me/data/csvtk/csvtk_linux_386.tar.gz">mirror</a>)</td>
-<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.8.0/csvtk_linux_386.tar.gz"><img alt="Github Releases (by Asset)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_386.tar.gz.svg?maxAge=3600" /></a></td>
+<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.9.0/csvtk_linux_386.tar.gz">csvtk_linux_386.tar.gz</a>, (<a href="http://app.shenwei.me/data/csvtk/csvtk_linux_386.tar.gz">mirror</a>)</td>
+<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.9.0/csvtk_linux_386.tar.gz"><img alt="Github Releases (by Asset)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_386.tar.gz.svg?maxAge=3600" /></a></td>
 </tr>
 <tr>
 <td align="left">Linux</td>
 <td align="left"><strong>64-bit</strong></td>
-<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.8.0/csvtk_linux_amd64.tar.gz"><strong>csvtk_linux_amd64.tar.gz</strong></a>, (<a href="http://app.shenwei.me/data/csvtk/csvtk_linux_amd64.tar.gz">mirror</a>)</td>
-<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.8.0/csvtk_linux_amd64.tar.gz"><img alt="Github Releases (by Asset)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_amd64.tar.gz.svg?maxAge=3600" /></a></td>
+<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.9.0/csvtk_linux_amd64.tar.gz"><strong>csvtk_linux_amd64.tar.gz</strong></a>, (<a href="http://app.shenwei.me/data/csvtk/csvtk_linux_amd64.tar.gz">mirror</a>)</td>
+<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.9.0/csvtk_linux_amd64.tar.gz"><img alt="Github Releases (by Asset)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_amd64.tar.gz.svg?maxAge=3600" /></a></td>
 </tr>
 <tr>
 <td align="left">OS X</td>
 <td align="left">32-bit</td>
-<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.8.0/csvtk_darwin_386.tar.gz">csvtk_darwin_386.tar.gz</a>, (<a href="http://app.shenwei.me/data/csvtk/csvtk_darwin_386.tar.gz">mirror</a>)</td>
-<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.8.0/csvtk_darwin_386.tar.gz"><img alt="Github Releases (by Asset)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_darwin_386.tar.gz.svg?maxAge=3600" /></a></td>
+<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.9.0/csvtk_darwin_386.tar.gz">csvtk_darwin_386.tar.gz</a>, (<a href="http://app.shenwei.me/data/csvtk/csvtk_darwin_386.tar.gz">mirror</a>)</td>
+<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.9.0/csvtk_darwin_386.tar.gz"><img alt="Github Releases (by Asset)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_darwin_386.tar.gz.svg?maxAge=3600" /></a></td>
 </tr>
 <tr>
 <td align="left">OS X</td>
 <td align="left"><strong>64-bit</strong></td>
-<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.8.0/csvtk_darwin_amd64.tar.gz"><strong>csvtk_darwin_amd64.tar.gz</strong></a>, (<a href="http://app.shenwei.me/data/csvtk/csvtk_darwin_amd64.tar.gz">mirror</a>)</td>
-<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.8.0/csvtk_darwin_amd64.tar.gz"><img alt="Github Releases (by Asset)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_darwin_amd64.tar.gz.svg?maxAge=3600" /></a></td>
+<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.9.0/csvtk_darwin_amd64.tar.gz"><strong>csvtk_darwin_amd64.tar.gz</strong></a>, (<a href="http://app.shenwei.me/data/csvtk/csvtk_darwin_amd64.tar.gz">mirror</a>)</td>
+<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.9.0/csvtk_darwin_amd64.tar.gz"><img alt="Github Releases (by Asset)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_darwin_amd64.tar.gz.svg?maxAge=3600" /></a></td>
 </tr>
 <tr>
 <td align="left">Windows</td>
 <td align="left">32-bit</td>
-<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.8.0/csvtk_windows_386.exe.tar.gz">csvtk_windows_386.exe.tar.gz</a>, (<a href="http://app.shenwei.me/data/csvtk/csvtk_windows_386.exe.tar.gz">mirror</a>)</td>
-<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.8.0/csvtk_windows_386.exe.tar.gz"><img alt="Github Releases (by Asset)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_windows_386.exe.tar.gz.svg?maxAge=3600" /></a></td>
+<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.9.0/csvtk_windows_386.exe.tar.gz">csvtk_windows_386.exe.tar.gz</a>, (<a href="http://app.shenwei.me/data/csvtk/csvtk_windows_386.exe.tar.gz">mirror</a>)</td>
+<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.9.0/csvtk_windows_386.exe.tar.gz"><img alt="Github Releases (by Asset)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_windows_386.exe.tar.gz.svg?maxAge=3600" /></a></td>
 </tr>
 <tr>
 <td align="left">Windows</td>
 <td align="left"><strong>64-bit</strong></td>
-<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.8.0/csvtk_windows_amd64.exe.tar.gz"><strong>csvtk_windows_amd64.exe.tar.gz</strong></a>, (<a href="http://app.shenwei.me/data/csvtk/csvtk_windows_amd64.exe.tar.gz">mirror</a>)</td>
-<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.8.0/csvtk_windows_amd64.exe.tar.gz"><img alt="Github Releases (by Asset)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_windows_amd64.exe.tar.gz.svg?maxAge=3600" /></a></td>
+<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.9.0/csvtk_windows_amd64.exe.tar.gz"><strong>csvtk_windows_amd64.exe.tar.gz</strong></a>, (<a href="http://app.shenwei.me/data/csvtk/csvtk_windows_amd64.exe.tar.gz">mirror</a>)</td>
+<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.9.0/csvtk_windows_amd64.exe.tar.gz"><img alt="Github Releases (by Asset)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_windows_amd64.exe.tar.gz.svg?maxAge=3600" /></a></td>
 </tr>
 </tbody>
 </table>
@@ -254,8 +250,39 @@ source ~/.bashrc
 <h4 id="method-3-for-go-developer">Method 3: For Go developer</h4>
 <pre><code>go get -u github.com/shenwei356/csvtk/csvtk
 </code></pre>
+<h2 id="bash-completion">Bash-completion</h2>
+<p>Note: The current version supports Bash only.
+This should work for *nix systems with Bash installed.</p>
+<p>Howto:</p>
+<ol>
+<li>
+<p>run: <code>csvtk genautocomplete</code></p>
+</li>
+<li>
+<p>create and edit <code>~/.bash_completion</code> file if you don't have it.</p>
+<pre><code>nano ~/.bash_completion
+</code></pre>
+<p>add the following:</p>
+<pre><code>for bcfile in ~/.bash_completion.d/* ; do
+  . $bcfile
+done
+</code></pre>
+</li>
+</ol>
 <h2 id="previous-versions">Previous Versions</h2>
 <ul>
+<li><a href="https://github.com/shenwei356/csvtk/releases/tag/v0.8.0">csvtk v0.8.0</a>
+<a href="https://github.com/shenwei356/csvtk/releases/tag/v0.8.0"><img alt="Github Releases (by Release)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/v0.8.0/total.svg" /></a><ul>
+<li><strong>new command <code>csvtk gather</code> for gathering columns into key-value pairs</strong>.</li>
+<li><code>csvtk sort</code>: support <strong>sorting by user-defined order</strong>.</li>
+<li>fix bug of <em>unselecting field</em>: wrongly reporting error of fields not existing.
+affected commands: <code>cut</code>, <code>filter</code>, <code>fitler2</code>, <code>freq</code>, <code>grep</code>, <code>inter</code>, <code>mutate</code>,
+<code>rename</code>, <code>rename2</code>, <code>replace</code>, <code>stats2</code>, <code>uniq</code>.</li>
+<li>update help message of flag <code>-F/--fuzzy-fields</code>.</li>
+<li>update help message of global flag <code>-t</code>, which overrides both <code>-d</code> and <code>-D</code>.
+  If you want other delimiter for tabular input, use <code>-t $'\t' -D "delimiter"</code>.</li>
+</ul>
+</li>
 <li><a href="https://github.com/shenwei356/csvtk/releases/tag/v0.7.1">csvtk v0.7.1</a>
 <a href="https://github.com/shenwei356/csvtk/releases/tag/v0.7.1"><img alt="Github Releases (by Release)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/v0.7.1/total.svg" /></a><ul>
 <li><code>csvtk plot box</code> and <code>csvtk plot line</code>: fix bugs for special cases of input</li>

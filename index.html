@@ -148,6 +148,8 @@
         
             <li><a href="#installation">Installation</a></li>
         
+            <li><a href="#bash-completion">Bash-completion</a></li>
+        
             <li><a href="#compared-to-csvkit">Compared to csvkit</a></li>
         
             <li><a href="#examples">Examples</a></li>
@@ -199,6 +201,7 @@ It could save you much time of writing Python/R scripts.</p>
 <li><a href="#features">Features</a></li>
 <li><a href="#subcommands">Subcommands</a></li>
 <li><a href="#installation">Installation</a></li>
+<li><a href="#bash-completion">Bash-completion</a></li>
 <li><a href="#compared-to-csvkit">Compared to <code>csvkit</code></a></li>
 <li><a href="#examples">Examples</a></li>
 <li><a href="#acknowledgements">Acknowledgements</a></li>
@@ -221,7 +224,7 @@ It could save you much time of writing Python/R scripts.</p>
 <li>Seamlessly support for data with meta line (e.g., <code>sep=,</code>) of separator declaration used by MS Excel</li>
 </ul>
 <h2 id="subcommands">Subcommands</h2>
-<p>26 subcommands in total.</p>
+<p>27 subcommands in total.</p>
 <p><strong>Information</strong></p>
 <ul>
 <li><code>headers</code> print headers</li>
@@ -256,6 +259,7 @@ It could save you much time of writing Python/R scripts.</p>
 <li><code>rename2</code> rename column names by regular expression</li>
 <li><code>replace</code> replace data of selected fields by regular expression</li>
 <li><code>mutate</code> create new columns from selected fields by regular expression</li>
+<li><code>mutate2</code> create new column from selected fields by awk-like artithmetic/string expressions</li>
 <li><code>gather</code> gather columns into key-value pairs</li>
 </ul>
 <p><strong>Ordering</strong></p>
@@ -270,6 +274,11 @@ It could save you much time of writing Python/R scripts.</p>
 <li><code>plot line</code> line plot and scatter plot</li>
 </ul>
 </li>
+</ul>
+<p><strong>Misc</strong></p>
+<ul>
+<li><code>version</code>   print version information and check for update</li>
+<li><code>genautocomplete</code> generate shell autocompletion script</li>
 </ul>
 <h2 id="installation">Installation</h2>
 <p><a href="https://github.com/shenwei356/csvtk/releases">Download Page</a></p>
@@ -309,6 +318,25 @@ source ~/.bashrc
 <h4 id="method-3-for-go-developer">Method 3: For Go developer</h4>
 <pre><code>go get -u github.com/shenwei356/csvtk/csvtk
 </code></pre>
+<h2 id="bash-completion">Bash-completion</h2>
+<p>Note: The current version supports Bash only.
+This should work for *nix systems with Bash installed.</p>
+<p>Howto:</p>
+<ol>
+<li>
+<p>run: <code>csvtk genautocomplete</code></p>
+</li>
+<li>
+<p>create and edit <code>~/.bash_completion</code> file if you don't have it.</p>
+<pre><code>nano ~/.bash_completion
+</code></pre>
+<p>add the following:</p>
+<pre><code>for bcfile in ~/.bash_completion.d/* ; do
+  . $bcfile
+done
+</code></pre>
+</li>
+</ol>
 <h2 id="compared-to-csvkit">Compared to <code>csvkit</code></h2>
 <p><a href="http://csvkit.readthedocs.org/">csvkit</a></p>
 <table>
