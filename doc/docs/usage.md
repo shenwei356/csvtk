@@ -50,6 +50,7 @@
 - [rename2](#rename2)
 - [replace](#replace)
 - [mutate](#mutate)
+- [mutate2](#mutate2)
 - [gather](#gather)
 
 **Ordering**
@@ -62,6 +63,10 @@
 - [plot hist](#plot-hist)
 - [plot box](#plot-box)
 - [plot line](#plot-line)
+
+**Misc**
+
+- [genautocomplete](#genautocomplete)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -1190,6 +1195,69 @@ Examples
         ken,22222,k
         shenwei,999999,s
 
+## mutate2
+
+Usage
+
+```
+create new column from selected fields by awk-like artithmetic/string expressions
+
+The artithmetic/string expression is supported by:
+
+    https://github.com/Knetic/govaluate
+
+Supported operators and types:
+
+    Modifiers: + - / * & | ^ ** % >> <<
+    Comparators: > >= < <= == != =~ !~
+    Logical ops: || &&
+    Numeric constants, as 64-bit floating point (12345.678)
+    String constants (single quotes: 'foobar')
+    Date constants (single quotes)
+    Boolean constants: true false
+    Parenthesis to control order of evaluation ( )
+    Arrays (anything separated by , within parenthesis: (1, 2, 'foo'))
+    Prefixes: ! - ~
+    Ternary conditional: ? :
+    Null coalescence: ??
+
+Usage:
+  csvtk mutate2 [flags]
+
+Flags:
+  -L, --digits int          number of digits after the dot (default 2)
+  -e, --expression string   artithmetic/string expressions. e.g. '$1 + $2', '$a / $b', ' $1 > 100 ? "big" : "small" '
+  -h, --help                help for mutate2
+  -n, --name string         new column name
+
+```
+
+Example
+
+1. Math
+
+        $ cat testdata/digitals.tsv | csvtk mutate2 -t -H -e '$1 + $3' -L 0
+        4       5       6       10
+        1       2       3       4
+        7       8       0       7
+        8       1,000   4       12
+
+1. Bool
+
+        $ cat testdata/digitals.tsv | csvtk mutate2 -t -H -e '$1 > 5'      
+        4       5       6       false
+        1       2       3       false
+        7       8       0       true
+        8       1,000   4       true
+    
+1. Ternary conditional
+
+        $ cat testdata/digitals.tsv | csvtk mutate2 -t -H -e '$1 > 5 ? "big" : "small" '
+        4       5       6       small
+        1       2       3       small
+        7       8       0       big
+        8       1,000   4       big
+
 ## gather
 
 Usage
@@ -1532,7 +1600,39 @@ Examples
 
     ![scatter.png](testdata/figures/scatter.png)
 
+## genautocomplete
 
+Usage
+
+```
+generate shell autocompletion script
+
+Note: The current version supports Bash only.
+This should work for *nix systems with Bash installed.
+
+Howto:
+
+1. run: csvtk genautocomplete
+
+2. create and edit ~/.bash_completion file if you don't have it.
+
+        nano ~/.bash_completion
+
+   add the following:
+
+        for bcfile in ~/.bash_completion.d/* ; do
+          . $bcfile
+        done
+
+Usage:
+  csvtk genautocomplete [flags]
+
+Flags:
+      --file string   autocompletion file (default "/home/shenwei/.bash_completion.d/csvtk.sh")
+  -h, --help          help for genautocomplete
+      --type string   autocompletion type (currently only bash supported) (default "bash")
+
+```
 
 <div id="disqus_thread"></div>
 <script>

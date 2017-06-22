@@ -40,6 +40,7 @@ It could save you much time of writing Python/R scripts.
 - [Features](#features)
 - [Subcommands](#subcommands)
 - [Installation](#installation)
+- [Bash-completion](#bash-completion)
 - [Compared to `csvkit`](#compared-to-csvkit)
 - [Examples](#examples)
 - [Acknowledgements](#acknowledgements)
@@ -114,6 +115,12 @@ It could save you much time of writing Python/R scripts.
     - `plot box` boxplot
     - `plot line` line plot and scatter plot
 
+**Misc**
+
+- `version`   print version information and check for update
+- `genautocomplete` generate shell autocompletion script
+
+
 ## Installation
 
 [Download Page](https://github.com/shenwei356/csvtk/releases)
@@ -151,6 +158,25 @@ And then:
 
     go get -u github.com/shenwei356/csvtk/csvtk
 
+
+## Bash-completion
+
+Note: The current version supports Bash only.
+This should work for *nix systems with Bash installed.
+
+Howto:
+
+1. run: `csvtk genautocomplete`
+
+2. create and edit `~/.bash_completion` file if you don't have it.
+
+        nano ~/.bash_completion
+
+    add the following:
+
+        for bcfile in ~/.bash_completion.d/* ; do
+          . $bcfile
+        done
 
 ## Compared to `csvkit`
 
