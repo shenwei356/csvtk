@@ -27,11 +27,11 @@ import (
 	"sort"
 	"strconv"
 
-	"github.com/gonum/plot"
-	"github.com/gonum/plot/plotter"
-	"github.com/gonum/plot/vg"
 	"github.com/shenwei356/util/stringutil"
 	"github.com/spf13/cobra"
+	"gonum.org/v1/plot"
+	"gonum.org/v1/plot/plotter"
+	"gonum.org/v1/plot/vg"
 )
 
 // boxCmd represents the box command

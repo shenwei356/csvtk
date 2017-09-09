@@ -28,12 +28,12 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/gonum/plot"
-	"github.com/gonum/plot/plotter"
-	"github.com/gonum/plot/plotutil"
-	"github.com/gonum/plot/vg"
 	"github.com/shenwei356/util/stringutil"
 	"github.com/spf13/cobra"
+	"gonum.org/v1/plot"
+	"gonum.org/v1/plot/plotter"
+	"gonum.org/v1/plot/plotutil"
+	"gonum.org/v1/plot/vg"
 )
 
 // lineCmd represents the line command

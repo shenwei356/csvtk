@@ -25,8 +25,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/gonum/plot/vg"
 	"github.com/spf13/cobra"
+	"gonum.org/v1/plot/vg"
 )
 
 // plotCmd represents the seq command
