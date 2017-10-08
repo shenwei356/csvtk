@@ -141,7 +141,7 @@ Flags:
   -t, --tabs                   specifies that the input CSV file is delimited with tabs. Overrides "-d" and "-D"
 
 ```
-
+name of key column to create in output
 ## headers
 
 Usage
@@ -1272,7 +1272,7 @@ Flags:
   -f, --fields string   fields for gathering. e.g -f 1,2 or -f columnA,columnB, or -f -columnA for unselect columnA
   -F, --fuzzy-fields    using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
   -k, --key string      name of key column to create in output
-  -v, --value string    name of key column to create in output
+  -v, --value string    name of value column to create in output
 
 ```
 
