@@ -141,7 +141,7 @@ Flags:
   -t, --tabs                   specifies that the input CSV file is delimited with tabs. Overrides "-d" and "-D"
 
 ```
-name of key column to create in output
+
 ## headers
 
 Usage
