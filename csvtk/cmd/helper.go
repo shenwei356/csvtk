@@ -36,7 +36,7 @@ import (
 )
 
 // VERSION of csvtk
-const VERSION = "0.9.0"
+const VERSION = "0.9.1"
 
 func checkError(err error) {
 	if err != nil {
@@ -565,7 +565,7 @@ func removeComma(s string) string {
 func readKVs(file string) (map[string]string, error) {
 	type KV [2]string
 	fn := func(line string) (interface{}, bool, error) {
-		strings.TrimRight(line, "\r\n")
+		line = strings.TrimRight(line, "\r\n")
 		if line == "" {
 			return nil, false, nil
 		}
