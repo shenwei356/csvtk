@@ -89,6 +89,7 @@ var grepCmd = &cobra.Command{
 		invert := getFlagBool(cmd, "invert")
 		verbose := getFlagBool(cmd, "verbose")
 		noHighlight := getFlagBool(cmd, "no-highlight")
+		printLineNumber := getFlagBool(cmd, "line-number")
 
 		patternsMap := make(map[string]*regexp.Regexp)
 		for _, pattern := range patterns {
@@ -148,13 +149,14 @@ var grepCmd = &cobra.Command{
 		var writer *csv.Writer
 		var outfhStd io.Writer
 		var outfhFile *xopen.Writer
+		var err error
 		isstdin := isStdin(config.OutFile)
 		if isstdin {
 			outfhStd = colorable.NewColorableStdout()
 			writer = csv.NewWriter(outfhStd)
 		} else {
 			noHighlight = true
-			outfhFile, err := xopen.Wopen(config.OutFile)
+			outfhFile, err = xopen.Wopen(config.OutFile)
 			checkError(err)
 			defer outfhFile.Close()
 			writer = csv.NewWriter(outfhFile)
@@ -174,10 +176,10 @@ var grepCmd = &cobra.Command{
 			parseHeaderRow := needParseHeaderRow // parsing header row
 			var colnames2fileds map[string]int   // column name -> field
 			var colnamesMap map[string]*regexp.Regexp
-			var HeaderRow []string
 
 			checkFields := true
-			var n int64
+			var N int64
+			var recordWithN []string
 
 			printMetaLine := true
 			for chunk := range csvReader.Ch {
@@ -243,11 +245,17 @@ var grepCmd = &cobra.Command{
 							fieldsMap[f] = struct{}{}
 						}
 
+						if printLineNumber {
+							recordWithN = []string{"n"}
+							recordWithN = append(recordWithN, record...)
+							record = recordWithN
+						}
+						checkError(writer.Write(record))
 						parseHeaderRow = false
-						HeaderRow = record
-						checkError(writer.Write(HeaderRow))
 						continue
 					}
+					N++
+
 					if checkFields {
 						for field := range fieldsMap {
 							if field > len(record) {
@@ -275,10 +283,8 @@ var grepCmd = &cobra.Command{
 						checkFields = false
 					}
 
-					n++
-
-					if verbose && n%1000000 == 0 {
-						log.Infof("processed records: %d", n)
+					if verbose && N%1000000 == 0 {
+						log.Infof("processed records: %d", N)
 					}
 
 					var target string
@@ -351,6 +357,11 @@ var grepCmd = &cobra.Command{
 						record = record2
 					}
 
+					if printLineNumber {
+						recordWithN = []string{fmt.Sprintf("%d", N)}
+						recordWithN = append(recordWithN, record...)
+						record = recordWithN
+					}
 					checkError(writer.Write(record))
 				}
 			}
@@ -371,6 +382,7 @@ func init() {
 	grepCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
 	grepCmd.Flags().BoolP("use-regexp", "r", false, `patterns are regular expression`)
 	grepCmd.Flags().BoolP("invert", "v", false, `invert match`)
-	grepCmd.Flags().BoolP("no-highlight", "n", false, `no highlight`)
+	grepCmd.Flags().BoolP("no-highlight", "N", false, `no highlight`)
 	grepCmd.Flags().BoolP("verbose", "", false, `verbose output`)
+	grepCmd.Flags().BoolP("line-number", "n", false, `print line number as the first column`)
 }

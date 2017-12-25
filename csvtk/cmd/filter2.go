@@ -68,6 +68,7 @@ Supported operators and types:
 		runtime.GOMAXPROCS(config.NumCPUs)
 
 		filterStr := getFlagString(cmd, "filter")
+		printLineNumber := getFlagBool(cmd, "line-number")
 		fuzzyFields := false
 
 		if filterStr == "" {
@@ -140,6 +141,8 @@ Supported operators and types:
 			var value string
 			var valueFloat float64
 			var result interface{}
+			var N int64
+			var recordWithN []string
 
 			printMetaLine := true
 			for chunk := range csvReader.Ch {
@@ -201,10 +204,17 @@ Supported operators and types:
 							fieldsMap[f] = struct{}{}
 						}
 
+						if printLineNumber {
+							recordWithN = []string{"n"}
+							recordWithN = append(recordWithN, record...)
+							record = recordWithN
+						}
 						checkError(writer.Write(record))
 						parseHeaderRow = false
 						continue
 					}
+					N++
+
 					if checkFields {
 						for field := range fieldsMap {
 							if field > len(record) {
@@ -278,6 +288,11 @@ Supported operators and types:
 						continue
 					}
 
+					if printLineNumber {
+						recordWithN = []string{fmt.Sprintf("%d", N)}
+						recordWithN = append(recordWithN, record...)
+						record = recordWithN
+					}
 					checkError(writer.Write(record))
 				}
 			}
@@ -290,6 +305,7 @@ Supported operators and types:
 func init() {
 	RootCmd.AddCommand(filter2Cmd)
 	filter2Cmd.Flags().StringP("filter", "f", "", `awk-like filter condition. e.g. '$age>12' or '$1 > $3' or '$name=="abc"' or '$1 % 2 == 0'`)
+	filter2Cmd.Flags().BoolP("line-number", "n", false, `print line number as the first column`)
 }
 
 var reFilter2 = regexp.MustCompile(`\$([^ +-/*&\|^%><!~=()]+)`)

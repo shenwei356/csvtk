@@ -9,7 +9,7 @@
 [csvtk v0.9.1](https://github.com/shenwei356/csvtk/releases/tag/v0.9.1)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.9.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.9.1)
 
-- `csvtk replace`: fix bug when replacing with key-value pairing brought in v0.8.0
+- `csvtk replace`: fix bug when replacing with key-value pairs brought in v0.8.0
 
 Links:
 

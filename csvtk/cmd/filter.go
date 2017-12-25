@@ -49,6 +49,8 @@ var filterCmd = &cobra.Command{
 		filterStr := getFlagString(cmd, "filter")
 		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
 		any := getFlagBool(cmd, "any")
+		printLineNumber := getFlagBool(cmd, "line-number")
+
 		if filterStr == "" {
 			checkError(fmt.Errorf("flag -f (--filter) needed"))
 		}
@@ -110,6 +112,9 @@ var filterCmd = &cobra.Command{
 
 			checkFields := true
 			printMetaLine := true
+			var N int64
+			var recordWithN []string
+
 			for chunk := range csvReader.Ch {
 				checkError(chunk.Err)
 
@@ -169,10 +174,17 @@ var filterCmd = &cobra.Command{
 							fieldsMap[f] = struct{}{}
 						}
 
+						if printLineNumber {
+							recordWithN = []string{"n"}
+							recordWithN = append(recordWithN, record...)
+							record = recordWithN
+						}
 						checkError(writer.Write(record))
 						parseHeaderRow = false
 						continue
 					}
+					N++
+
 					if checkFields {
 						for field := range fieldsMap {
 							if field > len(record) {
@@ -262,6 +274,11 @@ var filterCmd = &cobra.Command{
 						continue
 					}
 
+					if printLineNumber {
+						recordWithN = []string{fmt.Sprintf("%d", N)}
+						recordWithN = append(recordWithN, record...)
+						record = recordWithN
+					}
 					checkError(writer.Write(record))
 				}
 			}
@@ -276,6 +293,7 @@ func init() {
 	filterCmd.Flags().StringP("filter", "f", "", `filter condition. e.g. -f "age>12" or -f "1,3<=2" or -F -f "c*!=0"`)
 	filterCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
 	filterCmd.Flags().BoolP("any", "", false, `print record if any of the field satisfy the condition`)
+	filterCmd.Flags().BoolP("line-number", "n", false, `print line number as the first column`)
 }
 
 var reFilter = regexp.MustCompile(`^(.+?)([!<=>]+)([\-\d\.e,E\+]+)$`)
