@@ -1,1 +1,2 @@
 - `grep`, `filter`, `filter2`: add flag `-n/--line-number` to print line-number as the first column
+- `cut`: add flag `-i/--ignore-case` to ignore case of column name

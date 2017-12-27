@@ -471,6 +471,8 @@ Usage:
 Flags:
   -f, --fields string   select only these fields. e.g -f 1,2 or -f columnA,columnB, or -f -columnA for unselect columnA
   -F, --fuzzy-fields    using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
+  -h, --help            help for cut
+  -i, --ignore-case     ignore case (column name)
 
 ```
 
@@ -729,10 +731,12 @@ Usage:
 Flags:
   -f, --fields string         comma separated key fields, column name or index. e.g. -f 1-3 or -f id,id2 or -F -f "group*" (default "1")
   -F, --fuzzy-fields          using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
+  -h, --help                  help for grep
   -i, --ignore-case           ignore case
   -v, --invert                invert match
-  -n, --no-highlight          no highlight
-  -p, --pattern stringSlice   query pattern (multiple values supported)
+  -n, --line-number           print line number as the first column ("n")
+  -N, --no-highlight          no highlight
+  -p, --pattern strings       query pattern (multiple values supported)
   -P, --pattern-file string   pattern files (one pattern per line)
   -r, --use-regexp            patterns are regular expression
       --verbose               verbose output
@@ -761,6 +765,22 @@ Matched parts will be *highlight*
 
 - By pattern list: `csvtk grep -f first_name -P name_list.txt`
 - Remore rows containing missing data (NA): `csvtk grep -F -f "*" -r -p "^$" -v `
+- show line number
+
+        $ cat names.csv | csvtk pretty 
+        id   first_name   last_name   username
+        11   Rob          Pike        rob
+        2    Ken          Thompson    ken
+        4    Robert       Griesemer   gri
+        1    Robert       Thompson    abc
+        NA   Robert       Abel        123
+  
+        $ cat names.csv | csvtk grep -f first_name -r -i -p rob -n | csvtk pretty 
+        n   id   first_name   last_name   username
+        1   11   Rob          Pike        rob
+        3   4    Robert       Griesemer   gri
+        4   1    Robert       Thompson    abc
+        5   NA   Robert       Abel        123
 
 ## filter
 
@@ -776,6 +796,8 @@ Flags:
       --any             print record if any of the field satisfy the condition
   -f, --filter string   filter condition. e.g. -f "age>12" or -f "1,3<=2" or -F -f "c*!=0"
   -F, --fuzzy-fields    using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
+  -h, --help            help for filter
+  -n, --line-number     print line number as the first column ("n")
 
 ```
 
@@ -859,6 +881,9 @@ Usage:
 
 Flags:
   -f, --filter string   awk-like filter condition. e.g. '$age>12' or '$1 > $3' or '$name=="abc"' or '$1 % 2 == 0'
+  -h, --help            help for filter2
+  -n, --line-number     print line number as the first column ("n")
+
 
 ```
 
