@@ -77,7 +77,7 @@ Usage
 ```
 A cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.8.0
+Version: 0.9.2-dev2
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -99,39 +99,42 @@ Usage:
   csvtk [command]
 
 Available Commands:
-  csv2md      convert CSV to markdown format
-  csv2tab     convert CSV to tabular format
-  cut         select parts of fields
-  filter      filter rows by values of selected fields with artithmetic expression
-  filter2     filter rows by awk-like artithmetic/string expressions
-  freq        frequencies of selected fields
-  gather      gather columns into key-value pairs
-  grep        grep data by selected fields with patterns/regular expressions
-  head        print first N records
-  headers     print headers
-  help        Help about any command
-  inter       intersection of multiple files
-  join        join multiple CSV files by selected fields
-  mutate      create new column from selected fields by regular expression
-  plot        plot common figures
-  pretty      convert CSV to readable aligned table
-  rename      rename column names
-  rename2     rename column names by regular expression
-  replace     replace data of selected fields by regular expression
-  sample      sampling by proportion
-  sort        sort by selected fields
-  space2tab   convert space delimited format to CSV
-  stats       summary of CSV file
-  stats2      summary of selected digital fields
-  tab2csv     convert tabular format to CSV
-  transpose   transpose CSV data
-  uniq        unique data without sorting
-  version     print version information and check for update
+  csv2md          convert CSV to markdown format
+  csv2tab         convert CSV to tabular format
+  cut             select parts of fields
+  filter          filter rows by values of selected fields with artithmetic expression
+  filter2         filter rows by awk-like artithmetic/string expressions
+  freq            frequencies of selected fields
+  gather          gather columns into key-value pairs
+  genautocomplete generate shell autocompletion script
+  grep            grep data by selected fields with patterns/regular expressions
+  head            print first N records
+  headers         print headers
+  help            Help about any command
+  inter           intersection of multiple files
+  join            join multiple CSV files by selected fields
+  mutate          create new column from selected fields by regular expression
+  mutate2         create new column from selected fields by awk-like artithmetic/string expressions
+  plot            plot common figures
+  pretty          convert CSV to readable aligned table
+  rename          rename column names
+  rename2         rename column names by regular expression
+  replace         replace data of selected fields by regular expression
+  sample          sampling by proportion
+  sort            sort by selected fields
+  space2tab       convert space delimited format to CSV
+  stats           summary of CSV file
+  stats2          summary of selected digital fields
+  tab2csv         convert tabular format to CSV
+  transpose       transpose CSV data
+  uniq            unique data without sorting
+  version         print version information and check for update
 
 Flags:
   -c, --chunk-size int         chunk size of CSV reader (default 50)
   -C, --comment-char string    lines starting with commment-character will be ignored. if your header row starts with '#', please assign "-C" another rare symbol, e.g. '$' (default "#")
   -d, --delimiter string       delimiting character of the input CSV file (default ",")
+  -h, --help                   help for csvtk
   -l, --lazy-quotes            if given, a quote may appear in an unquoted field and a non-doubled quote may appear in a quoted field
   -H, --no-header-row          specifies that the input CSV file does not have header row
   -j, --num-cpus int           number of CPUs to use (default value depends on your computer) (default 4)

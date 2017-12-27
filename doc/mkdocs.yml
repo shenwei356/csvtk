@@ -5,6 +5,7 @@ pages:
 - Documents:
     - Usage: usage.md
     - Tutorial: tutorial.md
+    - 中文介绍: chinese.md
 - More tools: bioinf.md
 theme: yeti
 
