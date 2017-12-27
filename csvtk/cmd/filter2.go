@@ -305,7 +305,7 @@ Supported operators and types:
 func init() {
 	RootCmd.AddCommand(filter2Cmd)
 	filter2Cmd.Flags().StringP("filter", "f", "", `awk-like filter condition. e.g. '$age>12' or '$1 > $3' or '$name=="abc"' or '$1 % 2 == 0'`)
-	filter2Cmd.Flags().BoolP("line-number", "n", false, `print line number as the first column`)
+	filter2Cmd.Flags().BoolP("line-number", "n", false, `print line number as the first column ("n")`)
 }
 
 var reFilter2 = regexp.MustCompile(`\$([^ +-/*&\|^%><!~=()]+)`)

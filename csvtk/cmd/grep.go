@@ -384,5 +384,5 @@ func init() {
 	grepCmd.Flags().BoolP("invert", "v", false, `invert match`)
 	grepCmd.Flags().BoolP("no-highlight", "N", false, `no highlight`)
 	grepCmd.Flags().BoolP("verbose", "", false, `verbose output`)
-	grepCmd.Flags().BoolP("line-number", "n", false, `print line number as the first column`)
+	grepCmd.Flags().BoolP("line-number", "n", false, `print line number as the first column ("n")`)
 }

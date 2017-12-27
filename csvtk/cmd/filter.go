@@ -293,7 +293,7 @@ func init() {
 	filterCmd.Flags().StringP("filter", "f", "", `filter condition. e.g. -f "age>12" or -f "1,3<=2" or -F -f "c*!=0"`)
 	filterCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
 	filterCmd.Flags().BoolP("any", "", false, `print record if any of the field satisfy the condition`)
-	filterCmd.Flags().BoolP("line-number", "n", false, `print line number as the first column`)
+	filterCmd.Flags().BoolP("line-number", "n", false, `print line number as the first column ("n")`)
 }
 
 var reFilter = regexp.MustCompile(`^(.+?)([!<=>]+)([\-\d\.e,E\+]+)$`)

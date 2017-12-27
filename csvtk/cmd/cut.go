@@ -26,6 +26,7 @@ import (
 	"regexp"
 	"runtime"
 	"sort"
+	"strings"
 
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
@@ -56,6 +57,8 @@ var cutCmd = &cobra.Command{
 		var fieldsMap map[int]struct{}
 		var fieldsOrder map[int]int      // for set the order of fields
 		var colnamesOrder map[string]int // for set the order of fields
+
+		ignoreCase := getFlagBool(cmd, "ignore-case")
 
 		if len(fields) > 0 {
 			fields2 := make([]int, len(fields))
@@ -120,11 +123,17 @@ var cutCmd = &cobra.Command{
 				if parseHeaderRow { // parsing header row
 					colnames2fileds = make(map[string]int, len(record))
 					for i, col := range record {
+						if ignoreCase {
+							col = strings.ToLower(col)
+						}
 						colnames2fileds[col] = i + 1
 					}
 					colnamesMap = make(map[string]*regexp.Regexp, len(colnames))
 					i := 0
 					for _, col := range colnames {
+						if ignoreCase {
+							col = strings.ToLower(col)
+						}
 						if !fuzzyFields {
 							if negativeFields {
 								if _, ok := colnames2fileds[col[1:]]; !ok {
@@ -230,4 +239,5 @@ func init() {
 	RootCmd.AddCommand(cutCmd)
 	cutCmd.Flags().StringP("fields", "f", "", `select only these fields. e.g -f 1,2 or -f columnA,columnB, or -f -columnA for unselect columnA`)
 	cutCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
+	cutCmd.Flags().BoolP("ignore-case", "i", false, `ignore case (column name)`)
 }
