@@ -30,6 +30,7 @@
 - [pretty](#pretty)
 - [transpose](#transpose)
 - [csv2md](#csv2md)
+- [xlsx2csv](#xlsx2csv)
 
 **Set operations**
 
@@ -77,7 +78,7 @@ Usage
 ```
 A cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.9.2-dev2
+Version: 0.9.2-dev3
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -129,6 +130,7 @@ Available Commands:
   transpose       transpose CSV data
   uniq            unique data without sorting
   version         print version information and check for update
+  xlsx2csv        convert XLSX to CSV format
 
 Flags:
   -c, --chunk-size int         chunk size of CSV reader (default 50)
@@ -398,6 +400,52 @@ Examples
     4  |Robert    |Griesemer|gri
     1  |Robert    |Thompson |abc
     NA |Robert    |Abel     |123
+
+## xlsx2csv
+
+Usage
+
+```
+convert XLSX to CSV format
+
+Usage:
+  csvtk xlsx2csv [flags]
+
+Flags:
+  -h, --help                help for xlsx2csv
+  -a, --list-sheets         list all sheets
+  -i, --sheet-index int     Nth sheet to retrieve (default 1)
+  -n, --sheet-name string   sheet to retrieve
+
+```
+
+Examples
+
+1. list all sheets
+
+        $ csvtk xlsx2csv ../testdata/accounts.xlsx -a
+        index   sheet
+        1       names
+        2       phones
+        3       region
+
+1. retrieve sheet by index
+
+        $ csvtk xlsx2csv ../testdata/accounts.xlsx -i 3
+        name,region
+        ken,nowhere
+        gri,somewhere
+        shenwei,another
+        Thompson,there
+
+1. retrieve sheet by name
+
+        $ csvtk xlsx2sv ../testdata/accounts.xlsx -n region
+        name,region
+        ken,nowhere
+        gri,somewhere
+        shenwei,another
+        Thompson,there
 
 ## head
 
@@ -770,15 +818,15 @@ Matched parts will be *highlight*
 - Remore rows containing missing data (NA): `csvtk grep -F -f "*" -r -p "^$" -v `
 - show line number
 
-        $ cat names.csv | csvtk pretty 
+        $ cat names.csv | csvtk pretty
         id   first_name   last_name   username
         11   Rob          Pike        rob
         2    Ken          Thompson    ken
         4    Robert       Griesemer   gri
         1    Robert       Thompson    abc
         NA   Robert       Abel        123
-  
-        $ cat names.csv | csvtk grep -f first_name -r -i -p rob -n | csvtk pretty 
+
+        $ cat names.csv | csvtk grep -f first_name -r -i -p rob -n | csvtk pretty
         n   id   first_name   last_name   username
         1   11   Rob          Pike        rob
         3   4    Robert       Griesemer   gri
@@ -1272,12 +1320,12 @@ Example
 
 1. Bool
 
-        $ cat testdata/digitals.tsv | csvtk mutate2 -t -H -e '$1 > 5'      
+        $ cat testdata/digitals.tsv | csvtk mutate2 -t -H -e '$1 > 5'
         4       5       6       false
         1       2       3       false
         7       8       0       true
         8       1,000   4       true
-    
+
 1. Ternary conditional
 
         $ cat testdata/digitals.tsv | csvtk mutate2 -t -H -e '$1 > 5 ? "big" : "small" '
