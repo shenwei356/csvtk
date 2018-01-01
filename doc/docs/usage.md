@@ -78,7 +78,7 @@ Usage
 ```
 A cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.9.2-dev3
+Version: 0.10.0
 
 Author: Wei Shen <shenwei356@gmail.com>
 
