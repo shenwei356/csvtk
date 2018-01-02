@@ -159,6 +159,9 @@ And then:
 
     go get -u github.com/shenwei356/csvtk/csvtk
 
+#### Method 4: For ArchLinux AUR users
+
+    yaourt -S csvtk
 
 ## Bash-completion
 
