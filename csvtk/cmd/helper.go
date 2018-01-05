@@ -24,6 +24,7 @@ import (
 	"encoding/csv"
 	"fmt"
 	"os"
+	"path/filepath"
 	"regexp"
 	"sort"
 	"strconv"
@@ -607,4 +608,17 @@ func (s orderedFields) Swap(i, j int)      { s[i], s[j] = s[j], s[i] }
 
 func isStdin(file string) bool {
 	return file == "-"
+}
+
+func filepathTrimExtension(file string) (string, string) {
+	gz := strings.HasSuffix(file, ".gz") || strings.HasSuffix(file, ".GZ")
+	if gz {
+		file = file[0 : len(file)-3]
+	}
+	extension := filepath.Ext(file)
+	name := file[0 : len(file)-len(extension)]
+	if gz {
+		extension += ".gz"
+	}
+	return name, extension
 }

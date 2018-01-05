@@ -29,7 +29,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// csv2tabCmd represents the seq command
+// csv2tabCmd represents the csv2tab command
 var csv2tabCmd = &cobra.Command{
 	Use:   "csv2tab",
 	Short: "convert CSV to tabular format",
