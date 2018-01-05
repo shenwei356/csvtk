@@ -23,11 +23,13 @@ package cmd
 import (
 	"encoding/csv"
 	"fmt"
+	"os"
+	"path/filepath"
 	"regexp"
 	"runtime"
 	"strings"
-	"sync"
 
+	"github.com/shenwei356/util/pathutil"
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
 )
@@ -37,6 +39,10 @@ var splitCmd = &cobra.Command{
 	Use:   "split",
 	Short: "split CSV/TSV into multiple files according to column values",
 	Long: `split CSV/TSV into multiple files according to column values
+
+Note:
+
+  1. flag -o/--out-file can specify out directory for splitted files
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -70,6 +76,7 @@ var splitCmd = &cobra.Command{
 
 		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
 		ignoreCase := getFlagBool(cmd, "ignore-case")
+		bufSize := getFlagNonNegativeInt(cmd, "buf-size")
 
 		file := files[0]
 		csvReader, err := newCSVReaderByConfig(config, file)
@@ -87,6 +94,17 @@ var splitCmd = &cobra.Command{
 			outFilePrefix, outFileSuffix = filepathTrimExtension(file)
 		}
 
+		if config.OutFile != "-" { // outdir
+			outdir := config.OutFile
+			var existed bool
+			existed, err = pathutil.DirExists(outdir)
+			checkError(err)
+			if !existed {
+				checkError(os.MkdirAll(outdir, 0775))
+			}
+			outFilePrefix = filepath.Join(outdir, filepath.Base(outFilePrefix))
+		}
+
 		parseHeaderRow := needParseHeaderRow // parsing header row
 		printHeaderRow := needParseHeaderRow
 		var colnames2fileds map[string]int // column name -> field
@@ -96,11 +114,9 @@ var splitCmd = &cobra.Command{
 		var items []string
 		var key string
 		var headerRow []string
-
-		outCh := make(map[string]chan []string, 10)
+		firstTimeWrite := make(map[string]bool)
+		rowsBuf := make(map[string][][]string)
 		var ok bool
-		var ch chan []string
-		var wg sync.WaitGroup
 
 		printMetaLine := true
 		for chunk := range csvReader.Ch {
@@ -205,49 +221,43 @@ var splitCmd = &cobra.Command{
 				row := make([]string, len(record))
 				copy(row, record)
 
-				if ch, ok = outCh[key]; ok {
-					ch <- row
+				if !firstTimeWrite[key] {
+					firstTimeWrite[key] = true
+				}
+
+				if _, ok = rowsBuf[key]; ok {
+					rowsBuf[key] = append(rowsBuf[key], row)
+					if len(rowsBuf) == bufSize {
+						appendRows(config,
+							printMetaLine,
+							csvReader,
+							headerRow,
+							fmt.Sprintf("%s-%s%s", outFilePrefix, key, outFileSuffix),
+							rowsBuf[key],
+							firstTimeWrite[key],
+						)
+						rowsBuf[key] = make([][]string, 0, 1)
+					}
 				} else {
-					c := make(chan []string, config.ChunkSize)
-					outCh[key] = c
-					c <- row
-
-					wg.Add(1)
-					go func(c chan []string, key string) {
-						defer func() {
-							wg.Done()
-						}()
-
-						outfh, err := xopen.Wopen(fmt.Sprintf("%s-%s%s", outFilePrefix, key, outFileSuffix))
-						checkError(err)
-						defer outfh.Close()
-
-						writer := csv.NewWriter(outfh)
-						if config.OutTabs || config.Tabs {
-							writer.Comma = '\t'
-						} else {
-							writer.Comma = config.OutDelimiter
-						}
-
-						if printMetaLine && len(csvReader.Reader.MetaLine) > 0 {
-							outfh.WriteString(fmt.Sprintf("sep=%s\n", string(writer.Comma)))
-						}
-						if headerRow != nil {
-							checkError(writer.Write(headerRow))
-						}
-						for row := range c {
-							checkError(writer.Write(row))
-						}
-						writer.Flush()
-						checkError(writer.Error())
-					}(c, key)
+					rowsBuf[key] = make([][]string, 0, 1)
+					rowsBuf[key] = append(rowsBuf[key], row)
 				}
 			}
 		}
-		for _, c := range outCh {
-			close(c)
+		for key, rows := range rowsBuf {
+			if len(rows) == 0 {
+				continue
+			}
+			appendRows(config,
+				printMetaLine,
+				csvReader,
+				headerRow,
+				fmt.Sprintf("%s-%s%s", outFilePrefix, key, outFileSuffix),
+				rows,
+				firstTimeWrite[key],
+			)
 		}
-		wg.Wait()
+
 	},
 }
 
@@ -256,4 +266,47 @@ func init() {
 	splitCmd.Flags().StringP("fields", "f", "1", `comma separated key fields, column name or index. e.g. -f 1-3 or -f id,id2 or -F -f "group*"`)
 	splitCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
 	splitCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
+	splitCmd.Flags().IntP("buf-size", "b", 1000, `buffered N rows of every group before writing to file`)
+}
+
+func appendRows(config Config,
+	printMetaLine bool,
+	csvReader *CSVReader,
+	headerRow []string,
+	outFile string,
+	rows [][]string,
+	firstTimeWrite bool,
+) {
+
+	var outfh *xopen.Writer
+	var err error
+
+	if firstTimeWrite {
+		outfh, err = xopen.Wopen(outFile)
+	} else {
+		outfh, err = xopen.WopenFile(outFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	}
+	checkError(err)
+	defer outfh.Close()
+
+	writer := csv.NewWriter(outfh)
+	if config.OutTabs || config.Tabs {
+		writer.Comma = '\t'
+	} else {
+		writer.Comma = config.OutDelimiter
+	}
+
+	if printMetaLine && len(csvReader.Reader.MetaLine) > 0 {
+		outfh.WriteString(fmt.Sprintf("sep=%s\n", string(writer.Comma)))
+	}
+	if headerRow != nil {
+		checkError(writer.Write(headerRow))
+	}
+
+	for _, row := range rows {
+		checkError(writer.Write(row))
+	}
+
+	writer.Flush()
+	checkError(writer.Error())
 }

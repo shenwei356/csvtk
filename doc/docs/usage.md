@@ -44,6 +44,7 @@
 - [filter](#filter)
 - [filter2](#filter2)
 - [join](#join)
+- [split](#split)
 
 **Edit**
 
@@ -78,7 +79,7 @@ Usage
 ```
 A cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.10.0
+Version: 0.11.0-dev
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -124,6 +125,7 @@ Available Commands:
   sample          sampling by proportion
   sort            sort by selected fields
   space2tab       convert space delimited format to CSV
+  split           split CSV/TSV into multiple files according to column values
   stats           summary of CSV file
   stats2          summary of selected digital fields
   tab2csv         convert tabular format to CSV
@@ -1096,6 +1098,75 @@ Examples:
         2    bob    basketball    beutiful   computer science
         3    foo    football      cool
         4    wei    programming
+
+## split
+
+Usage
+
+```
+split CSV/TSV into multiple files according to column values
+
+Note:
+
+  1. flag -o/--out-file can specify out directory for splitted files
+
+Usage:
+  csvtk split [flags]
+
+Flags:
+  -b, --buf-size int    buffered N rows of every group before writing to file (default 1000)
+  -f, --fields string   comma separated key fields, column name or index. e.g. -f 1-3 or -f id,id2 or -F -f "group*" (default "1")
+  -F, --fuzzy-fields    using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
+  -h, --help            help for split
+  -i, --ignore-case     ignore case
+
+```
+
+Examples
+
+1. Test data
+
+        $ cat names.csv
+        id,first_name,last_name,username
+        11,"Rob","Pike",rob
+        2,Ken,Thompson,ken
+        4,"Robert","Griesemer","gri"
+        1,"Robert","Thompson","abc"
+        NA,"Robert","Abel","123"
+
+1. split according to `first_name`
+
+        $ csvtk split names.csv -f first_name
+        $ ls *.csv
+        names.csv  names-Ken.csv  names-Rob.csv  names-Robert.csv
+
+        $ cat names-Ken.csv
+        id,first_name,last_name,username
+        2,Ken,Thompson,ken
+
+        $ cat names-Rob.csv
+        id,first_name,last_name,username
+        11,Rob,Pike,rob
+
+        $ cat names-Robert.csv
+        id,first_name,last_name,username
+        4,Robert,Griesemer,gri
+        1,Robert,Thompson,abc
+        NA,Robert,Abel,123
+
+1. split according to `first_name` and `last_name`
+
+        $ csvtk split names.csv -f first_name,last_name
+        $ ls *.csv
+        names.csv               names-Robert-Abel.csv       names-Robert-Thompson.csv
+        names-Ken-Thompson.csv  names-Robert-Griesemer.csv  names-Rob-Pike.csv
+
+1.  flag ``-o/--out-file` can specify out directory for splitted files
+
+        $ seq 10000 | csvtk split -H -o result
+        $ ls result/*.csv | wc -l
+        10000
+
 
 ## rename
 
