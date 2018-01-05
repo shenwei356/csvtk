@@ -1114,7 +1114,7 @@ Usage:
   csvtk split [flags]
 
 Flags:
-  -b, --buf-size int    buffered N rows of every group before writing to file (default 1000)
+  -b, --buf-size int    buffered N rows of every group before writing to file (default 100000)
   -f, --fields string   comma separated key fields, column name or index. e.g. -f 1-3 or -f id,id2 or -F -f "group*" (default "1")
   -F, --fuzzy-fields    using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
   -h, --help            help for split
@@ -1167,6 +1167,37 @@ Examples
         $ ls result/*.csv | wc -l
         10000
 
+1. extreme example 1: lots (1M) of rows in groups
+
+        $ yes 2 | head -n 10000000 | gzip -c > t.gz
+
+        $ memusg -t ./csvtk -H split t.gz
+        elapsed time: 7.959s
+        peak rss: 35.7 MB
+
+        # check
+        $ zcat t-2.gz | wc -l
+        10000000
+        $ zcat t-2.gz | md5sum
+        f194afd7cecf645c0e3cce50c9bc526e  -
+        $ zcat t.gz | md5sum
+        f194afd7cecf645c0e3cce50c9bc526e  -
+
+1. extreme example 2: lots (10K) of groups
+
+        $ seq 10000000 | gzip -c > t2.gz
+
+        $ memusg -t ./csvtk -H split t2.gz  -o t2
+        elapsed time: 20.856s
+        peak rss: 23.77 MB
+
+        # check
+        $ ls t2/*.gz | wc -l
+        10000
+        $ zcat t2/*.gz | sort -k 1,1n | md5sum
+        72d4ff27a28afbc066d5804999d5a504  -
+        $ zcat t2.gz | md5sum
+        72d4ff27a28afbc066d5804999d5a504  -
 
 ## rename
 

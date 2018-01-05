@@ -114,8 +114,8 @@ Note:
 		var items []string
 		var key string
 		var headerRow []string
-		firstTimeWrite := make(map[string]bool)
-		rowsBuf := make(map[string][][]string)
+		moreThanOneWrite := make(map[string]bool)
+		rowsBuf := make(map[string][][]string, 1000)
 		var ok bool
 
 		printMetaLine := true
@@ -132,11 +132,11 @@ Note:
 					for _, col := range colnames {
 						if !fuzzyFields {
 							if negativeFields {
-								if _, ok := colnames2fileds[col[1:]]; !ok {
+								if _, ok = colnames2fileds[col[1:]]; !ok {
 									checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col[1:], file))
 								}
 							} else {
-								if _, ok := colnames2fileds[col]; !ok {
+								if _, ok = colnames2fileds[col]; !ok {
 									checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col, file))
 								}
 							}
@@ -151,7 +151,6 @@ Note:
 					if len(fields) == 0 { // user gives the colnames
 						fields = []int{}
 						for _, col := range record {
-							var ok bool
 							if fuzzyFields {
 								for _, re := range colnamesMap {
 									if re.MatchString(col) {
@@ -183,7 +182,7 @@ Note:
 					}
 					fields2 := []int{}
 					for f := range record {
-						_, ok := fieldsMap[f+1]
+						_, ok = fieldsMap[f+1]
 						if negativeFields {
 							if !ok {
 								fields2 = append(fields2, f+1)
@@ -221,26 +220,42 @@ Note:
 				row := make([]string, len(record))
 				copy(row, record)
 
-				if !firstTimeWrite[key] {
-					firstTimeWrite[key] = true
-				}
-
 				if _, ok = rowsBuf[key]; ok {
 					rowsBuf[key] = append(rowsBuf[key], row)
-					if len(rowsBuf) == bufSize {
+					if len(rowsBuf[key]) == bufSize {
 						appendRows(config,
 							printMetaLine,
 							csvReader,
 							headerRow,
 							fmt.Sprintf("%s-%s%s", outFilePrefix, key, outFileSuffix),
 							rowsBuf[key],
-							firstTimeWrite[key],
+							moreThanOneWrite,
+							key,
 						)
 						rowsBuf[key] = make([][]string, 0, 1)
+
 					}
 				} else {
 					rowsBuf[key] = make([][]string, 0, 1)
 					rowsBuf[key] = append(rowsBuf[key], row)
+
+					if len(rowsBuf) == 1000 { // empty the buffer
+						for key, rows := range rowsBuf {
+							if len(rows) == 0 {
+								continue
+							}
+							appendRows(config,
+								printMetaLine,
+								csvReader,
+								headerRow,
+								fmt.Sprintf("%s-%s%s", outFilePrefix, key, outFileSuffix),
+								rows,
+								moreThanOneWrite,
+								key,
+							)
+						}
+						rowsBuf = make(map[string][][]string, 1000)
+					}
 				}
 			}
 		}
@@ -254,7 +269,8 @@ Note:
 				headerRow,
 				fmt.Sprintf("%s-%s%s", outFilePrefix, key, outFileSuffix),
 				rows,
-				firstTimeWrite[key],
+				moreThanOneWrite,
+				key,
 			)
 		}
 
@@ -266,7 +282,7 @@ func init() {
 	splitCmd.Flags().StringP("fields", "f", "1", `comma separated key fields, column name or index. e.g. -f 1-3 or -f id,id2 or -F -f "group*"`)
 	splitCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
 	splitCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
-	splitCmd.Flags().IntP("buf-size", "b", 1000, `buffered N rows of every group before writing to file`)
+	splitCmd.Flags().IntP("buf-size", "b", 100000, `buffered N rows of every group before writing to file`)
 }
 
 func appendRows(config Config,
@@ -275,16 +291,18 @@ func appendRows(config Config,
 	headerRow []string,
 	outFile string,
 	rows [][]string,
-	firstTimeWrite bool,
+	moreThanOneWrite map[string]bool,
+	key string,
 ) {
 
 	var outfh *xopen.Writer
 	var err error
 
-	if firstTimeWrite {
-		outfh, err = xopen.Wopen(outFile)
-	} else {
+	if moreThanOneWrite[key] {
 		outfh, err = xopen.WopenFile(outFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	} else {
+		outfh, err = xopen.Wopen(outFile)
+		moreThanOneWrite[key] = true
 	}
 	checkError(err)
 	defer outfh.Close()
