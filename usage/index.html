@@ -184,6 +184,10 @@
         
             <li><a href="#join">join</a></li>
         
+            <li><a href="#split">split</a></li>
+        
+            <li><a href="#splitxlsx">splitxlsx</a></li>
+        
             <li><a href="#rename">rename</a></li>
         
             <li><a href="#rename2">rename2</a></li>
@@ -259,6 +263,8 @@
 <li><a href="#filter">filter</a></li>
 <li><a href="#filter2">filter2</a></li>
 <li><a href="#join">join</a></li>
+<li><a href="#split">split</a></li>
+<li><a href="#splitxlsx">splitxlsx</a></li>
 </ul>
 <p><strong>Edit</strong></p>
 <ul>
@@ -290,7 +296,7 @@
 <p>Usage</p>
 <pre><code>A cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.10.0
+Version: 0.11.0-dev2
 
 Author: Wei Shen &lt;shenwei356@gmail.com&gt;
 
@@ -336,6 +342,8 @@ Available Commands:
   sample          sampling by proportion
   sort            sort by selected fields
   space2tab       convert space delimited format to CSV
+  split           split CSV/TSV into multiple files according to column values
+  splitxlsx       split XLSX sheet into multiple sheets according to column values
   stats           summary of CSV file
   stats2          summary of selected digital fields
   tab2csv         convert tabular format to CSV
@@ -1380,6 +1388,181 @@ id   name   hobby         attr       major
 </code></pre>
 </li>
 </ul>
+<h2 id="split">split</h2>
+<p>Usage</p>
+<pre><code>split CSV/TSV into multiple files according to column values
+
+Note:
+
+  1. flag -o/--out-file can specify out directory for splitted files
+
+Usage:
+  csvtk split [flags]
+
+Flags:
+  -b, --buf-size int    buffered N rows of every group before writing to file (default 100000)
+  -f, --fields string   comma separated key fields, column name or index. e.g. -f 1-3 or -f id,id2 or -F -f &quot;group*&quot; (default &quot;1&quot;)
+  -F, --fuzzy-fields    using fuzzy fields, e.g., -F -f &quot;*name&quot; or -F -f &quot;id123*&quot;
+  -h, --help            help for split
+  -i, --ignore-case     ignore case
+
+</code></pre>
+
+<p>Examples</p>
+<ol>
+<li>
+<p>Test data</p>
+<pre><code>$ cat names.csv
+id,first_name,last_name,username
+11,"Rob","Pike",rob
+2,Ken,Thompson,ken
+4,"Robert","Griesemer","gri"
+1,"Robert","Thompson","abc"
+NA,"Robert","Abel","123"
+</code></pre>
+</li>
+<li>
+<p>split according to <code>first_name</code></p>
+<pre><code>$ csvtk split names.csv -f first_name
+$ ls *.csv
+names.csv  names-Ken.csv  names-Rob.csv  names-Robert.csv
+
+$ cat names-Ken.csv
+id,first_name,last_name,username
+2,Ken,Thompson,ken
+
+$ cat names-Rob.csv
+id,first_name,last_name,username
+11,Rob,Pike,rob
+
+$ cat names-Robert.csv
+id,first_name,last_name,username
+4,Robert,Griesemer,gri
+1,Robert,Thompson,abc
+NA,Robert,Abel,123
+</code></pre>
+</li>
+<li>
+<p>split according to <code>first_name</code> and <code>last_name</code></p>
+<pre><code>$ csvtk split names.csv -f first_name,last_name
+$ ls *.csv
+names.csv               names-Robert-Abel.csv       names-Robert-Thompson.csv
+names-Ken-Thompson.csv  names-Robert-Griesemer.csv  names-Rob-Pike.csv
+</code></pre>
+</li>
+<li>
+<p>flag <code>`-o/--out-file</code> can specify out directory for splitted files</p>
+<pre><code>$ seq 10000 | csvtk split -H -o result
+$ ls result/*.csv | wc -l
+10000
+</code></pre>
+</li>
+<li>
+<p>extreme example 1: lots (1M) of rows in groups</p>
+<pre><code>$ yes 2 | head -n 10000000 | gzip -c &gt; t.gz
+
+$ memusg -t ./csvtk -H split t.gz
+elapsed time: 7.959s
+peak rss: 35.7 MB
+
+# check
+$ zcat t-2.gz | wc -l
+10000000
+$ zcat t-2.gz | md5sum
+f194afd7cecf645c0e3cce50c9bc526e  -
+$ zcat t.gz | md5sum
+f194afd7cecf645c0e3cce50c9bc526e  -
+</code></pre>
+</li>
+<li>
+<p>extreme example 2: lots (10K) of groups</p>
+<pre><code>$ seq 10000000 | gzip -c &gt; t2.gz
+
+$ memusg -t ./csvtk -H split t2.gz  -o t2
+elapsed time: 20.856s
+peak rss: 23.77 MB
+
+# check
+$ ls t2/*.gz | wc -l
+10000
+$ zcat t2/*.gz | sort -k 1,1n | md5sum
+72d4ff27a28afbc066d5804999d5a504  -
+$ zcat t2.gz | md5sum
+72d4ff27a28afbc066d5804999d5a504  -
+</code></pre>
+</li>
+</ol>
+<h2 id="splitxlsx">splitxlsx</h2>
+<p>Usage</p>
+<pre><code>split XLSX sheet into multiple sheets according to column values
+
+Strengths: Sheet properties are remained unchanged.
+Weakness : Complicated sheet structures are not well supported, e.g.,
+1. merged cells
+2. more than one header row
+
+Usage:
+  csvtk splitxlsx [flags]
+
+Flags:
+  -f, --fields string       comma separated key fields, column name or index. e.g. -f 1-3 or -f id,id2 or -F -f &quot;group*&quot; (default &quot;1&quot;)
+  -F, --fuzzy-fields        using fuzzy fields, e.g., -F -f &quot;*name&quot; or -F -f &quot;id123*&quot;
+  -h, --help                help for splitxlsx
+  -i, --ignore-case         ignore case (cell value)
+  -a, --list-sheets         list all sheets
+  -I, --sheet-index int     Nth sheet to retrieve (default 1)
+  -n, --sheet-name string   sheet to retrieve
+</code></pre>
+
+<p>Examples</p>
+<ol>
+<li>
+<p>example data</p>
+<pre><code># list all sheets
+$ csvtk xlsx2csv -a accounts.xlsx
+index   sheet
+1       names
+2       phones
+3       region
+
+# data of sheet "names"
+$ csvtk xlsx2csv accounts.xlsx | csvtk pretty
+id   first_name   last_name   username
+11   Rob          Pike        rob
+2    Ken          Thompson    ken
+4    Robert       Griesemer   gri
+1    Robert       Thompson    abc
+NA   Robert       Abel        123
+</code></pre>
+</li>
+<li>
+<p>split sheet "names" according to <code>first_name</code></p>
+<pre><code>$ csvtk splitxlsx accounts.xlsx -n names -f first_name
+
+$ ls accounts.*
+accounts.split.xlsx  accounts.xlsx
+
+$ csvtk splitxlsx -a accounts.split.xlsx
+index   sheet
+1       names
+2       phones
+3       region
+4       Rob
+5       Ken
+6       Robert
+
+$ csvtk xlsx2csv accounts.split.xlsx -n Rob | csvtk pretty
+id   first_name   last_name   username
+11   Rob          Pike        rob
+
+$ csvtk xlsx2csv accounts.split.xlsx -n Robert | csvtk pretty
+id   first_name   last_name   username
+4    Robert       Griesemer   gri
+1    Robert       Thompson    abc
+NA   Robert       Abel        123
+</code></pre>
+</li>
+</ol>
 <h2 id="rename">rename</h2>
 <p>Usage</p>
 <pre><code>rename column names
