@@ -65,7 +65,7 @@ It could save you much time of writing Python/R scripts.
 
 ## Subcommands
 
-29 subcommands in total.
+30 subcommands in total.
 
 **Information**
 
@@ -95,7 +95,8 @@ It could save you much time of writing Python/R scripts.
 -  `filter` filter rows by values of selected fields with artithmetic expression
 -  `filter2` filter rows by awk-like artithmetic/string expressions
 -  `join` join multiple CSV files by selected fields
--  `split` 
+-  `split` split CSV/TSV into multiple files according to column values
+-  `splitxlsx` split XLSX sheet into multiple sheets according to column values
 
 **Edit**
 

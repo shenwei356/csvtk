@@ -45,6 +45,7 @@
 - [filter2](#filter2)
 - [join](#join)
 - [split](#split)
+- [splitxlsx](#splitxlsx)
 
 **Edit**
 
@@ -79,7 +80,7 @@ Usage
 ```
 A cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.11.0-dev
+Version: 0.11.0-dev2
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -126,6 +127,7 @@ Available Commands:
   sort            sort by selected fields
   space2tab       convert space delimited format to CSV
   split           split CSV/TSV into multiple files according to column values
+  splitxlsx       split XLSX sheet into multiple sheets according to column values
   stats           summary of CSV file
   stats2          summary of selected digital fields
   tab2csv         convert tabular format to CSV
@@ -1198,6 +1200,78 @@ Examples
         72d4ff27a28afbc066d5804999d5a504  -
         $ zcat t2.gz | md5sum
         72d4ff27a28afbc066d5804999d5a504  -
+
+## splitxlsx
+
+Usage
+
+```
+split XLSX sheet into multiple sheets according to column values
+
+Strengths: Sheet properties are remained unchanged.
+Weakness : Complicated sheet structures are not well supported, e.g.,
+1. merged cells
+2. more than one header row
+
+Usage:
+  csvtk splitxlsx [flags]
+
+Flags:
+  -f, --fields string       comma separated key fields, column name or index. e.g. -f 1-3 or -f id,id2 or -F -f "group*" (default "1")
+  -F, --fuzzy-fields        using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
+  -h, --help                help for splitxlsx
+  -i, --ignore-case         ignore case (cell value)
+  -a, --list-sheets         list all sheets
+  -I, --sheet-index int     Nth sheet to retrieve (default 1)
+  -n, --sheet-name string   sheet to retrieve
+```
+
+Examples
+
+
+1. example data
+
+        # list all sheets
+        $ csvtk xlsx2csv -a accounts.xlsx
+        index   sheet
+        1       names
+        2       phones
+        3       region
+
+        # data of sheet "names"
+        $ csvtk xlsx2csv accounts.xlsx | csvtk pretty
+        id   first_name   last_name   username
+        11   Rob          Pike        rob
+        2    Ken          Thompson    ken
+        4    Robert       Griesemer   gri
+        1    Robert       Thompson    abc
+        NA   Robert       Abel        123
+
+1. split sheet "names" according to `first_name`
+
+        $ csvtk splitxlsx accounts.xlsx -n names -f first_name
+
+        $ ls accounts.*
+        accounts.split.xlsx  accounts.xlsx
+
+        $ csvtk splitxlsx -a accounts.split.xlsx
+        index   sheet
+        1       names
+        2       phones
+        3       region
+        4       Rob
+        5       Ken
+        6       Robert
+
+        $ csvtk xlsx2csv accounts.split.xlsx -n Rob | csvtk pretty
+        id   first_name   last_name   username
+        11   Rob          Pike        rob
+
+        $ csvtk xlsx2csv accounts.split.xlsx -n Robert | csvtk pretty
+        id   first_name   last_name   username
+        4    Robert       Griesemer   gri
+        1    Robert       Thompson    abc
+        NA   Robert       Abel        123
 
 ## rename
 
