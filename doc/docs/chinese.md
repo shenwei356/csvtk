@@ -1,19 +1,13 @@
-# csvtk - 跨平台、高效、实用的CSV/TSV命令行工具
-
-如同生物信息领域中的FASTA/Q格式一样，CSV/TSV作为计算机、数据科学和生物信息的基本格式，
-应用非常广泛。常用的处理软件包括：
+如同生物信息领域中的FASTA/Q格式一样，CSV/TSV作为计算机、数据科学和生物信息的基本格式，应用非常广泛。常用的处理软件包括：
 
 1. 以微软Excel为代表的电子表格软件
 2. Notepad++/SublimeText等文本编辑器
 3. sed/awk/cut等Shell命令
 4. 各种编程语言的数据处理库。
 
-然而，电子表格软件和文本编辑器固然强大，但依赖鼠标操作，不适合批量处理；
-**sed/awk/cut等Shell命令主要用于通用的表格数据，不适合含有标题行的CSV格式**；
-**为了一个小操作写Python/R脚本也有点小题大作，且难以复用**。
+然而，电子表格软件和文本编辑器固然强大，但依赖鼠标操作，不适合批量处理；**sed/awk/cut等Shell命令主要用于通用的表格数据，不适合含有标题行的CSV格式**；**为了一个小操作写Python/R脚本也有点小题大作，且难以复用**。
 
-开发csvtk前现有的工具主要是Python写的csvkit，Rust写的xsv，C语言写的miller，都各有优劣。
-当时我刚开发完seqkit，投文章过程中时间充足，便想趁热再造一个轮子。
+开发csvtk前现有的工具主要是Python写的csvkit，Rust写的xsv，C语言写的miller，都各有优劣。当时我刚开发完seqkit，投文章过程中时间充足，便想趁热再造一个轮子。
 
 所以我决定写一个命令行工具来满足CSV/TSV格式的常见操作，这就是csvtk了。
 
@@ -42,10 +36,7 @@
 
 ## 功能
 
-在开发csvtk之前的两三年间，我已经写了几个可以复用的Python/Perl脚本
-（https://github.com/shenwei356/datakit）
-，包括csv2tab、csvtk_grep、csv_join、csv_melt，intersection，unique。
-所以我的计划是首先集成这些已有的功能，随后根据需求进行扩展。
+在开发csvtk之前的两三年间，我已经写了几个可以复用的Python/Perl脚本（https://github.com/shenwei356/datakit） ，包括csv2tab、csvtk_grep、csv_join、csv_melt，intersection，unique。所以我的计划是首先集成这些已有的功能，随后根据需求进行扩展。
 
 到目前为止，csvtk已有27个子命令，分为以下几大类：
 
