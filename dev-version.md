@@ -1,3 +1,0 @@
-- add command `split` to split CSV/TSV into multiple files according to column values
-- add command `splitxlxs` to split XLSX sheet into multiple sheets according to column values
-- `csvtk`, automatically check BOM (byte-order mark) and discard it
