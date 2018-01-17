@@ -37,15 +37,16 @@
 - [head](#head)
 - [sample](#sample)
 - [cut](#cut)
+- [grep](#grep)
 - [uniq](#uniq)
 - [freq](#freq)
 - [inter](#inter)
-- [grep](#grep)
 - [filter](#filter)
 - [filter2](#filter2)
 - [join](#join)
 - [split](#split)
 - [splitxlsx](#splitxlsx)
+- [collapse](#collapse)
 
 **Edit**
 
@@ -80,7 +81,7 @@ Usage
 ```
 A cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.11.0-dev2
+Version: 0.12.0-dev
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -102,6 +103,7 @@ Usage:
   csvtk [command]
 
 Available Commands:
+  collapse        collapse one field with selected fields as keys
   csv2md          convert CSV to markdown format
   csv2tab         convert CSV to tabular format
   cut             select parts of fields
@@ -1272,6 +1274,74 @@ Examples
         4    Robert       Griesemer   gri
         1    Robert       Thompson    abc
         NA   Robert       Abel        123
+
+## collapse
+
+Usage
+
+```
+collapse one field with selected fields as keys
+
+Usage:
+  csvtk collapse [flags]
+
+Flags:
+  -f, --fields string      key fields. e.g -f 1,2 or -f columnA,columnB (default "1")
+  -F, --fuzzy-fields       using fuzzy fields (only for key fields), e.g., -F -f "*name" or -F -f "id123*"
+  -h, --help               help for collapse
+  -i, --ignore-case        ignore case
+  -s, --separater string   separater for collapsed data (default ";")
+  -v, --vfield string      value field
+
+```
+
+examples
+
+1. data
+
+        $ csvtk pretty teachers.csv
+        lab                     teacher   class
+        computational biology   Tom       Bioinformatics
+        computational biology   Tom       Statistics
+        computational biology   Rob       Bioinformatics
+        sequencing center       Jerry     Bioinformatics
+        sequencing center       Nick      Molecular Biology
+        sequencing center       Nick      Microbiology
+
+1. List teachers for every lab/class. `uniq` is used to deduplicate items.
+
+        $ cat teachers.csv | \
+            csvtk uniq -f lab,teacher | \
+            csvtk collapse -f lab -v teacher |\
+            csvtk pretty
+
+        lab                     teacher
+        computational biology   Tom;Rob
+        sequencing center       Jerry;Nick
+
+        $ cat teachers.csv | \
+            csvtk uniq -f class,teacher | \
+            csvtk collapse -f class -v teacher -s ", " |\
+            csvtk pretty
+
+        class               teacher
+        Statistics          Tom
+        Bioinformatics      Tom, Rob, Jerry
+        Molecular Biology   Nick
+        Microbiology        Nick
+
+1. Multiple key fields supported
+
+        $ cat teachers.csv | \
+            csvtk collapse -f teacher,lab -v class |\
+            csvtk pretty
+
+        teacher   lab                     class
+        Tom       computational biology   Bioinformatics;Statistics
+        Rob       computational biology   Bioinformatics
+        Jerry     sequencing center       Bioinformatics
+        Nick      sequencing center       Molecular Biology;Microbiology
+
 
 ## rename
 

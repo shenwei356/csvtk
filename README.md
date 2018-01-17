@@ -65,7 +65,7 @@ It could save you much time of writing Python/R scripts.
 
 ## Subcommands
 
-30 subcommands in total.
+31 subcommands in total.
 
 **Information**
 
@@ -88,15 +88,16 @@ It could save you much time of writing Python/R scripts.
 -  `head` print first N records
 -  `sample` sampling by proportion
 -  `cut` select parts of fields
+-  `grep` grep data by selected fields with patterns/regular expressions
 -  `uniq` unique data without sorting
 -  `freq` frequencies of selected fields
 -  `inter` intersection of multiple files
--  `grep` grep data by selected fields with patterns/regular expressions
 -  `filter` filter rows by values of selected fields with artithmetic expression
 -  `filter2` filter rows by awk-like artithmetic/string expressions
 -  `join` join multiple CSV files by selected fields
 -  `split` split CSV/TSV into multiple files according to column values
 -  `splitxlsx` split XLSX sheet into multiple sheets according to column values
+-  `collapse` collapse one field with selected fields as keys
 
 **Edit**
 

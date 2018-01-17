@@ -26,7 +26,6 @@ import (
 	"regexp"
 	"runtime"
 	"sort"
-	"strconv"
 	"strings"
 
 	"github.com/shenwei356/util/stringutil"
@@ -34,11 +33,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// freqCmd represents the freq command
-var freqCmd = &cobra.Command{
-	Use:   "freq",
-	Short: "frequencies of selected fields",
-	Long: `frequencies of selected fields
+// collapseCmd represents the colapse command
+var collapseCmd = &cobra.Command{
+	Use:   "collapse",
+	Short: "collapse one field with selected fields as keys",
+	Long: `collapse one field with selected fields as keys
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -49,14 +48,27 @@ var freqCmd = &cobra.Command{
 		}
 		runtime.GOMAXPROCS(config.NumCPUs)
 
-		sortByFreq := getFlagBool(cmd, "sort-by-freq")
-		sortByKey := getFlagBool(cmd, "sort-by-key")
-		reverse := getFlagBool(cmd, "reverse")
-
 		fieldStr := getFlagString(cmd, "fields")
 		if fieldStr == "" {
 			checkError(fmt.Errorf("flag -f (--fields) needed"))
 		}
+
+		vfieldStr := getFlagString(cmd, "vfield")
+		if vfieldStr == "" {
+			checkError(fmt.Errorf("flag -v (--vfield) needed"))
+		}
+
+		if fieldStr == vfieldStr {
+			checkError(fmt.Errorf("values of -v (--vfield) and -f (--fields) should be different"))
+		}
+
+		separater := getFlagString(cmd, "separater")
+		if separater == "" {
+			checkError(fmt.Errorf("flag -s (--separater) needed"))
+		}
+
+		fieldStr = fmt.Sprintf("%s,%s", fieldStr, vfieldStr)
+
 		fields, colnames, negativeFields, needParseHeaderRow := parseFields(cmd, fieldStr, config.NoHeaderRow)
 		var fieldsMap map[int]struct{}
 		var fieldsOrder map[int]int      // for set the order of fields
@@ -101,7 +113,7 @@ var freqCmd = &cobra.Command{
 			writer.Comma = config.OutDelimiter
 		}
 
-		counter := make(map[string]int, 10000)
+		key2data := make(map[string][]string, 10000)
 		orders := make(map[string]int, 10000)
 
 		file := files[0]
@@ -118,6 +130,7 @@ var freqCmd = &cobra.Command{
 		var items []string
 		var key string
 		var N int
+		var ok bool
 
 		printMetaLine := true
 		for chunk := range csvReader.Ch {
@@ -174,6 +187,7 @@ var freqCmd = &cobra.Command{
 							}
 							if ok {
 								fields = append(fields, colnames2fileds[col])
+								fieldsOrder[colnames2fileds[col]] = colnamesOrder[col]
 							}
 						}
 					}
@@ -208,6 +222,10 @@ var freqCmd = &cobra.Command{
 					if len(fields) == 0 {
 						checkError(fmt.Errorf("no fields matched in file: %s", file))
 					}
+					if len(fields) == 1 {
+						checkError(fmt.Errorf("key field and value field refer to a same field?"))
+
+					}
 
 					// sort fields
 					orderedFieldss := make([]orderedField, len(fields))
@@ -229,59 +247,25 @@ var freqCmd = &cobra.Command{
 				}
 
 				if printHeaderRow {
-					checkError(writer.Write(append(items, "frequency")))
+					checkError(writer.Write(items))
 					printHeaderRow = false
 					continue
 				}
 
-				key = strings.Join(items, "_shenwei356_")
-				counter[key]++
+				key = strings.Join(items[0:len(items)-1], "_shenwei356_")
+				if _, ok = key2data[key]; !ok {
+					key2data[key] = make([]string, 0, 1)
+				}
+				key2data[key] = append(key2data[key], items[len(items)-1])
 				orders[key] = N
 			}
 		}
 
-		if sortByFreq {
-			counts := make([]stringutil.StringCount, len(counter))
-			i := 0
-			for key, count := range counter {
-				counts[i] = stringutil.StringCount{Key: key, Count: count}
-				i++
-			}
-			if reverse {
-				sort.Sort(stringutil.ReversedStringCountList{counts})
-			} else {
-				sort.Sort(stringutil.StringCountList(counts))
-			}
-			for _, count := range counts {
-				items = strings.Split(count.Key, "_shenwei356_")
-				items = append(items, strconv.Itoa(counter[count.Key]))
-				checkError(writer.Write(items))
-			}
-		} else if sortByKey {
-			keys := make([]string, len(counter))
-			i := 0
-			for key := range counter {
-				keys[i] = key
-				i++
-			}
-
-			sort.Strings(keys)
-			if reverse {
-				stringutil.ReverseStringSliceInplace(keys)
-			}
-
-			for _, key := range keys {
-				items = strings.Split(key, "_shenwei356_")
-				items = append(items, strconv.Itoa(counter[key]))
-				checkError(writer.Write(items))
-			}
-		} else {
-			orderedKey := stringutil.SortCountOfString(orders, false)
-			for _, o := range orderedKey {
-				items = strings.Split(o.Key, "_shenwei356_")
-				items = append(items, strconv.Itoa(counter[o.Key]))
-				checkError(writer.Write(items))
-			}
+		orderedKey := stringutil.SortCountOfString(orders, false)
+		for _, o := range orderedKey {
+			items = strings.Split(o.Key, "_shenwei356_")
+			items = append(items, strings.Join(key2data[o.Key], separater))
+			checkError(writer.Write(items))
 		}
 
 		writer.Flush()
@@ -290,11 +274,10 @@ var freqCmd = &cobra.Command{
 }
 
 func init() {
-	RootCmd.AddCommand(freqCmd)
-	freqCmd.Flags().StringP("fields", "f", "1", `select only these fields. e.g -f 1,2 or -f columnA,columnB`)
-	freqCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
-	freqCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
-	freqCmd.Flags().BoolP("sort-by-freq", "n", false, `sort by frequency`)
-	freqCmd.Flags().BoolP("sort-by-key", "k", false, `sort by key`)
-	freqCmd.Flags().BoolP("reverse", "r", false, `reverse order while sorting`)
+	RootCmd.AddCommand(collapseCmd)
+	collapseCmd.Flags().StringP("fields", "f", "1", `key fields. e.g -f 1,2 or -f columnA,columnB`)
+	collapseCmd.Flags().StringP("vfield", "v", "", `value field`)
+	collapseCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
+	collapseCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields (only for key fields), e.g., -F -f "*name" or -F -f "id123*"`)
+	collapseCmd.Flags().StringP("separater", "s", ";", "separater for collapsed data")
 }
