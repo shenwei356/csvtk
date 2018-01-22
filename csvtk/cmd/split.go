@@ -79,6 +79,7 @@ Note:
 		ignoreCase := getFlagBool(cmd, "ignore-case")
 		bufRowsSize := getFlagNonNegativeInt(cmd, "buf-rows")
 		bufGroupsSize := getFlagNonNegativeInt(cmd, "buf-groups")
+		gzipped := getFlagBool(cmd, "out-gzip")
 
 		file := files[0]
 		csvReader, err := newCSVReaderByConfig(config, file)
@@ -94,6 +95,10 @@ Note:
 			}
 		} else {
 			outFilePrefix, outFileSuffix = filepathTrimExtension(file)
+		}
+		if gzipped &&
+			!strings.HasSuffix(strings.ToLower(outFileSuffix), ".gz") {
+			outFileSuffix = outFileSuffix + ".gz"
 		}
 
 		if config.OutFile != "-" { // outdir
@@ -302,8 +307,10 @@ func init() {
 	splitCmd.Flags().StringP("fields", "f", "1", `comma separated key fields, column name or index. e.g. -f 1-3 or -f id,id2 or -F -f "group*"`)
 	splitCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
 	splitCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
+	splitCmd.Flags().BoolP("out-gzip", "G", false, `force output gzipped file`)
 	splitCmd.Flags().IntP("buf-rows", "b", 100000, `buffering N rows for every group before writing to file`)
 	splitCmd.Flags().IntP("buf-groups", "g", 100, `buffering N groups before writing to file`)
+
 }
 
 var moreThanOneWrite sync.Map

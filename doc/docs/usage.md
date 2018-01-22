@@ -1124,6 +1124,7 @@ Flags:
   -F, --fuzzy-fields     using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
   -h, --help             help for split
   -i, --ignore-case      ignore case
+  -G, --out-gzip         force output gzipped file
 
 ```
 
