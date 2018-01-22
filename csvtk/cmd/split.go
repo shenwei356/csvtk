@@ -28,6 +28,7 @@ import (
 	"regexp"
 	"runtime"
 	"strings"
+	"sync"
 
 	"github.com/shenwei356/util/pathutil"
 	"github.com/shenwei356/xopen"
@@ -76,7 +77,8 @@ Note:
 
 		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
 		ignoreCase := getFlagBool(cmd, "ignore-case")
-		bufSize := getFlagNonNegativeInt(cmd, "buf-size")
+		bufRowsSize := getFlagNonNegativeInt(cmd, "buf-rows")
+		bufGroupsSize := getFlagNonNegativeInt(cmd, "buf-groups")
 
 		file := files[0]
 		csvReader, err := newCSVReaderByConfig(config, file)
@@ -114,8 +116,8 @@ Note:
 		var items []string
 		var key string
 		var headerRow []string
-		moreThanOneWrite := make(map[string]bool)
-		rowsBuf := make(map[string][][]string, 1000)
+		// moreThanOneWrite := make(map[string]bool)
+		rowsBuf := make(map[string][][]string, bufGroupsSize)
 		var ok bool
 
 		printMetaLine := true
@@ -222,14 +224,13 @@ Note:
 
 				if _, ok = rowsBuf[key]; ok {
 					rowsBuf[key] = append(rowsBuf[key], row)
-					if len(rowsBuf[key]) == bufSize {
+					if len(rowsBuf[key]) == bufRowsSize {
 						appendRows(config,
 							printMetaLine,
 							csvReader,
 							headerRow,
 							fmt.Sprintf("%s-%s%s", outFilePrefix, key, outFileSuffix),
 							rowsBuf[key],
-							moreThanOneWrite,
 							key,
 						)
 						rowsBuf[key] = make([][]string, 0, 1)
@@ -238,41 +239,60 @@ Note:
 				} else {
 					rowsBuf[key] = make([][]string, 0, 1)
 					rowsBuf[key] = append(rowsBuf[key], row)
-
-					if len(rowsBuf) == 1000 { // empty the buffer
+					if len(rowsBuf) == bufGroupsSize { // empty the buffer
+						var wg sync.WaitGroup
+						tokens := make(chan int, config.NumCPUs)
 						for key, rows := range rowsBuf {
 							if len(rows) == 0 {
 								continue
 							}
-							appendRows(config,
-								printMetaLine,
-								csvReader,
-								headerRow,
-								fmt.Sprintf("%s-%s%s", outFilePrefix, key, outFileSuffix),
-								rows,
-								moreThanOneWrite,
-								key,
-							)
+							wg.Add(1)
+							tokens <- 1
+							go func(key string, rows [][]string) {
+								appendRows(config,
+									printMetaLine,
+									csvReader,
+									headerRow,
+									fmt.Sprintf("%s-%s%s", outFilePrefix, key, outFileSuffix),
+									rows,
+									key,
+								)
+								<-tokens
+								wg.Done()
+							}(key, rows)
 						}
-						rowsBuf = make(map[string][][]string, 1000)
+
+						wg.Wait()
+
+						rowsBuf = make(map[string][][]string, bufGroupsSize)
 					}
 				}
 			}
 		}
+
+		var wg sync.WaitGroup
+		tokens := make(chan int, config.NumCPUs)
 		for key, rows := range rowsBuf {
 			if len(rows) == 0 {
 				continue
 			}
-			appendRows(config,
-				printMetaLine,
-				csvReader,
-				headerRow,
-				fmt.Sprintf("%s-%s%s", outFilePrefix, key, outFileSuffix),
-				rows,
-				moreThanOneWrite,
-				key,
-			)
+			wg.Add(1)
+			tokens <- 1
+			go func(key string, rows [][]string) {
+				appendRows(config,
+					printMetaLine,
+					csvReader,
+					headerRow,
+					fmt.Sprintf("%s-%s%s", outFilePrefix, key, outFileSuffix),
+					rows,
+					key,
+				)
+				<-tokens
+				wg.Done()
+			}(key, rows)
 		}
+
+		wg.Wait()
 
 	},
 }
@@ -282,8 +302,11 @@ func init() {
 	splitCmd.Flags().StringP("fields", "f", "1", `comma separated key fields, column name or index. e.g. -f 1-3 or -f id,id2 or -F -f "group*"`)
 	splitCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
 	splitCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
-	splitCmd.Flags().IntP("buf-size", "b", 100000, `buffered N rows of every group before writing to file`)
+	splitCmd.Flags().IntP("buf-rows", "b", 100000, `buffering N rows for every group before writing to file`)
+	splitCmd.Flags().IntP("buf-groups", "g", 100, `buffering N groups before writing to file`)
 }
+
+var moreThanOneWrite sync.Map
 
 func appendRows(config Config,
 	printMetaLine bool,
@@ -291,18 +314,18 @@ func appendRows(config Config,
 	headerRow []string,
 	outFile string,
 	rows [][]string,
-	moreThanOneWrite map[string]bool,
+	// moreThanOneWrite map[string]bool,
 	key string,
 ) {
 
 	var outfh *xopen.Writer
 	var err error
 
-	if moreThanOneWrite[key] {
+	if _, ok := moreThanOneWrite.Load(key); ok {
 		outfh, err = xopen.WopenFile(outFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	} else {
 		outfh, err = xopen.Wopen(outFile)
-		moreThanOneWrite[key] = true
+		moreThanOneWrite.Store(key, true)
 	}
 	checkError(err)
 	defer outfh.Close()

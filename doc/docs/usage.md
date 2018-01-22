@@ -1118,11 +1118,12 @@ Usage:
   csvtk split [flags]
 
 Flags:
-  -b, --buf-size int    buffered N rows of every group before writing to file (default 100000)
-  -f, --fields string   comma separated key fields, column name or index. e.g. -f 1-3 or -f id,id2 or -F -f "group*" (default "1")
-  -F, --fuzzy-fields    using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
-  -h, --help            help for split
-  -i, --ignore-case     ignore case
+  -g, --buf-groups int   buffering N groups before writing to file (default 100)
+  -b, --buf-rows int     buffering N rows for every group before writing to file (default 100000)
+  -f, --fields string    comma separated key fields, column name or index. e.g. -f 1-3 or -f id,id2 or -F -f "group*" (default "1")
+  -F, --fuzzy-fields     using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
+  -h, --help             help for split
+  -i, --ignore-case      ignore case
 
 ```
 
@@ -1189,7 +1190,7 @@ Examples
 
 1. extreme example 2: lots (10K) of groups
 
-        $ seq 10000000 | gzip -c > t2.gz
+        $ seq 10000 | gzip -c > t2.gz
 
         $ memusg -t ./csvtk -H split t2.gz  -o t2
         elapsed time: 20.856s

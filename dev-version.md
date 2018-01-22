@@ -1,2 +1,3 @@
-- `freq`: keeping orignal order of keys by default
 - new command `collapse`: collapsing one field with selected fields as keys
+- `freq`: keeping orignal order of keys by default
+- `split`: performance improvement
