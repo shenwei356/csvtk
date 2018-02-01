@@ -81,7 +81,7 @@ Usage
 ```
 A cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.12.0-dev
+Version: 0.12.0
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -1312,19 +1312,19 @@ examples
 
 1. List teachers for every lab/class. `uniq` is used to deduplicate items.
 
-        $ cat teachers.csv | \
-            csvtk uniq -f lab,teacher | \
-            csvtk collapse -f lab -v teacher |\
-            csvtk pretty
+        $ cat teachers.csv  \
+            | csvtk uniq -f lab,teacher  \
+            | csvtk collapse -f lab -v teacher \
+            | csvtk pretty
 
         lab                     teacher
         computational biology   Tom;Rob
         sequencing center       Jerry;Nick
 
-        $ cat teachers.csv | \
-            csvtk uniq -f class,teacher | \
-            csvtk collapse -f class -v teacher -s ", " |\
-            csvtk pretty
+        $ cat teachers.csv  \
+            | csvtk uniq -f class,teacher  \
+            | csvtk collapse -f class -v teacher -s ", " \
+            | csvtk pretty
 
         class               teacher
         Statistics          Tom
@@ -1334,9 +1334,9 @@ examples
 
 1. Multiple key fields supported
 
-        $ cat teachers.csv | \
-            csvtk collapse -f teacher,lab -v class |\
-            csvtk pretty
+        $ cat teachers.csv  \
+            | csvtk collapse -f teacher,lab -v class \
+            | csvtk pretty
 
         teacher   lab                     class
         Tom       computational biology   Bioinformatics;Statistics
