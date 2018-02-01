@@ -299,7 +299,7 @@
 <p>Usage</p>
 <pre><code>A cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.12.0-dev
+Version: 0.12.0
 
 Author: Wei Shen &lt;shenwei356@gmail.com&gt;
 
@@ -1404,11 +1404,13 @@ Usage:
   csvtk split [flags]
 
 Flags:
-  -b, --buf-size int    buffered N rows of every group before writing to file (default 100000)
-  -f, --fields string   comma separated key fields, column name or index. e.g. -f 1-3 or -f id,id2 or -F -f &quot;group*&quot; (default &quot;1&quot;)
-  -F, --fuzzy-fields    using fuzzy fields, e.g., -F -f &quot;*name&quot; or -F -f &quot;id123*&quot;
-  -h, --help            help for split
-  -i, --ignore-case     ignore case
+  -g, --buf-groups int   buffering N groups before writing to file (default 100)
+  -b, --buf-rows int     buffering N rows for every group before writing to file (default 100000)
+  -f, --fields string    comma separated key fields, column name or index. e.g. -f 1-3 or -f id,id2 or -F -f &quot;group*&quot; (default &quot;1&quot;)
+  -F, --fuzzy-fields     using fuzzy fields, e.g., -F -f &quot;*name&quot; or -F -f &quot;id123*&quot;
+  -h, --help             help for split
+  -i, --ignore-case      ignore case
+  -G, --out-gzip         force output gzipped file
 
 </code></pre>
 
@@ -1480,7 +1482,7 @@ f194afd7cecf645c0e3cce50c9bc526e  -
 </li>
 <li>
 <p>extreme example 2: lots (10K) of groups</p>
-<pre><code>$ seq 10000000 | gzip -c &gt; t2.gz
+<pre><code>$ seq 10000 | gzip -c &gt; t2.gz
 
 $ memusg -t ./csvtk -H split t2.gz  -o t2
 elapsed time: 20.856s
@@ -1600,19 +1602,19 @@ sequencing center       Nick      Microbiology
 </li>
 <li>
 <p>List teachers for every lab/class. <code>uniq</code> is used to deduplicate items.</p>
-<pre><code>$ cat teachers.csv | \
-    csvtk uniq -f lab,teacher | \
-    csvtk collapse -f lab -v teacher |\
-    csvtk pretty
+<pre><code>$ cat teachers.csv  \
+    | csvtk uniq -f lab,teacher  \
+    | csvtk collapse -f lab -v teacher \
+    | csvtk pretty
 
 lab                     teacher
 computational biology   Tom;Rob
 sequencing center       Jerry;Nick
 
-$ cat teachers.csv | \
-    csvtk uniq -f class,teacher | \
-    csvtk collapse -f class -v teacher -s ", " |\
-    csvtk pretty
+$ cat teachers.csv  \
+    | csvtk uniq -f class,teacher  \
+    | csvtk collapse -f class -v teacher -s ", " \
+    | csvtk pretty
 
 class               teacher
 Statistics          Tom
@@ -1623,9 +1625,9 @@ Microbiology        Nick
 </li>
 <li>
 <p>Multiple key fields supported</p>
-<pre><code>$ cat teachers.csv | \
-    csvtk collapse -f teacher,lab -v class |\
-    csvtk pretty
+<pre><code>$ cat teachers.csv  \
+    | csvtk collapse -f teacher,lab -v class \
+    | csvtk pretty
 
 teacher   lab                     class
 Tom       computational biology   Bioinformatics;Statistics
