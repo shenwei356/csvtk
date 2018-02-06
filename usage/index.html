@@ -166,6 +166,8 @@
         
             <li><a href="#head">head</a></li>
         
+            <li><a href="#concat">concat</a></li>
+        
             <li><a href="#sample">sample</a></li>
         
             <li><a href="#cut">cut</a></li>
@@ -256,6 +258,7 @@
 <p><strong>Set operations</strong></p>
 <ul>
 <li><a href="#head">head</a></li>
+<li><a href="#concat">concat</a></li>
 <li><a href="#sample">sample</a></li>
 <li><a href="#cut">cut</a></li>
 <li><a href="#grep">grep</a></li>
@@ -299,7 +302,7 @@
 <p>Usage</p>
 <pre><code>A cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.12.0
+Version: 0.13.0-dev
 
 Author: Wei Shen &lt;shenwei356@gmail.com&gt;
 
@@ -322,6 +325,7 @@ Usage:
 
 Available Commands:
   collapse        collapse one field with selected fields as keys
+  concat          concatenate CSV/TSV files by rows
   csv2md          convert CSV to markdown format
   csv2tab         convert CSV to tabular format
   cut             select parts of fields
@@ -755,6 +759,109 @@ bar,handsome
 <pre><code>$ csvtk head -H -n 2 testdata/1.csv
 name,attr
 foo,cool
+</code></pre>
+</li>
+</ol>
+<h2 id="concat">concat</h2>
+<p>Usage</p>
+<pre><code>concatenate CSV/TSV files by rows
+
+Note that the second and later files are concatenated to the first one,
+so only columns match that of the first files kept.
+
+Usage:
+  csvtk concat [flags]
+
+Flags:
+  -h, --help                    help for concat
+  -i, --ignore-case             ignore case (column name)
+  -k, --keep-unmatched          keep blanks even if no any data of a file matches
+  -u, --unmatched-repl string   replacement for unmatched data
+
+</code></pre>
+
+<p>Examples</p>
+<ol>
+<li>
+<p>data</p>
+<pre><code>$ csvtk pretty names.csv
+id   first_name   last_name   username
+11   Rob          Pike        rob
+2    Ken          Thompson    ken
+4    Robert       Griesemer   gri
+1    Robert       Thompson    abc
+NA   Robert       Abel        123
+
+$ csvtk pretty  names.reorder.csv
+last_name   username   id   first_name
+Pike        rob        11   Rob
+Thompson    ken        2    Ken
+Griesemer   gri        4    Robert
+Thompson    abc        1    Robert
+Abel        123        NA   Robert
+
+$ csvtk pretty  names.with-unmatched-colname.csv
+id2   First_name   Last_name    Username   col
+22    Rob33        Pike222      rob111     abc
+44    Ken33        Thompson22   ken111     def
+</code></pre>
+</li>
+<li>
+<p>simple one</p>
+<pre><code>$ csvtk concat names.csv names.reorder.csv | csvtk pretty
+id   first_name   last_name   username
+11   Rob          Pike        rob
+2    Ken          Thompson    ken
+4    Robert       Griesemer   gri
+1    Robert       Thompson    abc
+NA   Robert       Abel        123
+11   Rob          Pike        rob
+2    Ken          Thompson    ken
+4    Robert       Griesemer   gri
+1    Robert       Thompson    abc
+NA   Robert       Abel        123
+</code></pre>
+</li>
+<li>
+<p>data with unmatched column names, and ignoring cases</p>
+<pre><code>$ csvtk concat names.csv names.with-unmatched-colname.csv -i | csvtk pretty
+id   first_name   last_name    username
+11   Rob          Pike         rob
+2    Ken          Thompson     ken
+4    Robert       Griesemer    gri
+1    Robert       Thompson     abc
+NA   Robert       Abel         123
+     Rob33        Pike222      rob111
+     Ken33        Thompson22   ken111
+
+ $ csvtk concat names.csv names.with-unmatched-colname.csv -i -u Unmached | csvtk pretty
+ id         first_name   last_name    username
+ 11         Rob          Pike         rob
+ 2          Ken          Thompson     ken
+ 4          Robert       Griesemer    gri
+ 1          Robert       Thompson     abc
+ NA         Robert       Abel         123
+ Unmached   Rob33        Pike222      rob111
+ Unmached   Ken33        Thompson22   ken111
+</code></pre>
+</li>
+<li>
+<p>Sometimes data of one file does not matche any column, they are discared by default.
+  But you can keep them using flag <code>-k/--keep-unmatched</code></p>
+<pre><code>$ csvtk concat names.with-unmatched-colname.csv names.csv | csvtk pretty
+id2   First_name   Last_name    Username   col
+22    Rob33        Pike222      rob111     abc
+44    Ken33        Thompson22   ken111     def
+
+$ csvtk concat names.with-unmatched-colname.csv names.csv -u -k NA | csvtk pretty
+id2   First_name   Last_name    Username   col
+22    Rob33        Pike222      rob111     abc
+44    Ken33        Thompson22   ken111     def
+NA    NA           NA           NA         NA
+NA    NA           NA           NA         NA
+NA    NA           NA           NA         NA
+NA    NA           NA           NA         NA
+NA    NA           NA           NA         NA
 </code></pre>
 </li>
 </ol>
