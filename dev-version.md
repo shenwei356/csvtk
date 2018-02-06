@@ -1,0 +1,2 @@
+- `pretty`: better support for files with duplicated column names
+- new command `concat` for concatenating CSV/TSV files by rows

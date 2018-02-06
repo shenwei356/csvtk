@@ -72,10 +72,7 @@ Attention:
 		defer outfh.Close()
 
 		file := files[0]
-		fieldStr := "*"
-		fuzzyFields := true
-		headerRow, _, _, _, data, _ := parseCSVfile(cmd, config,
-			file, fieldStr, fuzzyFields)
+		headerRow, data := readCSV(config, file)
 
 		var header []string
 		var datas [][]string

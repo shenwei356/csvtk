@@ -21,6 +21,7 @@
 package cmd
 
 import (
+	"bytes"
 	"fmt"
 	"runtime"
 
@@ -58,33 +59,31 @@ Attention:
 		defer outfh.Close()
 
 		file := files[0]
-		fieldStr := "*"
-		fuzzyFields := true
-		headerRow, _, _, _, data, _ := parseCSVfile(cmd, config,
-			file, fieldStr, fuzzyFields)
+		var colnames []string
+		headerRow, data := readCSV(config, file)
 
-		var header []string
-		var datas [][]string
 		if len(headerRow) > 0 {
-			header = headerRow
-			datas = data
+			colnames = headerRow
 		} else {
 			if len(data) == 0 {
 				checkError(fmt.Errorf("no data found in file: %s", file))
 			} else if len(data) > 0 {
-				header = data[0]
-				datas = data[1:]
+				colnames = make([]string, len(data[0]))
+				for i := 0; i < len(data[0]); i++ {
+					colnames[i] = fmt.Sprintf("%d", i+1)
+				}
 			}
 		}
-		columns := make([]prettytable.Column, len(header))
-		for i, c := range header {
+
+		columns := make([]prettytable.Column, len(colnames))
+		for i, c := range colnames {
 			columns[i] = prettytable.Column{Header: c, AlignRight: alignRight,
 				MinWidth: minWidth, MaxWidth: maxWidth}
 		}
 		tbl, err := prettytable.NewTable(columns...)
 		checkError(err)
 		tbl.Separator = separator
-		for _, record := range datas {
+		for _, record := range data {
 			// have to do this stupid conversion
 			record2 := make([]interface{}, len(record))
 			for i, r := range record {
@@ -92,7 +91,13 @@ Attention:
 			}
 			tbl.AddRow(record2...)
 		}
-		outfh.Write(tbl.Bytes())
+
+		if config.NoHeaderRow {
+			output := tbl.Bytes()
+			outfh.Write(output[bytes.IndexByte(output, '\n')+1:])
+		} else {
+			outfh.Write(tbl.Bytes())
+		}
 
 	},
 }

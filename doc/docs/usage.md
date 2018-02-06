@@ -35,6 +35,7 @@
 **Set operations**
 
 - [head](#head)
+- [concat](#concat)
 - [sample](#sample)
 - [cut](#cut)
 - [grep](#grep)
@@ -482,6 +483,107 @@ Examples
         $ csvtk head -H -n 2 testdata/1.csv
         name,attr
         foo,cool
+
+## concat
+
+Usage
+
+```
+concatenate CSV/TSV files by rows
+
+Note that the second and later files are concatenated to the first one,
+so only columns match that of the first files kept.
+
+Usage:
+  csvtk concat [flags]
+
+Flags:
+  -h, --help                    help for concat
+  -i, --ignore-case             ignore case (column name)
+  -k, --keep-unmatched          keep blanks even if no any data of a file matches
+  -u, --unmatched-repl string   replacement for unmatched data
+
+```
+
+Examples
+
+1. data
+
+        $ csvtk pretty names.csv
+        id   first_name   last_name   username
+        11   Rob          Pike        rob
+        2    Ken          Thompson    ken
+        4    Robert       Griesemer   gri
+        1    Robert       Thompson    abc
+        NA   Robert       Abel        123
+
+        $ csvtk pretty  names.reorder.csv
+        last_name   username   id   first_name
+        Pike        rob        11   Rob
+        Thompson    ken        2    Ken
+        Griesemer   gri        4    Robert
+        Thompson    abc        1    Robert
+        Abel        123        NA   Robert
+
+        $ csvtk pretty  names.with-unmatched-colname.csv
+        id2   First_name   Last_name    Username   col
+        22    Rob33        Pike222      rob111     abc
+        44    Ken33        Thompson22   ken111     def
+
+1. simple one
+
+        $ csvtk concat names.csv names.reorder.csv | csvtk pretty
+        id   first_name   last_name   username
+        11   Rob          Pike        rob
+        2    Ken          Thompson    ken
+        4    Robert       Griesemer   gri
+        1    Robert       Thompson    abc
+        NA   Robert       Abel        123
+        11   Rob          Pike        rob
+        2    Ken          Thompson    ken
+        4    Robert       Griesemer   gri
+        1    Robert       Thompson    abc
+        NA   Robert       Abel        123
+
+1. data with unmatched column names, and ignoring cases
+
+        $ csvtk concat names.csv names.with-unmatched-colname.csv -i | csvtk pretty
+        id   first_name   last_name    username
+        11   Rob          Pike         rob
+        2    Ken          Thompson     ken
+        4    Robert       Griesemer    gri
+        1    Robert       Thompson     abc
+        NA   Robert       Abel         123
+             Rob33        Pike222      rob111
+             Ken33        Thompson22   ken111
+
+         $ csvtk concat names.csv names.with-unmatched-colname.csv -i -u Unmached | csvtk pretty
+         id         first_name   last_name    username
+         11         Rob          Pike         rob
+         2          Ken          Thompson     ken
+         4          Robert       Griesemer    gri
+         1          Robert       Thompson     abc
+         NA         Robert       Abel         123
+         Unmached   Rob33        Pike222      rob111
+         Unmached   Ken33        Thompson22   ken111
+
+1. Sometimes data of one file does not matche any column, they are discared by default.
+  But you can keep them using flag `-k/--keep-unmatched`
+
+        $ csvtk concat names.with-unmatched-colname.csv names.csv | csvtk pretty
+        id2   First_name   Last_name    Username   col
+        22    Rob33        Pike222      rob111     abc
+        44    Ken33        Thompson22   ken111     def
+
+        $ csvtk concat names.with-unmatched-colname.csv names.csv -u -k NA | csvtk pretty
+        id2   First_name   Last_name    Username   col
+        22    Rob33        Pike222      rob111     abc
+        44    Ken33        Thompson22   ken111     def
+        NA    NA           NA           NA         NA
+        NA    NA           NA           NA         NA
+        NA    NA           NA           NA         NA
+        NA    NA           NA           NA         NA
+        NA    NA           NA           NA         NA
 
 ## sample
 

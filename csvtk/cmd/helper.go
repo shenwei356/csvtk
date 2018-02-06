@@ -37,7 +37,7 @@ import (
 )
 
 // VERSION of csvtk
-const VERSION = "0.12.0-dev"
+const VERSION = "0.13.0-dev"
 
 func checkError(err error) {
 	if err != nil {
@@ -371,6 +371,103 @@ func fuzzyField2Regexp(field string) *regexp.Regexp {
 	re, err := regexp.Compile(field)
 	checkError(err)
 	return re
+}
+
+func readCSV(config Config, file string) ([]string, [][]string) {
+	csvReader, err := newCSVReaderByConfig(config, file)
+	checkError(err)
+	csvReader.Run()
+
+	var headerRow []string
+	data := make([][]string, 0, 1000)
+
+	parseHeaderRow := !config.NoHeaderRow
+
+	for chunk := range csvReader.Ch {
+		checkError(chunk.Err)
+
+		for _, record := range chunk.Data {
+			if parseHeaderRow {
+				headerRow = record
+				parseHeaderRow = false
+				continue
+			}
+			data = append(data, record)
+		}
+	}
+	return headerRow, data
+}
+
+func readDataFrame(config Config, file string, ignoreCase bool) ([]string, map[string]string, map[string][]string) {
+	df := make(map[string][]string)
+	var colnames []string
+	headerRow, data := readCSV(config, file)
+
+	// in case that col names are not unique in headerRow
+	colname2headerRow := make(map[string]string, len(headerRow))
+
+	var newName string
+	if len(headerRow) > 0 {
+		// in case that col names are not unique in headerRow
+		colnames = make([]string, len(headerRow))
+		colnamesCount := make(map[string]int, len(headerRow))
+		var colLower string
+		for i, col := range headerRow {
+			if ignoreCase {
+				colLower = strings.ToLower(col)
+			}
+
+			if colnamesCount[col] > 0 ||
+				(ignoreCase && colnamesCount[colLower] > 0) {
+
+				log.Warningf(`duplicated colname (%s) in file: %s. this may bring incorrect result`, col, file)
+
+				newName = fmt.Sprintf("%s_%d", col, colnamesCount[col])
+				if ignoreCase {
+					newName = strings.ToLower(newName)
+				}
+				colname2headerRow[newName] = col
+				colnames[i] = newName
+				if ignoreCase {
+					colnamesCount[colLower]++
+				} else {
+					colnamesCount[col]++
+				}
+			} else {
+				if ignoreCase {
+					colname2headerRow[colLower] = col
+					col = colLower
+				} else {
+					colname2headerRow[col] = col
+				}
+				colnames[i] = col
+				colnamesCount[col] = 1
+			}
+		}
+	} else {
+		if len(data) == 0 {
+			return colnames, colname2headerRow, df
+		} else if len(data) > 0 {
+			colnames = make([]string, len(data[0]))
+			for i := 0; i < len(data[0]); i++ {
+				newName = fmt.Sprintf("%d", i+1)
+				colname2headerRow[newName] = newName
+				colnames[i] = newName
+			}
+		}
+	}
+
+	var ok bool
+	var j int
+	for i, col := range colnames {
+		if _, ok = df[col]; !ok {
+			df[col] = make([]string, 0, 1000)
+		}
+		for j = range data {
+			df[col] = append(df[col], data[j][i])
+		}
+	}
+	return colnames, colname2headerRow, df
 }
 
 func parseCSVfile(cmd *cobra.Command, config Config, file string,

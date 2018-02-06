@@ -10,7 +10,7 @@
 [![Github Releases](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/total.svg?maxAge=3600)](http://bioinf.shenwei.me/csvtk/download/)
 [![Cross-platform](https://img.shields.io/badge/platform-any-ec2eb4.svg?style=flat)](http://bioinf.shenwei.me/csvtk/download/)
 [![Install-with-conda](	https://anaconda.org/bioconda/csvtk/badges/installer/conda.svg)](http://bioinf.shenwei.me/csvtk/download/)
-[![Anaconda Cloud](	https://anaconda.org/bioconda/csvtk/badges/version.svg)](https://anaconda.org/bioconda/csvtk)
+[![Anaconda Cloud](https://anaconda.org/bioconda/csvtk/badges/version.svg)](https://anaconda.org/bioconda/csvtk)
 
 
 ## Introduction
@@ -65,7 +65,7 @@ It could save you much time of writing Python/R scripts.
 
 ## Subcommands
 
-31 subcommands in total.
+32 subcommands in total.
 
 **Information**
 
@@ -86,6 +86,7 @@ It could save you much time of writing Python/R scripts.
 **Set operations**
 
 -  `head` print first N records
+-  `concat` concatenate CSV/TSV files by rows
 -  `sample` sampling by proportion
 -  `cut` select parts of fields
 -  `grep` grep data by selected fields with patterns/regular expressions
