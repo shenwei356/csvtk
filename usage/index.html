@@ -302,7 +302,7 @@
 <p>Usage</p>
 <pre><code>A cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.13.0-dev
+Version: 0.13.0-dev2
 
 Author: Wei Shen &lt;shenwei356@gmail.com&gt;
 
@@ -319,6 +319,11 @@ Attention:
        starts with &quot;#&quot;, please assign flag &quot;-C&quot; another rare symbol, e.g. '$'.
     5. By default, csvtk handles CSV files, use flag &quot;-t&quot; for tab-delimited files.
     6. If &quot; exists in tab-delimited files, use flag &quot;-l&quot;.
+
+Environment variables for frequently used global flags
+
+    - &quot;CSVTK_T&quot; for flag &quot;-t/--tabs&quot;
+    - &quot;CSVTK_H&quot; for flag &quot;-H/--no-header-row&quot;
 
 Usage:
   csvtk [command]
@@ -1942,6 +1947,21 @@ Flags:
 
 <p>Example</p>
 <ol>
+<li>
+<p>Constants</p>
+<pre><code>$ cat testdata/digitals.tsv | csvtk mutate2 -t -H -e " 'abc' "
+4       5       6       abc
+1       2       3       abc
+7       8       0       abc
+8       1,000   4       abc
+
+$ val=123 &amp;&amp; cat testdata/digitals.tsv | csvtk mutate2 -t -H -e " $val "
+4       5       6       123
+1       2       3       123
+7       8       0       123
+8       1,000   4       123
+</code></pre>
+</li>
 <li>
 <p>Math</p>
 <pre><code>$ cat testdata/digitals.tsv | csvtk mutate2 -t -H -e '$1 + $3' -L 0
