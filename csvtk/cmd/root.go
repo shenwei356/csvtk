@@ -52,6 +52,11 @@ Attention:
     5. By default, csvtk handles CSV files, use flag "-t" for tab-delimited files.
     6. If " exists in tab-delimited files, use flag "-l".
 
+Environment variables for frequently used global flags
+
+    - "CSVTK_T" for flag "-t/--tabs"
+    - "CSVTK_H" for flag "-H/--no-header-row"
+
 `, VERSION),
 }
 

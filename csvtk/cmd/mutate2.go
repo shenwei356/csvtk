@@ -72,12 +72,66 @@ Supported operators and types:
 			checkError(fmt.Errorf("falg -n (--name) needed"))
 		}
 
+		outfh, err := xopen.Wopen(config.OutFile)
+		checkError(err)
+		defer outfh.Close()
+
+		writer := csv.NewWriter(outfh)
+		if config.OutTabs || config.Tabs {
+			writer.Comma = '\t'
+		} else {
+			writer.Comma = config.OutDelimiter
+		}
+		defer func() {
+			writer.Flush()
+			checkError(writer.Error())
+		}()
+
 		exprStr := getFlagString(cmd, "expression")
 		if exprStr == "" {
 			checkError(fmt.Errorf("flag -e (--expression) needed"))
 		}
+
+		// expressions doe not contains `$`
 		if !reFilter2.MatchString(exprStr) {
-			checkError(fmt.Errorf("invalid expression: %s", exprStr))
+			// checkError(fmt.Errorf("invalid expression: %s", exprStr))
+			var expression *govaluate.EvaluableExpression
+			expression, err = govaluate.NewEvaluableExpression(exprStr)
+			checkError(err)
+			var result interface{}
+			result, err = expression.Evaluate(nil)
+			if err != nil {
+				checkError(fmt.Errorf("fail to evaluate: %s", exprStr))
+			}
+			result2 := fmt.Sprintf("%v", result)
+			for _, file := range files {
+				var csvReader *CSVReader
+				csvReader, err = newCSVReaderByConfig(config, file)
+				checkError(err)
+				csvReader.Run()
+
+				isHeaderLine := !config.NoHeaderRow
+				printMetaLine := true
+				for chunk := range csvReader.Ch {
+					checkError(chunk.Err)
+
+					if printMetaLine && len(csvReader.Reader.MetaLine) > 0 {
+						outfh.WriteString(fmt.Sprintf("sep=%s\n", string(writer.Comma)))
+						printMetaLine = false
+					}
+
+					for _, record := range chunk.Data {
+						if isHeaderLine {
+							checkError(writer.Write(append(record, name)))
+							isHeaderLine = false
+							continue
+						}
+						checkError(writer.Write(append(record, result2)))
+					}
+				}
+			}
+
+			return
 		}
 
 		digits := getFlagNonNegativeInt(cmd, "digits")
@@ -121,17 +175,6 @@ Supported operators and types:
 
 		// fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
 		fuzzyFields := false
-
-		outfh, err := xopen.Wopen(config.OutFile)
-		checkError(err)
-		defer outfh.Close()
-
-		writer := csv.NewWriter(outfh)
-		if config.OutTabs || config.Tabs {
-			writer.Comma = '\t'
-		} else {
-			writer.Comma = config.OutDelimiter
-		}
 
 		for _, file := range files {
 			csvReader, err := newCSVReaderByConfig(config, file)
@@ -298,14 +341,12 @@ Supported operators and types:
 				}
 			}
 		}
-		writer.Flush()
-		checkError(writer.Error())
 	},
 }
 
 func init() {
 	RootCmd.AddCommand(mutate2Cmd)
-	mutate2Cmd.Flags().StringP("expression", "e", "", `artithmetic/string expressions. e.g. '$1 + $2', '$a / $b', ' $1 > 100 ? "big" : "small" '`)
+	mutate2Cmd.Flags().StringP("expression", "e", "", `artithmetic/string expressions. e.g. "'string'", '$1 + $2', '$a / $b', ' $1 > 100 ? "big" : "small" '`)
 	mutate2Cmd.Flags().StringP("name", "n", "", `new column name`)
 	mutate2Cmd.Flags().IntP("digits", "L", 2, `number of digits after the dot`)
 }

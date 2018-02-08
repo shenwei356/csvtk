@@ -1,2 +1,6 @@
+- `csvtk`: add support for environment variables for frequently used global flags
+    - `CSVTK_T` for flag `-t/--tabs`
+    - `CSVTK_H` for flag `-H/--no-header-row`
 - `pretty`: better support for files with duplicated column names
-- new command `concat` for concatenating CSV/TSV files by rows
+- `mutate2`: add support for eval expression WITHOUT column index symbol, so we can add some string constants [#37](https://github.com/shenwei356/csvtk/issues/37)
+- new command `concat` for concatenating CSV/TSV files by rows [#38](https://github.com/shenwei356/csvtk/issues/38)

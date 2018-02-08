@@ -82,7 +82,7 @@ Usage
 ```
 A cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.12.0
+Version: 0.13.0-dev2
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -100,11 +100,17 @@ Attention:
     5. By default, csvtk handles CSV files, use flag "-t" for tab-delimited files.
     6. If " exists in tab-delimited files, use flag "-l".
 
+Environment variables for frequently used global flags
+
+    - "CSVTK_T" for flag "-t/--tabs"
+    - "CSVTK_H" for flag "-H/--no-header-row"
+
 Usage:
   csvtk [command]
 
 Available Commands:
   collapse        collapse one field with selected fields as keys
+  concat          concatenate CSV/TSV files by rows
   csv2md          convert CSV to markdown format
   csv2tab         convert CSV to tabular format
   cut             select parts of fields
@@ -1659,6 +1665,20 @@ Flags:
 ```
 
 Example
+
+1. Constants
+
+        $ cat testdata/digitals.tsv | csvtk mutate2 -t -H -e " 'abc' "
+        4       5       6       abc
+        1       2       3       abc
+        7       8       0       abc
+        8       1,000   4       abc
+
+        $ val=123 && cat testdata/digitals.tsv | csvtk mutate2 -t -H -e " $val "
+        4       5       6       123
+        1       2       3       123
+        7       8       0       123
+        8       1,000   4       123
 
 1. Math
 

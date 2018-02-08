@@ -37,7 +37,7 @@ import (
 )
 
 // VERSION of csvtk
-const VERSION = "0.13.0-dev"
+const VERSION = "0.13.0-dev2"
 
 func checkError(err error) {
 	if err != nil {
@@ -193,7 +193,31 @@ type Config struct {
 	OutFile string
 }
 
+func isTrue(s string) bool {
+	s = strings.TrimSpace(s)
+	if s == "" || s == "0" || strings.ToLower(s) == "false" {
+		return false
+	}
+	return true
+}
+
 func getConfigs(cmd *cobra.Command) Config {
+	var val string
+
+	var tabs bool
+	if val = os.Getenv("CSVTK_T"); val != "" {
+		tabs = isTrue(val)
+	} else {
+		tabs = getFlagBool(cmd, "tabs")
+	}
+
+	var noHeaderRow bool
+	if val = os.Getenv("CSVTK_H"); val != "" {
+		noHeaderRow = isTrue(val)
+	} else {
+		noHeaderRow = getFlagBool(cmd, "no-header-row")
+	}
+
 	return Config{
 		ChunkSize: getFlagPositiveInt(cmd, "chunk-size"),
 		NumCPUs:   getFlagPositiveInt(cmd, "num-cpus"),
@@ -204,9 +228,9 @@ func getConfigs(cmd *cobra.Command) Config {
 		CommentChar: getFlagRune(cmd, "comment-char"),
 		LazyQuotes:  getFlagBool(cmd, "lazy-quotes"),
 
-		Tabs:        getFlagBool(cmd, "tabs"),
+		Tabs:        tabs,
 		OutTabs:     getFlagBool(cmd, "out-tabs"),
-		NoHeaderRow: getFlagBool(cmd, "no-header-row"),
+		NoHeaderRow: noHeaderRow,
 
 		OutFile: getFlagString(cmd, "out-file"),
 	}
