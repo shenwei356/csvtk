@@ -94,8 +94,8 @@ Howto:
 
 ## Previous Versions
 
-- [csvtk v0.13.0](https://github.com/shenwei356/csvtk/releases/tag/v0.13.0)
-[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.13.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.13.0)
+- [csvtk v0.12.0](https://github.com/shenwei356/csvtk/releases/tag/v0.12.0)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.12.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.12.0)
     - new command `collapse`: collapsing one field with selected fields as keys
     - `freq`: keeping orignal order of keys by default
     - `split`:
