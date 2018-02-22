@@ -82,7 +82,7 @@ Usage
 ```
 A cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.13.0-dev2
+Version: 0.13.0
 
 Author: Wei Shen <shenwei356@gmail.com>
 
