@@ -667,9 +667,9 @@ func parseCSVfile(cmd *cobra.Command, config Config, file string,
 		}
 	}
 	if fieldStr != "*" {
-		return HeaderRow, fields, Data, HeaderRowAll, DataAll, csvReader.Reader.MetaLine
+		return HeaderRow, fields, Data, HeaderRowAll, DataAll, csvReader.MetaLine
 	}
-	return HeaderRow, fields, Data, HeaderRowAll, Data, csvReader.Reader.MetaLine
+	return HeaderRow, fields, Data, HeaderRowAll, Data, csvReader.MetaLine
 }
 
 func removeComma(s string) string {
