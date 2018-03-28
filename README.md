@@ -60,8 +60,8 @@ It could save you much time of writing Python/R scripts.
 - Most of the subcommands support ***unselecting fields*** and ***fuzzy fields***,
   e.g. `-f "-id,-name"` for all fields except "id" and "name",
   `-F -f "a.*"` for all fields with prefix "a.".
-- **Support common plots** (see [usage](http://bioinf.shenwei.me/csvtk/usage/#plot))
-- Seamlessly support for data with meta line (e.g., `sep=,`) of separator declaration used by MS Excel
+- **Support some common plots** (see [usage](http://bioinf.shenwei.me/csvtk/usage/#plot))
+- <del>Seamlessly support for data with meta line (e.g., `sep=,`) of separator declaration used by MS Excel</del>
 
 ## Subcommands
 
