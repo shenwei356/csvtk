@@ -185,7 +185,7 @@ var grepCmd = &cobra.Command{
 			for chunk := range csvReader.Ch {
 				checkError(chunk.Err)
 
-				if printMetaLine && len(csvReader.Reader.MetaLine) > 0 {
+				if printMetaLine && len(csvReader.MetaLine) > 0 {
 					if isstdin {
 						outfhStd.Write([]byte(fmt.Sprintf("sep=%s\n", string(writer.Comma))))
 					} else {

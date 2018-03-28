@@ -114,7 +114,7 @@ var cutCmd = &cobra.Command{
 		for chunk := range csvReader.Ch {
 			checkError(chunk.Err)
 
-			if printMetaLine && len(csvReader.Reader.MetaLine) > 0 {
+			if printMetaLine && len(csvReader.MetaLine) > 0 {
 				outfh.WriteString(fmt.Sprintf("sep=%s\n", string(writer.Comma)))
 				printMetaLine = false
 			}

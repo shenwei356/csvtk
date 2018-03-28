@@ -344,7 +344,7 @@ func appendRows(config Config,
 		writer.Comma = config.OutDelimiter
 	}
 
-	if printMetaLine && len(csvReader.Reader.MetaLine) > 0 {
+	if printMetaLine && len(csvReader.MetaLine) > 0 {
 		outfh.WriteString(fmt.Sprintf("sep=%s\n", string(writer.Comma)))
 	}
 	if headerRow != nil {

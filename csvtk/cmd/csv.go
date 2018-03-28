@@ -21,10 +21,10 @@
 package cmd
 
 import (
+	"encoding/csv"
 	"fmt"
 	"io"
 
-	"github.com/shenwei356/multicorecsv"
 	"github.com/shenwei356/xopen"
 )
 
@@ -37,11 +37,12 @@ type CSVRecordsChunk struct {
 
 // CSVReader is
 type CSVReader struct {
-	Reader *multicorecsv.Reader
+	Reader *csv.Reader
 
 	bufferSize int
 	chunkSize  int
 	Ch         chan CSVRecordsChunk
+	MetaLine   []byte // meta line of separator declaration used by MS Excel
 
 	fh *xopen.Reader
 }
@@ -60,7 +61,22 @@ func NewCSVReader(file string, bufferSize int, chunkSize int) (*CSVReader, error
 		return nil, err
 	}
 
-	reader := multicorecsv.NewReader(fh)
+	var metaLine []byte
+
+	// var line []byte
+	// line, _, err = fh.ReadLine()
+	// if err != nil {
+	// 	return nil, err
+	// }
+	//
+	// if len(line) >= 5 && bytes.Equal(line[0:4], []byte("sep=")) {
+	// 	metaLine = line
+	// } else {
+	// 	// put it back.
+	// 	// but how?
+	// }
+
+	reader := csv.NewReader(fh)
 
 	ch := make(chan CSVRecordsChunk, bufferSize)
 
@@ -70,6 +86,7 @@ func NewCSVReader(file string, bufferSize int, chunkSize int) (*CSVReader, error
 		chunkSize:  chunkSize,
 		Ch:         ch,
 		fh:         fh,
+		MetaLine:   metaLine,
 	}
 	return csvReader, nil
 }
@@ -79,7 +96,6 @@ func (csvReader *CSVReader) Run() {
 	go func() {
 		defer func() {
 			csvReader.fh.Close()
-			csvReader.Reader.Close()
 		}()
 
 		chunkData := make([][]string, csvReader.chunkSize)

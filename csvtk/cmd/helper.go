@@ -37,7 +37,7 @@ import (
 )
 
 // VERSION of csvtk
-const VERSION = "0.13.0"
+const VERSION = "0.14.0-dev"
 
 func checkError(err error) {
 	if err != nil {
@@ -667,9 +667,9 @@ func parseCSVfile(cmd *cobra.Command, config Config, file string,
 		}
 	}
 	if fieldStr != "*" {
-		return HeaderRow, fields, Data, HeaderRowAll, DataAll, csvReader.Reader.MetaLine
+		return HeaderRow, fields, Data, HeaderRowAll, DataAll, csvReader.MetaLine
 	}
-	return HeaderRow, fields, Data, HeaderRowAll, Data, csvReader.Reader.MetaLine
+	return HeaderRow, fields, Data, HeaderRowAll, Data, csvReader.MetaLine
 }
 
 func removeComma(s string) string {
