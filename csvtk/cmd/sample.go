@@ -43,6 +43,7 @@ var sampleCmd = &cobra.Command{
 		runtime.GOMAXPROCS(config.NumCPUs)
 
 		proportion := getFlagFloat64(cmd, "proportion")
+		printLineNumber := getFlagBool(cmd, "line-number")
 
 		if proportion == 0 {
 			checkError(fmt.Errorf("flag -p (--proportion) needed"))
@@ -70,6 +71,9 @@ var sampleCmd = &cobra.Command{
 			checkError(err)
 			csvReader.Run()
 
+			var N int64
+			var recordWithN []string
+
 			isHeaderLine := !config.NoHeaderRow
 			printMetaLine := true
 			for chunk := range csvReader.Ch {
@@ -82,11 +86,26 @@ var sampleCmd = &cobra.Command{
 
 				for _, record := range chunk.Data {
 					if isHeaderLine {
+						if printLineNumber {
+							recordWithN = []string{"n"}
+							recordWithN = append(recordWithN, record...)
+							record = recordWithN
+						}
+
 						checkError(writer.Write(record))
 						isHeaderLine = false
 						continue
 					}
+
+					N++
+
 					if rand.Float64() <= proportion {
+						if printLineNumber {
+							recordWithN = []string{fmt.Sprintf("%d", N)}
+							recordWithN = append(recordWithN, record...)
+							record = recordWithN
+						}
+
 						checkError(writer.Write(record))
 					}
 				}
@@ -102,4 +121,5 @@ func init() {
 
 	sampleCmd.Flags().Int64P("rand-seed", "s", 11, "rand seed")
 	sampleCmd.Flags().Float64P("proportion", "p", 0, "sample by proportion")
+	sampleCmd.Flags().BoolP("line-number", "n", false, `print line number as the first column ("n")`)
 }
