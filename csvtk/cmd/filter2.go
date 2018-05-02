@@ -87,6 +87,7 @@ Supported operators and types:
 		fieldStr := strings.Join(fs, ",")
 
 		filterStr0 := filterStr
+		filterStr = reFiler2VarSymbolStartsWithDigits.ReplaceAllString(filterStr, "shenwei_$1$2")
 		filterStr = reFilter2VarField.ReplaceAllString(filterStr, "shenwei$1")
 		filterStr = reFilter2VarSymbol.ReplaceAllString(filterStr, "")
 		expression, err := govaluate.NewEvaluableExpression(filterStr)
@@ -247,7 +248,6 @@ Supported operators and types:
 					}
 
 					flag = false
-
 					if !usingColname {
 						for _, fieldTmp = range fields {
 							value = record[fieldTmp-1]
@@ -261,6 +261,11 @@ Supported operators and types:
 					} else {
 						for col = range colnamesMap {
 							value = record[colnames2fileds[col]-1]
+
+							if reFiler2ColSymbolStartsWithDigits.MatchString(col) {
+								col = fmt.Sprintf("shenwei_%s", col)
+							}
+
 							if reDigitals.MatchString(value) {
 								valueFloat, _ = strconv.ParseFloat(removeComma(value), 64)
 								parameters[col] = valueFloat
@@ -311,3 +316,7 @@ func init() {
 var reFilter2 = regexp.MustCompile(`\$([^ +-/*&\|^%><!~=()]+)`)
 var reFilter2VarField = regexp.MustCompile(`\$(\d+)`)
 var reFilter2VarSymbol = regexp.MustCompile(`\$`)
+
+// special colname starting with digits, e.g., 123abc
+var reFiler2VarSymbolStartsWithDigits = regexp.MustCompile(`\$(\d+)([^\d +-/*&\|^%><!~=()]+)`) // for preprocess expression
+var reFiler2ColSymbolStartsWithDigits = regexp.MustCompile(`(\d+)([^\d +-/*&\|^%><!~=()]+)`)   // for preparing paramters
