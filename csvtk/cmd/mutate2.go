@@ -346,7 +346,7 @@ Supported operators and types:
 
 func init() {
 	RootCmd.AddCommand(mutate2Cmd)
-	mutate2Cmd.Flags().StringP("expression", "e", "", `artithmetic/string expressions. e.g. "'string'", '$1 + $2', '$a / $b', ' $1 > 100 ? "big" : "small" '`)
+	mutate2Cmd.Flags().StringP("expression", "e", "", `artithmetic/string expressions. e.g. "'string'", '"abc"', ' $a + "-" + $b ', '$1 + $2', '$a / $b', ' $1 > 100 ? "big" : "small" '`)
 	mutate2Cmd.Flags().StringP("name", "n", "", `new column name`)
 	mutate2Cmd.Flags().IntP("digits", "L", 2, `number of digits after the dot`)
 }

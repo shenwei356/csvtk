@@ -1680,6 +1680,18 @@ Example
         7       8       0       123
         8       1,000   4       123
 
+1. String concatenation
+
+        $ cat testdata/names.csv  \
+            | csvtk mutate2 -n full_name -e ' $first_name + " " + $last_name ' \
+            | csvtk pretty 
+        id   first_name   last_name   username   full_name
+        11   Rob          Pike        rob        Rob Pike
+        2    Ken          Thompson    ken        Ken Thompson
+        4    Robert       Griesemer   gri        Robert Griesemer
+        1    Robert       Thompson    abc        Robert Thompson
+        NA   Robert       Abel        123        Robert Abel
+
 1. Math
 
         $ cat testdata/digitals.tsv | csvtk mutate2 -t -H -e '$1 + $3' -L 0
