@@ -54,9 +54,9 @@ more on: http://shenwei356.github.io/csvtk/usage/#replace
 
 Special replacement symbols:
 
-	{nr}	Record number, starting from 1
-	{kv}	Corresponding value of the key (captured variable $n) by key-value file,
-	        n can be specified by flag -I (--key-capt-idx) (default: 1)
+    {nr}    Record number, starting from 1
+    {kv}    Corresponding value of the key (captured variable $n) by key-value file,
+            n can be specified by flag -I (--key-capt-idx) (default: 1)
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -102,7 +102,6 @@ Special replacement symbols:
 				checkError(fmt.Errorf(`since replacement symbol "{kv}"/"{KV}" found in value of flag -r (--replacement), tab-delimited key-value file should be given by flag -k (--kv-file)`))
 			}
 			log.Infof("read key-value file: %s", kvFile)
-			var err error
 			kvs, err = readKVs(kvFile)
 			if err != nil {
 				checkError(fmt.Errorf("read key-value file: %s", err))

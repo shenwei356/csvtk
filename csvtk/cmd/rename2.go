@@ -25,6 +25,8 @@ import (
 	"fmt"
 	"regexp"
 	"runtime"
+	"strconv"
+	"strings"
 
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
@@ -35,6 +37,13 @@ var rename2Cmd = &cobra.Command{
 	Use:   "rename2",
 	Short: "rename column names by regular expression",
 	Long: `rename column names by regular expression
+
+Special replacement symbols:
+
+    {nr}  ascending number, starting from --start-num
+    {kv}  Corresponding value of the key (captured variable $n) by key-value file,
+          n can be specified by flag -I (--key-capt-idx) (default: 1)
+
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -59,8 +68,49 @@ var rename2Cmd = &cobra.Command{
 		if ignoreCase {
 			p = "(?i)" + p
 		}
+
 		patternRegexp, err := regexp.Compile(p)
 		checkError(err)
+
+		kvFile := getFlagString(cmd, "kv-file")
+		keepKey := getFlagBool(cmd, "keep-key")
+		keyCaptIdx := getFlagPositiveInt(cmd, "key-capt-idx")
+		keyMissRepl := getFlagString(cmd, "key-miss-repl")
+		startNum := getFlagNonNegativeInt(cmd, "start-num")
+		var replaceWithNR bool
+		if reNR.MatchString(replacement) {
+			replaceWithNR = true
+		}
+
+		var replaceWithKV bool
+		var kvs map[string]string
+		if reKV.MatchString(replacement) {
+			replaceWithKV = true
+			if !regexp.MustCompile(`\(.+\)`).MatchString(pattern) {
+				checkError(fmt.Errorf(`value of -p (--pattern) must contains "(" and ")" to capture data which is used specify the KEY`))
+			}
+			if kvFile == "" {
+				checkError(fmt.Errorf(`since replacement symbol "{kv}"/"{KV}" found in value of flag -r (--replacement), tab-delimited key-value file should be given by flag -k (--kv-file)`))
+			}
+			log.Infof("read key-value file: %s", kvFile)
+			kvs, err = readKVs(kvFile)
+			if err != nil {
+				checkError(fmt.Errorf("read key-value file: %s", err))
+			}
+			if len(kvs) == 0 {
+				checkError(fmt.Errorf("no valid data in key-value file: %s", kvFile))
+			}
+
+			if ignoreCase {
+				kvs2 := make(map[string]string, len(kvs))
+				for k, v := range kvs {
+					kvs2[strings.ToLower(k)] = v
+				}
+				kvs = kvs2
+			}
+
+			log.Infof("%d pairs of key-value loaded", len(kvs))
+		}
 
 		fieldStr := getFlagString(cmd, "fields")
 		if fieldStr == "" {
@@ -108,6 +158,10 @@ var rename2Cmd = &cobra.Command{
 			checkFields := true
 
 			var record2 []string // for output
+			var r string
+			var found []string
+			var founds [][]string
+			var k string
 
 			printMetaLine := true
 			for chunk := range csvReader.Ch {
@@ -201,10 +255,43 @@ var rename2Cmd = &cobra.Command{
 
 						record2 = make([]string, len(record))
 
+						nr := startNum
 						for f := range record {
 							record2[f] = record[f]
 							if _, ok := fieldsMap[f+1]; ok {
-								record2[f] = patternRegexp.ReplaceAllString(record2[f], replacement)
+								r = replacement
+
+								if replaceWithNR {
+									r = reNR.ReplaceAllString(r, strconv.Itoa(nr))
+								}
+
+								if replaceWithKV {
+									founds = patternRegexp.FindAllStringSubmatch(record2[f], -1)
+									if len(founds) > 1 {
+										checkError(fmt.Errorf(`pattern "%s" matches multiple targets in "%s", this will cause chaos`, p, record2[f]))
+									}
+									if len(founds) > 0 {
+										found = founds[0]
+										if keyCaptIdx > len(found)-1 {
+											checkError(fmt.Errorf("value of flag -I (--key-capt-idx) overflows"))
+										}
+										k = string(found[keyCaptIdx])
+										if ignoreCase {
+											k = strings.ToLower(k)
+										}
+										if _, ok = kvs[k]; ok {
+											r = reKV.ReplaceAllString(r, kvs[k])
+										} else if keepKey {
+											r = reKV.ReplaceAllString(r, found[keyCaptIdx])
+										} else {
+											r = reKV.ReplaceAllString(r, keyMissRepl)
+										}
+									}
+								}
+
+								record2[f] = patternRegexp.ReplaceAllString(record2[f], r)
+                                
+								nr++
 							}
 						}
 						checkError(writer.Write(record2))
@@ -232,6 +319,13 @@ func init() {
 		"renamement. supporting capture variables. "+
 			" e.g. $1 represents the text of the first submatch. "+
 			"ATTENTION: use SINGLE quote NOT double quotes in *nix OS or "+
-			"use the \\ escape character.")
+			`use the \ escape character. Ascending number is also supported by "{nr}".`+
+			`use ${1} instead of $1 when {kv} given!`)
 	rename2Cmd.Flags().BoolP("ignore-case", "i", false, "ignore case")
+	rename2Cmd.Flags().StringP("kv-file", "k", "",
+		`tab-delimited key-value file for replacing key with value when using "{kv}" in -r (--replacement)`)
+	rename2Cmd.Flags().BoolP("keep-key", "K", false, "keep the key as value when no value found for the key")
+	rename2Cmd.Flags().IntP("key-capt-idx", "I", 1, "capture variable index of key (1-based)")
+	rename2Cmd.Flags().StringP("key-miss-repl", "", "", "replacement for key with no corresponding value")
+	rename2Cmd.Flags().IntP("start-num", "n", 1, `starting number when using {nr} in replacement`)
 }

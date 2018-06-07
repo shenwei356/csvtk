@@ -82,7 +82,7 @@ Usage
 ```
 A cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.13.0
+Version: 0.14.0
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -1495,10 +1495,26 @@ Usage
 ```
 rename column names by regular expression
 
+Special replacement symbols:
+
+    {nr}  ascending number, starting from 1
+    {kv}  Corresponding value of the key (captured variable $n) by key-value file,
+          n can be specified by flag -I (--key-capt-idx) (default: 1)
+
 Usage:
   csvtk rename2 [flags]
 
 Flags:
+  -f, --fields string          select only these fields. e.g -f 1,2 or -f columnA,columnB
+  -F, --fuzzy-fields           using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
+  -h, --help                   help for rename2
+  -i, --ignore-case            ignore case
+  -K, --keep-key               keep the key as value when no value found for the key
+  -I, --key-capt-idx int       capture variable index of key (1-based) (default 1)
+      --key-miss-repl string   replacement for key with no corresponding value
+  -k, --kv-file string         tab-delimited key-value file for replacing key with value when using "{kv}" in -r (--replacement)
+  -p, --pattern string         search regular expression
+  -r, --replacement string     renamement. supporting capture variables.  e.g. $1 represents the text of the first submatch. ATTENTION: use SINGLE quote NOT double quotes in *nix OS or use the \ escape character. Ascending number is also supported by "{nr}".use ${1} instead of $1 when {kv} given!
 
 ```
 
@@ -1519,6 +1535,42 @@ Examples:
         rob,12345
         ken,22222
         shenwei,999999
+
+- supporting `{kv}` and `{nr}` in `csvtk replace`. e.g., replace barcode with sample name.
+
+        $ cat barcodes.tsv 
+        Sample  Barcode
+        sc1     CCTAGATTAAT
+        sc2     GAAGACTTGGT
+        sc3     GAAGCAGTATG
+        sc4     GGTAACCTGAC
+        sc5     ATAGTTCTCGT
+
+        $ cat table.tsv 
+        gene    ATAGTTCTCGT     GAAGCAGTATG     GAAGACTTGGT     AAAAAAAAAA
+        gene1   0       0       3       0
+        gen1e2  0       0       0       0
+        
+        # note that, we must arrange the order of barcodes.tsv to KEY-VALUE
+        $ csvtk cut -t -f 2,1 barcodes.tsv 
+        Barcode Sample
+        CCTAGATTAAT     sc1
+        GAAGACTTGGT     sc2
+        GAAGCAGTATG     sc3
+        GGTAACCTGAC     sc4
+        ATAGTTCTCGT     sc5
+        
+        # here we go!!!!
+        
+        $ csvtk rename2 -t -k <(csvtk cut -t -f 2,1 barcodes.tsv) -f -1 -p '(.+)' -r '{kv}' --key-miss-repl unknown table.tsv 
+        gene    sc5     sc3     sc2     unknown
+        gene1   0       0       3       0
+        gen1e2  0       0       0       0
+
+- `{nr}`, incase you need this
+
+        $ echo "a,b,c,d" | csvtk rename2  -p '(.+)' -r 'col_{nr}' -f -1 --start-num 2
+        a,col_2,col_3,col_4
 
 ## replace
 
