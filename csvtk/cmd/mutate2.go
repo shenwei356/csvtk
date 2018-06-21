@@ -137,6 +137,8 @@ Supported operators and types:
 		digits := getFlagNonNegativeInt(cmd, "digits")
 		formatDigitals := fmt.Sprintf("%%.%df", digits)
 
+		digitsAsString := getFlagBool(cmd, "digits-as-string")
+
 		fs := make([]string, 0)
 		for _, f := range reFilter2.FindAllStringSubmatch(exprStr, -1) {
 			fs = append(fs, f[1])
@@ -302,8 +304,12 @@ Supported operators and types:
 									for _, fieldTmp = range fields {
 										value = record[fieldTmp-1]
 										if reDigitals.MatchString(value) {
-											valueFloat, _ = strconv.ParseFloat(removeComma(value), 64)
-											parameters[fmt.Sprintf("shenwei%d", fieldTmp)] = valueFloat
+											if digitsAsString {
+												parameters[fmt.Sprintf("shenwei%d", fieldTmp)] = value
+											} else {
+												valueFloat, _ = strconv.ParseFloat(removeComma(value), 64)
+												parameters[fmt.Sprintf("shenwei%d", fieldTmp)] = valueFloat
+											}
 										} else {
 											parameters[fmt.Sprintf("shenwei%d", fieldTmp)] = value
 										}
@@ -312,8 +318,12 @@ Supported operators and types:
 									for col = range colnamesMap {
 										value = record[colnames2fileds[col]-1]
 										if reDigitals.MatchString(value) {
-											valueFloat, _ = strconv.ParseFloat(removeComma(value), 64)
-											parameters[col] = valueFloat
+											if digitsAsString {
+												parameters[col] = value
+											} else {
+												valueFloat, _ = strconv.ParseFloat(removeComma(value), 64)
+												parameters[col] = valueFloat
+											}
 										} else {
 											parameters[col] = value
 										}
@@ -349,4 +359,5 @@ func init() {
 	mutate2Cmd.Flags().StringP("expression", "e", "", `artithmetic/string expressions. e.g. "'string'", '"abc"', ' $a + "-" + $b ', '$1 + $2', '$a / $b', ' $1 > 100 ? "big" : "small" '`)
 	mutate2Cmd.Flags().StringP("name", "n", "", `new column name`)
 	mutate2Cmd.Flags().IntP("digits", "L", 2, `number of digits after the dot`)
+	mutate2Cmd.Flags().BoolP("digits-as-string", "s", false, `treate digits as string to avoid converting big digits into scientific notation`)
 }
