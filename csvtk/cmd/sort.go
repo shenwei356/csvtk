@@ -39,7 +39,7 @@ import (
 var sortCmd = &cobra.Command{
 	Use:   "sort",
 	Short: "sort by selected fields",
-	Long: ` sort by selected fields
+	Long: `sort by selected fields
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -206,7 +206,7 @@ type sortType struct {
 
 func init() {
 	RootCmd.AddCommand(sortCmd)
-	sortCmd.Flags().StringSliceP("keys", "k", []string{"1"}, `keys (multiple values supported). sort type supported, "n" for number and "r" for reverse. e.g., "-k 1" or "-k A:r" or ""-k 1:nr -k 2"`)
-	sortCmd.Flags().StringSliceP("levels", "L", []string{}, `user-defined level file (one level per line, multiple values supported). format: <field>:<level-file>.  e.g., "-L name:level.txt"`)
+	sortCmd.Flags().StringSliceP("keys", "k", []string{"1"}, `keys (multiple values supported). sort type supported, "n" for number, "u" for user-defined order and "r" for reverse. e.g., "-k 1" or "-k A:r" or ""-k 1:nr -k 2"`)
+	sortCmd.Flags().StringSliceP("levels", "L", []string{}, `user-defined level file (one level per line, multiple values supported). format: <field>:<level-file>.  e.g., "-k name:u -L name:level.txt"`)
 	sortCmd.Flags().BoolP("ignore-case", "i", false, "ignore-case")
 }
