@@ -231,7 +231,7 @@
 <p>Usage</p>
 <pre><code>A cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.13.0
+Version: 0.14.0
 
 Author: Wei Shen &lt;shenwei356@gmail.com&gt;
 
@@ -1714,16 +1714,34 @@ shenwei,999999
 <p>Usage</p>
 <pre><code>rename column names by regular expression
 
+Special replacement symbols:
+
+    {nr}  ascending number, starting from 1
+    {kv}  Corresponding value of the key (captured variable $n) by key-value file,
+          n can be specified by flag -I (--key-capt-idx) (default: 1)
+
 Usage:
   csvtk rename2 [flags]
 
 Flags:
+  -f, --fields string          select only these fields. e.g -f 1,2 or -f columnA,columnB
+  -F, --fuzzy-fields           using fuzzy fields, e.g., -F -f &quot;*name&quot; or -F -f &quot;id123*&quot;
+  -h, --help                   help for rename2
+  -i, --ignore-case            ignore case
+  -K, --keep-key               keep the key as value when no value found for the key
+  -I, --key-capt-idx int       capture variable index of key (1-based) (default 1)
+      --key-miss-repl string   replacement for key with no corresponding value
+  -k, --kv-file string         tab-delimited key-value file for replacing key with value when using &quot;{kv}&quot; in -r (--replacement)
+  -p, --pattern string         search regular expression
+  -r, --replacement string     renamement. supporting capture variables.  e.g. $1 represents the text of the first submatch. ATTENTION: use SINGLE quote NOT double quotes in *nix OS or use the \ escape character. Ascending number is also supported by &quot;{nr}&quot;.use ${1} instead of $1 when {kv} given!
 
 </code></pre>
 
 <p>Examples:</p>
 <ul>
-<li>replacing with original names by regular express: <code>cat testdata/c.csv | csvtk rename2 -F -f "*" -p "(.*)" -r 'prefix_$1'</code> for adding prefix to all column names.<pre><code>$ cat testdata/phones.csv
+<li>
+<p>replacing with original names by regular express: <code>cat testdata/c.csv | csvtk rename2 -F -f "*" -p "(.*)" -r 'prefix_$1'</code> for adding prefix to all column names.</p>
+<pre><code>$ cat testdata/phones.csv
 username,phone
 gri,11111
 rob,12345
@@ -1736,6 +1754,44 @@ gri,11111
 rob,12345
 ken,22222
 shenwei,999999
+</code></pre>
+</li>
+<li>
+<p>supporting <code>{kv}</code> and <code>{nr}</code> in <code>csvtk replace</code>. e.g., replace barcode with sample name.</p>
+<pre><code>$ cat barcodes.tsv 
+Sample  Barcode
+sc1     CCTAGATTAAT
+sc2     GAAGACTTGGT
+sc3     GAAGCAGTATG
+sc4     GGTAACCTGAC
+sc5     ATAGTTCTCGT
+
+$ cat table.tsv 
+gene    ATAGTTCTCGT     GAAGCAGTATG     GAAGACTTGGT     AAAAAAAAAA
+gene1   0       0       3       0
+gen1e2  0       0       0       0
+
+# note that, we must arrange the order of barcodes.tsv to KEY-VALUE
+$ csvtk cut -t -f 2,1 barcodes.tsv 
+Barcode Sample
+CCTAGATTAAT     sc1
+GAAGACTTGGT     sc2
+GAAGCAGTATG     sc3
+GGTAACCTGAC     sc4
+ATAGTTCTCGT     sc5
+
+# here we go!!!!
+
+$ csvtk rename2 -t -k &lt;(csvtk cut -t -f 2,1 barcodes.tsv) -f -1 -p '(.+)' -r '{kv}' --key-miss-repl unknown table.tsv 
+gene    sc5     sc3     sc2     unknown
+gene1   0       0       3       0
+gen1e2  0       0       0       0
+</code></pre>
+</li>
+<li>
+<p><code>{nr}</code>, incase you need this</p>
+<pre><code>$ echo "a,b,c,d" | csvtk rename2  -p '(.+)' -r 'col_{nr}' -f -1 --start-num 2
+a,col_2,col_3,col_4
 </code></pre>
 </li>
 </ul>
@@ -1982,8 +2038,10 @@ Usage:
   csvtk sort [flags]
 
 Flags:
-  -k, --keys value   keys. sort type supported, &quot;n&quot; for number and &quot;r&quot; for reverse. e.g. &quot;-k 1&quot; or &quot;-k A:r&quot; or &quot;&quot;-k 1:nr -k 2&quot; (default [1])
-
+  -h, --help             help for sort
+  -i, --ignore-case      ignore-case
+  -k, --keys strings     keys (multiple values supported). sort type supported, &quot;n&quot; for number, &quot;u&quot; for user-defined order and &quot;r&quot; for reverse. e.g., &quot;-k 1&quot; or &quot;-k A:r&quot; or &quot;&quot;-k 1:nr -k 2&quot; (default [1])
+  -L, --levels strings   user-defined level file (one level per line, multiple values supported). format: &lt;field&gt;:&lt;level-file&gt;.  e.g., &quot;-k name:u -L name:level.txt&quot;
 </code></pre>
 
 <p>Examples</p>
