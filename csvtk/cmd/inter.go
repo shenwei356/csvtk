@@ -79,12 +79,14 @@ var interCmd = &cobra.Command{
 			writer.Comma = config.OutDelimiter
 		}
 
-		keysMaps := make(map[string]map[string]struct{})
+		keysMaps := make(map[string]bool, 10000)
 		valuesMaps := make(map[string][]string) // store selected columns of first file
 		parseSelectedColnames := true
-		saveDataOfFirstFile := true
 		var selectedColnames []string
 
+		var firstFile = true
+		var hasInter = true
+		var ok bool
 		for _, file := range files {
 			csvReader, err := newCSVReaderByConfig(config, file)
 			checkError(err)
@@ -207,12 +209,10 @@ var interCmd = &cobra.Command{
 					if ignoreCase {
 						key = strings.ToLower(key)
 					}
-					if _, ok := keysMaps[key]; !ok {
-						keysMaps[key] = make(map[string]struct{})
-					}
-					keysMaps[key][file] = struct{}{}
 
-					if saveDataOfFirstFile {
+					if firstFile {
+						keysMaps[key] = false
+
 						for i, f := range fields {
 							items[i] = record[f-1]
 						}
@@ -221,21 +221,47 @@ var interCmd = &cobra.Command{
 							itemsCopy[i] = item
 						}
 						valuesMaps[key] = itemsCopy
+						continue
 					}
+
+					if _, ok = keysMaps[key]; ok {
+						keysMaps[key] = true
+					}
+
 				}
 
 			}
-			saveDataOfFirstFile = false
+
+			if firstFile {
+				firstFile = false
+				continue
+			}
+
+			// remove unseen kmers
+			for key = range keysMaps {
+				if keysMaps[key] {
+					keysMaps[key] = false
+				} else {
+					delete(keysMaps, key)
+				}
+			}
+
+			if len(keysMaps) == 0 {
+				hasInter = false
+				break
+			}
+		}
+
+		if !hasInter {
+			writer.Flush()
+			checkError(writer.Error())
+			return
 		}
 
 		if needParseHeaderRow {
 			checkError(writer.Write(selectedColnames))
 		}
-		n := len(files)
-		for key, count := range keysMaps {
-			if len(count) < n {
-				continue
-			}
+		for key := range keysMaps {
 			checkError(writer.Write(valuesMaps[key]))
 		}
 
