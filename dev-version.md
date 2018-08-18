@@ -1,1 +1,0 @@
-- `csvtk mutate2`, add flag `-s/--digits-as-string` for not converting big digits into scientific notation. [#46](https://github.com/shenwei356/csvtk/issues/46)

@@ -82,7 +82,7 @@ Usage
 ```
 A cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.14.0
+Version: 0.15.0-dev2
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -1538,7 +1538,7 @@ Examples:
 
 - supporting `{kv}` and `{nr}` in `csvtk replace`. e.g., replace barcode with sample name.
 
-        $ cat barcodes.tsv 
+        $ cat barcodes.tsv
         Sample  Barcode
         sc1     CCTAGATTAAT
         sc2     GAAGACTTGGT
@@ -1546,23 +1546,23 @@ Examples:
         sc4     GGTAACCTGAC
         sc5     ATAGTTCTCGT
 
-        $ cat table.tsv 
+        $ cat table.tsv
         gene    ATAGTTCTCGT     GAAGCAGTATG     GAAGACTTGGT     AAAAAAAAAA
         gene1   0       0       3       0
         gen1e2  0       0       0       0
-        
+
         # note that, we must arrange the order of barcodes.tsv to KEY-VALUE
-        $ csvtk cut -t -f 2,1 barcodes.tsv 
+        $ csvtk cut -t -f 2,1 barcodes.tsv
         Barcode Sample
         CCTAGATTAAT     sc1
         GAAGACTTGGT     sc2
         GAAGCAGTATG     sc3
         GGTAACCTGAC     sc4
         ATAGTTCTCGT     sc5
-        
+
         # here we go!!!!
-        
-        $ csvtk rename2 -t -k <(csvtk cut -t -f 2,1 barcodes.tsv) -f -1 -p '(.+)' -r '{kv}' --key-miss-repl unknown table.tsv 
+
+        $ csvtk rename2 -t -k <(csvtk cut -t -f 2,1 barcodes.tsv) -f -1 -p '(.+)' -r '{kv}' --key-miss-repl unknown table.tsv
         gene    sc5     sc3     sc2     unknown
         gene1   0       0       3       0
         gen1e2  0       0       0       0
@@ -1710,7 +1710,8 @@ Usage:
 
 Flags:
   -L, --digits int          number of digits after the dot (default 2)
-  -e, --expression string   artithmetic/string expressions. e.g. '$1 + $2', '$a / $b', ' $1 > 100 ? "big" : "small" '
+  -s, --digits-as-string    treate digits as string to avoid converting big digits into scientific notation
+  -e, --expression string   artithmetic/string expressions. e.g. "'string'", '"abc"', ' $a + "-" + $b ', '$1 + $2', '$a / $b', ' $1 > 100 ? "big" : "small" '
   -h, --help                help for mutate2
   -n, --name string         new column name
 
@@ -1736,7 +1737,7 @@ Example
 
         $ cat testdata/names.csv  \
             | csvtk mutate2 -n full_name -e ' $first_name + " " + $last_name ' \
-            | csvtk pretty 
+            | csvtk pretty
         id   first_name   last_name   username   full_name
         11   Rob          Pike        rob        Rob Pike
         2    Ken          Thompson    ken        Ken Thompson
@@ -1827,7 +1828,7 @@ Usage:
 Flags:
   -h, --help             help for sort
   -i, --ignore-case      ignore-case
-  -k, --keys strings     keys (multiple values supported). sort type supported, "n" for number, "u" for user-defined order and "r" for reverse. e.g., "-k 1" or "-k A:r" or ""-k 1:nr -k 2" (default [1])
+  -k, --keys strings     keys (multiple values supported). sort type supported, "N" for natural order, "n" for number, "u" for user-defined order and "r" for reverse. e.g., "-k 1" or "-k A:r" or ""-k 1:nr -k 2" (default [1])
   -L, --levels strings   user-defined level file (one level per line, multiple values supported). format: <field>:<level-file>.  e.g., "-k name:u -L name:level.txt"
 ```
 
@@ -1874,6 +1875,16 @@ Examples
             2,Ken,Thompson,ken
             4,Robert,Griesemer,gri
             11,Rob,Pike,rob
+
+    - in natural order
+
+            $ cat testdata/names.csv | csvtk sort -k id:N
+            id,first_name,last_name,username
+            1,Robert,Thompson,abc
+            2,Ken,Thompson,ken
+            4,Robert,Griesemer,gri
+            11,Rob,Pike,rob
+            NA,Robert,Abel,123
 
 - By multiple columns: `csvtk sort -k 1,2` or `csvtk sort -k 1 -k 2` or `csvtk sort -k last_name,age`
 

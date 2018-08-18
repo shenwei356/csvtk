@@ -100,6 +100,10 @@ var sortCmd = &cobra.Command{
 				}
 				fieldsStrs = append(fieldsStrs, items[0])
 				switch items[1] {
+				case "N":
+					sortTypes = append(sortTypes, sortType{FieldStr: items[0], Natural: true, Reverse: false})
+				case "Nr", "rN":
+					sortTypes = append(sortTypes, sortType{FieldStr: items[0], Natural: true, Reverse: true})
 				case "n":
 					sortTypes = append(sortTypes, sortType{FieldStr: items[0], Number: true, Reverse: false})
 				case "r":
@@ -168,6 +172,7 @@ var sortCmd = &cobra.Command{
 			}
 			sortTypes2[i] = stringutil.SortType{Index: field,
 				IgnoreCase:  ignoreCase,
+				Natural:     t.Natural,
 				Number:      t.Number,
 				Reverse:     t.Reverse,
 				UserDefined: t.UserDefined,
@@ -198,6 +203,7 @@ var sortCmd = &cobra.Command{
 
 type sortType struct {
 	FieldStr    string
+	Natural     bool
 	Number      bool
 	Reverse     bool
 	UserDefined bool
@@ -206,7 +212,7 @@ type sortType struct {
 
 func init() {
 	RootCmd.AddCommand(sortCmd)
-	sortCmd.Flags().StringSliceP("keys", "k", []string{"1"}, `keys (multiple values supported). sort type supported, "n" for number, "u" for user-defined order and "r" for reverse. e.g., "-k 1" or "-k A:r" or ""-k 1:nr -k 2"`)
+	sortCmd.Flags().StringSliceP("keys", "k", []string{"1"}, `keys (multiple values supported). sort type supported, "N" for natural order, "n" for number, "u" for user-defined order and "r" for reverse. e.g., "-k 1" or "-k A:r" or ""-k 1:nr -k 2"`)
 	sortCmd.Flags().StringSliceP("levels", "L", []string{}, `user-defined level file (one level per line, multiple values supported). format: <field>:<level-file>.  e.g., "-k name:u -L name:level.txt"`)
 	sortCmd.Flags().BoolP("ignore-case", "i", false, "ignore-case")
 }
