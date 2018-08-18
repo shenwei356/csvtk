@@ -231,7 +231,7 @@
 <p>Usage</p>
 <pre><code>A cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.14.0
+Version: 0.15.0-dev2
 
 Author: Wei Shen &lt;shenwei356@gmail.com&gt;
 
@@ -1758,7 +1758,7 @@ shenwei,999999
 </li>
 <li>
 <p>supporting <code>{kv}</code> and <code>{nr}</code> in <code>csvtk replace</code>. e.g., replace barcode with sample name.</p>
-<pre><code>$ cat barcodes.tsv 
+<pre><code>$ cat barcodes.tsv
 Sample  Barcode
 sc1     CCTAGATTAAT
 sc2     GAAGACTTGGT
@@ -1766,13 +1766,13 @@ sc3     GAAGCAGTATG
 sc4     GGTAACCTGAC
 sc5     ATAGTTCTCGT
 
-$ cat table.tsv 
+$ cat table.tsv
 gene    ATAGTTCTCGT     GAAGCAGTATG     GAAGACTTGGT     AAAAAAAAAA
 gene1   0       0       3       0
 gen1e2  0       0       0       0
 
 # note that, we must arrange the order of barcodes.tsv to KEY-VALUE
-$ csvtk cut -t -f 2,1 barcodes.tsv 
+$ csvtk cut -t -f 2,1 barcodes.tsv
 Barcode Sample
 CCTAGATTAAT     sc1
 GAAGACTTGGT     sc2
@@ -1782,7 +1782,7 @@ ATAGTTCTCGT     sc5
 
 # here we go!!!!
 
-$ csvtk rename2 -t -k &lt;(csvtk cut -t -f 2,1 barcodes.tsv) -f -1 -p '(.+)' -r '{kv}' --key-miss-repl unknown table.tsv 
+$ csvtk rename2 -t -k &lt;(csvtk cut -t -f 2,1 barcodes.tsv) -f -1 -p '(.+)' -r '{kv}' --key-miss-repl unknown table.tsv
 gene    sc5     sc3     sc2     unknown
 gene1   0       0       3       0
 gen1e2  0       0       0       0
@@ -1924,7 +1924,8 @@ Usage:
 
 Flags:
   -L, --digits int          number of digits after the dot (default 2)
-  -e, --expression string   artithmetic/string expressions. e.g. '$1 + $2', '$a / $b', ' $1 &gt; 100 ? &quot;big&quot; : &quot;small&quot; '
+  -s, --digits-as-string    treate digits as string to avoid converting big digits into scientific notation
+  -e, --expression string   artithmetic/string expressions. e.g. &quot;'string'&quot;, '&quot;abc&quot;', ' $a + &quot;-&quot; + $b ', '$1 + $2', '$a / $b', ' $1 &gt; 100 ? &quot;big&quot; : &quot;small&quot; '
   -h, --help                help for mutate2
   -n, --name string         new column name
 
@@ -1951,7 +1952,7 @@ $ val=123 &amp;&amp; cat testdata/digitals.tsv | csvtk mutate2 -t -H -e " $val "
 <p>String concatenation</p>
 <pre><code>$ cat testdata/names.csv  \
     | csvtk mutate2 -n full_name -e ' $first_name + " " + $last_name ' \
-    | csvtk pretty 
+    | csvtk pretty
 id   first_name   last_name   username   full_name
 11   Rob          Pike        rob        Rob Pike
 2    Ken          Thompson    ken        Ken Thompson
@@ -2040,7 +2041,7 @@ Usage:
 Flags:
   -h, --help             help for sort
   -i, --ignore-case      ignore-case
-  -k, --keys strings     keys (multiple values supported). sort type supported, &quot;n&quot; for number, &quot;u&quot; for user-defined order and &quot;r&quot; for reverse. e.g., &quot;-k 1&quot; or &quot;-k A:r&quot; or &quot;&quot;-k 1:nr -k 2&quot; (default [1])
+  -k, --keys strings     keys (multiple values supported). sort type supported, &quot;N&quot; for natural order, &quot;n&quot; for number, &quot;u&quot; for user-defined order and &quot;r&quot; for reverse. e.g., &quot;-k 1&quot; or &quot;-k A:r&quot; or &quot;&quot;-k 1:nr -k 2&quot; (default [1])
   -L, --levels strings   user-defined level file (one level per line, multiple values supported). format: &lt;field&gt;:&lt;level-file&gt;.  e.g., &quot;-k name:u -L name:level.txt&quot;
 </code></pre>
 
@@ -2091,6 +2092,17 @@ NA,Robert,Abel,123
 2,Ken,Thompson,ken
 4,Robert,Griesemer,gri
 11,Rob,Pike,rob
+</code></pre>
+</li>
+<li>
+<p>in natural order</p>
+<pre><code>$ cat testdata/names.csv | csvtk sort -k id:N
+id,first_name,last_name,username
+1,Robert,Thompson,abc
+2,Ken,Thompson,ken
+4,Robert,Griesemer,gri
+11,Rob,Pike,rob
+NA,Robert,Abel,123
 </code></pre>
 </li>
 </ul>
