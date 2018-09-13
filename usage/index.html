@@ -231,7 +231,7 @@
 <p>Usage</p>
 <pre><code>A cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.15.0-dev2
+Version: 0.15.0-dev3
 
 Author: Wei Shen &lt;shenwei356@gmail.com&gt;
 
@@ -263,8 +263,8 @@ Available Commands:
   csv2md          convert CSV to markdown format
   csv2tab         convert CSV to tabular format
   cut             select parts of fields
-  filter          filter rows by values of selected fields with artithmetic expression
-  filter2         filter rows by awk-like artithmetic/string expressions
+  filter          filter rows by values of selected fields with arithmetic expression
+  filter2         filter rows by awk-like arithmetic/string expressions
   freq            frequencies of selected fields
   gather          gather columns into key-value pairs
   genautocomplete generate shell autocompletion script
@@ -275,7 +275,7 @@ Available Commands:
   inter           intersection of multiple files
   join            join multiple CSV files by selected fields
   mutate          create new column from selected fields by regular expression
-  mutate2         create new column from selected fields by awk-like artithmetic/string expressions
+  mutate2         create new column from selected fields by awk-like arithmetic/string expressions
   plot            plot common figures
   pretty          convert CSV to readable aligned table
   rename          rename column names
@@ -299,6 +299,7 @@ Flags:
   -C, --comment-char string    lines starting with commment-character will be ignored. if your header row starts with '#', please assign &quot;-C&quot; another rare symbol, e.g. '$' (default &quot;#&quot;)
   -d, --delimiter string       delimiting character of the input CSV file (default &quot;,&quot;)
   -h, --help                   help for csvtk
+  -E, --ignore-empty-row       ignore empty row
   -l, --lazy-quotes            if given, a quote may appear in an unquoted field and a non-doubled quote may appear in a quoted field
   -H, --no-header-row          specifies that the input CSV file does not have header row
   -j, --num-cpus int           number of CPUs to use (default value depends on your computer) (default 4)
@@ -1167,7 +1168,7 @@ n   id   first_name   last_name   username
 </ul>
 <h2 id="filter">filter</h2>
 <p>Usage</p>
-<pre><code>filter rows by values of selected fields with artithmetic expression
+<pre><code>filter rows by values of selected fields with arithmetic expression
 
 Usage:
   csvtk filter [flags]
@@ -1235,9 +1236,9 @@ id,first_name,last_name,username
 </ol>
 <h2 id="filter2">filter2</h2>
 <p>Usage</p>
-<pre><code>filter rows by awk-like artithmetic/string expressions
+<pre><code>filter rows by awk-like arithmetic/string expressions
 
-The artithmetic/string expression is supported by:
+The arithmetic/string expression is supported by:
 
     https://github.com/Knetic/govaluate
 
@@ -1286,7 +1287,7 @@ id,first_name,last_name,username
 </code></pre>
 </li>
 <li>
-<p>Artithmetic and string expressions</p>
+<p>arithmetic and string expressions</p>
 <pre><code>$ cat testdata/names.csv | csvtk filter2 -f '$id &gt; 3 || $username=="ken"'
 id,first_name,last_name,username
 11,Rob,Pike,rob
@@ -1295,7 +1296,7 @@ id,first_name,last_name,username
 </code></pre>
 </li>
 <li>
-<p>More artithmetic expressions</p>
+<p>More arithmetic expressions</p>
 <pre><code>$ cat testdata/digitals.tsv
 4       5       6
 1       2       3
@@ -1898,9 +1899,9 @@ shenwei,999999,s
 </ul>
 <h2 id="mutate2">mutate2</h2>
 <p>Usage</p>
-<pre><code>create new column from selected fields by awk-like artithmetic/string expressions
+<pre><code>create new column from selected fields by awk-like arithmetic/string expressions
 
-The artithmetic/string expression is supported by:
+The arithmetic/string expression is supported by:
 
     https://github.com/Knetic/govaluate
 
@@ -1925,7 +1926,7 @@ Usage:
 Flags:
   -L, --digits int          number of digits after the dot (default 2)
   -s, --digits-as-string    treate digits as string to avoid converting big digits into scientific notation
-  -e, --expression string   artithmetic/string expressions. e.g. &quot;'string'&quot;, '&quot;abc&quot;', ' $a + &quot;-&quot; + $b ', '$1 + $2', '$a / $b', ' $1 &gt; 100 ? &quot;big&quot; : &quot;small&quot; '
+  -e, --expression string   arithmetic/string expressions. e.g. &quot;'string'&quot;, '&quot;abc&quot;', ' $a + &quot;-&quot; + $b ', '$1 + $2', '$a / $b', ' $1 &gt; 100 ? &quot;big&quot; : &quot;small&quot; '
   -h, --help                help for mutate2
   -n, --name string         new column name
 

@@ -211,8 +211,8 @@ It could save you much time of writing Python/R scripts.</p>
 <li><code>uniq</code> unique data without sorting</li>
 <li><code>freq</code> frequencies of selected fields</li>
 <li><code>inter</code> intersection of multiple files</li>
-<li><code>filter</code> filter rows by values of selected fields with artithmetic expression</li>
-<li><code>filter2</code> filter rows by awk-like artithmetic/string expressions</li>
+<li><code>filter</code> filter rows by values of selected fields with arithmetic expression</li>
+<li><code>filter2</code> filter rows by awk-like arithmetic/string expressions</li>
 <li><code>join</code> join multiple CSV files by selected fields</li>
 <li><code>split</code> split CSV/TSV into multiple files according to column values</li>
 <li><code>splitxlsx</code> split XLSX sheet into multiple sheets according to column values</li>
@@ -224,7 +224,7 @@ It could save you much time of writing Python/R scripts.</p>
 <li><code>rename2</code> rename column names by regular expression</li>
 <li><code>replace</code> replace data of selected fields by regular expression</li>
 <li><code>mutate</code> create new columns from selected fields by regular expression</li>
-<li><code>mutate2</code> create new column from selected fields by awk-like artithmetic/string expressions</li>
+<li><code>mutate2</code> create new column from selected fields by awk-like arithmetic/string expressions</li>
 <li><code>gather</code> gather columns into key-value pairs</li>
 </ul>
 <p><strong>Ordering</strong></p>
@@ -525,11 +525,11 @@ field   num     sum   min     max     mean    stdev
 </ul>
 </li>
 <li>
-<p><strong>Filter rows by awk-like artithmetic/string expressions</strong> (<code>filter2</code>)</p>
+<p><strong>Filter rows by awk-like arithmetic/string expressions</strong> (<code>filter2</code>)</p>
 <ul>
 <li>Using field index: <code>csvtk filter2 -f '$3&gt;0'</code></li>
 <li>Using column names: <code>csvtk filter2 -f '$id &gt; 0'</code></li>
-<li>Both artithmetic and string expressions: <code>csvtk filter2 -f '$id &gt; 3 || $username=="ken"'</code></li>
+<li>Both arithmetic and string expressions: <code>csvtk filter2 -f '$id &gt; 3 || $username=="ken"'</code></li>
 <li>More complicated: <code>csvtk filter2 -H -t -f '$1 &gt; 2 &amp;&amp; $2 % 2 == 0'</code></li>
 </ul>
 </li>
@@ -646,5 +646,5 @@ propose new functions or ask for help.</p>
 
 <!--
 MkDocs version : 0.17.3
-Build Date UTC : 2018-08-18 05:56:30
+Build Date UTC : 2018-09-13 13:41:45
 -->
