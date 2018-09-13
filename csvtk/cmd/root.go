@@ -84,4 +84,6 @@ func init() {
 	RootCmd.PersistentFlags().BoolP("out-tabs", "T", false, `specifies that the output is delimited with tabs. Overrides "-D"`)
 	RootCmd.PersistentFlags().BoolP("no-header-row", "H", false, `specifies that the input CSV file does not have header row`)
 	RootCmd.PersistentFlags().StringP("out-file", "o", "-", `out file ("-" for stdout, suffix .gz for gzipped out)`)
+
+	RootCmd.PersistentFlags().BoolP("ignore-empty-row", "E", false, `ignore empty row`)
 }

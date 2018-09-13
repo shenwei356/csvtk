@@ -93,8 +93,8 @@ It could save you much time of writing Python/R scripts.
 -  `uniq` unique data without sorting
 -  `freq` frequencies of selected fields
 -  `inter` intersection of multiple files
--  `filter` filter rows by values of selected fields with artithmetic expression
--  `filter2` filter rows by awk-like artithmetic/string expressions
+-  `filter` filter rows by values of selected fields with arithmetic expression
+-  `filter2` filter rows by awk-like arithmetic/string expressions
 -  `join` join multiple CSV files by selected fields
 -  `split` split CSV/TSV into multiple files according to column values
 -  `splitxlsx` split XLSX sheet into multiple sheets according to column values
@@ -106,7 +106,7 @@ It could save you much time of writing Python/R scripts.
 -  `rename2` rename column names by regular expression
 -  `replace` replace data of selected fields by regular expression
 -  `mutate` create new columns from selected fields by regular expression
--  `mutate2` create new column from selected fields by awk-like artithmetic/string expressions
+-  `mutate2` create new column from selected fields by awk-like arithmetic/string expressions
 -  `gather` gather columns into key-value pairs
 
 **Ordering**
@@ -308,11 +308,11 @@ Examples
     - Using `--any` to print record if any of the field satisfy the condition: `csvtk filter -f "1-3>0" --any`
     - **fuzzy fields**: `csvtk filter -F -f "A*!=0"`
 
-1. **Filter rows by awk-like artithmetic/string expressions** (`filter2`)
+1. **Filter rows by awk-like arithmetic/string expressions** (`filter2`)
 
     - Using field index: `csvtk filter2 -f '$3>0'`
     - Using column names: `csvtk filter2 -f '$id > 0'`
-    - Both artithmetic and string expressions: `csvtk filter2 -f '$id > 3 || $username=="ken"'`
+    - Both arithmetic and string expressions: `csvtk filter2 -f '$id > 3 || $username=="ken"'`
     - More complicated: `csvtk filter2 -H -t -f '$1 > 2 && $2 % 2 == 0'`
 
 

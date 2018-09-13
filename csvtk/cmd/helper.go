@@ -37,7 +37,7 @@ import (
 )
 
 // VERSION of csvtk
-const VERSION = "0.15.0-dev2"
+const VERSION = "0.15.0-dev3"
 
 func checkError(err error) {
 	if err != nil {
@@ -191,6 +191,8 @@ type Config struct {
 	NoHeaderRow bool
 
 	OutFile string
+
+	IgnoreEmptyRow bool
 }
 
 func isTrue(s string) bool {
@@ -233,6 +235,8 @@ func getConfigs(cmd *cobra.Command) Config {
 		NoHeaderRow: noHeaderRow,
 
 		OutFile: getFlagString(cmd, "out-file"),
+
+		IgnoreEmptyRow: getFlagBool(cmd, "ignore-empty-row"),
 	}
 }
 
@@ -248,6 +252,7 @@ func newCSVReaderByConfig(config Config, file string) (*CSVReader, error) {
 	}
 	reader.Reader.Comment = config.CommentChar
 	reader.Reader.LazyQuotes = config.LazyQuotes
+	reader.IgnoreEmptyRow = config.IgnoreEmptyRow
 
 	return reader, nil
 }

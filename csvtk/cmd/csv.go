@@ -44,6 +44,8 @@ type CSVReader struct {
 	Ch         chan CSVRecordsChunk
 	MetaLine   []byte // meta line of separator declaration used by MS Excel
 
+	IgnoreEmptyRow bool
+
 	fh *xopen.Reader
 }
 
@@ -101,6 +103,8 @@ func (csvReader *CSVReader) Run() {
 		chunkData := make([][]string, csvReader.chunkSize)
 		var id uint64
 		var i int
+		var notBlank bool
+		var data string
 		for {
 			record, err := csvReader.Reader.Read()
 			if err == io.EOF {
@@ -114,6 +118,18 @@ func (csvReader *CSVReader) Run() {
 			}
 			if record == nil {
 				continue
+			}
+			if csvReader.IgnoreEmptyRow {
+				notBlank = false
+				for _, data = range record {
+					if len(data) > 0 {
+						notBlank = true
+						break
+					}
+				}
+				if !notBlank {
+					continue
+				}
 			}
 			chunkData[i] = record
 			i++

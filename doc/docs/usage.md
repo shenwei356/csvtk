@@ -82,7 +82,7 @@ Usage
 ```
 A cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.15.0-dev2
+Version: 0.15.0-dev3
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -114,8 +114,8 @@ Available Commands:
   csv2md          convert CSV to markdown format
   csv2tab         convert CSV to tabular format
   cut             select parts of fields
-  filter          filter rows by values of selected fields with artithmetic expression
-  filter2         filter rows by awk-like artithmetic/string expressions
+  filter          filter rows by values of selected fields with arithmetic expression
+  filter2         filter rows by awk-like arithmetic/string expressions
   freq            frequencies of selected fields
   gather          gather columns into key-value pairs
   genautocomplete generate shell autocompletion script
@@ -126,7 +126,7 @@ Available Commands:
   inter           intersection of multiple files
   join            join multiple CSV files by selected fields
   mutate          create new column from selected fields by regular expression
-  mutate2         create new column from selected fields by awk-like artithmetic/string expressions
+  mutate2         create new column from selected fields by awk-like arithmetic/string expressions
   plot            plot common figures
   pretty          convert CSV to readable aligned table
   rename          rename column names
@@ -150,6 +150,7 @@ Flags:
   -C, --comment-char string    lines starting with commment-character will be ignored. if your header row starts with '#', please assign "-C" another rare symbol, e.g. '$' (default "#")
   -d, --delimiter string       delimiting character of the input CSV file (default ",")
   -h, --help                   help for csvtk
+  -E, --ignore-empty-row       ignore empty row
   -l, --lazy-quotes            if given, a quote may appear in an unquoted field and a non-doubled quote may appear in a quoted field
   -H, --no-header-row          specifies that the input CSV file does not have header row
   -j, --num-cpus int           number of CPUs to use (default value depends on your computer) (default 4)
@@ -952,7 +953,7 @@ Matched parts will be *highlight*
 Usage
 
 ```
-filter rows by values of selected fields with artithmetic expression
+filter rows by values of selected fields with arithmetic expression
 
 Usage:
   csvtk filter [flags]
@@ -1020,9 +1021,9 @@ Examples
 Usage
 
 ```
-filter rows by awk-like artithmetic/string expressions
+filter rows by awk-like arithmetic/string expressions
 
-The artithmetic/string expression is supported by:
+The arithmetic/string expression is supported by:
 
     https://github.com/Knetic/govaluate
 
@@ -1069,7 +1070,7 @@ Examples:
         11,Rob,Pike,rob
         4,Robert,Griesemer,gri
 
-1. Artithmetic and string expressions
+1. arithmetic and string expressions
 
         $ cat testdata/names.csv | csvtk filter2 -f '$id > 3 || $username=="ken"'
         id,first_name,last_name,username
@@ -1077,7 +1078,7 @@ Examples:
         2,Ken,Thompson,ken
         4,Robert,Griesemer,gri
 
-1. More artithmetic expressions
+1. More arithmetic expressions
 
         $ cat testdata/digitals.tsv
         4       5       6
@@ -1684,9 +1685,9 @@ Examples
 Usage
 
 ```
-create new column from selected fields by awk-like artithmetic/string expressions
+create new column from selected fields by awk-like arithmetic/string expressions
 
-The artithmetic/string expression is supported by:
+The arithmetic/string expression is supported by:
 
     https://github.com/Knetic/govaluate
 
@@ -1711,7 +1712,7 @@ Usage:
 Flags:
   -L, --digits int          number of digits after the dot (default 2)
   -s, --digits-as-string    treate digits as string to avoid converting big digits into scientific notation
-  -e, --expression string   artithmetic/string expressions. e.g. "'string'", '"abc"', ' $a + "-" + $b ', '$1 + $2', '$a / $b', ' $1 > 100 ? "big" : "small" '
+  -e, --expression string   arithmetic/string expressions. e.g. "'string'", '"abc"', ' $a + "-" + $b ', '$1 + $2', '$a / $b', ' $1 > 100 ? "big" : "small" '
   -h, --help                help for mutate2
   -n, --name string         new column name
 
