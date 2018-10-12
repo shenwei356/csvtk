@@ -80,9 +80,9 @@
 Usage
 
 ```
-A cross-platform, efficient and practical CSV/TSV toolkit
+csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.15.0-dev3
+Version: 0.15.0
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -115,7 +115,7 @@ Available Commands:
   csv2tab         convert CSV to tabular format
   cut             select parts of fields
   filter          filter rows by values of selected fields with arithmetic expression
-  filter2         filter rows by awk-like arithmetic/string expressions
+  filter2         filter rows by awk-like artithmetic/string expressions
   freq            frequencies of selected fields
   gather          gather columns into key-value pairs
   genautocomplete generate shell autocompletion script
@@ -126,7 +126,7 @@ Available Commands:
   inter           intersection of multiple files
   join            join multiple CSV files by selected fields
   mutate          create new column from selected fields by regular expression
-  mutate2         create new column from selected fields by awk-like arithmetic/string expressions
+  mutate2         create new column from selected fields by awk-like artithmetic/string expressions
   plot            plot common figures
   pretty          convert CSV to readable aligned table
   rename          rename column names

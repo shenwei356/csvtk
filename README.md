@@ -134,7 +134,7 @@ It could save you much time of writing Python/R scripts.
  executable binary files **for most popular operating systems** are freely available
   in [release](https://github.com/shenwei356/csvtk/releases) page.
 
-#### Method 1: Download binaries
+#### Method 1: Download binaries (latest stable/dev version)
 
 Just [download](https://github.com/shenwei356/csvtk/releases) compressed
 executable file of your operating system,
@@ -146,24 +146,25 @@ And then:
 
             sudo cp csvtk /usr/local/bin/
 
-    1. Or add the current directory of the executable file to environment variable
-    `PATH`:
+    1. Or copy to anywhere in the environment variable `PATH`:
 
-            echo export PATH=\$PATH:\"$(pwd)\" >> ~/.bashrc
-            source ~/.bashrc
-
+            mkdir -p $HOME/bin/; cp csvtk $HOME/bin/
 
 1. **For windows**, just copy `csvtk.exe` to `C:\WINDOWS\system32`.
 
-#### Method 2: Install via conda [![Install-with-conda](https://anaconda.org/bioconda/csvtk/badges/installer/conda.svg)](http://bioinf.shenwei.me/csvtk/download/) [![Anaconda Cloud](	https://anaconda.org/bioconda/csvtk/badges/version.svg)](https://anaconda.org/bioconda/csvtk) [![downloads](https://anaconda.org/bioconda/csvtk/badges/downloads.svg)](https://anaconda.org/bioconda/csvtk)
+#### Method 2: Install via conda (latest stable version)  [![Install-with-conda](https://anaconda.org/bioconda/csvtk/badges/installer/conda.svg)](http://bioinf.shenwei.me/csvtk/download/) [![Anaconda Cloud](	https://anaconda.org/bioconda/csvtk/badges/version.svg)](https://anaconda.org/bioconda/csvtk) [![downloads](https://anaconda.org/bioconda/csvtk/badges/downloads.svg)](https://anaconda.org/bioconda/csvtk)
 
     conda install -c bioconda csvtk
 
-#### Method 3: For Go developer
+#### Method 3: Install via homebrew  (latest stable version)
+
+    brew install brewsci/bio/csvtk
+
+#### Method 4: For Go developer (latest stable/dev version)
 
     go get -u github.com/shenwei356/csvtk/csvtk
 
-#### Method 4: For ArchLinux AUR users
+#### Method 5: For ArchLinux AUR users (may be not the latest)
 
     yaourt -S csvtk
 

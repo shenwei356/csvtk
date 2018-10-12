@@ -32,7 +32,7 @@ import (
 var RootCmd = &cobra.Command{
 	Use:   "csvtk",
 	Short: "A cross-platform, efficient and practical CSV/TSV toolkit",
-	Long: fmt.Sprintf(`A cross-platform, efficient and practical CSV/TSV toolkit
+	Long: fmt.Sprintf(`csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
 Version: %s
 
