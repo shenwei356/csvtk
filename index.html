@@ -250,7 +250,7 @@ It could save you much time of writing Python/R scripts.</p>
 <p><code>csvtk</code> is implemented in <a href="https://golang.org/">Go</a> programming language,
  executable binary files <strong>for most popular operating systems</strong> are freely available
   in <a href="https://github.com/shenwei356/csvtk/releases">release</a> page.</p>
-<h4 id="method-1-download-binaries">Method 1: Download binaries</h4>
+<h4 id="method-1-download-binaries-latest-stabledev-version">Method 1: Download binaries (latest stable/dev version)</h4>
 <p>Just <a href="https://github.com/shenwei356/csvtk/releases">download</a> compressed
 executable file of your operating system,
 and decompress it with <code>tar -zxvf *.tar.gz</code> command or other tools.
@@ -265,10 +265,8 @@ And then:</p>
 </code></pre>
 </li>
 <li>
-<p>Or add the current directory of the executable file to environment variable
-<code>PATH</code>:</p>
-<pre><code>echo export PATH=\$PATH:\"$(pwd)\" &gt;&gt; ~/.bashrc
-source ~/.bashrc
+<p>Or copy to anywhere in the environment variable <code>PATH</code>:</p>
+<pre><code>mkdir -p $HOME/bin/; cp csvtk $HOME/bin/
 </code></pre>
 </li>
 </ol>
@@ -277,13 +275,16 @@ source ~/.bashrc
 <p><strong>For windows</strong>, just copy <code>csvtk.exe</code> to <code>C:\WINDOWS\system32</code>.</p>
 </li>
 </ol>
-<h4 id="method-2-install-via-conda">Method 2: Install via conda <a href="http://bioinf.shenwei.me/csvtk/download/"><img alt="Install-with-conda" src="https://anaconda.org/bioconda/csvtk/badges/installer/conda.svg" /></a> <a href="https://anaconda.org/bioconda/csvtk"><img alt="Anaconda Cloud" src="https://anaconda.org/bioconda/csvtk/badges/version.svg" /></a> <a href="https://anaconda.org/bioconda/csvtk"><img alt="downloads" src="https://anaconda.org/bioconda/csvtk/badges/downloads.svg" /></a></h4>
+<h4 id="method-2-install-via-conda-latest-stable-version">Method 2: Install via conda (latest stable version)  <a href="http://bioinf.shenwei.me/csvtk/download/"><img alt="Install-with-conda" src="https://anaconda.org/bioconda/csvtk/badges/installer/conda.svg" /></a> <a href="https://anaconda.org/bioconda/csvtk"><img alt="Anaconda Cloud" src="https://anaconda.org/bioconda/csvtk/badges/version.svg" /></a> <a href="https://anaconda.org/bioconda/csvtk"><img alt="downloads" src="https://anaconda.org/bioconda/csvtk/badges/downloads.svg" /></a></h4>
 <pre><code>conda install -c bioconda csvtk
 </code></pre>
-<h4 id="method-3-for-go-developer">Method 3: For Go developer</h4>
+<h4 id="method-3-install-via-homebrew-latest-stable-version">Method 3: Install via homebrew  (latest stable version)</h4>
+<pre><code>brew install brewsci/bio/csvtk
+</code></pre>
+<h4 id="method-4-for-go-developer-latest-stabledev-version">Method 4: For Go developer (latest stable/dev version)</h4>
 <pre><code>go get -u github.com/shenwei356/csvtk/csvtk
 </code></pre>
-<h4 id="method-4-for-archlinux-aur-users">Method 4: For ArchLinux AUR users</h4>
+<h4 id="method-5-for-archlinux-aur-users-may-be-not-the-latest">Method 5: For ArchLinux AUR users (may be not the latest)</h4>
 <pre><code>yaourt -S csvtk
 </code></pre>
 <h2 id="bash-completion">Bash-completion</h2>
@@ -646,5 +647,5 @@ propose new functions or ask for help.</p>
 
 <!--
 MkDocs version : 0.17.3
-Build Date UTC : 2018-09-13 13:41:45
+Build Date UTC : 2018-10-12 05:35:53
 -->
