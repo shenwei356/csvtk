@@ -241,9 +241,9 @@ var csv2jsonCmd = &cobra.Command{
 					}
 					for i, col = range HeaderRow {
 						if i < len(record)-1 {
-							outfh.WriteString(indent + indent + `"` + col + `":` + SEP + `"` + record[i] + `"` + "," + LF)
+							outfh.WriteString(indent + indent + `"` + unescapeJSONField(col) + `":` + SEP + `"` + unescapeJSONField(record[i]) + `"` + "," + LF)
 						} else {
-							outfh.WriteString(indent + indent + `"` + col + `":` + SEP + `"` + record[i] + `"` + LF)
+							outfh.WriteString(indent + indent + `"` + unescapeJSONField(col) + `":` + SEP + `"` + unescapeJSONField(record[i]) + `"` + LF)
 						}
 					}
 					outfh.WriteString(indent + "}")
@@ -255,9 +255,9 @@ var csv2jsonCmd = &cobra.Command{
 					}
 					for i, col = range record {
 						if i < len(record)-1 {
-							outfh.WriteString(indent + indent + `"` + col + `"` + "," + LF)
+							outfh.WriteString(indent + indent + `"` + unescapeJSONField(col) + `"` + "," + LF)
 						} else {
-							outfh.WriteString(indent + indent + `"` + col + `"` + LF)
+							outfh.WriteString(indent + indent + `"` + unescapeJSONField(col) + `"` + LF)
 						}
 					}
 					outfh.WriteString(indent + "]")
@@ -278,4 +278,15 @@ func init() {
 	RootCmd.AddCommand(csv2jsonCmd)
 	csv2jsonCmd.Flags().StringP("indent", "i", "  ", `indent. if given blank, output json in one line.`)
 	csv2jsonCmd.Flags().StringP("key", "k", "", "output json as an array of objects keyed by a given filed rather than as a list. e.g -k 1 or -k columnA")
+}
+
+func unescapeJSONField(s string) string {
+	s2 := make([]rune, 0, len(s))
+	for _, r := range s {
+		if r == '"' {
+			s2 = append(s2, rune('\\'))
+		}
+		s2 = append(s2, r)
+	}
+	return string(s2)
 }
