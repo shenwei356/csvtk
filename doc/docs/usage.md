@@ -30,6 +30,7 @@
 - [pretty](#pretty)
 - [transpose](#transpose)
 - [csv2md](#csv2md)
+- [csv2json](#csv2json)
 - [xlsx2csv](#xlsx2csv)
 
 **Set operations**
@@ -82,7 +83,7 @@ Usage
 ```
 csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.15.0
+Version: 0.16.0
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -111,6 +112,7 @@ Usage:
 Available Commands:
   collapse        collapse one field with selected fields as keys
   concat          concatenate CSV/TSV files by rows
+  csv2json        convert CSV to JSON format
   csv2md          convert CSV to markdown format
   csv2tab         convert CSV to tabular format
   cut             select parts of fields
@@ -350,6 +352,127 @@ Examples
     4       1       7       8
     5       2       8       1,000
     6       3       0       4
+
+## csv2json
+
+Usage
+
+```
+convert CSV to JSON format
+
+Usage:
+  csvtk csv2json [flags]
+
+Flags:
+  -h, --help            help for csv2json
+  -i, --indent string   indent. if given blank, output json in one line. (default "  ")
+  -k, --key string      output json as an array of objects keyed by a given filed rather than as a list. e.g -k 1 or -k columnA
+
+```
+
+Examples
+
+- test data
+
+        $ cat data.csv
+        ID,room,name
+        3,G13,Simon
+        5,103,Anna
+
+- default operation
+
+        $ cat data.csv | csvtk csv2json
+        [
+          {
+            "ID": "3",
+            "room": "G13",
+            "name": "Simon"
+          },
+          {
+            "ID": "5",
+            "room": "103",
+            "name": "Anna"
+          }
+        ]
+
+- change indent
+
+        $ cat data.csv | csvtk csv2json -i "    "
+        [
+            {
+                "ID": "3",
+                "room": "G13",
+                "name": "Simon"
+            },
+            {
+                "ID": "5",
+                "room": "103",
+                "name": "Anna"
+            }
+        ]
+
+- change indent 2)
+
+        $ cat data.csv | csvtk csv2json -i ""
+        [{"ID":"3","room":"G13","name":"Simon"},{"ID":"5","room":"103","name":"Anna"}]
+
+- output json as an array of objects keyed by a given filed rather than as a list.
+
+        $ cat data.csv | csvtk csv2json -k ID
+        {
+          "3": {
+            "ID": "3",
+            "room": "G13",
+            "name": "Simon"
+          },
+          "5": {
+            "ID": "5",
+            "room": "103",
+            "name": "Anna"
+          }
+        }
+
+- for CSV without header row
+
+        $ cat data.csv | csvtk csv2json -H
+        [
+          [
+            "ID",
+            "room",
+            "name"
+          ],
+          [
+            "3",
+            "G13",
+            "Simon"
+          ],
+          [
+            "5",
+            "103",
+            "Anna"
+          ]
+        ]
+
+- for CSV without header row 2)
+
+        $ cat data.csv | csvtk csv2json -H -k 1
+        {
+          "ID": [
+            "ID",
+            "room",
+            "name"
+          ],
+          "3": [
+            "3",
+            "G13",
+            "Simon"
+          ],
+          "5": [
+            "5",
+            "103",
+            "Anna"
+          ]
+        }
 
 ## csv2md
 

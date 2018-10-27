@@ -65,7 +65,7 @@ It could save you much time of writing Python/R scripts.
 
 ## Subcommands
 
-32 subcommands in total.
+33 subcommands in total.
 
 **Information**
 
@@ -81,6 +81,7 @@ It could save you much time of writing Python/R scripts.
 -  `space2tab` convert space delimited format to CSV
 -  `transpose` transpose CSV data
 -  `csv2md` convert CSV to markdown format
+-  `csv2json` convert CSV to JSON format
 -  `xlsx2csv` convert XLSX to CSV format
 
 **Set operations**

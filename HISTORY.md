@@ -1,3 +1,6 @@
+- [csvtk v0.16.0](https://github.com/shenwei356/csvtk/releases/tag/v0.16.0)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.16.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.16.0)
+    - new command: `csvtk csv2json`: convert CSV to JSON format
 
 - [csvtk v0.15.0](https://github.com/shenwei356/csvtk/releases/tag/v0.15.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.15.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.15.0)
