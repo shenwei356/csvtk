@@ -1,7 +1,7 @@
 - [csvtk v0.16.0](https://github.com/shenwei356/csvtk/releases/tag/v0.16.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.16.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.16.0)
     - new command: `csvtk csv2json`: convert CSV to JSON format
-
+    - `csvtk replace`: add flag `--nr-width`: minimum width for {nr} in flag -r/--replacement. e.g., formating "1" to "001" by `--nr-width 3` (default 1)
 - [csvtk v0.15.0](https://github.com/shenwei356/csvtk/releases/tag/v0.15.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.15.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.15.0)
     - `csvtk`: add global flag `-E/--ignore-empty-row` to skip empty row. [#50](https://github.com/shenwei356/csvtk/issues/50)

@@ -25,7 +25,6 @@ import (
 	"fmt"
 	"regexp"
 	"runtime"
-	"strconv"
 	"strings"
 
 	"github.com/shenwei356/xopen"
@@ -85,6 +84,8 @@ Special replacement symbols:
 		keepKey := getFlagBool(cmd, "keep-key")
 		keyCaptIdx := getFlagPositiveInt(cmd, "key-capt-idx")
 		keyMissRepl := getFlagString(cmd, "key-miss-repl")
+		nrWidth := getFlagPositiveInt(cmd, "nr-width")
+		nrFormat := fmt.Sprintf("%%0%dd", nrWidth)
 
 		var replaceWithNR bool
 		if reNR.MatchString(replacement) {
@@ -282,7 +283,7 @@ Special replacement symbols:
 							r = replacement
 
 							if replaceWithNR {
-								r = reNR.ReplaceAllString(r, strconv.Itoa(nr))
+								r = reNR.ReplaceAllString(r, fmt.Sprintf(nrFormat, nr))
 							}
 
 							if replaceWithKV {
@@ -338,6 +339,7 @@ func init() {
 	replaceCmd.Flags().BoolP("keep-key", "K", false, "keep the key as value when no value found for the key")
 	replaceCmd.Flags().IntP("key-capt-idx", "I", 1, "capture variable index of key (1-based)")
 	replaceCmd.Flags().StringP("key-miss-repl", "", "", "replacement for key with no corresponding value")
+	replaceCmd.Flags().IntP("nr-width", "", 1, `minimum width for {nr} in flag -r/--replacement. e.g., formating "1" to "001" by --nr-width 3`)
 }
 
 var reNR = regexp.MustCompile(`\{(NR|nr)\}`)
