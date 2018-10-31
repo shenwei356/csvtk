@@ -77,6 +77,7 @@ Special replacement symbols:
 		keyCaptIdx := getFlagPositiveInt(cmd, "key-capt-idx")
 		keyMissRepl := getFlagString(cmd, "key-miss-repl")
 		startNum := getFlagNonNegativeInt(cmd, "start-num")
+		kvFileAllLeftColumnsAsValue := getFlagBool(cmd, "kv-file-all-left-columns-as-value")
 		var replaceWithNR bool
 		if reNR.MatchString(replacement) {
 			replaceWithNR = true
@@ -93,7 +94,7 @@ Special replacement symbols:
 				checkError(fmt.Errorf(`since replacement symbol "{kv}"/"{KV}" found in value of flag -r (--replacement), tab-delimited key-value file should be given by flag -k (--kv-file)`))
 			}
 			log.Infof("read key-value file: %s", kvFile)
-			kvs, err = readKVs(kvFile)
+			kvs, err = readKVs(kvFile, kvFileAllLeftColumnsAsValue)
 			if err != nil {
 				checkError(fmt.Errorf("read key-value file: %s", err))
 			}
@@ -290,7 +291,7 @@ Special replacement symbols:
 								}
 
 								record2[f] = patternRegexp.ReplaceAllString(record2[f], r)
-                                
+
 								nr++
 							}
 						}
@@ -328,4 +329,5 @@ func init() {
 	rename2Cmd.Flags().IntP("key-capt-idx", "I", 1, "capture variable index of key (1-based)")
 	rename2Cmd.Flags().StringP("key-miss-repl", "", "", "replacement for key with no corresponding value")
 	rename2Cmd.Flags().IntP("start-num", "n", 1, `starting number when using {nr} in replacement`)
+	rename2Cmd.Flags().BoolP("kv-file-all-left-columns-as-value", "A", false, "treat all columns except 1th one as value for kv-file with more than 2 columns")
 }

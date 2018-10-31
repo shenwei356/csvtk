@@ -36,9 +36,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// VERSION of csvtk
-const VERSION = "0.16.0"
-
 func checkError(err error) {
 	if err != nil {
 		log.Error(err)
@@ -689,7 +686,7 @@ func removeComma(s string) string {
 	return string(newSlice)
 }
 
-func readKVs(file string) (map[string]string, error) {
+func readKVs(file string, allLeftAsValue bool) (map[string]string, error) {
 	type KV [2]string
 	fn := func(line string) (interface{}, bool, error) {
 		line = strings.TrimRight(line, "\r\n")
@@ -701,6 +698,9 @@ func readKVs(file string) (map[string]string, error) {
 			return nil, false, nil
 		}
 
+		if allLeftAsValue {
+			return KV([2]string{items[0], strings.Join(items[1:], "\t")}), true, nil
+		}
 		return KV([2]string{items[0], items[1]}), true, nil
 	}
 	kvs := make(map[string]string)

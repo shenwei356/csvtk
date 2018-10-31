@@ -28,6 +28,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// VERSION of csvtk
+const VERSION = "0.16.0"
+
 // versionCmd represents the version command
 var versionCmd = &cobra.Command{
 	Use:   "version",

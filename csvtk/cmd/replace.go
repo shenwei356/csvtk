@@ -86,6 +86,7 @@ Special replacement symbols:
 		keyMissRepl := getFlagString(cmd, "key-miss-repl")
 		nrWidth := getFlagPositiveInt(cmd, "nr-width")
 		nrFormat := fmt.Sprintf("%%0%dd", nrWidth)
+		kvFileAllLeftColumnsAsValue := getFlagBool(cmd, "kv-file-all-left-columns-as-value")
 
 		var replaceWithNR bool
 		if reNR.MatchString(replacement) {
@@ -103,7 +104,7 @@ Special replacement symbols:
 				checkError(fmt.Errorf(`since replacement symbol "{kv}"/"{KV}" found in value of flag -r (--replacement), tab-delimited key-value file should be given by flag -k (--kv-file)`))
 			}
 			log.Infof("read key-value file: %s", kvFile)
-			kvs, err = readKVs(kvFile)
+			kvs, err = readKVs(kvFile, kvFileAllLeftColumnsAsValue)
 			if err != nil {
 				checkError(fmt.Errorf("read key-value file: %s", err))
 			}
@@ -340,6 +341,7 @@ func init() {
 	replaceCmd.Flags().IntP("key-capt-idx", "I", 1, "capture variable index of key (1-based)")
 	replaceCmd.Flags().StringP("key-miss-repl", "", "", "replacement for key with no corresponding value")
 	replaceCmd.Flags().IntP("nr-width", "", 1, `minimum width for {nr} in flag -r/--replacement. e.g., formating "1" to "001" by --nr-width 3`)
+	replaceCmd.Flags().BoolP("kv-file-all-left-columns-as-value", "A", false, "treat all columns except 1th one as value for kv-file with more than 2 columns")
 }
 
 var reNR = regexp.MustCompile(`\{(NR|nr)\}`)
