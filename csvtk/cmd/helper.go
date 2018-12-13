@@ -319,9 +319,13 @@ func parseFields(cmd *cobra.Command,
 			found := reIntegerRange.FindAllStringSubmatch(s, -1)
 			if len(found) > 0 { // field range
 				start, err := strconv.Atoi(found[0][1])
-				checkError(err)
+				if err != nil {
+					checkError(fmt.Errorf("fail to parse field range: %s. it should be an integer", found[0][1]))
+				}
 				end, err := strconv.Atoi(found[0][2])
-				checkError(err)
+				if err != nil {
+					checkError(fmt.Errorf("fail to parse field range: %s. it should be an integer", found[0][2]))
+				}
 				if start == 0 || end == 0 {
 					checkError(fmt.Errorf("no 0 allowed in field range: %s", s))
 				}
@@ -333,7 +337,9 @@ func parseFields(cmd *cobra.Command,
 				}
 			} else {
 				field, err := strconv.Atoi(s)
-				checkError(err)
+				if err != nil {
+					checkError(fmt.Errorf("fail to parse digital field: %s, you may mix use digital fields and column names", s))
+				}
 				fields = append(fields, field)
 			}
 		}
