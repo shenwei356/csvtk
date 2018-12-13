@@ -41,8 +41,13 @@ var statsCmd = &cobra.Command{
 	Short:   "summary of selected digital fields",
 	Long: `summary of selected digital fields: 
 
+Attention:
+  1. do not mix use digital fields and column names.
+
 Available operations:
-	
+  count, min, max, sum
+  mean, stdev, variance
+  entropy, prod
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
