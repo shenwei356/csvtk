@@ -66,7 +66,7 @@ done
 
 
 # ----------------------------------------------------------------------------
-# csvtk stats
+# csvtk dim
 # ----------------------------------------------------------------------------
 
 for n in $N; do                 # scales
@@ -81,9 +81,9 @@ for n in $N; do                 # scales
                 tab=-t
             fi
             fn() {
-                matrix $(($n*2)) $n $d $h | $app $tab $headrow stats
+                matrix $(($n*2)) $n $d $h | $app $tab $headrow dim
             }
-            run "stats $tab $headrow (n=$n)" fn
+            run "dim $tab $headrow (n=$n)" fn
             
             if [ $h = true ]; then
                 assert_no_stderr
