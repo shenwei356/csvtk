@@ -12,6 +12,7 @@
     starts with `#`, please assign flag `-C` another rare symbol, e.g. `'$'`.
 5. By default, csvtk handles CSV files, use flag `-t` for tab-delimited files.
 6. If `"` exists in tab-delimited files, use flag `-l`.
+7. Do not mix use digital fields and column names.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -22,8 +23,8 @@
 **Information**
 
 - [headers](#headers)
+- [dim](#dim)
 - [stats](#stats)
-- [stats2](#stats2)
 
 **Format conversion**
 
@@ -92,19 +93,20 @@ Source code: https://github.com/shenwei356/csvtk
 
 Attention:
 
-    1. The CSV parser requires all the lines have same number of fields/columns.
-       Even lines with spaces will cause error.
-    2. By default, csvtk thinks your files have header row, if not, switch flag "-H" on.
-    3. Column names better be unique.
-    4. By default, lines starting with "#" will be ignored, if the header row
-       starts with "#", please assign flag "-C" another rare symbol, e.g. '$'.
-    5. By default, csvtk handles CSV files, use flag "-t" for tab-delimited files.
-    6. If " exists in tab-delimited files, use flag "-l".
+  1. The CSV parser requires all the lines have same number of fields/columns.
+     Even lines with spaces will cause error.
+  2. By default, csvtk thinks your files have header row, if not, switch flag "-H" on.
+  3. Column names better be unique.
+  4. By default, lines starting with "#" will be ignored, if the header row
+     starts with "#", please assign flag "-C" another rare symbol, e.g. '$'.
+  5. By default, csvtk handles CSV files, use flag "-t" for tab-delimited files.
+  6. If " exists in tab-delimited files, use flag "-l".
+  7. Do not mix use digital fields and column names.
 
 Environment variables for frequently used global flags
 
-    - "CSVTK_T" for flag "-t/--tabs"
-    - "CSVTK_H" for flag "-H/--no-header-row"
+  - "CSVTK_T" for flag "-t/--tabs"
+  - "CSVTK_H" for flag "-H/--no-header-row"
 
 Usage:
   csvtk [command]
@@ -116,6 +118,7 @@ Available Commands:
   csv2md          convert CSV to markdown format
   csv2tab         convert CSV to tabular format
   cut             select parts of fields
+  dim             dimensions of CSV file
   filter          filter rows by values of selected fields with arithmetic expression
   filter2         filter rows by awk-like artithmetic/string expressions
   freq            frequencies of selected fields
@@ -139,8 +142,7 @@ Available Commands:
   space2tab       convert space delimited format to CSV
   split           split CSV/TSV into multiple files according to column values
   splitxlsx       split XLSX sheet into multiple sheets according to column values
-  stats           summary of CSV file
-  stats2          summary of selected digital fields
+  stats           summary statistics of selected digital fields (groupby group fields)
   tab2csv         convert tabular format to CSV
   transpose       transpose CSV data
   uniq            unique data without sorting
@@ -155,12 +157,11 @@ Flags:
   -E, --ignore-empty-row       ignore empty row
   -l, --lazy-quotes            if given, a quote may appear in an unquoted field and a non-doubled quote may appear in a quoted field
   -H, --no-header-row          specifies that the input CSV file does not have header row
-  -j, --num-cpus int           number of CPUs to use (default value depends on your computer) (default 4)
-  -D, --out-delimiter string   delimiting character of the output CSV file (default ",")
+  -j, --num-cpus int           number of CPUs to use (default value depends on your computer) (default 16)
+  -D, --out-delimiter string   delimiting character of the output CSV file, e.g., -D $'\t' for tab (default ",")
   -o, --out-file string        out file ("-" for stdout, suffix .gz for gzipped out) (default "-")
   -T, --out-tabs               specifies that the output is delimited with tabs. Overrides "-D"
   -t, --tabs                   specifies that the input CSV file is delimited with tabs. Overrides "-d" and "-D"
-
 ```
 
 ## headers
@@ -178,7 +179,7 @@ Usage:
 Examples
 
 ```
-$ csvtk headers testdata/*.csv$
+$ csvtk headers testdata/*.csv
 # testdata/1.csv
 1       name
 2       attr
@@ -191,18 +192,21 @@ $ csvtk headers testdata/*.csv$
 3       hobby
 ```
 
-## stats
+## dim
 
 Usage
 
 ```
-summary of CSV file
+dimensions of CSV file
 
 Usage:
-  csvtk stats [flags]
+  csvtk dim [flags]
 
 Aliases:
-  stats, stat
+  dim, size
+
+Flags:
+  -h, --help   help for dim
 
 ```
 
@@ -218,7 +222,7 @@ Examples
         1,"Robert","Thompson","abc"
         NA,"Robert","Abel","123"
 
-        $ cat testdata/names.csv | csvtk stats
+        $ cat testdata/names.csv | csvtk size
         file   num_cols   num_rows
         -             4          5
 
@@ -230,48 +234,120 @@ Examples
         7       8       0
         8       1,000   4
 
-        $ cat  testdata/digitals.tsv | csvtk stats -t -H
+        $ cat  testdata/digitals.tsv | csvtk size -t -H
         file   num_cols   num_rows
         -             3          4
 
-## stat2
+## stats
 
 Usage
 
 ```
-summary of selected digital fields: num, sum, min, max, mean, stdev
+summary statistics of selected digital fields (groupby group fields)
+
+Attention:
+
+  1. Do not mix use digital fields and column names.
+  
+Available operations:
+
+  # provided by github.com/gonum/stat and github.com/gonum/floats
+  count, min, max, sum,
+  mean, stdev, variance, median, q1, q2, q3,
+  entropy (Shannon entropy), 
+  prod (product of the elements)
 
 Usage:
-  csvtk stats2 [flags]
+  csvtk stats [flags]
+
+Aliases:
+  stats, stat
 
 Flags:
-  -f, --fields string   select only these fields. e.g -f 1,2 or -f columnA,columnB
-  -F, --fuzzy-fields    using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
+  -n, --decimal-width int   limit floats to N decimal points (default 2)
+  -f, --fields strings      operations on these fields. e.g -f 1:count,1:sum or -f colA:mean. available operations: count, entropy, max, mean, median, min, prod, q1, q2, q3, stdev, sum, variance
+  -g, --groups string       group via fields. e.g -f 1,2 or -f columnA,columnB
+  -h, --help                help for stats
+  -i, --ignore-non-digits   ignore non-digital values like "NA" or "N/A"
 
 ```
 
 Examples
 
-1. simplest one
+1. data
 
-        $ seq 1 5 | csvtk stats2 -H -f 1
-        field   num   sum   min   max   mean   stdev
-        1         5    15     1     5      3    1.58
+        $ cat testdata/digitals2.csv 
+        f1,f2,f3,f4,f5
+        foo,bar,xyz,1,0
+        foo,bar2,xyz,1.5,-1
+        foo,bar2,xyz,3,2
+        foo,bar,xyz,5,3
+        foo,bar2,xyz,N/A,4
+        bar,xyz,abc,NA,2
+        bar,xyz,abc2,1,-1
+        bar,xyz,abc,2,0
+        bar,xyz,abc,1,5
+        bar,xyz,abc,3,100
+        bar,xyz2,abc3,2,3
+        bar,xyz2,abc3,2,1
 
-1. multiple fields
+1. use flag `-i/--ignore-non-digits`
 
-        $ cat  testdata/digitals.tsv
-        4       5       6
-        1       2       3
-        7       8       0
-        8       1,000   4
+        $ cat testdata/digitals2.csv | csvtk stats -f f4:sum
+        [ERRO] column 4 has non-digital data: N/A, you can use flag -i/--ignore-non-digits to skip these data
 
-        $ cat  testdata/digitals.tsv | csvtk stats2 -t -H -f 1-3
-        field   num     sum   min     max     mean    stdev
-        1         4      20     1       8        5     3.16
-        2         4   1,015     2   1,000   253.75   497.51
-        3         4      13     0       6     3.25      2.5
+        $ cat testdata/digitals2.csv | csvtk stats -f f4:sum -i
+        f4:sum
+        21.50
 
+1. multiple fields suported
+
+        $ cat testdata/digitals2.csv | csvtk stats -f f4:sum,f5:sum -i
+        f4:sum,f5:sum
+        21.50,118.00
+
+1. using fields instead of colname is still supported
+
+        $ cat testdata/digitals2.csv | csvtk stats -f 4:sum,5:sum -i
+        f4:sum,f5:sum
+        21.50,118.00
+
+1. but remember not mixing use digital fields and column names
+
+        $ cat testdata/digitals2.csv | csvtk stats -f f4:sum,5:sum -i
+        [ERRO] column "5" not existed in file: -
+
+        $ cat testdata/digitals2.csv | csvtk stats -f 4:sum,f5:sum -i
+        [ERRO] fail to parse digital field: f5, you may mix use digital fields and column names
+
+1. groupby
+
+        $ cat testdata/digitals2.csv | csvtk stats -i -f f4:sum,f5:sum -g f1,f2 \
+            | csvtk pretty
+        f1    f2     f4:sum   f5:sum
+        bar   xyz    7.00     106.00
+        bar   xyz2   4.00     4.00
+        foo   bar    6.00     3.00
+        foo   bar2   4.50     5.00
+
+1. for data without header line
+
+        $ cat testdata/digitals2.csv | sed 1d \
+            | csvtk stats -H -i -f 4:sum,5:sum -g 1,2 \
+            | csvtk pretty
+        bar   xyz    7.00   106.00
+        bar   xyz2   4.00   4.00
+        foo   bar    6.00   3.00
+        foo   bar2   4.50   5.00
+
+1. more statistics
+
+        $ cat testdata/digitals2.csv \
+            | csvtk stats -i -g f1 -f f4:count,f4:mean,f4:stdev,f4:q1,f4:q2,f4:mean,f4:q3,f4:min,f4:max \
+            | csvtk pretty
+        f1    f4:count   f4:mean   f4:stdev   f4:q1   f4:q2   f4:mean   f4:q3   f4:min   f4:max
+        bar   6.00       1.83      0.75       1.00    2.00    1.83      2.00    1.00     3.00
+        foo   4.00       2.62      1.80       1.25    2.25    2.62      4.00    1.00     5.00
 
 ## pretty
 
@@ -282,13 +358,14 @@ convert CSV to readable aligned table
 
 Attention:
 
-    csv2md treats the first row as header line and requires them to be unique
+  pretty treats the first row as header line and requires them to be unique
 
 Usage:
   csvtk pretty [flags]
 
 Flags:
   -r, --align-right        align right
+  -h, --help               help for pretty
   -W, --max-width int      max width
   -w, --min-width int      min width
   -s, --separator string   fields/columns separator (default "   ")
@@ -483,7 +560,7 @@ convert CSV to markdown format
 
 Attention:
 
-    csv2md treats the first row as header line and requires them to be unique
+  csv2md treats the first row as header line and requires them to be unique
 
 Usage:
   csvtk csv2md [flags]
@@ -1144,26 +1221,26 @@ Examples
 Usage
 
 ```
-filter rows by awk-like arithmetic/string expressions
+filter rows by awk-like artithmetic/string expressions
 
-The arithmetic/string expression is supported by:
+The artithmetic/string expression is supported by:
 
-    https://github.com/Knetic/govaluate
+  https://github.com/Knetic/govaluate
 
 Supported operators and types:
 
-    Modifiers: + - / * & | ^ ** % >> <<
-    Comparators: > >= < <= == != =~ !~
-    Logical ops: || &&
-    Numeric constants, as 64-bit floating point (12345.678)
-    String constants (single quotes: 'foobar')
-    Date constants (single quotes)
-    Boolean constants: true false
-    Parenthesis to control order of evaluation ( )
-    Arrays (anything separated by , within parenthesis: (1, 2, 'foo'))
-    Prefixes: ! - ~
-    Ternary conditional: ? :
-    Null coalescence: ??
+  Modifiers: + - / * & | ^ ** % >> <<
+  Comparators: > >= < <= == != =~ !~
+  Logical ops: || &&
+  Numeric constants, as 64-bit floating point (12345.678)
+  String constants (single quotes: 'foobar')
+  Date constants (single quotes)
+  Boolean constants: true false
+  Parenthesis to control order of evaluation ( )
+  Arrays (anything separated by , within parenthesis: (1, 2, 'foo'))
+  Prefixes: ! - ~
+  Ternary conditional: ? :
+  Null coalescence: ??
 
 Usage:
   csvtk filter2 [flags]
@@ -1172,7 +1249,6 @@ Flags:
   -f, --filter string   awk-like filter condition. e.g. '$age>12' or '$1 > $3' or '$name=="abc"' or '$1 % 2 == 0'
   -h, --help            help for filter2
   -n, --line-number     print line number as the first column ("n")
-
 
 ```
 
@@ -1446,8 +1522,8 @@ split XLSX sheet into multiple sheets according to column values
 
 Strengths: Sheet properties are remained unchanged.
 Weakness : Complicated sheet structures are not well supported, e.g.,
-1. merged cells
-2. more than one header row
+  1. merged cells
+  2. more than one header row
 
 Usage:
   csvtk splitxlsx [flags]
@@ -1709,22 +1785,23 @@ ATTENTION: use SINGLE quote NOT double quotes in *nix OS.
 
 Examples: Adding space to all bases.
 
-    csvtk replace -p "(.)" -r '$1 ' -s
+  csvtk replace -p "(.)" -r '$1 ' -s
 
 Or use the \ escape character.
 
-    csvtk replace -p "(.)" -r "\$1 " -s
+  csvtk replace -p "(.)" -r "\$1 " -s
 
 more on: http://shenwei356.github.io/csvtk/usage/#replace
 
 Special replacement symbols:
 
-        {nr}    Record number, starting from 1
-        {kv}    Corresponding value of the key (captured variable $n) by key-value file,
-                n can be specified by flag -I (--key-capt-idx) (default: 1)
+  {nr}    Record number, starting from 1
+  {kv}    Corresponding value of the key (captured variable $n) by key-value file,
+          n can be specified by flag -I (--key-capt-idx) (default: 1)
 
 Usage:
   csvtk replace [flags]
+
 
 Flags:
   -f, --fields string          select only these fields. e.g -f 1,2 or -f columnA,columnB (default "1")
@@ -1808,26 +1885,26 @@ Examples
 Usage
 
 ```
-create new column from selected fields by awk-like arithmetic/string expressions
+create new column from selected fields by awk-like artithmetic/string expressions
 
-The arithmetic/string expression is supported by:
+The artithmetic/string expression is supported by:
 
-    https://github.com/Knetic/govaluate
+  https://github.com/Knetic/govaluate
 
 Supported operators and types:
 
-    Modifiers: + - / * & | ^ ** % >> <<
-    Comparators: > >= < <= == != =~ !~
-    Logical ops: || &&
-    Numeric constants, as 64-bit floating point (12345.678)
-    String constants (single quotes: 'foobar')
-    Date constants (single quotes)
-    Boolean constants: true false
-    Parenthesis to control order of evaluation ( )
-    Arrays (anything separated by , within parenthesis: (1, 2, 'foo'))
-    Prefixes: ! - ~
-    Ternary conditional: ? :
-    Null coalescence: ??
+  Modifiers: + - / * & | ^ ** % >> <<
+  Comparators: > >= < <= == != =~ !~
+  Logical ops: || &&
+  Numeric constants, as 64-bit floating point (12345.678)
+  String constants (single quotes: 'foobar')
+  Date constants (single quotes)
+  Boolean constants: true false
+  Parenthesis to control order of evaluation ( )
+  Arrays (anything separated by , within parenthesis: (1, 2, 'foo'))
+  Prefixes: ! - ~
+  Ternary conditional: ? :
+  Null coalescence: ??
 
 Usage:
   csvtk mutate2 [flags]

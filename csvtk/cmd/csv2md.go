@@ -37,7 +37,7 @@ var csv2mdCmd = &cobra.Command{
 
 Attention:
 
-    csv2md treats the first row as header line and requires them to be unique
+  csv2md treats the first row as header line and requires them to be unique
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {

@@ -43,19 +43,19 @@ ATTENTION: use SINGLE quote NOT double quotes in *nix OS.
 
 Examples: Adding space to all bases.
 
-    csvtk replace -p "(.)" -r '$1 ' -s
+  csvtk replace -p "(.)" -r '$1 ' -s
 
 Or use the \ escape character.
 
-    csvtk replace -p "(.)" -r "\$1 " -s
+  csvtk replace -p "(.)" -r "\$1 " -s
 
 more on: http://shenwei356.github.io/csvtk/usage/#replace
 
 Special replacement symbols:
 
-    {nr}    Record number, starting from 1
-    {kv}    Corresponding value of the key (captured variable $n) by key-value file,
-            n can be specified by flag -I (--key-capt-idx) (default: 1)
+  {nr}    Record number, starting from 1
+  {kv}    Corresponding value of the key (captured variable $n) by key-value file,
+          n can be specified by flag -I (--key-capt-idx) (default: 1)
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {

@@ -43,19 +43,20 @@ Source code: https://github.com/shenwei356/csvtk
 
 Attention:
 
-    1. The CSV parser requires all the lines have same number of fields/columns.
-       Even lines with spaces will cause error.
-    2. By default, csvtk thinks your files have header row, if not, switch flag "-H" on.
-    3. Column names better be unique.
-    4. By default, lines starting with "#" will be ignored, if the header row
-       starts with "#", please assign flag "-C" another rare symbol, e.g. '$'.
-    5. By default, csvtk handles CSV files, use flag "-t" for tab-delimited files.
-    6. If " exists in tab-delimited files, use flag "-l".
+  1. The CSV parser requires all the lines have same number of fields/columns.
+     Even lines with spaces will cause error.
+  2. By default, csvtk thinks your files have header row, if not, switch flag "-H" on.
+  3. Column names better be unique.
+  4. By default, lines starting with "#" will be ignored, if the header row
+     starts with "#", please assign flag "-C" another rare symbol, e.g. '$'.
+  5. By default, csvtk handles CSV files, use flag "-t" for tab-delimited files.
+  6. If " exists in tab-delimited files, use flag "-l".
+  7. Do not mix use digital fields and column names.
 
 Environment variables for frequently used global flags
 
-    - "CSVTK_T" for flag "-t/--tabs"
-    - "CSVTK_H" for flag "-H/--no-header-row"
+  - "CSVTK_T" for flag "-t/--tabs"
+  - "CSVTK_H" for flag "-H/--no-header-row"
 
 `, VERSION),
 }
@@ -74,7 +75,7 @@ func init() {
 	RootCmd.PersistentFlags().IntP("num-cpus", "j", runtime.NumCPU(), `number of CPUs to use (default value depends on your computer)`)
 
 	RootCmd.PersistentFlags().StringP("delimiter", "d", ",", `delimiting character of the input CSV file`)
-	RootCmd.PersistentFlags().StringP("out-delimiter", "D", ",", `delimiting character of the output CSV file`)
+	RootCmd.PersistentFlags().StringP("out-delimiter", "D", ",", `delimiting character of the output CSV file, e.g., -D $'\t' for tab`)
 	// RootCmd.PersistentFlags().StringP("quote-char", "q", `"`, `character used to quote strings in the input CSV file`)
 	RootCmd.PersistentFlags().StringP("comment-char", "C", `#`, "lines starting with commment-character will be ignored. "+
 		`if your header row starts with '#', please assign "-C" another rare symbol, e.g. '$'`)

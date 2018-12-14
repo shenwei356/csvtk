@@ -38,7 +38,7 @@ var prettyCmd = &cobra.Command{
 
 Attention:
 
-    pretty treats the first row as header line and requires them to be unique
+  pretty treats the first row as header line and requires them to be unique
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {

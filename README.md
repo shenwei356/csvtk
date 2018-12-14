@@ -342,6 +342,9 @@ Examples
 We are grateful to [Zhiluo Deng](https://github.com/dawnmy) and
 [Li Peng](https://github.com/penglbio) for suggesting features and reporting bugs.
 
+Thanks [Albert Vilella](https://github.com/avilella) for features suggestion,
+which makes csvtk feature-rich。
+
 ## Contact
 
 [create an issue](https://github.com/shenwei356/csvtk/issues) to report bugs,

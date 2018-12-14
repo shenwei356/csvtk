@@ -39,8 +39,8 @@ var splitXlsxCmd = &cobra.Command{
 
 Strengths: Sheet properties are remained unchanged.
 Weakness : Complicated sheet structures are not well supported, e.g.,
-1. merged cells
-2. more than one header row
+  1. merged cells
+  2. more than one header row
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {

@@ -40,9 +40,9 @@ var rename2Cmd = &cobra.Command{
 
 Special replacement symbols:
 
-    {nr}  ascending number, starting from --start-num
-    {kv}  Corresponding value of the key (captured variable $n) by key-value file,
-          n can be specified by flag -I (--key-capt-idx) (default: 1)
+  {nr}  ascending number, starting from --start-num
+  {kv}  Corresponding value of the key (captured variable $n) by key-value file,
+        n can be specified by flag -I (--key-capt-idx) (default: 1)
 
 
 `,

@@ -21,6 +21,7 @@
 package cmd
 
 import (
+	"encoding/csv"
 	"fmt"
 	"regexp"
 	"runtime"
@@ -38,16 +39,20 @@ import (
 var statsCmd = &cobra.Command{
 	Use:     "stats",
 	Aliases: []string{"stat"},
-	Short:   "summary of selected digital fields",
-	Long: `summary of selected digital fields: 
+	Short:   "summary statistics of selected digital fields (groupby group fields)",
+	Long: `summary statistics of selected digital fields (groupby group fields)
 
 Attention:
-  1. do not mix use digital fields and column names.
+
+  1. Do not mix use digital fields and column names.
 
 Available operations:
-  count, min, max, sum
-  mean, stdev, variance
-  entropy, prod
+ 
+  # provided by github.com/gonum/stat and github.com/gonum/floats
+  count, min, max, sum,
+  mean, stdev, variance, median, q1, q2, q3,
+  entropy (Shannon entropy), 
+  prod (product of the elements)
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -170,6 +175,13 @@ Available operations:
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
 		defer outfh.Close()
+
+		writer := csv.NewWriter(outfh)
+		if config.OutTabs || config.Tabs {
+			writer.Comma = '\t'
+		} else {
+			writer.Comma = config.OutDelimiter
+		}
 
 		file := files[0]
 		csvReader, err := newCSVReaderByConfig(config, file)
@@ -335,29 +347,23 @@ Available operations:
 			}
 		}
 
+		colsOut := len(fieldsG) + len(fieldsD)
 		if needParseHeaderRow {
+			record := make([]string, 0, colsOut)
 			if len(fieldsG) > 0 {
-				outfh.WriteString(HeaderRow[fieldsG[0]-1])
-				for _, i := range fieldsG[1:] {
-					outfh.WriteString("\t" + HeaderRow[i-1])
+				for _, i := range fieldsG {
+					record = append(record, HeaderRow[i-1])
 				}
-				outfh.WriteString("\t")
 			}
 
-			n := 0
-			for _, f := range fieldsD {
-				n += len(statsI[f-1])
-			}
-			items := make([]string, 0, n)
 			for _, f := range fieldsD {
 				for _, s := range statsI[f] {
-					items = append(items, HeaderRow[f-1]+":"+s)
+					record = append(record, HeaderRow[f-1]+":"+s)
 				}
 			}
-			outfh.WriteString(strings.Join(items, "\t"))
-
-			outfh.WriteString("\n")
+			writer.Write(record)
 		}
+
 		groups := make([]string, 0, len(data))
 		for group := range data {
 			groups = append(groups, group)
@@ -366,27 +372,33 @@ Available operations:
 
 		var fu func([]float64) float64
 		for _, group := range groups {
+			record := make([]string, 0, colsOut)
 			if len(fieldsG) > 0 {
-				outfh.WriteString(strings.Join(strings.Split(group, "_shenwei356_"), "\t"))
-				outfh.WriteString("\t")
+				record = append(record, strings.Split(group, "_shenwei356_")...)
 			}
 
-			n := 0
 			for _, f := range fieldsD {
-				n += len(statsI[f])
-			}
-			items := make([]string, 0, n)
+				needSort := false
+				for _, s := range statsI[f] {
+					if s == "q1" || s == "q2" || s == "q3" || s == "median" {
+						needSort = true
+						break
+					}
+				}
+				if needSort {
+					sort.Float64s(data[group][f])
+				}
 
-			for _, f := range fieldsD {
 				for _, s := range statsI[f] {
 					fu = allStats[s]
-					items = append(items, fmt.Sprintf(decimalFormat, fu(data[group][f])))
+					record = append(record, fmt.Sprintf(decimalFormat, fu(data[group][f])))
 				}
 			}
-			outfh.WriteString(strings.Join(items, "\t"))
-
-			outfh.WriteString("\n")
+			writer.Write(record)
 		}
+
+		writer.Flush()
+		checkError(writer.Error())
 	},
 }
 
@@ -404,6 +416,10 @@ func init() {
 	allStats["stdev"] = func(s []float64) float64 { return stat.StdDev(s, nil) }
 	allStats["entropy"] = func(s []float64) float64 { return stat.Entropy(s) }
 	allStats["variance"] = func(s []float64) float64 { return stat.Variance(s, nil) }
+	allStats["median"] = func(s []float64) float64 { return median(s) }
+	allStats["q1"] = func(s []float64) float64 { q1, _, _ := quartile(s); return q1 }
+	allStats["q2"] = func(s []float64) float64 { _, q2, _ := quartile(s); return q2 }
+	allStats["q3"] = func(s []float64) float64 { _, _, q3 := quartile(s); return q3 }
 
 	allStatsList = make([]string, 0, len(allStats))
 	for k := range allStats {
@@ -413,12 +429,12 @@ func init() {
 
 	RootCmd.AddCommand(statsCmd)
 	statsCmd.Flags().StringP("groups", "g", "", `group via fields. e.g -f 1,2 or -f columnA,columnB`)
-	statsCmd.Flags().StringSliceP("fields", "f", []string{}, `operate on these fields. e.g -f 1:count,sum or -f colA:mean`)
+	statsCmd.Flags().StringSliceP("fields", "f", []string{}, fmt.Sprintf(`operations on these fields. e.g -f 1:count,1:sum or -f colA:mean. available operations: %s`, strings.Join(allStatsList, ", ")))
 	statsCmd.Flags().BoolP("ignore-non-digits", "i", false, `ignore non-digital values like "NA" or "N/A"`)
 	statsCmd.Flags().IntP("decimal-width", "n", 2, "limit floats to N decimal points")
 }
 
-func median(sorted []int64) int64 {
+func median(sorted []float64) float64 {
 	l := len(sorted)
 	if l == 0 {
 		return 0
@@ -429,7 +445,7 @@ func median(sorted []int64) int64 {
 	return sorted[l/2]
 }
 
-func quartile(sorted []int64) (q1, q2, q3 int64) {
+func quartile(sorted []float64) (q1, q2, q3 float64) {
 	l := len(sorted)
 	if l == 0 {
 		return
