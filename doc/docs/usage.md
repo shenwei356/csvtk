@@ -23,7 +23,7 @@
 **Information**
 
 - [headers](#headers)
-- [stats](#stats)
+- [dim](#dim)
 - [summary](#summary)
 
 **Format conversion**
@@ -238,7 +238,7 @@ Examples
         file   num_cols   num_rows
         -             3          4
 
-## stats
+## summary
 
 Usage
 
