@@ -69,62 +69,62 @@ It could save you much time of writing Python/R scripts.
 
 **Information**
 
--  `headers` print headers
--  `stats` summary of CSV file
--  `stats2` summary of selected digital fields
+- [`headers`](https://bioinf.shenwei.me/csvtk/usage/#headers): prints headers
+- [`dim`](https://bioinf.shenwei.me/csvtk/usage/#dim): dimensions of CSV file
+- [`stats`](https://bioinf.shenwei.me/csvtk/usage/#stats): summary statistics of selected digital fields (groupby group fields)
 
 **Format conversion**
 
--  `pretty` convert CSV to readable aligned table
--  `csv2tab` convert CSV to tabular format
--  `tab2csv` convert tabular format to CSV
--  `space2tab` convert space delimited format to CSV
--  `transpose` transpose CSV data
--  `csv2md` convert CSV to markdown format
--  `csv2json` convert CSV to JSON format
--  `xlsx2csv` convert XLSX to CSV format
+- [`pretty`](https://bioinf.shenwei.me/csvtk/usage/#pretty): converts CSV to readable aligned table
+- [`csv2tab`](https://bioinf.shenwei.me/csvtk/usage/#csv2tab): converts CSV to tabular format
+- [`tab2csv`](https://bioinf.shenwei.me/csvtk/usage/#tab2csv): converts tabular format to CSV
+- [`space2tab`](https://bioinf.shenwei.me/csvtk/usage/#space2tab): converts space delimited format to CSV
+- [`transpose`](https://bioinf.shenwei.me/csvtk/usage/#transpose): transposes CSV data
+- [`csv2md`](https://bioinf.shenwei.me/csvtk/usage/#csv2md): converts CSV to markdown format
+- [`csv2json`](https://bioinf.shenwei.me/csvtk/usage/#csv2json): converts CSV to JSON format
+- [`xlsx2csv`](https://bioinf.shenwei.me/csvtk/usage/#xlsx2csv): converts XLSX to CSV format
 
 **Set operations**
 
--  `head` print first N records
--  `concat` concatenate CSV/TSV files by rows
--  `sample` sampling by proportion
--  `cut` select parts of fields
--  `grep` grep data by selected fields with patterns/regular expressions
--  `uniq` unique data without sorting
--  `freq` frequencies of selected fields
--  `inter` intersection of multiple files
--  `filter` filter rows by values of selected fields with arithmetic expression
--  `filter2` filter rows by awk-like arithmetic/string expressions
--  `join` join multiple CSV files by selected fields
--  `split` split CSV/TSV into multiple files according to column values
--  `splitxlsx` split XLSX sheet into multiple sheets according to column values
--  `collapse` collapse one field with selected fields as keys
+- [`head`](https://bioinf.shenwei.me/csvtk/usage/#head): prints first N records
+- [`concat`](https://bioinf.shenwei.me/csvtk/usage/#concat): concatenates CSV/TSV files by rows
+- [`sample`](https://bioinf.shenwei.me/csvtk/usage/#sample): sampling by proportion
+- [`cut`](https://bioinf.shenwei.me/csvtk/usage/#cut): selects parts of fields
+- [`grep`](https://bioinf.shenwei.me/csvtk/usage/#grep): greps data by selected fields with patterns/regular expressions
+- [`uniq`](https://bioinf.shenwei.me/csvtk/usage/#uniq): unique data without sorting
+- [`freq`](https://bioinf.shenwei.me/csvtk/usage/#freq): frequencies of selected fields
+- [`inter`](https://bioinf.shenwei.me/csvtk/usage/#inter): intersection of multiple files
+- [`filter`](https://bioinf.shenwei.me/csvtk/usage/#filter): filters rows by values of selected fields with arithmetic expression
+- [`filter2`](https://bioinf.shenwei.me/csvtk/usage/#filter2): filters rows by awk-like arithmetic/string expressions
+- [`join`](https://bioinf.shenwei.me/csvtk/usage/#join): joins multiple CSV files by selected fields
+- [`split`](https://bioinf.shenwei.me/csvtk/usage/#split) splits CSV/TSV into multiple files according to column values
+- [`splitxlsx`](https://bioinf.shenwei.me/csvtk/usage/#splitxlsx): splits XLSX sheet into multiple sheets according to column values
+- [`collapse`](https://bioinf.shenwei.me/csvtk/usage/#collapse): collapses one field with selected fields as keys
 
 **Edit**
 
--  `rename` rename column names
--  `rename2` rename column names by regular expression
--  `replace` replace data of selected fields by regular expression
--  `mutate` create new columns from selected fields by regular expression
--  `mutate2` create new column from selected fields by awk-like arithmetic/string expressions
--  `gather` gather columns into key-value pairs
+- [`rename`](https://bioinf.shenwei.me/csvtk/usage/#rename): renames column names
+- [`rename2`](https://bioinf.shenwei.me/csvtk/usage/#rename2): renames column names by regular expression
+- [`replace`](https://bioinf.shenwei.me/csvtk/usage/#replace): replaces data of selected fields by regular expression
+- [`mutate`](https://bioinf.shenwei.me/csvtk/usage/#mutate): creates new columns from selected fields by regular expression
+- [`mutate2`](https://bioinf.shenwei.me/csvtk/usage/#mutate2): creates new column from selected fields by awk-like arithmetic/string expressions
+- [`gather`](https://bioinf.shenwei.me/csvtk/usage/#gather): gathers columns into key-value pairs
 
 **Ordering**
 
--  `sort` sort by selected fields
+- [`sort`](https://bioinf.shenwei.me/csvtk/usage/#sort): sorts by selected fields
 
 **Ploting**
 
-- `plot` see [usage](http://bioinf.shenwei.me/csvtk/usage/#plot)
-    - `plot hist` histogram
-    - `plot box` boxplot
-    - `plot line` line plot and scatter plot
+- [`plot`](https://bioinf.shenwei.me/csvtk/usage/#plot) see [usage](http://bioinf.shenwei.me/csvtk/usage/#plot)
+    - [`plot hist`](https://bioinf.shenwei.me/csvtk/usage/#hist) histogram
+    - [`plot box`](https://bioinf.shenwei.me/csvtk/usage/#box) boxplot
+    - [`plot line`](https://bioinf.shenwei.me/csvtk/usage/#line) line plot and scatter plot
 
 **Misc**
 
-- `version`   print version information and check for update
-- `genautocomplete` generate shell autocompletion script
+- [`version`](https://bioinf.shenwei.me/csvtk/usage/#version)   print version information and check for update
+- [`genautocomplete`](https://bioinf.shenwei.me/csvtk/usage/#genautocomplete) generate shell autocompletion script
 
 
 ## Installation
@@ -157,15 +157,11 @@ And then:
 
     conda install -c bioconda csvtk
 
-#### Method 3: Install via homebrew  (latest stable version)
-
-    brew install brewsci/bio/csvtk
-
-#### Method 4: For Go developer (latest stable/dev version)
+#### Method 3: For Go developer (latest stable/dev version)
 
     go get -u github.com/shenwei356/csvtk/csvtk
 
-#### Method 5: For ArchLinux AUR users (may be not the latest)
+#### Method 4: For ArchLinux AUR users (may be not the latest)
 
     yaourt -S csvtk
 
@@ -232,6 +228,7 @@ More [examples](http://shenwei356.github.io/csvtk/usage/) and [tutorial](http://
     starts with `#`, please assign flag `-C` another rare symbol, e.g. `'$'`.
 5. By default, csvtk handles CSV files, use flag `-t` for tab-delimited files.
 6. If `"` exists in tab-delimited files, use flag `-l`.
+7. Do not mix use digital fields and column names.
 
 Examples
 

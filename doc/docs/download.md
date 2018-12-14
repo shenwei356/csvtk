@@ -6,11 +6,13 @@
 
 ## Current Version
 
-- [csvtk v0.15.0](https://github.com/shenwei356/csvtk/releases/tag/v0.15.0)
-[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.15.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.15.0)
-    - `csvtk`: add global flag `-E/--ignore-empty-row` to skip empty row. [#50](https://github.com/shenwei356/csvtk/issues/50)
-    - `csvtk mutate2`: add flag `-s/--digits-as-string` for not converting big digits into scientific notation. [#46](https://github.com/shenwei356/csvtk/issues/46)
-    - `csvtk sort`: add support for sorting in natural order. [#49](https://github.com/shenwei356/csvtk/issues/49)
+- [csvtk v0.16.0](https://github.com/shenwei356/csvtk/releases/tag/v0.16.0)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.16.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.16.0)
+    - new command: `csvtk csv2json`: convert CSV to JSON format.
+    - `csvtk stats` renamed to `csvtk dim`, `csvtk stats2` removed.
+    - **rewritten command `csvtk stats`**: summary statistics of selected digital fields (groupby group fields), [usage and examples](https://bioinf.shenwei.me/csvtk/usage/#stats). [#59](https://github.com/shenwei356/csvtk/issues/59)
+    - `csvtk replace`: add flag `--nr-width`: minimum width for {nr} in flag -r/--replacement. e.g., formating "1" to "001" by `--nr-width 3` (default 1).
+    - `csvtk rename2/replace`: add flag `-A, --kv-file-all-left-columns-as-value`, for treating all columns except 1th one as value for kv-file with more than 2 columns. [#56](https://github.com/shenwei356/csvtk/issues/56)
 
 Links:
 
@@ -91,6 +93,11 @@ Howto:
 
 ## Previous Versions
 
+- [csvtk v0.15.0](https://github.com/shenwei356/csvtk/releases/tag/v0.15.0)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.15.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.15.0)
+    - `csvtk`: add global flag `-E/--ignore-empty-row` to skip empty row. [#50](https://github.com/shenwei356/csvtk/issues/50)
+    - `csvtk mutate2`: add flag `-s/--digits-as-string` for not converting big digits into scientific notation. [#46](https://github.com/shenwei356/csvtk/issues/46)
+    - `csvtk sort`: add support for sorting in natural order. [#49](https://github.com/shenwei356/csvtk/issues/49)
 - [csvtk v0.14.0](https://github.com/shenwei356/csvtk/releases/tag/v0.14.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.14.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.14.0)
     - `csvtk`: **supporting multi-line fields by replacing [multicorecsv](https://github.com/mzimmerman/multicorecsv ) with standard library [encoding/csv](https://golang.org/pkg/encoding/csv/),

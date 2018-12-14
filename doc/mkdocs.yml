@@ -7,7 +7,7 @@ pages:
     - Tutorial: tutorial.md
     - 中文介绍: chinese.md
 - More tools: bioinf.md
-theme: yeti
+theme: cinder
 
 repo_url: https://github.com/shenwei356/csvtk
 site_description: csvtk - CSV/TSV toolkit
