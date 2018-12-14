@@ -23,8 +23,8 @@
 **Information**
 
 - [headers](#headers)
-- [dim](#dim)
 - [stats](#stats)
+- [summary](#summary)
 
 **Format conversion**
 
@@ -142,7 +142,7 @@ Available Commands:
   space2tab       convert space delimited format to CSV
   split           split CSV/TSV into multiple files according to column values
   splitxlsx       split XLSX sheet into multiple sheets according to column values
-  stats           summary statistics of selected digital fields (groupby group fields)
+  summary         summary statistics of selected digital fields (groupby group fields)
   tab2csv         convert tabular format to CSV
   transpose       transpose CSV data
   uniq            unique data without sorting
@@ -203,7 +203,7 @@ Usage:
   csvtk dim [flags]
 
 Aliases:
-  dim, size
+  dim, size, stats, stat
 
 Flags:
   -h, --help   help for dim
@@ -258,10 +258,7 @@ Available operations:
   prod (product of the elements)
 
 Usage:
-  csvtk stats [flags]
-
-Aliases:
-  stats, stat
+  csvtk summary [flags]
 
 Flags:
   -n, --decimal-width int   limit floats to N decimal points (default 2)
@@ -293,36 +290,36 @@ Examples
 
 1. use flag `-i/--ignore-non-digits`
 
-        $ cat testdata/digitals2.csv | csvtk stats -f f4:sum
+        $ cat testdata/digitals2.csv | csvtk summary -f f4:sum
         [ERRO] column 4 has non-digital data: N/A, you can use flag -i/--ignore-non-digits to skip these data
 
-        $ cat testdata/digitals2.csv | csvtk stats -f f4:sum -i
+        $ cat testdata/digitals2.csv | csvtk summary -f f4:sum -i
         f4:sum
         21.50
 
 1. multiple fields suported
 
-        $ cat testdata/digitals2.csv | csvtk stats -f f4:sum,f5:sum -i
+        $ cat testdata/digitals2.csv | csvtk summary -f f4:sum,f5:sum -i
         f4:sum,f5:sum
         21.50,118.00
 
 1. using fields instead of colname is still supported
 
-        $ cat testdata/digitals2.csv | csvtk stats -f 4:sum,5:sum -i
+        $ cat testdata/digitals2.csv | csvtk summary -f 4:sum,5:sum -i
         f4:sum,f5:sum
         21.50,118.00
 
 1. but remember not mixing use digital fields and column names
 
-        $ cat testdata/digitals2.csv | csvtk stats -f f4:sum,5:sum -i
+        $ cat testdata/digitals2.csv | csvtk summary -f f4:sum,5:sum -i
         [ERRO] column "5" not existed in file: -
 
-        $ cat testdata/digitals2.csv | csvtk stats -f 4:sum,f5:sum -i
+        $ cat testdata/digitals2.csv | csvtk summary -f 4:sum,f5:sum -i
         [ERRO] fail to parse digital field: f5, you may mix use digital fields and column names
 
 1. groupby
 
-        $ cat testdata/digitals2.csv | csvtk stats -i -f f4:sum,f5:sum -g f1,f2 \
+        $ cat testdata/digitals2.csv | csvtk summary -i -f f4:sum,f5:sum -g f1,f2 \
             | csvtk pretty
         f1    f2     f4:sum   f5:sum
         bar   xyz    7.00     106.00
@@ -333,7 +330,7 @@ Examples
 1. for data without header line
 
         $ cat testdata/digitals2.csv | sed 1d \
-            | csvtk stats -H -i -f 4:sum,5:sum -g 1,2 \
+            | csvtk summary -H -i -f 4:sum,5:sum -g 1,2 \
             | csvtk pretty
         bar   xyz    7.00   106.00
         bar   xyz2   4.00   4.00
@@ -343,7 +340,7 @@ Examples
 1. more statistics
 
         $ cat testdata/digitals2.csv \
-            | csvtk stats -i -g f1 -f f4:count,f4:mean,f4:stdev,f4:q1,f4:q2,f4:mean,f4:q3,f4:min,f4:max \
+            | csvtk summary -i -g f1 -f f4:count,f4:mean,f4:stdev,f4:q1,f4:q2,f4:mean,f4:q3,f4:min,f4:max \
             | csvtk pretty
         f1    f4:count   f4:mean   f4:stdev   f4:q1   f4:q2   f4:mean   f4:q3   f4:min   f4:max
         bar   6.00       1.83      0.75       1.00    2.00    1.83      2.00    1.00     3.00

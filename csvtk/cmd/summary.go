@@ -35,11 +35,11 @@ import (
 	"gonum.org/v1/gonum/stat"
 )
 
-// statsCmd represents the stat2 command
-var statsCmd = &cobra.Command{
-	Use:     "stats",
-	Aliases: []string{"stat"},
-	Short:   "summary statistics of selected digital fields (groupby group fields)",
+// summaryCmd represents the stat2 command
+var summaryCmd = &cobra.Command{
+	Use: "summary",
+	// Aliases: []string{"summary"},
+	Short: "summary statistics of selected digital fields (groupby group fields)",
 	Long: `summary statistics of selected digital fields (groupby group fields)
 
 Attention:
@@ -427,11 +427,11 @@ func init() {
 	}
 	sort.Strings(allStatsList)
 
-	RootCmd.AddCommand(statsCmd)
-	statsCmd.Flags().StringP("groups", "g", "", `group via fields. e.g -f 1,2 or -f columnA,columnB`)
-	statsCmd.Flags().StringSliceP("fields", "f", []string{}, fmt.Sprintf(`operations on these fields. e.g -f 1:count,1:sum or -f colA:mean. available operations: %s`, strings.Join(allStatsList, ", ")))
-	statsCmd.Flags().BoolP("ignore-non-digits", "i", false, `ignore non-digital values like "NA" or "N/A"`)
-	statsCmd.Flags().IntP("decimal-width", "n", 2, "limit floats to N decimal points")
+	RootCmd.AddCommand(summaryCmd)
+	summaryCmd.Flags().StringP("groups", "g", "", `group via fields. e.g -f 1,2 or -f columnA,columnB`)
+	summaryCmd.Flags().StringSliceP("fields", "f", []string{}, fmt.Sprintf(`operations on these fields. e.g -f 1:count,1:sum or -f colA:mean. available operations: %s`, strings.Join(allStatsList, ", ")))
+	summaryCmd.Flags().BoolP("ignore-non-digits", "i", false, `ignore non-digital values like "NA" or "N/A"`)
+	summaryCmd.Flags().IntP("decimal-width", "n", 2, "limit floats to N decimal points")
 }
 
 func median(sorted []float64) float64 {

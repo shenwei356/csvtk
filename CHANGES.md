@@ -1,8 +1,8 @@
 - [csvtk v0.16.0](https://github.com/shenwei356/csvtk/releases/tag/v0.16.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.16.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.16.0)
-    - new command: `csvtk csv2json`: convert CSV to JSON format
-    - `csvtk stats` renamed to `csvtk dim`, `csvtk stats2` removed.
-    - **rewritten command `csvtk stats`**: summary statistics of selected digital fields (groupby group fields), [usage and examples](https://bioinf.shenwei.me/csvtk/usage/#stats). [#59](https://github.com/shenwei356/csvtk/issues/59)
+    - new command: `csvtk csv2json`: convert CSV to JSON format.
+    - remove comand: `csvtk stats2`.
+    - new command `csvtk summary`: summary statistics of selected digital fields (groupby group fields), [usage and examples](https://bioinf.shenwei.me/csvtk/usage/#stats). [#59](https://github.com/shenwei356/csvtk/issues/59)
     - `csvtk replace`: add flag `--nr-width`: minimum width for {nr} in flag -r/--replacement. e.g., formating "1" to "001" by `--nr-width 3` (default 1)
     - `csvtk rename2/replace`: add flag `-A, --kv-file-all-left-columns-as-value`, for treating all columns except 1th one as value for kv-file with more than 2 columns. [#56](https://github.com/shenwei356/csvtk/issues/56)
 - [csvtk v0.15.0](https://github.com/shenwei356/csvtk/releases/tag/v0.15.0)

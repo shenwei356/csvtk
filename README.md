@@ -71,7 +71,7 @@ It could save you much time of writing Python/R scripts.
 
 - [`headers`](https://bioinf.shenwei.me/csvtk/usage/#headers): prints headers
 - [`dim`](https://bioinf.shenwei.me/csvtk/usage/#dim): dimensions of CSV file
-- [`stats`](https://bioinf.shenwei.me/csvtk/usage/#stats): summary statistics of selected digital fields (groupby group fields)
+- [`summary`](https://bioinf.shenwei.me/csvtk/usage/#summary): summary statistics of selected digital fields (groupby group fields)
 
 **Format conversion**
 
