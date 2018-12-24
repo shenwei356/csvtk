@@ -1,41 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="csvtk - CSV/TSV toolkit">
-        <meta name="author" content="shenwei356">
-        
-        <link rel="shortcut icon" href="./img/favicon.ico">
-        <title>csvtk - CSV/TSV Toolkit</title>
-        <link href="./css/bootstrap-custom.min.css" rel="stylesheet">
-        <link href="./css/font-awesome-4.5.0.css" rel="stylesheet">
-        <link href="./css/base.css" rel="stylesheet">
-        <link rel="stylesheet" href="./css/highlight.css">
-        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-        <!--[if lt IE 9]>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="csvtk - CSV/TSV toolkit"> 
+    <meta name="author" content="shenwei356"> 
+    <link rel="shortcut icon" href="./img/favicon.ico">
+
+    <title>Home - csvtk - CSV/TSV Toolkit</title>
+
+    <link href="./css/bootstrap-custom.min.css" rel="stylesheet">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/font-hack/2.018/css/hack.min.css">
+    <link href='//fonts.googleapis.com/css?family=PT+Sans:400,400italic,700,700italic&subset=latin-ext,latin' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,400,300,600,700&subset=latin-ext,latin' rel='stylesheet' type='text/css'>
+    <link href="./css/base.css" rel="stylesheet">
+    <link href="./css/cinder.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/highlight.css">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
             <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
             <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
         <![endif]-->
 
-        <script src="./js/jquery-1.10.2.min.js"></script>
-        <script src="./js/bootstrap-3.0.3.min.js"></script>
-        <script src="./js/highlight.pack.js"></script>
-        <script>
-            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.5.18/webfont.js"></script>
+    <script>
+    WebFont.load({
+        google: {
+            families: ['Open Sans', 'PT Sans']
+        }
+    });
+    </script>
 
-            ga('create', 'UA-28948626-9', 'bioinf.shenwei.me/csvtk');
-            ga('send', 'pageview');
-        </script> 
-    </head>
+    
+</head>
 
-    <body class="homepage">
+<body class="homepage" >
 
-        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
     <div class="container">
 
         <!-- Collapsed navigation -->
@@ -47,6 +52,10 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
+            
+
+            <!-- Main title -->
+
             <a class="navbar-brand" href=".">csvtk - CSV/TSV Toolkit</a>
         </div>
 
@@ -54,40 +63,60 @@
         <div class="navbar-collapse collapse">
                 <!-- Main navigation -->
                 <ul class="nav navbar-nav">
+                
+                
                     <li class="active">
                         <a href=".">Home</a>
                     </li>
+                
+                
+                
                     <li >
                         <a href="download/">Download</a>
                     </li>
+                
+                
+                
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Documents <b class="caret"></b></a>
                         <ul class="dropdown-menu">
+                        
                             
 <li >
     <a href="usage/">Usage</a>
 </li>
+
+                        
                             
 <li >
     <a href="tutorial/">Tutorial</a>
 </li>
+
+                        
                             
 <li >
     <a href="chinese/">中文介绍</a>
 </li>
+
+                        
                         </ul>
                     </li>
+                
+                
+                
                     <li >
                         <a href="bioinf/">More tools</a>
                     </li>
+                
+                
                 </ul>
 
             <ul class="nav navbar-nav navbar-right">
-                <li>
-                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
-                        <i class="fa fa-search"></i> Search
-                    </a>
-                </li>
+                    <li>
+                        <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                            <i class="fa fa-search"></i> Search
+                        </a>
+                    </li>
                     <li class="disabled">
                         <a rel="next" >
                             <i class="fa fa-arrow-left"></i> Previous
@@ -106,24 +135,40 @@
     </div>
 </div>
 
-        <div class="container">
-                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <div class="container">
+        
+        <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
-        <li class="main active"><a href="#csvtk-a-cross-platform-efficient-and-practical-csvtsv-toolkit">csvtk - a cross-platform, efficient and practical CSV/TSV toolkit</a></li>
-            <li><a href="#introduction">Introduction</a></li>
-            <li><a href="#table-of-contents">Table of Contents</a></li>
-            <li><a href="#features">Features</a></li>
-            <li><a href="#subcommands">Subcommands</a></li>
-            <li><a href="#installation">Installation</a></li>
-            <li><a href="#bash-completion">Bash-completion</a></li>
-            <li><a href="#compared-to-csvkit">Compared to csvkit</a></li>
-            <li><a href="#examples">Examples</a></li>
-            <li><a href="#acknowledgements">Acknowledgements</a></li>
-            <li><a href="#contact">Contact</a></li>
-            <li><a href="#license">License</a></li>
+        <li class="first-level active"><a href="#csvtk-a-cross-platform-efficient-and-practical-csvtsv-toolkit">csvtk - a cross-platform, efficient and practical CSV/TSV toolkit</a></li>
+            <li class="second-level"><a href="#introduction">Introduction</a></li>
+                
+            <li class="second-level"><a href="#table-of-contents">Table of Contents</a></li>
+                
+            <li class="second-level"><a href="#features">Features</a></li>
+                
+            <li class="second-level"><a href="#subcommands">Subcommands</a></li>
+                
+            <li class="second-level"><a href="#installation">Installation</a></li>
+                
+                <li class="third-level"><a href="#method-1-download-binaries-latest-stabledev-version">Method 1: Download binaries (latest stable/dev version)</a></li>
+                <li class="third-level"><a href="#method-2-install-via-conda-latest-stable-version">Method 2: Install via conda (latest stable version)</a></li>
+                <li class="third-level"><a href="#method-3-for-go-developer-latest-stabledev-version">Method 3: For Go developer (latest stable/dev version)</a></li>
+                <li class="third-level"><a href="#method-4-for-archlinux-aur-users-may-be-not-the-latest">Method 4: For ArchLinux AUR users (may be not the latest)</a></li>
+            <li class="second-level"><a href="#bash-completion">Bash-completion</a></li>
+                
+            <li class="second-level"><a href="#compared-to-csvkit">Compared to csvkit</a></li>
+                
+            <li class="second-level"><a href="#examples">Examples</a></li>
+                
+            <li class="second-level"><a href="#acknowledgements">Acknowledgements</a></li>
+                
+            <li class="second-level"><a href="#contact">Contact</a></li>
+                
+            <li class="second-level"><a href="#license">License</a></li>
+                
     </ul>
 </div></div>
-                <div class="col-md-9" role="main">
+        <div class="col-md-9" role="main">
 
 <h1 id="csvtk-a-cross-platform-efficient-and-practical-csvtsv-toolkit">csvtk - a cross-platform, efficient and practical CSV/TSV toolkit</h1>
 <ul>
@@ -184,66 +229,67 @@ It could save you much time of writing Python/R scripts.</p>
 <li><del>Seamlessly support for data with meta line (e.g., <code>sep=,</code>) of separator declaration used by MS Excel</del></li>
 </ul>
 <h2 id="subcommands">Subcommands</h2>
-<p>32 subcommands in total.</p>
+<p>33 subcommands in total.</p>
 <p><strong>Information</strong></p>
 <ul>
-<li><code>headers</code> print headers</li>
-<li><code>stats</code> summary of CSV file</li>
-<li><code>stats2</code> summary of selected digital fields</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#headers"><code>headers</code></a>: prints headers</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#dim"><code>dim</code></a>: dimensions of CSV file</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#summary"><code>summary</code></a>: summary statistics of selected digital fields (groupby group fields)</li>
 </ul>
 <p><strong>Format conversion</strong></p>
 <ul>
-<li><code>pretty</code> convert CSV to readable aligned table</li>
-<li><code>csv2tab</code> convert CSV to tabular format</li>
-<li><code>tab2csv</code> convert tabular format to CSV</li>
-<li><code>space2tab</code> convert space delimited format to CSV</li>
-<li><code>transpose</code> transpose CSV data</li>
-<li><code>csv2md</code> convert CSV to markdown format</li>
-<li><code>xlsx2csv</code> convert XLSX to CSV format</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#pretty"><code>pretty</code></a>: converts CSV to readable aligned table</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#csv2tab"><code>csv2tab</code></a>: converts CSV to tabular format</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#tab2csv"><code>tab2csv</code></a>: converts tabular format to CSV</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#space2tab"><code>space2tab</code></a>: converts space delimited format to CSV</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#transpose"><code>transpose</code></a>: transposes CSV data</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#csv2md"><code>csv2md</code></a>: converts CSV to markdown format</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#csv2json"><code>csv2json</code></a>: converts CSV to JSON format</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#xlsx2csv"><code>xlsx2csv</code></a>: converts XLSX to CSV format</li>
 </ul>
 <p><strong>Set operations</strong></p>
 <ul>
-<li><code>head</code> print first N records</li>
-<li><code>concat</code> concatenate CSV/TSV files by rows</li>
-<li><code>sample</code> sampling by proportion</li>
-<li><code>cut</code> select parts of fields</li>
-<li><code>grep</code> grep data by selected fields with patterns/regular expressions</li>
-<li><code>uniq</code> unique data without sorting</li>
-<li><code>freq</code> frequencies of selected fields</li>
-<li><code>inter</code> intersection of multiple files</li>
-<li><code>filter</code> filter rows by values of selected fields with arithmetic expression</li>
-<li><code>filter2</code> filter rows by awk-like arithmetic/string expressions</li>
-<li><code>join</code> join multiple CSV files by selected fields</li>
-<li><code>split</code> split CSV/TSV into multiple files according to column values</li>
-<li><code>splitxlsx</code> split XLSX sheet into multiple sheets according to column values</li>
-<li><code>collapse</code> collapse one field with selected fields as keys</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#head"><code>head</code></a>: prints first N records</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#concat"><code>concat</code></a>: concatenates CSV/TSV files by rows</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#sample"><code>sample</code></a>: sampling by proportion</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#cut"><code>cut</code></a>: selects parts of fields</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#grep"><code>grep</code></a>: greps data by selected fields with patterns/regular expressions</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#uniq"><code>uniq</code></a>: unique data without sorting</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#freq"><code>freq</code></a>: frequencies of selected fields</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#inter"><code>inter</code></a>: intersection of multiple files</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#filter"><code>filter</code></a>: filters rows by values of selected fields with arithmetic expression</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#filter2"><code>filter2</code></a>: filters rows by awk-like arithmetic/string expressions</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#join"><code>join</code></a>: joins multiple CSV files by selected fields</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#split"><code>split</code></a> splits CSV/TSV into multiple files according to column values</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#splitxlsx"><code>splitxlsx</code></a>: splits XLSX sheet into multiple sheets according to column values</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#collapse"><code>collapse</code></a>: collapses one field with selected fields as keys</li>
 </ul>
 <p><strong>Edit</strong></p>
 <ul>
-<li><code>rename</code> rename column names</li>
-<li><code>rename2</code> rename column names by regular expression</li>
-<li><code>replace</code> replace data of selected fields by regular expression</li>
-<li><code>mutate</code> create new columns from selected fields by regular expression</li>
-<li><code>mutate2</code> create new column from selected fields by awk-like arithmetic/string expressions</li>
-<li><code>gather</code> gather columns into key-value pairs</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#rename"><code>rename</code></a>: renames column names</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#rename2"><code>rename2</code></a>: renames column names by regular expression</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#replace"><code>replace</code></a>: replaces data of selected fields by regular expression</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#mutate"><code>mutate</code></a>: creates new columns from selected fields by regular expression</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#mutate2"><code>mutate2</code></a>: creates new column from selected fields by awk-like arithmetic/string expressions</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#gather"><code>gather</code></a>: gathers columns into key-value pairs</li>
 </ul>
 <p><strong>Ordering</strong></p>
 <ul>
-<li><code>sort</code> sort by selected fields</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#sort"><code>sort</code></a>: sorts by selected fields</li>
 </ul>
 <p><strong>Ploting</strong></p>
 <ul>
-<li><code>plot</code> see <a href="http://bioinf.shenwei.me/csvtk/usage/#plot">usage</a><ul>
-<li><code>plot hist</code> histogram</li>
-<li><code>plot box</code> boxplot</li>
-<li><code>plot line</code> line plot and scatter plot</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#plot"><code>plot</code></a> see <a href="http://bioinf.shenwei.me/csvtk/usage/#plot">usage</a><ul>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#hist"><code>plot hist</code></a> histogram</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#box"><code>plot box</code></a> boxplot</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#line"><code>plot line</code></a> line plot and scatter plot</li>
 </ul>
 </li>
 </ul>
 <p><strong>Misc</strong></p>
 <ul>
-<li><code>version</code>   print version information and check for update</li>
-<li><code>genautocomplete</code> generate shell autocompletion script</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#version"><code>version</code></a>   print version information and check for update</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#genautocomplete"><code>genautocomplete</code></a> generate shell autocompletion script</li>
 </ul>
 <h2 id="installation">Installation</h2>
 <p><a href="https://github.com/shenwei356/csvtk/releases">Download Page</a></p>
@@ -278,13 +324,10 @@ And then:</p>
 <h4 id="method-2-install-via-conda-latest-stable-version">Method 2: Install via conda (latest stable version)  <a href="http://bioinf.shenwei.me/csvtk/download/"><img alt="Install-with-conda" src="https://anaconda.org/bioconda/csvtk/badges/installer/conda.svg" /></a> <a href="https://anaconda.org/bioconda/csvtk"><img alt="Anaconda Cloud" src="https://anaconda.org/bioconda/csvtk/badges/version.svg" /></a> <a href="https://anaconda.org/bioconda/csvtk"><img alt="downloads" src="https://anaconda.org/bioconda/csvtk/badges/downloads.svg" /></a></h4>
 <pre><code>conda install -c bioconda csvtk
 </code></pre>
-<h4 id="method-3-install-via-homebrew-latest-stable-version">Method 3: Install via homebrew  (latest stable version)</h4>
-<pre><code>brew install brewsci/bio/csvtk
-</code></pre>
-<h4 id="method-4-for-go-developer-latest-stabledev-version">Method 4: For Go developer (latest stable/dev version)</h4>
+<h4 id="method-3-for-go-developer-latest-stabledev-version">Method 3: For Go developer (latest stable/dev version)</h4>
 <pre><code>go get -u github.com/shenwei356/csvtk/csvtk
 </code></pre>
-<h4 id="method-5-for-archlinux-aur-users-may-be-not-the-latest">Method 5: For ArchLinux AUR users (may be not the latest)</h4>
+<h4 id="method-4-for-archlinux-aur-users-may-be-not-the-latest">Method 4: For ArchLinux AUR users (may be not the latest)</h4>
 <pre><code>yaourt -S csvtk
 </code></pre>
 <h2 id="bash-completion">Bash-completion</h2>
@@ -430,6 +473,7 @@ name-indexed data such as CSV and tabular JSON http://johnkerl.org/miller</li>
     starts with <code>#</code>, please assign flag <code>-C</code> another rare symbol, e.g. <code>'$'</code>.</li>
 <li>By default, csvtk handles CSV files, use flag <code>-t</code> for tab-delimited files.</li>
 <li>If <code>"</code> exists in tab-delimited files, use flag <code>-l</code>.</li>
+<li>Do not mix use digital fields and column names.</li>
 </ol>
 <p>Examples</p>
 <ol>
@@ -539,113 +583,87 @@ field   num     sum   min     max     mean    stdev
 <ul>
 <li>plot histogram with data of the second column:
  <code>csvtk -t plot hist testdata/grouped_data.tsv.gz -f 2 | display</code>
-<img alt="histogram.png" src="./testdata/figures/histogram.png" /></li>
+<img alt="histogram.png" src="testdata/figures/histogram.png" /></li>
 <li>plot boxplot with data of the "GC Content" (third) column,
 group information is the "Group" column.
 <code>csvtk -t plot box testdata/grouped_data.tsv.gz -g "Group" -f "GC Content" --width 3 | display</code>
-<img alt="boxplot.png" src="./testdata/figures/boxplot.png" /></li>
+<img alt="boxplot.png" src="testdata/figures/boxplot.png" /></li>
 <li>plot horiz boxplot with data of the "Length" (second) column,
 group information is the "Group" column.
 <code>csvtk -t plot box testdata/grouped_data.tsv.gz -g "Group" -f "Length"  --height 3 --width 5 --horiz --title "Horiz box plot" | display</code>
-<img alt="boxplot2.png" src="./testdata/figures/boxplot2.png" /></li>
+<img alt="boxplot2.png" src="testdata/figures/boxplot2.png" /></li>
 <li>plot line plot with X-Y data
 <code>csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group | display</code>
-<img alt="lineplot.png" src="./testdata/figures/lineplot.png" /></li>
+<img alt="lineplot.png" src="testdata/figures/lineplot.png" /></li>
 <li>plot scatter plot with X-Y data
 <code>csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group --scatter | display</code>
-<img alt="scatter.png" src="./testdata/figures/scatter.png" /></li>
+<img alt="scatter.png" src="testdata/figures/scatter.png" /></li>
 </ul>
 </li>
 </ol>
 <h2 id="acknowledgements">Acknowledgements</h2>
 <p>We are grateful to <a href="https://github.com/dawnmy">Zhiluo Deng</a> and
 <a href="https://github.com/penglbio">Li Peng</a> for suggesting features and reporting bugs.</p>
+<p>Thanks <a href="https://github.com/avilella">Albert Vilella</a> for features suggestion,
+which makes csvtk feature-rich。</p>
 <h2 id="contact">Contact</h2>
 <p><a href="https://github.com/shenwei356/csvtk/issues">create an issue</a> to report bugs,
 propose new functions or ask for help.</p>
 <p>Or <a href="https://shenwei356.github.io/csvtk/usage/#disqus_thread">leave a comment</a>.</p>
 <h2 id="license">License</h2>
 <p><a href="https://github.com/shenwei356/csvtk/blob/master/LICENSE">MIT License</a></p></div>
-        </div>
+        
+    </div>
 
-        <footer class="col-md-12">
-            <hr>
-            <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
-        </footer>
-        <script>var base_url = '.';</script>
-        <script src="./js/base.js"></script>
-        <script src="./search/require.js"></script>
-        <script src="./search/search.js"></script>
+    <footer class="col-md-12 text-center">
+        <hr>
+        <p>
+        <small>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p></small>
+    </footer>
 
-        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
-            </div>
-            <div class="modal-body">
-                <p>
-                    From here you can search these documents. Enter
-                    your search terms below.
-                </p>
-                <form role="form">
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
-                    </div>
-                </form>
-                <div id="mkdocs-search-results"></div>
-            </div>
-            <div class="modal-footer">
+    <script src="./js/jquery-1.10.2.min.js"></script>
+    <script src="./js/bootstrap-3.0.3.min.js"></script>
+    <script src="./js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script>
+    var base_url = '.';
+    </script>
+    <script data-main="./mkdocs/js/search.js" src="./mkdocs/js/require.js"></script>
+    <script src="./js/base.js"></script>
+    <script src="search/main.js"></script>
+
+    <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span>
+                        <span class="sr-only">Close</span>
+                    </button>
+                    <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        From here you can search these documents. Enter your search terms below.
+                    </p>
+                    <form role="form">
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                        </div>
+                    </form>
+                    <div id="mkdocs-search-results"></div>
+                </div>
+                <div class="modal-footer">
+                </div>
             </div>
         </div>
     </div>
-</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
-            </div>
-            <div class="modal-body">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th style="width: 20%;">Keys</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><kbd>?</kbd></td>
-                    <td>Open this help</td>
-                  </tr>
-                  <tr>
-                    <td><kbd>&larr;</kbd></td>
-                    <td>Previous page</td>
-                  </tr>
-                  <tr>
-                    <td><kbd>&rarr;</kbd></td>
-                    <td>Next page</td>
-                  </tr>
-                  <tr>
-                    <td><kbd>s</kbd></td>
-                    <td>Search</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="modal-footer">
-            </div>
-        </div>
-    </div>
-</div>
-
 
     </body>
+
 </html>
 
 <!--
-MkDocs version : 0.17.3
-Build Date UTC : 2018-10-12 05:35:53
+MkDocs version : 1.0.4
+Build Date UTC : 2018-12-24 09:10:32
 -->
