@@ -800,6 +800,8 @@ Usage:
   csvtk sample [flags]
 
 Flags:
+  -h, --help               help for sample
+  -n, --line-number        print line number as the first column ("n")
   -p, --proportion float   sample by proportion
   -s, --rand-seed int      rand seed (default 11)
 
@@ -817,8 +819,10 @@ $ seq 100 | csvtk sample -H -p 0.5 | wc -l
 $ seq 100 | csvtk sample -H -p 0.1 | wc -l
 10
 
-$ seq 100 | csvtk sample -H -p 0.1 | wc -l
-10
+$  seq 100 | csvtk sample -H -p 0.05 -n
+50,50
+52,52
+65,65
 ```
 
 ## cut

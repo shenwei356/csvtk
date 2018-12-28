@@ -92,9 +92,13 @@ var grepCmd = &cobra.Command{
 		printLineNumber := getFlagBool(cmd, "line-number")
 
 		patternsMap := make(map[string]*regexp.Regexp)
+		var outAll bool
 		for _, pattern := range patterns {
 			if useRegexp {
 				p := pattern
+				if !outAll && (p == "." || p == ".*") {
+					outAll = true
+				}
 				if ignoreCase {
 					p = "(?i)" + p
 				}
@@ -127,6 +131,9 @@ var grepCmd = &cobra.Command{
 					pattern := data.(string)
 					if useRegexp {
 						p := pattern
+						if !outAll && (p == "." || p == ".*") {
+							outAll = true
+						}
 						if ignoreCase {
 							p = "(?i)" + p
 						}
@@ -294,11 +301,15 @@ var grepCmd = &cobra.Command{
 						target = record[f-1]
 						hitOne = false
 						if useRegexp {
-							for _, re := range patternsMap {
-								if re.MatchString(target) {
-									hitOne = true
-									reHit = re
-									break
+							if outAll {
+								hitOne = true
+							} else {
+								for _, re := range patternsMap {
+									if re.MatchString(target) {
+										hitOne = true
+										reHit = re
+										break
+									}
 								}
 							}
 						} else {
@@ -338,15 +349,18 @@ var grepCmd = &cobra.Command{
 							if _, ok := fieldsMap[i+1]; (!negativeFields && ok) || (negativeFields && !ok) {
 								if useRegexp {
 									j = 0
-									buf.Reset()
-									for _, f := range reHit.FindAllStringIndex(c, -1) {
-										buf.WriteString(c[j:f[0]])
-										buf.WriteString(redText(c[f[0]:f[1]]))
-										j = f[1]
+									if outAll {
+										record2[i] = redText(c)
+									} else {
+										buf.Reset()
+										for _, f := range reHit.FindAllStringIndex(c, -1) {
+											buf.WriteString(c[j:f[0]])
+											buf.WriteString(redText(c[f[0]:f[1]]))
+											j = f[1]
+										}
+										buf.WriteString(c[j:len(c)])
+										record2[i] = buf.String()
 									}
-									buf.WriteString(c[j:len(c)])
-
-									record2[i] = buf.String()
 								} else {
 									record2[i] = redText(c)
 								}

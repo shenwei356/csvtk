@@ -52,6 +52,8 @@ var sampleCmd = &cobra.Command{
 			checkError(fmt.Errorf("value of -p (--proportion) (%f) should be in range of (0, 1]", proportion))
 		}
 
+		outAll := proportion == 1
+
 		seed := getFlagInt64(cmd, "rand-seed")
 		rand.Seed(seed)
 
@@ -99,7 +101,7 @@ var sampleCmd = &cobra.Command{
 
 					N++
 
-					if rand.Float64() <= proportion {
+					if outAll || rand.Float64() <= proportion {
 						if printLineNumber {
 							recordWithN = []string{fmt.Sprintf("%d", N)}
 							recordWithN = append(recordWithN, record...)
