@@ -53,6 +53,7 @@
 
 **Edit**
 
+- [add-header](#add-header)
 - [rename](#rename)
 - [rename2](#rename2)
 - [replace](#replace)
@@ -1653,6 +1654,51 @@ examples
         Jerry     sequencing center       Bioinformatics
         Nick      sequencing center       Molecular Biology;Microbiology
 
+## add-header
+
+Usage
+
+```
+add column names
+
+Usage:
+  csvtk add-header [flags]
+
+Flags:
+  -h, --help            help for add-header
+  -n, --names strings   column names to add, in CSV format
+
+```
+
+Examples:
+
+1. No new colnames given:
+
+        $ seq 3 | csvtk mutate -H | csvtk add-header
+        [WARN] colnames not given, c1, c2, c3... will be used
+        c1,c2
+        1,1
+        2,2
+        3,3
+
+1. Adding new colnames:
+
+        $ seq 3 | csvtk mutate -H | csvtk add-header -n a,b
+        a,b
+        1,1
+        2,2
+        3,3
+        $ seq 3 | csvtk mutate -H | csvtk add-header -n a -n b
+        a,b
+        1,1
+        2,2
+        3,3
+
+        $ seq 3 | csvtk mutate -H -t | csvtk add-header -t -n a,b
+        a       b
+        1       1
+        2       2
+        3       3
 
 ## rename
 
