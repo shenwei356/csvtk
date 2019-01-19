@@ -190,6 +190,10 @@
                 
             <li class="second-level"><a href="#collapse">collapse</a></li>
                 
+            <li class="second-level"><a href="#add-header">add-header</a></li>
+                
+            <li class="second-level"><a href="#del-header">del-header</a></li>
+                
             <li class="second-level"><a href="#rename">rename</a></li>
                 
             <li class="second-level"><a href="#rename2">rename2</a></li>
@@ -273,6 +277,8 @@
 </ul>
 <p><strong>Edit</strong></p>
 <ul>
+<li><a href="#add-header">add-header</a></li>
+<li><a href="#del-header">del-header</a></li>
 <li><a href="#rename">rename</a></li>
 <li><a href="#rename2">rename2</a></li>
 <li><a href="#replace">replace</a></li>
@@ -301,7 +307,7 @@
 <p>Usage</p>
 <pre><code>csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.16.0
+Version: 0.17.0
 
 Author: Wei Shen &lt;shenwei356@gmail.com&gt;
 
@@ -329,12 +335,14 @@ Usage:
   csvtk [command]
 
 Available Commands:
+  add-header      add column names
   collapse        collapse one field with selected fields as keys
   concat          concatenate CSV/TSV files by rows
   csv2json        convert CSV to JSON format
   csv2md          convert CSV to markdown format
   csv2tab         convert CSV to tabular format
   cut             select parts of fields
+  del-header      delete column names
   dim             dimensions of CSV file
   filter          filter rows by values of selected fields with arithmetic expression
   filter2         filter rows by awk-like artithmetic/string expressions
@@ -1085,6 +1093,8 @@ Usage:
   csvtk sample [flags]
 
 Flags:
+  -h, --help               help for sample
+  -n, --line-number        print line number as the first column (&quot;n&quot;)
   -p, --proportion float   sample by proportion
   -s, --rand-seed int      rand seed (default 11)
 
@@ -1100,8 +1110,10 @@ $ seq 100 | csvtk sample -H -p 0.5 | wc -l
 $ seq 100 | csvtk sample -H -p 0.1 | wc -l
 10
 
-$ seq 100 | csvtk sample -H -p 0.1 | wc -l
-10
+$  seq 100 | csvtk sample -H -p 0.05 -n
+50,50
+52,52
+65,65
 </code></pre>
 
 <h2 id="cut">cut</h2>
@@ -1955,6 +1967,81 @@ Nick      sequencing center       Molecular Biology;Microbiology
 </code></pre>
 </li>
 </ol>
+<h2 id="add-header">add-header</h2>
+<p>Usage</p>
+<pre><code>add column names
+
+Usage:
+  csvtk add-header [flags]
+
+Flags:
+  -h, --help            help for add-header
+  -n, --names strings   column names to add, in CSV format
+
+</code></pre>
+
+<p>Examples:</p>
+<ol>
+<li>
+<p>No new colnames given:</p>
+<pre><code>$ seq 3 | csvtk mutate -H | csvtk add-header
+[WARN] colnames not given, c1, c2, c3... will be used
+c1,c2
+1,1
+2,2
+3,3
+</code></pre>
+</li>
+<li>
+<p>Adding new colnames:</p>
+<pre><code>$ seq 3 | csvtk mutate -H | csvtk add-header -n a,b
+a,b
+1,1
+2,2
+3,3
+$ seq 3 | csvtk mutate -H | csvtk add-header -n a -n b
+a,b
+1,1
+2,2
+3,3
+
+$ seq 3 | csvtk mutate -H -t | csvtk add-header -t -n a,b
+a       b
+1       1
+2       2
+3       3
+</code></pre>
+</li>
+</ol>
+<h2 id="del-header">del-header</h2>
+<p>Usage</p>
+<pre><code>delete column names
+
+Usage:
+  csvtk del-header [flags]
+
+Flags:
+  -h, --help   help for del-header
+
+</code></pre>
+
+<p>Examples:</p>
+<pre><code>$ seq 3 | csvtk add-header
+c1
+1
+2
+3
+
+$ seq 3 | csvtk add-header | csvtk del-header
+1
+2
+3
+
+$ seq 3 | ./csvtk del-header -H
+1
+2
+3
+</code></pre>
 <h2 id="rename">rename</h2>
 <p>Usage</p>
 <pre><code>rename column names
