@@ -65,7 +65,7 @@ It could save you much time of writing Python/R scripts.
 
 ## Subcommands
 
-33 subcommands in total.
+35 subcommands in total.
 
 **Information**
 
@@ -103,6 +103,8 @@ It could save you much time of writing Python/R scripts.
 
 **Edit**
 
+- [`add-header`](https://bioinf.shenwei.me/csvtk/usage/#add-header): add column names
+- [`del-header`](https://bioinf.shenwei.me/csvtk/usage/#del-header): delete column names
 - [`rename`](https://bioinf.shenwei.me/csvtk/usage/#rename): renames column names
 - [`rename2`](https://bioinf.shenwei.me/csvtk/usage/#rename2): renames column names by regular expression
 - [`replace`](https://bioinf.shenwei.me/csvtk/usage/#replace): replaces data of selected fields by regular expression

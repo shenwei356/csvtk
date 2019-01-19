@@ -54,6 +54,7 @@
 **Edit**
 
 - [add-header](#add-header)
+- [del-header](#del-header)
 - [rename](#rename)
 - [rename2](#rename2)
 - [replace](#replace)
@@ -85,7 +86,7 @@ Usage
 ```
 csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.16.0
+Version: 0.17.0
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -113,12 +114,14 @@ Usage:
   csvtk [command]
 
 Available Commands:
+  add-header      add column names
   collapse        collapse one field with selected fields as keys
   concat          concatenate CSV/TSV files by rows
   csv2json        convert CSV to JSON format
   csv2md          convert CSV to markdown format
   csv2tab         convert CSV to tabular format
   cut             select parts of fields
+  del-header      delete column names
   dim             dimensions of CSV file
   filter          filter rows by values of selected fields with arithmetic expression
   filter2         filter rows by awk-like artithmetic/string expressions
@@ -1699,6 +1702,39 @@ Examples:
         1       1
         2       2
         3       3
+
+## del-header
+
+Usage
+
+```
+delete column names
+
+Usage:
+  csvtk del-header [flags]
+
+Flags:
+  -h, --help   help for del-header
+
+```
+
+Examples:
+
+    $ seq 3 | csvtk add-header
+    c1
+    1
+    2
+    3
+
+    $ seq 3 | csvtk add-header | csvtk del-header
+    1
+    2
+    3
+
+    $ seq 3 | ./csvtk del-header -H
+    1
+    2
+    3
 
 ## rename
 
