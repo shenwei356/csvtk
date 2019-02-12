@@ -279,5 +279,5 @@ func init() {
 	collapseCmd.Flags().StringP("vfield", "v", "", `value field`)
 	collapseCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
 	collapseCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields (only for key fields), e.g., -F -f "*name" or -F -f "id123*"`)
-	collapseCmd.Flags().StringP("separater", "s", ";", "separater for collapsed data")
+	collapseCmd.Flags().StringP("separater", "s", "; ", "separater for collapsed data")
 }

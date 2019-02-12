@@ -86,7 +86,7 @@ Usage
 ```
 csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.17.0
+Version: 0.17.1
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -252,24 +252,30 @@ summary statistics of selected digital fields (groupby group fields)
 Attention:
 
   1. Do not mix use digital fields and column names.
-  
-Available operations:
 
+Available operations:
+ 
+  # numeric/statistical operations
   # provided by github.com/gonum/stat and github.com/gonum/floats
-  count, min, max, sum,
+  countn (count of digits), min, max, sum,
   mean, stdev, variance, median, q1, q2, q3,
-  entropy (Shannon entropy), 
+  entropy (Shannon entropy),
   prod (product of the elements)
+
+  # textual/numeric operations
+  count, first, last, rand, unique, collapse, countunique
 
 Usage:
   csvtk summary [flags]
 
 Flags:
   -n, --decimal-width int   limit floats to N decimal points (default 2)
-  -f, --fields strings      operations on these fields. e.g -f 1:count,1:sum or -f colA:mean. available operations: count, entropy, max, mean, median, min, prod, q1, q2, q3, stdev, sum, variance
+  -f, --fields strings      operations on these fields. e.g -f 1:count,1:sum or -f colA:mean. available operations: collapse, count, countn, countunique, entropy, first, last, max, mean, median, min, prod, q1, q2, q3, rand, stdev, sum, uniq, variance
   -g, --groups string       group via fields. e.g -f 1,2 or -f columnA,columnB
-  -h, --help                help for stats
+  -h, --help                help for summary
   -i, --ignore-non-digits   ignore non-digital values like "NA" or "N/A"
+  -S, --rand-seed int       rand seed for operation "rand" (default 11)
+  -s, --separater string    separater for collapsed data (default "; ")
 
 ```
 
@@ -341,14 +347,38 @@ Examples
         foo   bar    6.00   3.00
         foo   bar2   4.50   5.00
 
-1. more statistics
+1. numeric/statistical operations
 
         $ cat testdata/digitals2.csv \
-            | csvtk summary -i -g f1 -f f4:count,f4:mean,f4:stdev,f4:q1,f4:q2,f4:mean,f4:q3,f4:min,f4:max \
+            | csvtk summary -i -g f1 -f f4:countn,f4:mean,f4:stdev,f4:q1,f4:q2,f4:mean,f4:q3,f4:min,f4:max \
             | csvtk pretty
-        f1    f4:count   f4:mean   f4:stdev   f4:q1   f4:q2   f4:mean   f4:q3   f4:min   f4:max
-        bar   6.00       1.83      0.75       1.00    2.00    1.83      2.00    1.00     3.00
-        foo   4.00       2.62      1.80       1.25    2.25    2.62      4.00    1.00     5.00
+        f1    f4:countn   f4:mean   f4:stdev   f4:q1   f4:q2   f4:mean   f4:q3   f4:min   f4:max
+        bar   6.00        1.83      0.75       1.00    2.00    1.83      2.00    1.00     3.00
+        foo   4.00        2.62      1.80       1.25    2.25    2.62      4.00    1.00     5.00
+
+1. textual/numeric operations
+
+        $  cat testdata/digitals2.csv \
+            | csvtk summary -i -g f1 -f f2:count,f2:first,f2:last,f2:rand,f2:collapse,f2:uniq,f2:countunique \
+            | csvtk pretty
+        f1    f2:count   f2:first   f2:last   f2:rand   f2:collapse                           f2:uniq     f2:countunique
+        bar   7          xyz        xyz2      xyz2      xyz; xyz; xyz; xyz; xyz; xyz2; xyz2   xyz2; xyz   2
+        foo   5          bar        bar2      bar2      bar; bar2; bar2; bar; bar2            bar; bar2   2
+
+1. mixed operations
+
+        $  cat testdata/digitals2.csv \
+            | csvtk summary -i -g f1 -f f4:collapse,f4:max \
+            | csvtk pretty
+        f1    f4:collapse            f4:max
+        bar   NA; 1; 2; 1; 3; 2; 2   3.00
+        foo   1; 1.5; 3; 5; N/A      5.00
+
+1. `countn` and `count`
+
+        $ cat testdata/digitals2.csv | csvtk summary -f f4:count,f4:countn -i
+        f4:count,f4:countn
+        12,10
 
 ## pretty
 
@@ -1605,7 +1635,7 @@ Flags:
   -F, --fuzzy-fields       using fuzzy fields (only for key fields), e.g., -F -f "*name" or -F -f "id123*"
   -h, --help               help for collapse
   -i, --ignore-case        ignore case
-  -s, --separater string   separater for collapsed data (default ";")
+  -s, --separater string   separater for collapsed data (default "; ")
   -v, --vfield string      value field
 
 ```
@@ -1631,8 +1661,8 @@ examples
             | csvtk pretty
 
         lab                     teacher
-        computational biology   Tom;Rob
-        sequencing center       Jerry;Nick
+        computational biology   Tom; Rob
+        sequencing center       Jerry; Nick
 
         $ cat teachers.csv  \
             | csvtk uniq -f class,teacher  \
@@ -1652,10 +1682,10 @@ examples
             | csvtk pretty
 
         teacher   lab                     class
-        Tom       computational biology   Bioinformatics;Statistics
+        Tom       computational biology   Bioinformatics; Statistics
         Rob       computational biology   Bioinformatics
         Jerry     sequencing center       Bioinformatics
-        Nick      sequencing center       Molecular Biology;Microbiology
+        Nick      sequencing center       Molecular Biology; Microbiology
 
 ## add-header
 

@@ -23,6 +23,7 @@ package cmd
 import (
 	"encoding/csv"
 	"fmt"
+	"math/rand"
 	"regexp"
 	"runtime"
 	"sort"
@@ -34,6 +35,8 @@ import (
 	"gonum.org/v1/gonum/floats"
 	"gonum.org/v1/gonum/stat"
 )
+
+var separater string
 
 // summaryCmd represents the stat2 command
 var summaryCmd = &cobra.Command{
@@ -48,11 +51,15 @@ Attention:
 
 Available operations:
  
+  # numeric/statistical operations
   # provided by github.com/gonum/stat and github.com/gonum/floats
-  count, min, max, sum,
+  countn (count of digits), min, max, sum,
   mean, stdev, variance, median, q1, q2, q3,
   entropy (Shannon entropy), 
   prod (product of the elements)
+
+  # textual/numeric operations
+  count, first, last, rand, unique, collapse, countunique
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -67,6 +74,12 @@ Available operations:
 		decimalWidth := getFlagNonNegativeInt(cmd, "decimal-width")
 		decimalFormat := fmt.Sprintf("%%.%df", decimalWidth)
 		groupsStr := getFlagString(cmd, "groups")
+		separater = getFlagString(cmd, "separater")
+		if separater == "" {
+			checkError(fmt.Errorf("flag -s (--separater) needed"))
+		}
+		seed := getFlagInt64(cmd, "rand-seed")
+		rand.Seed(seed)
 
 		ops := getFlagStringSlice(cmd, "fields")
 		if len(ops) == 0 {
@@ -104,8 +117,10 @@ Available operations:
 				}
 				fieldsStrsD = append(fieldsStrsD, items[0])
 
-				if _, ok := allStats[items[1]]; !ok {
-					checkError(fmt.Errorf(`invalid stats operation: %s. run "csvtk stats --help" for help`, items[1]))
+				_, ok1 := allStats[items[1]]
+				_, ok2 := allStats2[items[1]]
+				if !(ok1 || ok2) {
+					checkError(fmt.Errorf(`invalid operation: %s. run "csvtk stats --help" for help`, items[1]))
 				}
 				if _, ok := stats[items[0]]; !ok {
 					stats[items[0]] = make([]string, 0, 1)
@@ -198,6 +213,7 @@ Available operations:
 
 		// group -> field -> data
 		data := make(map[string]map[int][]float64)
+		data2 := make(map[string]map[int][]string)
 
 		fieldsG := []int{}
 		fieldsD := []int{}
@@ -207,6 +223,7 @@ Available operations:
 		var ok bool
 		var items []string
 		var group string
+		var needParseDigits bool
 		for chunk := range csvReader.Ch {
 			checkError(chunk.Err)
 
@@ -329,8 +346,27 @@ Available operations:
 				if _, ok = data[group]; !ok {
 					data[group] = make(map[int][]float64, 1000)
 				}
+				if _, ok = data2[group]; !ok {
+					data2[group] = make(map[int][]string, 1000)
+				}
 
 				for _, f = range fieldsD {
+					if _, ok = data2[group][f]; !ok {
+						data2[group][f] = []string{}
+					}
+					data2[group][f] = append(data2[group][f], record[f-1])
+
+					needParseDigits = false
+					for _, op := range statsI[f] {
+						if _, ok = allStats[op]; ok {
+							needParseDigits = true
+							break
+						}
+					}
+
+					if !needParseDigits {
+						continue
+					}
 					if !reDigitals.MatchString(record[f-1]) {
 						if ignore {
 							continue
@@ -364,13 +400,14 @@ Available operations:
 			writer.Write(record)
 		}
 
-		groups := make([]string, 0, len(data))
+		groups := make([]string, 0, len(data)+len(data2))
 		for group := range data {
 			groups = append(groups, group)
 		}
 		sort.Strings(groups)
 
 		var fu func([]float64) float64
+		var fu2 func([]string) string
 		for _, group := range groups {
 			record := make([]string, 0, colsOut)
 			if len(fieldsG) > 0 {
@@ -378,20 +415,32 @@ Available operations:
 			}
 
 			for _, f := range fieldsD {
-				needSort := false
-				for _, s := range statsI[f] {
-					if s == "q1" || s == "q2" || s == "q3" || s == "median" {
-						needSort = true
-						break
-					}
-				}
-				if needSort {
-					sort.Float64s(data[group][f])
-				}
+				sorted := false
 
 				for _, s := range statsI[f] {
-					fu = allStats[s]
-					record = append(record, fmt.Sprintf(decimalFormat, fu(data[group][f])))
+					if _, ok = allStats[s]; !ok {
+						fu2 = allStats2[s]
+						record = append(record, fu2(data2[group][f]))
+					} else {
+						needSort := false
+						for _, s := range statsI[f] {
+							if s == "q1" || s == "q2" || s == "q3" || s == "median" {
+								needSort = true
+								break
+							}
+						}
+						if needSort && !sorted {
+							sort.Float64s(data[group][f])
+							sorted = true
+						}
+
+						fu = allStats[s]
+						if s == "countn" {
+							record = append(record, fmt.Sprintf("%.0f", fu(data[group][f])))
+						} else {
+							record = append(record, fmt.Sprintf(decimalFormat, fu(data[group][f])))
+						}
+					}
 				}
 			}
 			writer.Write(record)
@@ -403,6 +452,7 @@ Available operations:
 }
 
 var allStats map[string]func([]float64) float64
+var allStats2 map[string]func([]string) string
 var allStatsList []string
 
 func init() {
@@ -411,7 +461,7 @@ func init() {
 	allStats["max"] = floats.Max
 	allStats["min"] = floats.Min
 	allStats["prod"] = floats.Prod
-	allStats["count"] = func(s []float64) float64 { return float64(len(s)) }
+	allStats["countn"] = func(s []float64) float64 { return float64(len(s)) }
 	allStats["mean"] = func(s []float64) float64 { return stat.Mean(s, nil) }
 	allStats["stdev"] = func(s []float64) float64 { return stat.StdDev(s, nil) }
 	allStats["entropy"] = func(s []float64) float64 { return stat.Entropy(s) }
@@ -421,8 +471,40 @@ func init() {
 	allStats["q2"] = func(s []float64) float64 { _, q2, _ := quartile(s); return q2 }
 	allStats["q3"] = func(s []float64) float64 { _, _, q3 := quartile(s); return q3 }
 
-	allStatsList = make([]string, 0, len(allStats))
+	allStats2 = make(map[string]func([]string) string)
+	allStats2["count"] = func(s []string) string { return fmt.Sprintf("%d", len(s)) }
+	allStats2["first"] = func(s []string) string { return s[0] }
+	allStats2["last"] = func(s []string) string { return s[len(s)-1] }
+	allStats2["rand"] = func(s []string) string { return s[rand.Intn(len(s))] }
+	allStats2["uniq"] = func(s []string) string {
+		m := make(map[string]struct{}, len(s))
+		for _, v := range s {
+			m[v] = struct{}{}
+		}
+		vs := make([]string, len(m))
+		i := 0
+		for v := range m {
+			vs[i] = v
+			i++
+		}
+		return strings.Join(vs, separater)
+	}
+	allStats2["countunique"] = func(s []string) string {
+		m := make(map[string]struct{}, len(s))
+		for _, v := range s {
+			m[v] = struct{}{}
+		}
+		return fmt.Sprintf("%d", len(m))
+	}
+	allStats2["collapse"] = func(s []string) string { return strings.Join(s, separater) }
+
+	// ---------------
+
+	allStatsList = make([]string, 0, len(allStats)+len(allStats2))
 	for k := range allStats {
+		allStatsList = append(allStatsList, k)
+	}
+	for k := range allStats2 {
 		allStatsList = append(allStatsList, k)
 	}
 	sort.Strings(allStatsList)
@@ -432,6 +514,8 @@ func init() {
 	summaryCmd.Flags().StringSliceP("fields", "f", []string{}, fmt.Sprintf(`operations on these fields. e.g -f 1:count,1:sum or -f colA:mean. available operations: %s`, strings.Join(allStatsList, ", ")))
 	summaryCmd.Flags().BoolP("ignore-non-digits", "i", false, `ignore non-digital values like "NA" or "N/A"`)
 	summaryCmd.Flags().IntP("decimal-width", "n", 2, "limit floats to N decimal points")
+	summaryCmd.Flags().StringP("separater", "s", "; ", "separater for collapsed data")
+	summaryCmd.Flags().Int64P("rand-seed", "S", 11, `rand seed for operation "rand"`)
 }
 
 func median(sorted []float64) float64 {
