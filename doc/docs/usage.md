@@ -376,9 +376,19 @@ Examples
 
 1. `countn` and `count`
 
-        $ cat testdata/digitals2.csv | csvtk summary -f f4:count,f4:countn -i
-        f4:count,f4:countn
-        12,10
+        $ cat testdata/digitals2.csv \
+            | csvtk summary -f f4:count,f4:countn -i \
+            | csvtk pretty
+        f4:count   f4:countn
+        12         10
+
+        $ cat testdata/digitals2.csv \
+            | csvtk summary -f f4:count,f4:countn,f4:collapse -i -g f1 \
+            | csvtk pretty
+        f1    f4:count   f4:countn   f4:collapse
+        bar   7          6           NA; 1; 2; 1; 3; 2; 2
+        foo   5          4           1; 1.5; 3; 5; N/A
+
 
 ## pretty
 
