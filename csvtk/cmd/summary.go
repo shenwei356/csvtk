@@ -23,6 +23,7 @@ package cmd
 import (
 	"encoding/csv"
 	"fmt"
+	"math"
 	"math/rand"
 	"regexp"
 	"runtime"
@@ -457,19 +458,57 @@ var allStatsList []string
 
 func init() {
 	allStats = make(map[string]func([]float64) float64)
-	allStats["sum"] = floats.Sum
-	allStats["max"] = floats.Max
-	allStats["min"] = floats.Min
+	allStats["sum"] = func(s []float64) float64 {
+		if len(s) == 0 {
+			return math.NaN()
+		}
+		return floats.Sum(s)
+	}
+	allStats["max"] = func(s []float64) float64 {
+		if len(s) == 0 {
+			return math.NaN()
+		}
+		return floats.Max(s)
+	}
+	allStats["min"] = func(s []float64) float64 {
+		if len(s) == 0 {
+			return math.NaN()
+		}
+		return floats.Min(s)
+	}
 	allStats["prod"] = floats.Prod
 	allStats["countn"] = func(s []float64) float64 { return float64(len(s)) }
 	allStats["mean"] = func(s []float64) float64 { return stat.Mean(s, nil) }
 	allStats["stdev"] = func(s []float64) float64 { return stat.StdDev(s, nil) }
 	allStats["entropy"] = func(s []float64) float64 { return stat.Entropy(s) }
 	allStats["variance"] = func(s []float64) float64 { return stat.Variance(s, nil) }
-	allStats["median"] = func(s []float64) float64 { return median(s) }
-	allStats["q1"] = func(s []float64) float64 { q1, _, _ := quartile(s); return q1 }
-	allStats["q2"] = func(s []float64) float64 { _, q2, _ := quartile(s); return q2 }
-	allStats["q3"] = func(s []float64) float64 { _, _, q3 := quartile(s); return q3 }
+	allStats["median"] = func(s []float64) float64 {
+		if len(s) == 0 {
+			return math.NaN()
+		}
+		return median(s)
+	}
+	allStats["q1"] = func(s []float64) float64 {
+		if len(s) == 0 {
+			return math.NaN()
+		}
+		q1, _, _ := quartile(s)
+		return q1
+	}
+	allStats["q2"] = func(s []float64) float64 {
+		if len(s) == 0 {
+			return math.NaN()
+		}
+		_, q2, _ := quartile(s)
+		return q2
+	}
+	allStats["q3"] = func(s []float64) float64 {
+		if len(s) == 0 {
+			return math.NaN()
+		}
+		_, _, q3 := quartile(s)
+		return q3
+	}
 
 	allStats2 = make(map[string]func([]string) string)
 	allStats2["count"] = func(s []string) string { return fmt.Sprintf("%d", len(s)) }
