@@ -1,6 +1,7 @@
 - [csvtk v0.17.1](https://github.com/shenwei356/csvtk/releases/tag/v0.17.1)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.17.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.17.1)
     - `csvtk summary`: add more textual/numeric operations. [#64](https://github.com/shenwei356/csvtk/issues/64)
+    - `csvtk sort`: fix bug for sorting by columns with empty values. [#70](https://github.com/shenwei356/csvtk/issues/70)
 - [csvtk v0.17.0](https://github.com/shenwei356/csvtk/releases/tag/v0.17.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.17.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.17.0)
     - new command: `csvtk add-header` and `csvtk del-header` for adding/deleting column names. [#62](https://github.com/shenwei356/csvtk/issues/62)
