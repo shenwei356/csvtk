@@ -96,7 +96,8 @@ var xlsx2csvCmd = &cobra.Command{
 
 		writer := csv.NewWriter(outfh)
 
-		rows := xlsx.GetRows(sheetName)
+		rows, err := xlsx.GetRows(sheetName)
+		checkError(err)
 		for _, row := range rows {
 			checkError(writer.Write(row))
 		}
