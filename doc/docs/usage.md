@@ -84,7 +84,7 @@
 
 Usage
 
-```
+```text
 csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
 Version: 0.18.0
@@ -175,7 +175,7 @@ Flags:
 
 Usage
 
-```
+```text
 print headers
 
 Usage:
@@ -185,7 +185,7 @@ Usage:
 
 Examples
 
-```
+```sh
 $ csvtk headers testdata/*.csv
 # testdata/1.csv
 1       name
@@ -203,7 +203,7 @@ $ csvtk headers testdata/*.csv
 
 Usage
 
-```
+```text
 dimensions of CSV file
 
 Usage:
@@ -249,7 +249,7 @@ Examples
 
 Usage
 
-```
+```text
 summary statistics of selected digital fields (groupby group fields)
 
 Attention:
@@ -397,7 +397,7 @@ Examples
 
 Usage
 
-```
+```text
 convert CSV to readable aligned table
 
 Attention:
@@ -453,7 +453,7 @@ Examples:
 
 Usage
 
-```
+```text
 transpose CSV data
 
 Usage:
@@ -464,8 +464,8 @@ Usage:
 Examples
 
     $ cat  testdata/digitals.tsv
-    4       5       6$
-    1       2       3$
+    4       5       6
+    1       2       3
     7       8       0
     8       1,000   4
 
@@ -478,7 +478,7 @@ Examples
 
 Usage
 
-```
+```text
 convert CSV to JSON format
 
 Usage:
@@ -599,7 +599,7 @@ Examples
 
 Usage
 
-```
+```text
 convert CSV to markdown format
 
 Attention:
@@ -663,7 +663,7 @@ Examples
 
 Usage
 
-```
+```text
 convert XLSX to CSV format
 
 Usage:
@@ -709,7 +709,7 @@ Examples
 
 Usage
 
-```
+```text
 print first N records
 
 Usage:
@@ -739,7 +739,7 @@ Examples
 
 Usage
 
-```
+```text
 concatenate CSV/TSV files by rows
 
 Note that the second and later files are concatenated to the first one,
@@ -840,7 +840,7 @@ Examples
 
 Usage
 
-```
+```text
 sampling by proportion
 
 Usage:
@@ -856,7 +856,7 @@ Flags:
 
 Examples
 
-```
+```sh
 $ seq 100 | csvtk sample -H -p 0.5 | wc -l
 46
 
@@ -876,7 +876,7 @@ $  seq 100 | csvtk sample -H -p 0.05 -n
 
 Usage
 
-```
+```text
 select parts of fields
 
 Usage:
@@ -988,7 +988,7 @@ Examples
 
 Usage
 
-```
+```text
 unique data without sorting
 
 Usage:
@@ -1033,7 +1033,7 @@ Examples:
 
 Usage
 
-```
+```text
 frequencies of selected fields
 
 Usage:
@@ -1097,7 +1097,7 @@ Examples
 
 Usage
 
-```
+```text
 intersection of multiple files
 
 Usage:
@@ -1136,7 +1136,7 @@ Examples:
 
 Usage
 
-```
+```text
 grep data by selected fields with patterns/regular expressions
 
 Usage:
@@ -1201,7 +1201,7 @@ Matched parts will be *highlight*
 
 Usage
 
-```
+```text
 filter rows by values of selected fields with arithmetic expression
 
 Usage:
@@ -1269,7 +1269,7 @@ Examples
 
 Usage
 
-```
+```text
 filter rows by awk-like artithmetic/string expressions
 
 The artithmetic/string expression is supported by:
@@ -1348,7 +1348,7 @@ Examples:
 
 Usage
 
-```
+```text
 join 2nd and later files to the first file by selected fields.
 
 Multiple keys supported, but the orders are ignored.
@@ -1464,7 +1464,7 @@ Examples:
 
 Usage
 
-```
+```text
 split CSV/TSV into multiple files according to column values
 
 Note:
@@ -1566,7 +1566,7 @@ Examples
 
 Usage
 
-```
+```text
 split XLSX sheet into multiple sheets according to column values
 
 Strengths: Sheet properties are remained unchanged.
@@ -1638,7 +1638,7 @@ Examples
 
 Usage
 
-```
+```text
 collapse one field with selected fields as keys
 
 Usage:
@@ -1705,7 +1705,7 @@ examples
 
 Usage
 
-```
+```text
 add column names
 
 Usage:
@@ -1751,7 +1751,7 @@ Examples:
 
 Usage
 
-```
+```text
 delete column names
 
 Usage:
@@ -1784,7 +1784,7 @@ Examples:
 
 Usage
 
-```
+```text
 rename column names
 
 Usage:
@@ -1819,7 +1819,7 @@ Examples:
 
 Usage
 
-```
+```text
 rename column names by regular expression
 
 Special replacement symbols:
@@ -1903,7 +1903,7 @@ Examples:
 
 Usage
 
-```
+```text
 replace data of selected fields by regular expression
 
 Note that the replacement supports capture variables.
@@ -1971,7 +1971,7 @@ Examples
 
 Usage
 
-```
+```text
 create new column from selected fields by regular expression
 
 Usage:
@@ -2011,7 +2011,7 @@ Examples
 
 Usage
 
-```
+```text
 create new column from selected fields by awk-like artithmetic/string expressions
 
 The artithmetic/string expression is supported by:
@@ -2101,7 +2101,7 @@ Example
 
 Usage
 
-```
+```text
 gather columns into key-value pairs
 
 Usage:
@@ -2147,7 +2147,7 @@ Examples:
 
 Usage
 
-```
+```text
 sort by selected fields
 
 Usage:
@@ -2265,7 +2265,7 @@ Examples
 
 Usage
 
-```
+```text
 plot common figures
 
 Notes:
@@ -2304,6 +2304,7 @@ Flags:
       --ylab string          y label text
 
 ```
+
 ***Note that most of the flags of `plot` are global flags of the subcommands
 `hist`, `box` and `line`***
 
@@ -2320,7 +2321,7 @@ Flags:
 
 Usage
 
-```
+```text
 plot histogram
 
 Notes:
@@ -2365,7 +2366,7 @@ Examples
 
 Usage
 
-```
+```text
 plot boxplot
 
 Notes:
@@ -2404,7 +2405,7 @@ group information is the "Group" column.
 
 Usage
 
-```
+```text
 line plot and scatter plot
 
 Notes:
@@ -2455,7 +2456,7 @@ Examples
 
 Usage
 
-```
+```text
 generate shell autocompletion script
 
 Note: The current version supports Bash only.
