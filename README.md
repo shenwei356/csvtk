@@ -224,6 +224,7 @@ More [examples](http://shenwei356.github.io/csvtk/usage/) and [tutorial](http://
 
 1. The CSV parser requires all the lines have same number of fields/columns.
     Even lines with spaces will cause error.
+    Use '-I/--ignore-illegal-row' to skip these lines if neccessary.
 2. By default, csvtk thinks your files have header row, if not, switch flag `-H` on.
 3. Column names better be unique.
 4. By default, lines starting with `#` will be ignored, if the header row

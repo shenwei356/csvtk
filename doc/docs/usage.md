@@ -6,6 +6,7 @@
 
 1. The CSV parser requires all the lines have same number of fields/columns.
     Even lines with spaces will cause error.
+    Use '-I/--ignore-illegal-row' to skip these lines if neccessary.
 2. By default, csvtk thinks your files have header row, if not, switch flag `-H` on.
 3. Column names better be unique.
 4. By default, lines starting with `#` will be ignored, if the header row
@@ -86,7 +87,7 @@ Usage
 ```
 csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.17.1
+Version: 0.18.0
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -97,6 +98,7 @@ Attention:
 
   1. The CSV parser requires all the lines have same number of fields/columns.
      Even lines with spaces will cause error.
+     Use '-I/--ignore-illegal-row' to skip these lines if neccessary.
   2. By default, csvtk thinks your files have header row, if not, switch flag "-H" on.
   3. Column names better be unique.
   4. By default, lines starting with "#" will be ignored, if the header row
@@ -158,7 +160,8 @@ Flags:
   -C, --comment-char string    lines starting with commment-character will be ignored. if your header row starts with '#', please assign "-C" another rare symbol, e.g. '$' (default "#")
   -d, --delimiter string       delimiting character of the input CSV file (default ",")
   -h, --help                   help for csvtk
-  -E, --ignore-empty-row       ignore empty row
+  -E, --ignore-empty-row       ignore empty rows
+  -I, --ignore-illegal-row     ignore illegal rows
   -l, --lazy-quotes            if given, a quote may appear in an unquoted field and a non-doubled quote may appear in a quoted field
   -H, --no-header-row          specifies that the input CSV file does not have header row
   -j, --num-cpus int           number of CPUs to use (default value depends on your computer) (default 16)

@@ -189,7 +189,8 @@ type Config struct {
 
 	OutFile string
 
-	IgnoreEmptyRow bool
+	IgnoreEmptyRow   bool
+	IgnoreIllegalRow bool
 }
 
 func isTrue(s string) bool {
@@ -233,7 +234,8 @@ func getConfigs(cmd *cobra.Command) Config {
 
 		OutFile: getFlagString(cmd, "out-file"),
 
-		IgnoreEmptyRow: getFlagBool(cmd, "ignore-empty-row"),
+		IgnoreEmptyRow:   getFlagBool(cmd, "ignore-empty-row"),
+		IgnoreIllegalRow: getFlagBool(cmd, "ignore-illegal-row"),
 	}
 }
 
@@ -250,6 +252,7 @@ func newCSVReaderByConfig(config Config, file string) (*CSVReader, error) {
 	reader.Reader.Comment = config.CommentChar
 	reader.Reader.LazyQuotes = config.LazyQuotes
 	reader.IgnoreEmptyRow = config.IgnoreEmptyRow
+	reader.IgnoreIllegalRow = config.IgnoreIllegalRow
 
 	return reader, nil
 }
@@ -405,7 +408,7 @@ func fuzzyField2Regexp(field string) *regexp.Regexp {
 	return re
 }
 
-func readCSV(config Config, file string) ([]string, [][]string) {
+func readCSV(config Config, file string) ([]string, [][]string, *CSVReader) {
 	csvReader, err := newCSVReaderByConfig(config, file)
 	checkError(err)
 	csvReader.Run()
@@ -427,13 +430,13 @@ func readCSV(config Config, file string) ([]string, [][]string) {
 			data = append(data, record)
 		}
 	}
-	return headerRow, data
+	return headerRow, data, csvReader
 }
 
 func readDataFrame(config Config, file string, ignoreCase bool) ([]string, map[string]string, map[string][]string) {
 	df := make(map[string][]string)
 	var colnames []string
-	headerRow, data := readCSV(config, file)
+	headerRow, data, csvReader := readCSV(config, file)
 
 	// in case that col names are not unique in headerRow
 	colname2headerRow := make(map[string]string, len(headerRow))
@@ -499,6 +502,14 @@ func readDataFrame(config Config, file string, ignoreCase bool) ([]string, map[s
 			df[col] = append(df[col], data[j][i])
 		}
 	}
+
+	if config.IgnoreEmptyRow {
+		log.Warningf("file '%s': %d empty rows ignored", file, csvReader.NumEmptyRows)
+	}
+	if config.IgnoreIllegalRow {
+		log.Warningf("file '%s': %d illegal rows ignored", file, csvReader.NumIllegalRows)
+	}
+
 	return colnames, colname2headerRow, df
 }
 
@@ -674,6 +685,14 @@ func parseCSVfile(cmd *cobra.Command, config Config, file string,
 			}
 		}
 	}
+
+	if config.IgnoreEmptyRow {
+		log.Warningf("file '%s': %d empty rows ignored", file, csvReader.NumEmptyRows)
+	}
+	if config.IgnoreIllegalRow {
+		log.Warningf("file '%s': %d illegal rows ignored", file, csvReader.NumIllegalRows)
+	}
+
 	if fieldStr != "*" {
 		return HeaderRow, fields, Data, HeaderRowAll, DataAll, csvReader.MetaLine
 	}

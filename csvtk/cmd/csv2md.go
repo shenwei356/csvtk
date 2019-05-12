@@ -72,7 +72,7 @@ Attention:
 		defer outfh.Close()
 
 		file := files[0]
-		headerRow, data := readCSV(config, file)
+		headerRow, data, csvReader := readCSV(config, file)
 
 		var header []string
 		var datas [][]string
@@ -158,6 +158,13 @@ Attention:
 			tbl.AddRow(record2...)
 		}
 		outfh.Write(tbl.Bytes())
+
+		if config.IgnoreEmptyRow {
+			log.Warningf("file '%s': %d empty rows ignored", file, csvReader.NumEmptyRows)
+		}
+		if config.IgnoreIllegalRow {
+			log.Warningf("file '%s': %d illegal rows ignored", file, csvReader.NumIllegalRows)
+		}
 	},
 }
 

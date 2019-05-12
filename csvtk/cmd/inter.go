@@ -232,6 +232,13 @@ var interCmd = &cobra.Command{
 
 			}
 
+			if config.IgnoreEmptyRow {
+				log.Warningf("file '%s': %d empty rows ignored", file, csvReader.NumEmptyRows)
+			}
+			if config.IgnoreIllegalRow {
+				log.Warningf("file '%s': %d illegal rows ignored", file, csvReader.NumIllegalRows)
+			}
+
 			if firstFile {
 				firstFile = false
 				continue

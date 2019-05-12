@@ -44,7 +44,8 @@ Source code: https://github.com/shenwei356/csvtk
 Attention:
 
   1. The CSV parser requires all the lines have same number of fields/columns.
-     Even lines with spaces will cause error.
+     Even lines with spaces will cause error. 
+     Use '-I/--ignore-illegal-row' to skip these lines if neccessary.
   2. By default, csvtk thinks your files have header row, if not, switch flag "-H" on.
   3. Column names better be unique.
   4. By default, lines starting with "#" will be ignored, if the header row
@@ -86,5 +87,6 @@ func init() {
 	RootCmd.PersistentFlags().BoolP("no-header-row", "H", false, `specifies that the input CSV file does not have header row`)
 	RootCmd.PersistentFlags().StringP("out-file", "o", "-", `out file ("-" for stdout, suffix .gz for gzipped out)`)
 
-	RootCmd.PersistentFlags().BoolP("ignore-empty-row", "E", false, `ignore empty row`)
+	RootCmd.PersistentFlags().BoolP("ignore-empty-row", "E", false, `ignore empty rows`)
+	RootCmd.PersistentFlags().BoolP("ignore-illegal-row", "I", false, `ignore illegal rows`)
 }

@@ -129,6 +129,13 @@ Supported operators and types:
 						checkError(writer.Write(append(record, result2)))
 					}
 				}
+
+				if config.IgnoreEmptyRow {
+					log.Warningf("file '%s': %d empty rows ignored", file, csvReader.NumEmptyRows)
+				}
+				if config.IgnoreIllegalRow {
+					log.Warningf("file '%s': %d illegal rows ignored", file, csvReader.NumIllegalRows)
+				}
 			}
 
 			return
@@ -349,6 +356,13 @@ Supported operators and types:
 					}
 					checkError(writer.Write(record2))
 				}
+			}
+
+			if config.IgnoreEmptyRow {
+				log.Warningf("file '%s': %d empty rows ignored", file, csvReader.NumEmptyRows)
+			}
+			if config.IgnoreIllegalRow {
+				log.Warningf("file '%s': %d illegal rows ignored", file, csvReader.NumIllegalRows)
 			}
 		}
 	},
