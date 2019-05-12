@@ -468,7 +468,8 @@ name-indexed data such as CSV and tabular JSON http://johnkerl.org/miller</li>
 <p><strong>Attention</strong></p>
 <ol>
 <li>The CSV parser requires all the lines have same number of fields/columns.
-    Even lines with spaces will cause error.</li>
+    Even lines with spaces will cause error.
+    Use '-I/--ignore-illegal-row' to skip these lines if neccessary.</li>
 <li>By default, csvtk thinks your files have header row, if not, switch flag <code>-H</code> on.</li>
 <li>Column names better be unique.</li>
 <li>By default, lines starting with <code>#</code> will be ignored, if the header row
@@ -667,5 +668,5 @@ propose new functions or ask for help.</p>
 
 <!--
 MkDocs version : 1.0.4
-Build Date UTC : 2019-01-22 05:56:17
+Build Date UTC : 2019-05-12 08:28:58
 -->

@@ -227,7 +227,8 @@
 <p><strong>Attention</strong></p>
 <ol>
 <li>The CSV parser requires all the lines have same number of fields/columns.
-    Even lines with spaces will cause error.</li>
+    Even lines with spaces will cause error.
+    Use '-I/--ignore-illegal-row' to skip these lines if neccessary.</li>
 <li>By default, csvtk thinks your files have header row, if not, switch flag <code>-H</code> on.</li>
 <li>Column names better be unique.</li>
 <li>By default, lines starting with <code>#</code> will be ignored, if the header row
@@ -305,9 +306,9 @@
 
 <h2 id="csvtk">csvtk</h2>
 <p>Usage</p>
-<pre><code>csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
+<pre><code class="text">csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.17.0
+Version: 0.18.0
 
 Author: Wei Shen &lt;shenwei356@gmail.com&gt;
 
@@ -318,6 +319,7 @@ Attention:
 
   1. The CSV parser requires all the lines have same number of fields/columns.
      Even lines with spaces will cause error.
+     Use '-I/--ignore-illegal-row' to skip these lines if neccessary.
   2. By default, csvtk thinks your files have header row, if not, switch flag &quot;-H&quot; on.
   3. Column names better be unique.
   4. By default, lines starting with &quot;#&quot; will be ignored, if the header row
@@ -379,7 +381,8 @@ Flags:
   -C, --comment-char string    lines starting with commment-character will be ignored. if your header row starts with '#', please assign &quot;-C&quot; another rare symbol, e.g. '$' (default &quot;#&quot;)
   -d, --delimiter string       delimiting character of the input CSV file (default &quot;,&quot;)
   -h, --help                   help for csvtk
-  -E, --ignore-empty-row       ignore empty row
+  -E, --ignore-empty-row       ignore empty rows
+  -I, --ignore-illegal-row     ignore illegal rows
   -l, --lazy-quotes            if given, a quote may appear in an unquoted field and a non-doubled quote may appear in a quoted field
   -H, --no-header-row          specifies that the input CSV file does not have header row
   -j, --num-cpus int           number of CPUs to use (default value depends on your computer) (default 16)
@@ -391,7 +394,7 @@ Flags:
 
 <h2 id="headers">headers</h2>
 <p>Usage</p>
-<pre><code>print headers
+<pre><code class="text">print headers
 
 Usage:
   csvtk headers [flags]
@@ -399,7 +402,7 @@ Usage:
 </code></pre>
 
 <p>Examples</p>
-<pre><code>$ csvtk headers testdata/*.csv
+<pre><code class="sh">$ csvtk headers testdata/*.csv
 # testdata/1.csv
 1       name
 2       attr
@@ -414,7 +417,7 @@ Usage:
 
 <h2 id="dim">dim</h2>
 <p>Usage</p>
-<pre><code>dimensions of CSV file
+<pre><code class="text">dimensions of CSV file
 
 Usage:
   csvtk dim [flags]
@@ -460,7 +463,7 @@ file   num_cols   num_rows
 </ol>
 <h2 id="summary">summary</h2>
 <p>Usage</p>
-<pre><code>summary statistics of selected digital fields (groupby group fields)
+<pre><code class="text">summary statistics of selected digital fields (groupby group fields)
 
 Attention:
 
@@ -468,21 +471,27 @@ Attention:
 
 Available operations:
 
+  # numeric/statistical operations
   # provided by github.com/gonum/stat and github.com/gonum/floats
-  count, min, max, sum,
+  countn (count of digits), min, max, sum,
   mean, stdev, variance, median, q1, q2, q3,
-  entropy (Shannon entropy), 
+  entropy (Shannon entropy),
   prod (product of the elements)
+
+  # textual/numeric operations
+  count, first, last, rand, unique, collapse, countunique
 
 Usage:
   csvtk summary [flags]
 
 Flags:
   -n, --decimal-width int   limit floats to N decimal points (default 2)
-  -f, --fields strings      operations on these fields. e.g -f 1:count,1:sum or -f colA:mean. available operations: count, entropy, max, mean, median, min, prod, q1, q2, q3, stdev, sum, variance
+  -f, --fields strings      operations on these fields. e.g -f 1:count,1:sum or -f colA:mean. available operations: collapse, count, countn, countunique, entropy, first, last, max, mean, median, min, prod, q1, q2, q3, rand, stdev, sum, uniq, variance
   -g, --groups string       group via fields. e.g -f 1,2 or -f columnA,columnB
-  -h, --help                help for stats
+  -h, --help                help for summary
   -i, --ignore-non-digits   ignore non-digital values like &quot;NA&quot; or &quot;N/A&quot;
+  -S, --rand-seed int       rand seed for operation &quot;rand&quot; (default 11)
+  -s, --separater string    separater for collapsed data (default &quot;; &quot;)
 
 </code></pre>
 
@@ -562,19 +571,55 @@ foo   bar2   4.50   5.00
 </code></pre>
 </li>
 <li>
-<p>more statistics</p>
+<p>numeric/statistical operations</p>
 <pre><code>$ cat testdata/digitals2.csv \
-    | csvtk summary -i -g f1 -f f4:count,f4:mean,f4:stdev,f4:q1,f4:q2,f4:mean,f4:q3,f4:min,f4:max \
+    | csvtk summary -i -g f1 -f f4:countn,f4:mean,f4:stdev,f4:q1,f4:q2,f4:mean,f4:q3,f4:min,f4:max \
     | csvtk pretty
-f1    f4:count   f4:mean   f4:stdev   f4:q1   f4:q2   f4:mean   f4:q3   f4:min   f4:max
-bar   6.00       1.83      0.75       1.00    2.00    1.83      2.00    1.00     3.00
-foo   4.00       2.62      1.80       1.25    2.25    2.62      4.00    1.00     5.00
+f1    f4:countn   f4:mean   f4:stdev   f4:q1   f4:q2   f4:mean   f4:q3   f4:min   f4:max
+bar   6.00        1.83      0.75       1.00    2.00    1.83      2.00    1.00     3.00
+foo   4.00        2.62      1.80       1.25    2.25    2.62      4.00    1.00     5.00
+</code></pre>
+</li>
+<li>
+<p>textual/numeric operations</p>
+<pre><code>$  cat testdata/digitals2.csv \
+    | csvtk summary -i -g f1 -f f2:count,f2:first,f2:last,f2:rand,f2:collapse,f2:uniq,f2:countunique \
+    | csvtk pretty
+f1    f2:count   f2:first   f2:last   f2:rand   f2:collapse                           f2:uniq     f2:countunique
+bar   7          xyz        xyz2      xyz2      xyz; xyz; xyz; xyz; xyz; xyz2; xyz2   xyz2; xyz   2
+foo   5          bar        bar2      bar2      bar; bar2; bar2; bar; bar2            bar; bar2   2
+</code></pre>
+</li>
+<li>
+<p>mixed operations</p>
+<pre><code>$  cat testdata/digitals2.csv \
+    | csvtk summary -i -g f1 -f f4:collapse,f4:max \
+    | csvtk pretty
+f1    f4:collapse            f4:max
+bar   NA; 1; 2; 1; 3; 2; 2   3.00
+foo   1; 1.5; 3; 5; N/A      5.00
+</code></pre>
+</li>
+<li>
+<p><code>countn</code> and <code>count</code></p>
+<pre><code>$ cat testdata/digitals2.csv \
+    | csvtk summary -f f4:count,f4:countn -i \
+    | csvtk pretty
+f4:count   f4:countn
+12         10
+
+$ cat testdata/digitals2.csv \
+    | csvtk summary -f f4:count,f4:countn,f4:collapse -i -g f1 \
+    | csvtk pretty
+f1    f4:count   f4:countn   f4:collapse
+bar   7          6           NA; 1; 2; 1; 3; 2; 2
+foo   5          4           1; 1.5; 3; 5; N/A
 </code></pre>
 </li>
 </ol>
 <h2 id="pretty">pretty</h2>
 <p>Usage</p>
-<pre><code>convert CSV to readable aligned table
+<pre><code class="text">convert CSV to readable aligned table
 
 Attention:
 
@@ -630,7 +675,7 @@ NA | Robert     | Abel      | 123
 </ol>
 <h2 id="transpose">transpose</h2>
 <p>Usage</p>
-<pre><code>transpose CSV data
+<pre><code class="text">transpose CSV data
 
 Usage:
   csvtk transpose [flags]
@@ -639,8 +684,8 @@ Usage:
 
 <p>Examples</p>
 <pre><code>$ cat  testdata/digitals.tsv
-4       5       6$
-1       2       3$
+4       5       6
+1       2       3
 7       8       0
 8       1,000   4
 
@@ -651,7 +696,7 @@ $ csvtk transpose -t  testdata/digitals.tsv
 </code></pre>
 <h2 id="csv2json">csv2json</h2>
 <p>Usage</p>
-<pre><code>convert CSV to JSON format
+<pre><code class="text">convert CSV to JSON format
 
 Usage:
   csvtk csv2json [flags]
@@ -777,7 +822,7 @@ ID,room,name
 </ul>
 <h2 id="csv2md">csv2md</h2>
 <p>Usage</p>
-<pre><code>convert CSV to markdown format
+<pre><code class="text">convert CSV to markdown format
 
 Attention:
 
@@ -907,7 +952,7 @@ NA |Robert    |Abel     |123
 </ol>
 <h2 id="xlsx2csv">xlsx2csv</h2>
 <p>Usage</p>
-<pre><code>convert XLSX to CSV format
+<pre><code class="text">convert XLSX to CSV format
 
 Usage:
   csvtk xlsx2csv [flags]
@@ -954,7 +999,7 @@ Thompson,there
 </ol>
 <h2 id="head">head</h2>
 <p>Usage</p>
-<pre><code>print first N records
+<pre><code class="text">print first N records
 
 Usage:
   csvtk head [flags]
@@ -984,7 +1029,7 @@ foo,cool
 </ol>
 <h2 id="concat">concat</h2>
 <p>Usage</p>
-<pre><code>concatenate CSV/TSV files by rows
+<pre><code class="text">concatenate CSV/TSV files by rows
 
 Note that the second and later files are concatenated to the first one,
 so only columns match that of the first files kept.
@@ -1087,7 +1132,7 @@ NA    NA           NA           NA         NA
 </ol>
 <h2 id="sample">sample</h2>
 <p>Usage</p>
-<pre><code>sampling by proportion
+<pre><code class="text">sampling by proportion
 
 Usage:
   csvtk sample [flags]
@@ -1101,7 +1146,7 @@ Flags:
 </code></pre>
 
 <p>Examples</p>
-<pre><code>$ seq 100 | csvtk sample -H -p 0.5 | wc -l
+<pre><code class="sh">$ seq 100 | csvtk sample -H -p 0.5 | wc -l
 46
 
 $ seq 100 | csvtk sample -H -p 0.5 | wc -l
@@ -1118,7 +1163,7 @@ $  seq 100 | csvtk sample -H -p 0.05 -n
 
 <h2 id="cut">cut</h2>
 <p>Usage</p>
-<pre><code>select parts of fields
+<pre><code class="text">select parts of fields
 
 Usage:
   csvtk cut [flags]
@@ -1245,7 +1290,7 @@ abc
 </ul>
 <h2 id="uniq">uniq</h2>
 <p>Usage</p>
-<pre><code>unique data without sorting
+<pre><code class="text">unique data without sorting
 
 Usage:
   csvtk uniq [flags]
@@ -1291,7 +1336,7 @@ Robert
 </ul>
 <h2 id="freq">freq</h2>
 <p>Usage</p>
-<pre><code>frequencies of selected fields
+<pre><code class="text">frequencies of selected fields
 
 Usage:
   csvtk freq [flags]
@@ -1358,7 +1403,7 @@ Robert       Griesemer   1
 </ol>
 <h2 id="inter">inter</h2>
 <p>Usage</p>
-<pre><code>intersection of multiple files
+<pre><code class="text">intersection of multiple files
 
 Usage:
   csvtk inter [flags]
@@ -1393,12 +1438,13 @@ shenwei
 </code></pre>
 <h2 id="grep">grep</h2>
 <p>Usage</p>
-<pre><code>grep data by selected fields with patterns/regular expressions
+<pre><code class="text">grep data by selected fields with patterns/regular expressions
 
 Usage:
   csvtk grep [flags]
 
 Flags:
+  --delete-matched        delete a pattern right after being matched, this keeps the firstly matched data and speedups when using regular expressions
   -f, --fields string         comma separated key fields, column name or index. e.g. -f 1-3 or -f id,id2 or -F -f &quot;group*&quot; (default &quot;1&quot;)
   -F, --fuzzy-fields          using fuzzy fields, e.g., -F -f &quot;*name&quot; or -F -f &quot;id123*&quot;
   -h, --help                  help for grep
@@ -1457,7 +1503,7 @@ n   id   first_name   last_name   username
 </ul>
 <h2 id="filter">filter</h2>
 <p>Usage</p>
-<pre><code>filter rows by values of selected fields with arithmetic expression
+<pre><code class="text">filter rows by values of selected fields with arithmetic expression
 
 Usage:
   csvtk filter [flags]
@@ -1525,7 +1571,7 @@ id,first_name,last_name,username
 </ol>
 <h2 id="filter2">filter2</h2>
 <p>Usage</p>
-<pre><code>filter rows by awk-like artithmetic/string expressions
+<pre><code class="text">filter rows by awk-like artithmetic/string expressions
 
 The artithmetic/string expression is supported by:
 
@@ -1605,7 +1651,7 @@ $ cat testdata/digitals.tsv | csvtk filter2 -H -t -f '$2 &lt;= $3 || ( $1 / $2 &
 </ol>
 <h2 id="join">join</h2>
 <p>Usage</p>
-<pre><code>join 2nd and later files to the first file by selected fields.
+<pre><code class="text">join 2nd and later files to the first file by selected fields.
 
 Multiple keys supported, but the orders are ignored.
 
@@ -1724,7 +1770,7 @@ id   name   hobby         attr       major
 </ul>
 <h2 id="split">split</h2>
 <p>Usage</p>
-<pre><code>split CSV/TSV into multiple files according to column values
+<pre><code class="text">split CSV/TSV into multiple files according to column values
 
 Note:
 
@@ -1830,7 +1876,7 @@ $ zcat t2.gz | md5sum
 </ol>
 <h2 id="splitxlsx">splitxlsx</h2>
 <p>Usage</p>
-<pre><code>split XLSX sheet into multiple sheets according to column values
+<pre><code class="text">split XLSX sheet into multiple sheets according to column values
 
 Strengths: Sheet properties are remained unchanged.
 Weakness : Complicated sheet structures are not well supported, e.g.,
@@ -1901,7 +1947,7 @@ NA   Robert       Abel        123
 </ol>
 <h2 id="collapse">collapse</h2>
 <p>Usage</p>
-<pre><code>collapse one field with selected fields as keys
+<pre><code class="text">collapse one field with selected fields as keys
 
 Usage:
   csvtk collapse [flags]
@@ -1911,7 +1957,7 @@ Flags:
   -F, --fuzzy-fields       using fuzzy fields (only for key fields), e.g., -F -f &quot;*name&quot; or -F -f &quot;id123*&quot;
   -h, --help               help for collapse
   -i, --ignore-case        ignore case
-  -s, --separater string   separater for collapsed data (default &quot;;&quot;)
+  -s, --separater string   separater for collapsed data (default &quot;; &quot;)
   -v, --vfield string      value field
 
 </code></pre>
@@ -1938,8 +1984,8 @@ sequencing center       Nick      Microbiology
     | csvtk pretty
 
 lab                     teacher
-computational biology   Tom;Rob
-sequencing center       Jerry;Nick
+computational biology   Tom; Rob
+sequencing center       Jerry; Nick
 
 $ cat teachers.csv  \
     | csvtk uniq -f class,teacher  \
@@ -1960,16 +2006,16 @@ Microbiology        Nick
     | csvtk pretty
 
 teacher   lab                     class
-Tom       computational biology   Bioinformatics;Statistics
+Tom       computational biology   Bioinformatics; Statistics
 Rob       computational biology   Bioinformatics
 Jerry     sequencing center       Bioinformatics
-Nick      sequencing center       Molecular Biology;Microbiology
+Nick      sequencing center       Molecular Biology; Microbiology
 </code></pre>
 </li>
 </ol>
 <h2 id="add-header">add-header</h2>
 <p>Usage</p>
-<pre><code>add column names
+<pre><code class="text">add column names
 
 Usage:
   csvtk add-header [flags]
@@ -2015,7 +2061,7 @@ a       b
 </ol>
 <h2 id="del-header">del-header</h2>
 <p>Usage</p>
-<pre><code>delete column names
+<pre><code class="text">delete column names
 
 Usage:
   csvtk del-header [flags]
@@ -2044,7 +2090,7 @@ $ seq 3 | ./csvtk del-header -H
 </code></pre>
 <h2 id="rename">rename</h2>
 <p>Usage</p>
-<pre><code>rename column names
+<pre><code class="text">rename column names
 
 Usage:
   csvtk rename [flags]
@@ -2076,7 +2122,7 @@ shenwei,999999
 </ul>
 <h2 id="rename2">rename2</h2>
 <p>Usage</p>
-<pre><code>rename column names by regular expression
+<pre><code class="text">rename column names by regular expression
 
 Special replacement symbols:
 
@@ -2161,7 +2207,7 @@ a,col_2,col_3,col_4
 </ul>
 <h2 id="replace">replace</h2>
 <p>Usage</p>
-<pre><code>replace data of selected fields by regular expression
+<pre><code class="text">replace data of selected fields by regular expression
 
 Note that the replacement supports capture variables.
 e.g. $1 represents the text of the first submatch.
@@ -2226,7 +2272,7 @@ C       N: 3, alias: 004
 </ul>
 <h2 id="mutate">mutate</h2>
 <p>Usage</p>
-<pre><code>create new column from selected fields by regular expression
+<pre><code class="text">create new column from selected fields by regular expression
 
 Usage:
   csvtk mutate [flags]
@@ -2263,7 +2309,7 @@ shenwei,999999,s
 </ul>
 <h2 id="mutate2">mutate2</h2>
 <p>Usage</p>
-<pre><code>create new column from selected fields by awk-like artithmetic/string expressions
+<pre><code class="text">create new column from selected fields by awk-like artithmetic/string expressions
 
 The artithmetic/string expression is supported by:
 
@@ -2356,7 +2402,7 @@ NA   Robert       Abel        123        Robert Abel
 </ol>
 <h2 id="gather">gather</h2>
 <p>Usage</p>
-<pre><code>gather columns into key-value pairs
+<pre><code class="text">gather columns into key-value pairs
 
 Usage:
   csvtk gather [flags]
@@ -2398,7 +2444,7 @@ NA,username,123
 </code></pre>
 <h2 id="sort">sort</h2>
 <p>Usage</p>
-<pre><code>sort by selected fields
+<pre><code class="text">sort by selected fields
 
 Usage:
   csvtk sort [flags]
@@ -2524,7 +2570,7 @@ id,size
 </ul>
 <h2 id="plot">plot</h2>
 <p>Usage</p>
-<pre><code>plot common figures
+<pre><code class="text">plot common figures
 
 Notes:
 
@@ -2576,7 +2622,7 @@ Flags:
 </ol>
 <h2 id="plot-hist">plot hist</h2>
 <p>Usage</p>
-<pre><code>plot histogram
+<pre><code class="text">plot histogram
 
 Notes:
 
@@ -2620,7 +2666,7 @@ Group A   100      51.00
 </ul>
 <h2 id="plot-box">plot box</h2>
 <p>Usage</p>
-<pre><code>plot boxplot
+<pre><code class="text">plot boxplot
 
 Notes:
 
@@ -2657,7 +2703,7 @@ group information is the "Group" column.
 </ul>
 <h2 id="plot-line">plot line</h2>
 <p>Usage</p>
-<pre><code>line plot and scatter plot
+<pre><code class="text">line plot and scatter plot
 
 Notes:
 
@@ -2707,7 +2753,7 @@ A       2.0     2
 </ul>
 <h2 id="genautocomplete">genautocomplete</h2>
 <p>Usage</p>
-<pre><code>generate shell autocompletion script
+<pre><code class="text">generate shell autocompletion script
 
 Note: The current version supports Bash only.
 This should work for *nix systems with Bash installed.
