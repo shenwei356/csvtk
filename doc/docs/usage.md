@@ -1140,6 +1140,7 @@ Usage:
   csvtk grep [flags]
 
 Flags:
+  --delete-matched        delete a pattern right after being matched, this keeps the firstly matched data and speedups when using regular expressions
   -f, --fields string         comma separated key fields, column name or index. e.g. -f 1-3 or -f id,id2 or -F -f "group*" (default "1")
   -F, --fuzzy-fields          using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
   -h, --help                  help for grep

@@ -90,6 +90,7 @@ var grepCmd = &cobra.Command{
 		verbose := getFlagBool(cmd, "verbose")
 		noHighlight := getFlagBool(cmd, "no-highlight")
 		printLineNumber := getFlagBool(cmd, "line-number")
+		deleteMatched := getFlagBool(cmd, "delete-matched")
 
 		patternsMap := make(map[string]*regexp.Regexp)
 		var outAll bool
@@ -188,6 +189,9 @@ var grepCmd = &cobra.Command{
 			var N int64
 			var recordWithN []string
 
+			var k string
+			var re *regexp.Regexp
+			var ok bool
 			printMetaLine := true
 			for chunk := range csvReader.Ch {
 				checkError(chunk.Err)
@@ -232,7 +236,7 @@ var grepCmd = &cobra.Command{
 							for _, col := range record {
 								var ok bool
 								if fuzzyFields {
-									for _, re := range colnamesMap {
+									for _, re = range colnamesMap {
 										if re.MatchString(col) {
 											ok = true
 											break
@@ -304,21 +308,27 @@ var grepCmd = &cobra.Command{
 							if outAll {
 								hitOne = true
 							} else {
-								for _, re := range patternsMap {
+								for k, re = range patternsMap {
 									if re.MatchString(target) {
 										hitOne = true
 										reHit = re
+										if deleteMatched && !invert {
+											delete(patternsMap, k)
+										}
 										break
 									}
 								}
 							}
 						} else {
-							k := target
+							k = target
 							if ignoreCase {
 								k = strings.ToLower(k)
 							}
-							if _, ok := patternsMap[k]; ok {
+							if _, ok = patternsMap[k]; ok {
 								hitOne = true
+								if deleteMatched && !invert {
+									delete(patternsMap, k)
+								}
 							}
 						}
 
@@ -399,4 +409,5 @@ func init() {
 	grepCmd.Flags().BoolP("no-highlight", "N", false, `no highlight`)
 	grepCmd.Flags().BoolP("verbose", "", false, `verbose output`)
 	grepCmd.Flags().BoolP("line-number", "n", false, `print line number as the first column ("n")`)
+	grepCmd.Flags().BoolP("delete-matched", "", false, "delete a pattern right after being matched, this keeps the firstly matched data and speedups when using regular expressions")
 }
