@@ -3,7 +3,7 @@
     - `csvtk`: add new flag `--ignore-illegal-row` to skip illegal rows. [#72](https://github.com/shenwei356/csvtk/issues/72)
     - `csvtk summary`: add more textual/numeric operations. [#64](https://github.com/shenwei356/csvtk/issues/64)
     - `csvtk sort`: fix bug for sorting by columns with empty values. [#70](https://github.com/shenwei356/csvtk/issues/70)
-    - `csvtk grep`: add new flag `--delete-matched` to delete a pattern right after being matched, this keeps the firstly matched data and speedups when using regular expressions
+    - `csvtk grep`: add new flag `--delete-matched` to delete a pattern right after being matched, this keeps the firstly matched data and speedups when using regular expressions. [#77](https://github.com/shenwei356/csvtk/issues/77)
 - [csvtk v0.17.0](https://github.com/shenwei356/csvtk/releases/tag/v0.17.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.17.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.17.0)
     - new command: `csvtk add-header` and `csvtk del-header` for adding/deleting column names. [#62](https://github.com/shenwei356/csvtk/issues/62)
