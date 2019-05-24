@@ -95,15 +95,41 @@ var xlsx2csvCmd = &cobra.Command{
 		}
 
 		writer := csv.NewWriter(outfh)
+		if config.OutTabs || config.Tabs {
+			writer.Comma = '\t'
+		} else {
+			writer.Comma = config.OutDelimiter
+		}
 
 		rows, err := xlsx.GetRows(sheetName)
 		checkError(err)
+
+		var notBlank bool
+		var data string
+		var numEmptyRows int
 		for _, row := range rows {
+			if config.IgnoreEmptyRow {
+				notBlank = false
+				for _, data = range row {
+					if data != "" {
+						notBlank = true
+						break
+					}
+				}
+				if !notBlank {
+					numEmptyRows++
+					continue
+				}
+			}
 			checkError(writer.Write(row))
 		}
 
 		writer.Flush()
 		checkError(writer.Error())
+
+		if config.IgnoreEmptyRow {
+			log.Warningf("file '%s': %d empty rows ignored", files[0], numEmptyRows)
+		}
 	},
 }
 

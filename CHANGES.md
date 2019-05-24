@@ -1,6 +1,7 @@
 - [csvtk v0.18.1](https://github.com/shenwei356/csvtk/releases/tag/v0.18.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.18.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.18.1)
     - `csvtk sort`: fix mutiple-key-sort containing natural order sorting. [#79](https://github.com/shenwei356/csvtk/issues/79)
+    - `csvtk xlsx2csv`: reacts to global flags `-t`, `-T`, `-D` and `-E`.
 - [csvtk v0.18.0](https://github.com/shenwei356/csvtk/releases/tag/v0.18.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.18.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.18.0)
     - `csvtk`: add new flag `--ignore-illegal-row` to skip illegal rows. [#72](https://github.com/shenwei356/csvtk/issues/72)

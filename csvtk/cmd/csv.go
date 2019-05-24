@@ -131,7 +131,7 @@ func (csvReader *CSVReader) Run() {
 			if csvReader.IgnoreEmptyRow {
 				notBlank = false
 				for _, data = range record {
-					if len(data) > 0 {
+					if data != "" {
 						notBlank = true
 						break
 					}
