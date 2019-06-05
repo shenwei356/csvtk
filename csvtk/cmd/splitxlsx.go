@@ -278,5 +278,5 @@ func init() {
 	splitXlsxCmd.Flags().BoolP("ignore-case", "i", false, `ignore case (cell value)`)
 	splitXlsxCmd.Flags().StringP("sheet-name", "n", "", "sheet to retrieve")
 	splitXlsxCmd.Flags().BoolP("list-sheets", "a", false, "list all sheets")
-	splitXlsxCmd.Flags().IntP("sheet-index", "I", 1, "Nth sheet to retrieve")
+	splitXlsxCmd.Flags().IntP("sheet-index", "N", 1, "Nth sheet to retrieve")
 }

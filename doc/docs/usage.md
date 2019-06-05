@@ -1583,7 +1583,7 @@ Flags:
   -h, --help                help for splitxlsx
   -i, --ignore-case         ignore case (cell value)
   -a, --list-sheets         list all sheets
-  -I, --sheet-index int     Nth sheet to retrieve (default 1)
+  -N, --sheet-index int     Nth sheet to retrieve (default 1)
   -n, --sheet-name string   sheet to retrieve
 ```
 
@@ -1826,7 +1826,7 @@ Special replacement symbols:
 
     {nr}  ascending number, starting from 1
     {kv}  Corresponding value of the key (captured variable $n) by key-value file,
-          n can be specified by flag -I (--key-capt-idx) (default: 1)
+          n can be specified by flag --key-capt-idx (default: 1)
 
 Usage:
   csvtk rename2 [flags]
@@ -1837,7 +1837,7 @@ Flags:
   -h, --help                   help for rename2
   -i, --ignore-case            ignore case
   -K, --keep-key               keep the key as value when no value found for the key
-  -I, --key-capt-idx int       capture variable index of key (1-based) (default 1)
+      --key-capt-idx int       capture variable index of key (1-based) (default 1)
       --key-miss-repl string   replacement for key with no corresponding value
   -k, --kv-file string         tab-delimited key-value file for replacing key with value when using "{kv}" in -r (--replacement)
   -p, --pattern string         search regular expression
@@ -1924,7 +1924,7 @@ Special replacement symbols:
 
   {nr}    Record number, starting from 1
   {kv}    Corresponding value of the key (captured variable $n) by key-value file,
-          n can be specified by flag -I (--key-capt-idx) (default: 1)
+          n can be specified by flag --key-capt-idx (default: 1)
 
 Usage:
   csvtk replace [flags]
@@ -1935,7 +1935,7 @@ Flags:
   -F, --fuzzy-fields           using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
   -i, --ignore-case            ignore case
   -K, --keep-key               keep the key as value when no value found for the key
-  -I, --key-capt-idx int       capture variable index of key (1-based) (default 1)
+      --key-capt-idx int       capture variable index of key (1-based) (default 1)
       --key-miss-repl string   replacement for key with no corresponding value
   -k, --kv-file string         tab-delimited key-value file for replacing key with value when using "{kv}" in -r (--replacement)
   -p, --pattern string         search regular expression

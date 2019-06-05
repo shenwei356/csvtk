@@ -42,7 +42,7 @@ Special replacement symbols:
 
   {nr}  ascending number, starting from --start-num
   {kv}  Corresponding value of the key (captured variable $n) by key-value file,
-        n can be specified by flag -I (--key-capt-idx) (default: 1)
+        n can be specified by flag --key-capt-idx (default: 1)
 
 
 `,
@@ -333,7 +333,7 @@ func init() {
 	rename2Cmd.Flags().StringP("kv-file", "k", "",
 		`tab-delimited key-value file for replacing key with value when using "{kv}" in -r (--replacement)`)
 	rename2Cmd.Flags().BoolP("keep-key", "K", false, "keep the key as value when no value found for the key")
-	rename2Cmd.Flags().IntP("key-capt-idx", "I", 1, "capture variable index of key (1-based)")
+	rename2Cmd.Flags().IntP("key-capt-idx", "", 1, "capture variable index of key (1-based)")
 	rename2Cmd.Flags().StringP("key-miss-repl", "", "", "replacement for key with no corresponding value")
 	rename2Cmd.Flags().IntP("start-num", "n", 1, `starting number when using {nr} in replacement`)
 	rename2Cmd.Flags().BoolP("kv-file-all-left-columns-as-value", "A", false, "treat all columns except 1th one as value for kv-file with more than 2 columns")

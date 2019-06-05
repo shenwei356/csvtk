@@ -55,7 +55,7 @@ Special replacement symbols:
 
   {nr}    Record number, starting from 1
   {kv}    Corresponding value of the key (captured variable $n) by key-value file,
-          n can be specified by flag -I (--key-capt-idx) (default: 1)
+          n can be specified by flag --key-capt-idx (default: 1)
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -345,7 +345,7 @@ func init() {
 	replaceCmd.Flags().StringP("kv-file", "k", "",
 		`tab-delimited key-value file for replacing key with value when using "{kv}" in -r (--replacement)`)
 	replaceCmd.Flags().BoolP("keep-key", "K", false, "keep the key as value when no value found for the key")
-	replaceCmd.Flags().IntP("key-capt-idx", "I", 1, "capture variable index of key (1-based)")
+	replaceCmd.Flags().IntP("key-capt-idx", "", 1, "capture variable index of key (1-based)")
 	replaceCmd.Flags().StringP("key-miss-repl", "", "", "replacement for key with no corresponding value")
 	replaceCmd.Flags().IntP("nr-width", "", 1, `minimum width for {nr} in flag -r/--replacement. e.g., formating "1" to "001" by --nr-width 3`)
 	replaceCmd.Flags().BoolP("kv-file-all-left-columns-as-value", "A", false, "treat all columns except 1th one as value for kv-file with more than 2 columns")
