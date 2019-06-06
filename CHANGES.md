@@ -1,6 +1,6 @@
 - [csvtk v0.18.2](https://github.com/shenwei356/csvtk/releases/tag/v0.18.2)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.18.2/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.18.2)
-    - `csvtk replace/rename2/splitxlsx`: fix flag conflicts with global flag `-I`.
+    - `csvtk replace/rename2/splitxlsx`: fix flag conflicts with global flag `-I` since v0.18.0.
     - `csvtk replace/rename2`: removing shorthand flag `-I` for `--key-capt-idx`.
     - `csvtk splitxlsx`: changing shorthand flag of `--sheet-index` from `-I` to `-N`.
 - [csvtk v0.18.1](https://github.com/shenwei356/csvtk/releases/tag/v0.18.1)
