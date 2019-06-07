@@ -36,6 +36,23 @@
     </script>
 
     
+    <script>
+    (function(i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r;
+        i[r] = i[r] || function() {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date();
+        a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0];
+        a.async = 1;
+        a.src = g;
+        m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-28948626-9', 'bioinf.shenwei.me/csvtk');
+    ga('send', 'pageview');
+    </script>
+    
 </head>
 
 <body>
@@ -136,6 +153,7 @@
 </div>
 
     <div class="container">
+        
         
         <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
@@ -308,7 +326,7 @@
 <p>Usage</p>
 <pre><code class="text">csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.18.1
+Version: 0.18.2
 
 Author: Wei Shen &lt;shenwei356@gmail.com&gt;
 
@@ -1892,7 +1910,7 @@ Flags:
   -h, --help                help for splitxlsx
   -i, --ignore-case         ignore case (cell value)
   -a, --list-sheets         list all sheets
-  -I, --sheet-index int     Nth sheet to retrieve (default 1)
+  -N, --sheet-index int     Nth sheet to retrieve (default 1)
   -n, --sheet-name string   sheet to retrieve
 </code></pre>
 
@@ -2128,7 +2146,7 @@ Special replacement symbols:
 
     {nr}  ascending number, starting from 1
     {kv}  Corresponding value of the key (captured variable $n) by key-value file,
-          n can be specified by flag -I (--key-capt-idx) (default: 1)
+          n can be specified by flag --key-capt-idx (default: 1)
 
 Usage:
   csvtk rename2 [flags]
@@ -2139,7 +2157,7 @@ Flags:
   -h, --help                   help for rename2
   -i, --ignore-case            ignore case
   -K, --keep-key               keep the key as value when no value found for the key
-  -I, --key-capt-idx int       capture variable index of key (1-based) (default 1)
+      --key-capt-idx int       capture variable index of key (1-based) (default 1)
       --key-miss-repl string   replacement for key with no corresponding value
   -k, --kv-file string         tab-delimited key-value file for replacing key with value when using &quot;{kv}&quot; in -r (--replacement)
   -p, --pattern string         search regular expression
@@ -2227,7 +2245,7 @@ Special replacement symbols:
 
   {nr}    Record number, starting from 1
   {kv}    Corresponding value of the key (captured variable $n) by key-value file,
-          n can be specified by flag -I (--key-capt-idx) (default: 1)
+          n can be specified by flag --key-capt-idx (default: 1)
 
 Usage:
   csvtk replace [flags]
@@ -2238,7 +2256,7 @@ Flags:
   -F, --fuzzy-fields           using fuzzy fields, e.g., -F -f &quot;*name&quot; or -F -f &quot;id123*&quot;
   -i, --ignore-case            ignore case
   -K, --keep-key               keep the key as value when no value found for the key
-  -I, --key-capt-idx int       capture variable index of key (1-based) (default 1)
+      --key-capt-idx int       capture variable index of key (1-based) (default 1)
       --key-miss-repl string   replacement for key with no corresponding value
   -k, --kv-file string         tab-delimited key-value file for replacing key with value when using &quot;{kv}&quot; in -r (--replacement)
   -p, --pattern string         search regular expression
@@ -2806,6 +2824,7 @@ s.setAttribute('data-timestamp', +new Date());
 </script>
 
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript></div>
+        
         
     </div>
 

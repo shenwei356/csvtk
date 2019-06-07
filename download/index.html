@@ -36,6 +36,23 @@
     </script>
 
     
+    <script>
+    (function(i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r;
+        i[r] = i[r] || function() {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date();
+        a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0];
+        a.async = 1;
+        a.src = g;
+        m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-28948626-9', 'bioinf.shenwei.me/csvtk');
+    ga('send', 'pageview');
+    </script>
+    
 </head>
 
 <body>
@@ -137,6 +154,7 @@
 
     <div class="container">
         
+        
         <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
         <li class="first-level active"><a href="#download">Download</a></li>
@@ -163,10 +181,11 @@
   in <a href="https://github.com/shenwei356/csvtk/releases">release</a> page.</p>
 <h2 id="current-version">Current Version</h2>
 <ul>
-<li><a href="https://github.com/shenwei356/csvtk/releases/tag/v0.18.1">csvtk v0.18.1</a>
-<a href="https://github.com/shenwei356/csvtk/releases/tag/v0.18.1"><img alt="Github Releases (by Release)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/v0.18.1/total.svg" /></a><ul>
-<li><code>csvtk sort</code>: fix mutiple-key-sort containing natural order sorting. <a href="https://github.com/shenwei356/csvtk/issues/79">#79</a></li>
-<li><code>csvtk xlsx2csv</code>: reacts to global flags <code>-t</code>, <code>-T</code>, <code>-D</code> and <code>-E</code>. <a href="https://github.com/shenwei356/csvtk/issues/78">#78</a></li>
+<li><a href="https://github.com/shenwei356/csvtk/releases/tag/v0.18.2">csvtk v0.18.2</a>
+<a href="https://github.com/shenwei356/csvtk/releases/tag/v0.18.2"><img alt="Github Releases (by Release)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/v0.18.2/total.svg" /></a><ul>
+<li><code>csvtk replace/rename2/splitxlsx</code>: fix flag conflicts with global flag <code>-I</code> since v0.18.0.</li>
+<li><code>csvtk replace/rename2</code>: removing shorthand flag <code>-I</code> for <code>--key-capt-idx</code>.</li>
+<li><code>csvtk splitxlsx</code>: changing shorthand flag of <code>--sheet-index</code> from <code>-I</code> to <code>-N</code>.</li>
 </ul>
 </li>
 </ul>
@@ -189,38 +208,38 @@
 <tr>
 <td align="left">Linux</td>
 <td align="left">32-bit</td>
-<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.18.1/csvtk_linux_386.tar.gz">csvtk_linux_386.tar.gz</a>,<br/> <a href="http://app.shenwei.me/data/csvtk/csvtk_linux_386.tar.gz">中国镜像</a></td>
-<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.18.1/csvtk_linux_386.tar.gz"><img alt="Github Releases (by Asset)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_386.tar.gz.svg?maxAge=3600" /></a></td>
+<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.18.2/csvtk_linux_386.tar.gz">csvtk_linux_386.tar.gz</a>,<br/> <a href="http://app.shenwei.me/data/csvtk/csvtk_linux_386.tar.gz">中国镜像</a></td>
+<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.18.2/csvtk_linux_386.tar.gz"><img alt="Github Releases (by Asset)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_386.tar.gz.svg?maxAge=3600" /></a></td>
 </tr>
 <tr>
 <td align="left">Linux</td>
 <td align="left"><strong>64-bit</strong></td>
-<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.18.1/csvtk_linux_amd64.tar.gz"><strong>csvtk_linux_amd64.tar.gz</strong></a>,<br/> <a href="http://app.shenwei.me/data/csvtk/csvtk_linux_amd64.tar.gz">中国镜像</a></td>
-<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.18.1/csvtk_linux_amd64.tar.gz"><img alt="Github Releases (by Asset)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_amd64.tar.gz.svg?maxAge=3600" /></a></td>
+<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.18.2/csvtk_linux_amd64.tar.gz"><strong>csvtk_linux_amd64.tar.gz</strong></a>,<br/> <a href="http://app.shenwei.me/data/csvtk/csvtk_linux_amd64.tar.gz">中国镜像</a></td>
+<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.18.2/csvtk_linux_amd64.tar.gz"><img alt="Github Releases (by Asset)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_amd64.tar.gz.svg?maxAge=3600" /></a></td>
 </tr>
 <tr>
 <td align="left">OS X</td>
 <td align="left">32-bit</td>
-<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.18.1/csvtk_darwin_386.tar.gz">csvtk_darwin_386.tar.gz</a>,<br/> <a href="http://app.shenwei.me/data/csvtk/csvtk_darwin_386.tar.gz">中国镜像</a></td>
-<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.18.1/csvtk_darwin_386.tar.gz"><img alt="Github Releases (by Asset)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_darwin_386.tar.gz.svg?maxAge=3600" /></a></td>
+<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.18.2/csvtk_darwin_386.tar.gz">csvtk_darwin_386.tar.gz</a>,<br/> <a href="http://app.shenwei.me/data/csvtk/csvtk_darwin_386.tar.gz">中国镜像</a></td>
+<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.18.2/csvtk_darwin_386.tar.gz"><img alt="Github Releases (by Asset)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_darwin_386.tar.gz.svg?maxAge=3600" /></a></td>
 </tr>
 <tr>
 <td align="left">OS X</td>
 <td align="left"><strong>64-bit</strong></td>
-<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.18.1/csvtk_darwin_amd64.tar.gz"><strong>csvtk_darwin_amd64.tar.gz</strong></a>,<br/> <a href="http://app.shenwei.me/data/csvtk/csvtk_darwin_amd64.tar.gz">中国镜像</a></td>
-<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.18.1/csvtk_darwin_amd64.tar.gz"><img alt="Github Releases (by Asset)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_darwin_amd64.tar.gz.svg?maxAge=3600" /></a></td>
+<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.18.2/csvtk_darwin_amd64.tar.gz"><strong>csvtk_darwin_amd64.tar.gz</strong></a>,<br/> <a href="http://app.shenwei.me/data/csvtk/csvtk_darwin_amd64.tar.gz">中国镜像</a></td>
+<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.18.2/csvtk_darwin_amd64.tar.gz"><img alt="Github Releases (by Asset)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_darwin_amd64.tar.gz.svg?maxAge=3600" /></a></td>
 </tr>
 <tr>
 <td align="left">Windows</td>
 <td align="left">32-bit</td>
-<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.18.1/csvtk_windows_386.exe.tar.gz">csvtk_windows_386.exe.tar.gz</a>,<br/> <a href="http://app.shenwei.me/data/csvtk/csvtk_windows_386.exe.tar.gz">中国镜像</a></td>
-<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.18.1/csvtk_windows_386.exe.tar.gz"><img alt="Github Releases (by Asset)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_windows_386.exe.tar.gz.svg?maxAge=3600" /></a></td>
+<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.18.2/csvtk_windows_386.exe.tar.gz">csvtk_windows_386.exe.tar.gz</a>,<br/> <a href="http://app.shenwei.me/data/csvtk/csvtk_windows_386.exe.tar.gz">中国镜像</a></td>
+<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.18.2/csvtk_windows_386.exe.tar.gz"><img alt="Github Releases (by Asset)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_windows_386.exe.tar.gz.svg?maxAge=3600" /></a></td>
 </tr>
 <tr>
 <td align="left">Windows</td>
 <td align="left"><strong>64-bit</strong></td>
-<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.18.1/csvtk_windows_amd64.exe.tar.gz"><strong>csvtk_windows_amd64.exe.tar.gz</strong></a>,<br/> <a href="http://app.shenwei.me/data/csvtk/csvtk_windows_amd64.exe.tar.gz">中国镜像</a></td>
-<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.18.1/csvtk_windows_amd64.exe.tar.gz"><img alt="Github Releases (by Asset)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_windows_amd64.exe.tar.gz.svg?maxAge=3600" /></a></td>
+<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.18.2/csvtk_windows_amd64.exe.tar.gz"><strong>csvtk_windows_amd64.exe.tar.gz</strong></a>,<br/> <a href="http://app.shenwei.me/data/csvtk/csvtk_windows_amd64.exe.tar.gz">中国镜像</a></td>
+<td align="left"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.18.2/csvtk_windows_amd64.exe.tar.gz"><img alt="Github Releases (by Asset)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_windows_amd64.exe.tar.gz.svg?maxAge=3600" /></a></td>
 </tr>
 </tbody>
 </table>
@@ -287,6 +306,12 @@ done
 </ol>
 <h2 id="previous-versions">Previous Versions</h2>
 <ul>
+<li><a href="https://github.com/shenwei356/csvtk/releases/tag/v0.18.1">csvtk v0.18.1</a>
+<a href="https://github.com/shenwei356/csvtk/releases/tag/v0.18.1"><img alt="Github Releases (by Release)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/v0.18.1/total.svg" /></a><ul>
+<li><code>csvtk sort</code>: fix mutiple-key-sort containing natural order sorting. <a href="https://github.com/shenwei356/csvtk/issues/79">#79</a></li>
+<li><code>csvtk xlsx2csv</code>: reacts to global flags <code>-t</code>, <code>-T</code>, <code>-D</code> and <code>-E</code>. <a href="https://github.com/shenwei356/csvtk/issues/78">#78</a></li>
+</ul>
+</li>
 <li><a href="https://github.com/shenwei356/csvtk/releases/tag/v0.18.0">csvtk v0.18.0</a>
 <a href="https://github.com/shenwei356/csvtk/releases/tag/v0.18.0"><img alt="Github Releases (by Release)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/v0.18.0/total.svg" /></a><ul>
 <li><code>csvtk</code>: add new flag <code>--ignore-illegal-row</code> to skip illegal rows. <a href="https://github.com/shenwei356/csvtk/issues/72">#72</a></li>
@@ -627,6 +652,7 @@ s.setAttribute('data-timestamp', +new Date());
 </script>
 
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript></div>
+        
         
     </div>
 
