@@ -79,18 +79,18 @@ var watchCmd = &cobra.Command{
 		defer outfh.Flush()
 		defer outw.Close()
 
-		transform := func(x float64) float64 { return x }
-		if printLog {
-			transform = func(x float64) float64 {
-				return math.Log10(x + math.Pow(10, -8))
-			}
-		}
-
 		binMode := "termfit"
 		if printBins > 0 {
 			binMode = "fixed"
 		}
 		h := thist.NewHist([]float64{}, printField, binMode, printBins, true)
+
+		transform := func(x float64) float64 { return x }
+		if printLog {
+			transform = func(x float64) float64 {
+				return math.Log10(x + 1)
+			}
+		}
 
 		field2col := make(map[string]int)
 		var col int
