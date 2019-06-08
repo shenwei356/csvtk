@@ -21,20 +21,17 @@
 package cmd
 
 import (
+	"bufio"
 	"fmt"
 	"math"
 	"os"
 	"runtime"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/bsipos/thist"
-	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
-	"gonum.org/v1/plot"
-	"gonum.org/v1/plot/plotter"
-	"gonum.org/v1/plot/plotutil"
-	"gonum.org/v1/plot/vg"
 )
 
 // watchCmd represents the seq command
@@ -62,15 +59,25 @@ var watchCmd = &cobra.Command{
 		}
 		printBins := getFlagInt(cmd, "bins")
 		printPass := getFlagBool(cmd, "pass")
-		_ = printPass
 
 		if printFreq > 0 {
 			config.ChunkSize = printFreq
 		}
 
-		outfh, err := xopen.Wopen(outFile)
-		checkError(err)
-		defer outfh.Close()
+		if config.Tabs {
+			config.OutDelimiter = rune('\t')
+		}
+
+		outw := os.Stdout
+		if outFile != "-" {
+			tw, err := os.Create(outFile)
+			checkError(err)
+			outw = tw
+		}
+		outfh := bufio.NewWriter(outw)
+
+		defer outfh.Flush()
+		defer outw.Close()
 
 		transform := func(x float64) float64 { return x }
 		if printLog {
@@ -125,7 +132,9 @@ var watchCmd = &cobra.Command{
 						}
 
 						isHeaderLine = false
-						outfh.Write()
+						if printPass {
+							outfh.Write([]byte(strings.Join(record, string(config.OutDelimiter)) + "\n"))
+						}
 						continue
 					} // header
 
@@ -140,14 +149,20 @@ var watchCmd = &cobra.Command{
 					}
 					p, err := strconv.ParseFloat(record[i], 64)
 					if err == nil {
+						count++
 						h.Update(transform(p))
+						if printPass {
+							outfh.Write([]byte(strings.Join(record, string(config.OutDelimiter)) + "\n"))
+						}
+					} else {
+						continue
 					}
 					if printFreq > 0 && count%printFreq == 0 {
 						if printDump {
-							outfh.Write([]byte(h.Dump()))
+							os.Stderr.Write([]byte(h.Dump()))
 						} else {
-							outfh.Write([]byte(thist.ClearScreenString()))
-							outfh.Write([]byte(h.Draw()))
+							os.Stderr.Write([]byte(thist.ClearScreenString()))
+							os.Stderr.Write([]byte(h.Draw()))
 							if printPdf != "" {
 								h.SaveImage(printPdf)
 							}
@@ -157,9 +172,8 @@ var watchCmd = &cobra.Command{
 							h = thist.NewHist([]float64{}, printField, binMode, printBins, true)
 						}
 						time.Sleep(time.Duration(printDelay) * time.Second)
-						outfh.Write([]byte(thist.ClearScreenString()))
+						os.Stderr.Write([]byte(thist.ClearScreenString()))
 					}
-					count++
 
 				} // record
 			} //chunk
@@ -167,10 +181,10 @@ var watchCmd = &cobra.Command{
 		} //file
 		if printFreq < 0 || count%printFreq != 0 {
 			if printDump {
-				outfh.Write([]byte(h.Dump()))
+				os.Stderr.Write([]byte(h.Dump()))
 			} else {
-				outfh.Write([]byte(thist.ClearScreenString()))
-				outfh.Write([]byte(h.Draw()))
+				os.Stderr.Write([]byte(thist.ClearScreenString()))
+				os.Stderr.Write([]byte(h.Draw()))
 			}
 			outfh.Flush()
 			if printPdf != "" {
@@ -186,7 +200,7 @@ func init() {
 	watchCmd.Flags().StringP("field", "f", "", "field to watch")
 	watchCmd.Flags().IntP("print-freq", "p", -1, "print frequency (-1 for print after parsing)")
 	watchCmd.Flags().StringP("image", "O", "", "print frequency (-1 for print after parsing)")
-	watchCmd.Flags().IntP("delay", "w", 0, "sleep this many seconds after online plotting")
+	watchCmd.Flags().IntP("delay", "w", 1, "sleep this many seconds after online plotting")
 	watchCmd.Flags().IntP("bins", "B", -1, "number of histogram bins")
 	watchCmd.Flags().BoolP("dump", "y", false, "dump histogram instead of plotting")
 	watchCmd.Flags().BoolP("log", "L", false, "log10 transform values")
