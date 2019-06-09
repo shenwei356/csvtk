@@ -51,6 +51,7 @@ var watchCmd = &cobra.Command{
 		printFreq := getFlagInt(cmd, "print-freq")
 		printDump := getFlagBool(cmd, "dump")
 		printLog := getFlagBool(cmd, "log")
+		printQuiet := getFlagBool(cmd, "quiet")
 		outFile := config.OutFile
 		printDelay := getFlagInt(cmd, "delay")
 		printReset := getFlagBool(cmd, "reset")
@@ -161,8 +162,10 @@ var watchCmd = &cobra.Command{
 						if printDump {
 							os.Stderr.Write([]byte(h.Dump()))
 						} else {
-							os.Stderr.Write([]byte(thist.ClearScreenString()))
-							os.Stderr.Write([]byte(h.Draw()))
+							if !printQuiet {
+								os.Stderr.Write([]byte(thist.ClearScreenString()))
+								os.Stderr.Write([]byte(h.Draw()))
+							}
 							if printPdf != "" {
 								h.SaveImage(printPdf)
 							}
@@ -172,7 +175,6 @@ var watchCmd = &cobra.Command{
 							h = thist.NewHist([]float64{}, printField, binMode, printBins, true)
 						}
 						time.Sleep(time.Duration(printDelay) * time.Second)
-						os.Stderr.Write([]byte(thist.ClearScreenString()))
 					}
 
 				} // record
@@ -183,8 +185,10 @@ var watchCmd = &cobra.Command{
 			if printDump {
 				os.Stderr.Write([]byte(h.Dump()))
 			} else {
-				os.Stderr.Write([]byte(thist.ClearScreenString()))
-				os.Stderr.Write([]byte(h.Draw()))
+				if !printQuiet {
+					os.Stderr.Write([]byte(thist.ClearScreenString()))
+					os.Stderr.Write([]byte(h.Draw()))
+				}
 			}
 			outfh.Flush()
 			if printPdf != "" {
@@ -206,4 +210,5 @@ func init() {
 	watchCmd.Flags().BoolP("log", "L", false, "log10 transform values")
 	watchCmd.Flags().BoolP("reset", "R", false, "reset histogram after every print")
 	watchCmd.Flags().BoolP("pass", "x", false, "reset histogram after every print")
+	watchCmd.Flags().BoolP("quiet", "Q", false, "reset histogram after every print")
 }
