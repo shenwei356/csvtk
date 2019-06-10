@@ -34,24 +34,9 @@ import (
 // concateCmd represents the concatenate command
 var catCmd = &cobra.Command{
 	Use:   "cat",
-	Short: "concatenate sequences with same ID from multiple files",
-	Long: `concatenate sequences with same ID from multiple files
+	Short: "stream file to stdout and report progress on stderr",
+	Long:  "stream file to stdout and report progress on stderr",
 
-Example: concatenating leading 2 bases and last 2 bases
-
-    $ cat t.fa
-    >test
-    ACCTGATGT
-    >test2
-    TGATAGCTACTAGGGTGTCTATCG
-
-    $ seqkit concate <(seqkit subseq -r 1:2 t.fa) <(seqkit subseq -r -2:-1 t.fa)
-    >test
-    ACGT
-    >test2
-    TGCG
-
-`,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
 		outFile := config.OutFile
@@ -150,8 +135,7 @@ Example: concatenating leading 2 bases and last 2 bases
 func init() {
 	RootCmd.AddCommand(catCmd)
 	catCmd.Flags().IntP("print-freq", "p", 1, "print frequency (-1 for print after parsing)")
-	catCmd.Flags().IntP("buffsize", "b", 4096*2, "sleep this many seconds after online plotting")
-	catCmd.Flags().BoolP("lines", "L", false, "number of histogram bins")
-	catCmd.Flags().IntP("total", "s", -1, "number of histogram bins")
-
+	catCmd.Flags().IntP("buffsize", "b", 4096*2, "buffer size")
+	catCmd.Flags().BoolP("lines", "L", false, "count lines instead of bytes")
+	catCmd.Flags().IntP("total", "s", -1, "expected total bytes/lines")
 }

@@ -37,10 +37,9 @@ import (
 // watchCmd represents the seq command
 var watchCmd = &cobra.Command{
 	Use:   "watch",
-	Short: "sampling by proportion",
-	Long: `sampling by proportion
+	Short: "monitor the specified fields",
+	Long:  "monitor the specified fields",
 
-`,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
 		files := getFileList(args)
@@ -202,13 +201,13 @@ func init() {
 	RootCmd.AddCommand(watchCmd)
 
 	watchCmd.Flags().StringP("field", "f", "", "field to watch")
-	watchCmd.Flags().IntP("print-freq", "p", -1, "print frequency (-1 for print after parsing)")
-	watchCmd.Flags().StringP("image", "O", "", "print frequency (-1 for print after parsing)")
-	watchCmd.Flags().IntP("delay", "w", 1, "sleep this many seconds after online plotting")
+	watchCmd.Flags().IntP("print-freq", "p", -1, "print/report after this many records (-1 for print after EOF)")
+	watchCmd.Flags().StringP("image", "O", "", "save histogram to this PDF/image file")
+	watchCmd.Flags().IntP("delay", "w", 1, "sleep this many seconds after plotting")
 	watchCmd.Flags().IntP("bins", "B", -1, "number of histogram bins")
-	watchCmd.Flags().BoolP("dump", "y", false, "dump histogram instead of plotting")
-	watchCmd.Flags().BoolP("log", "L", false, "log10 transform values")
-	watchCmd.Flags().BoolP("reset", "R", false, "reset histogram after every print")
-	watchCmd.Flags().BoolP("pass", "x", false, "reset histogram after every print")
-	watchCmd.Flags().BoolP("quiet", "Q", false, "reset histogram after every print")
+	watchCmd.Flags().BoolP("dump", "y", false, "print histogram data to stderr instead of plotting")
+	watchCmd.Flags().BoolP("log", "L", false, "log10(x+1) transform numeric values")
+	watchCmd.Flags().BoolP("reset", "R", false, "reset histogram after every report")
+	watchCmd.Flags().BoolP("pass", "x", false, "passthrough mode (forward input to output)")
+	watchCmd.Flags().BoolP("quiet", "Q", false, "supress all plotting to stderr")
 }
