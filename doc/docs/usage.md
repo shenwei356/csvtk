@@ -1100,6 +1100,11 @@ Usage
 ```text
 intersection of multiple files
 
+Attention:
+
+  1. fields in all files should be the same, 
+     if not, extracting to another file using "csvtk cut".
+
 Usage:
   csvtk inter [flags]
 
