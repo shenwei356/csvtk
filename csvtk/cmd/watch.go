@@ -203,7 +203,7 @@ func init() {
 	watchCmd.Flags().StringP("field", "f", "", "field to watch")
 	watchCmd.Flags().IntP("print-freq", "p", -1, "print/report after this many records (-1 for print after EOF)")
 	watchCmd.Flags().StringP("image", "O", "", "save histogram to this PDF/image file")
-	watchCmd.Flags().IntP("delay", "w", 1, "sleep this many seconds after plotting")
+	watchCmd.Flags().IntP("delay", "W", 1, "sleep this many seconds after plotting")
 	watchCmd.Flags().IntP("bins", "B", -1, "number of histogram bins")
 	watchCmd.Flags().BoolP("dump", "y", false, "print histogram data to stderr instead of plotting")
 	watchCmd.Flags().BoolP("log", "L", false, "log10(x+1) transform numeric values")
