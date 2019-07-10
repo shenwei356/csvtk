@@ -437,35 +437,16 @@
       
 
 
-  <li class="md-nav__item md-nav__item--nested">
-    
-      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
-    
-    <label class="md-nav__link" for="nav-3">
-      Documents
-    </label>
-    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
-      <label class="md-nav__title" for="nav-3">
-        Documents
-      </label>
-      <ul class="md-nav__list" data-md-scrollfix>
-        
-        
-          
-          
-          
-
-
   <li class="md-nav__item">
     <a href="usage/" title="Usage" class="md-nav__link">
       Usage
     </a>
   </li>
 
-        
-          
-          
-          
+    
+      
+      
+      
 
 
   <li class="md-nav__item">
@@ -474,21 +455,16 @@
     </a>
   </li>
 
-        
-          
-          
-          
+    
+      
+      
+      
 
 
   <li class="md-nav__item">
     <a href="chinese/" title="中文介绍" class="md-nav__link">
       中文介绍
     </a>
-  </li>
-
-        
-      </ul>
-    </nav>
   </li>
 
     
@@ -498,7 +474,7 @@
 
 
   <li class="md-nav__item">
-    <a href="bioinf/" title="More tools" class="md-nav__link">
+    <a href="https://github.com/shenwei356" title="More tools" class="md-nav__link">
       More tools
     </a>
   </li>
@@ -1008,18 +984,15 @@ NA   Robert       Abel        123
 </code></pre>
 </li>
 <li>
-<p>Summary of selected digital fields: num, sum, min, max, mean, stdev (<code>stat2</code>)</p>
-<pre><code>$ cat digitals.tsv
-4       5       6
-1       2       3
-7       8       0
-8       1,000   4
-
-$ cat digitals.tsv | csvtk stat2 -t -H -f 1-3
-field   num     sum   min     max     mean    stdev
-1         4      20     1       8        5     3.16
-2         4   1,015     2   1,000   253.75   497.51
-3         4      13     0       6     3.25      2.5
+<p>Summary of selected digital fields, supporting "group-by"</p>
+<pre><code>$ cat testdata/digitals2.csv \
+    | csvtk summary --ignore-non-digits --fields f4:sum,f5:sum --groups f1,f2 \
+    | csvtk pretty
+f1    f2     f4:sum   f5:sum
+bar   xyz    7.00     106.00
+bar   xyz2   4.00     4.00
+foo   bar    6.00     3.00
+foo   bar2   4.50     5.00
 </code></pre>
 </li>
 <li>
@@ -1070,6 +1043,7 @@ field   num     sum   min     max     mean    stdev
 <li>By multiple columns: <code>csvtk sort -k 1,2</code> or <code>csvtk sort -k 1 -k 2</code> or <code>csvtk sort -k last_name,age</code></li>
 <li>Sort by number: <code>csvtk sort -k 1:n</code> or  <code>csvtk sort -k 1:nr</code> for reverse number</li>
 <li>Complex sort: <code>csvtk sort -k region -k age:n -k id:nr</code></li>
+<li>In natural order: <code>csvtk sort -k chr:N</code></li>
 </ul>
 </li>
 <li>
@@ -1100,24 +1074,39 @@ field   num     sum   min     max     mean    stdev
 <li>
 <p>Ploting</p>
 <ul>
-<li>plot histogram with data of the second column:
- <code>csvtk -t plot hist testdata/grouped_data.tsv.gz -f 2 | display</code>
-<img alt="histogram.png" src="testdata/figures/histogram.png" /></li>
-<li>plot boxplot with data of the "GC Content" (third) column,
-group information is the "Group" column.
-<code>csvtk -t plot box testdata/grouped_data.tsv.gz -g "Group" -f "GC Content" --width 3 | display</code>
-<img alt="boxplot.png" src="testdata/figures/boxplot.png" /></li>
-<li>plot horiz boxplot with data of the "Length" (second) column,
-group information is the "Group" column.
-<code>csvtk -t plot box testdata/grouped_data.tsv.gz -g "Group" -f "Length"  --height 3 --width 5 --horiz --title "Horiz box plot" | display</code>
-<img alt="boxplot2.png" src="testdata/figures/boxplot2.png" /></li>
-<li>plot line plot with X-Y data
-<code>csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group | display</code>
-<img alt="lineplot.png" src="testdata/figures/lineplot.png" /></li>
-<li>plot scatter plot with X-Y data
-<code>csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group --scatter | display</code>
-<img alt="scatter.png" src="testdata/figures/scatter.png" /></li>
+<li>plot histogram with data of the second column:<pre><code>csvtk -t plot hist testdata/grouped_data.tsv.gz -f 2 | display
+</code></pre>
+</li>
 </ul>
+<p><img alt="histogram.png" src="testdata/figures/histogram.png" /></p>
+<ul>
+<li>plot boxplot with data of the "GC Content" (third) column,
+group information is the "Group" column.<pre><code>csvtk -t plot box testdata/grouped_data.tsv.gz -g "Group" \
+    -f "GC Content" --width 3 | display
+</code></pre>
+</li>
+</ul>
+<p><img alt="boxplot.png" src="testdata/figures/boxplot.png" /></p>
+<ul>
+<li>plot horiz boxplot with data of the "Length" (second) column,
+group information is the "Group" column.<pre><code>csvtk -t plot box testdata/grouped_data.tsv.gz -g "Group" -f "Length"  \
+    --height 3 --width 5 --horiz --title "Horiz box plot" | display
+</code></pre>
+</li>
+</ul>
+<p><img alt="boxplot2.png" src="testdata/figures/boxplot2.png" /></p>
+<ul>
+<li>plot line plot with X-Y data<pre><code>csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group | display
+</code></pre>
+</li>
+</ul>
+<p><img alt="lineplot.png" src="testdata/figures/lineplot.png" /></p>
+<ul>
+<li>plot scatter plot with X-Y data<pre><code>csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group --scatter | display
+</code></pre>
+</li>
+</ul>
+<p><img alt="scatter.png" src="testdata/figures/scatter.png" /></p>
 </li>
 </ol>
 <h2 id="acknowledgements">Acknowledgements</h2>
@@ -1126,7 +1115,7 @@ group information is the "Group" column.
 <p>Thanks <a href="https://github.com/avilella">Albert Vilella</a> for features suggestion,
 which makes csvtk feature-rich。</p>
 <h2 id="contact">Contact</h2>
-<p><a href="https://github.com/shenwei356/csvtk/issues">create an issue</a> to report bugs,
+<p><a href="https://github.com/shenwei356/csvtk/issues">Create an issue</a> to report bugs,
 propose new functions or ask for help.</p>
 <p>Or <a href="https://shenwei356.github.io/csvtk/usage/#disqus_thread">leave a comment</a>.</p>
 <h2 id="license">License</h2>
