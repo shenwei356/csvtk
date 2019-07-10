@@ -2,11 +2,10 @@ site_name: csvtk - CSV/TSV Toolkit
 pages:
 - Home: index.md
 - Download: download.md
-- Documents:
-    - Usage: usage.md
-    - Tutorial: tutorial.md
-    - 中文介绍: chinese.md
-- More tools: bioinf.md
+- Usage: usage.md
+- Tutorial: tutorial.md
+- 中文介绍: chinese.md
+- More tools: https://github.com/shenwei356
 
 # theme: cinder
 
