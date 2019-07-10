@@ -121,7 +121,7 @@ Available operations:
 				_, ok1 := allStats[items[1]]
 				_, ok2 := allStats2[items[1]]
 				if !(ok1 || ok2) {
-					checkError(fmt.Errorf(`invalid operation: %s. run "csvtk stats --help" for help`, items[1]))
+					checkError(fmt.Errorf(`invalid operation: %s. run "csvtk summary --help" for help`, items[1]))
 				}
 				if _, ok := stats[items[0]]; !ok {
 					stats[items[0]] = make([]string, 0, 1)
