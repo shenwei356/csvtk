@@ -186,7 +186,8 @@
 
 1. 对指定列做简单替换
 
-        $ cat names.csv | csvtk replace -f id -p '(\d+)' -r 'ID: $1' | csvtk pretty
+        $ cat names.csv | csvtk replace -f id -p '(\d+)' -r 'ID: $1' \
+            | csvtk pretty
         id       first_name   last_name   username
         ID: 11   Rob          Pike        rob
         ID: 2    Ken          Thompson    ken
@@ -207,7 +208,8 @@
         002     Bob
         003     Jim
 
-        $ csvtk replace -t -f 2 -p "ID(.+)" -r "N: {nr}, alias: {kv}" -k alias.tsv data.tsv
+        $ csvtk replace -t -f 2 -p "ID(.+)" -r "N: {nr}, alias: {kv}" -k \
+            alias.tsv data.tsv
         name    id
         A       N: 1, alias: Tom
         B       N: 2, alias: Bob
@@ -222,7 +224,8 @@
         ken,22222
         shenwei,999999
 
-        $ csvtk join -f 'username;username' --keep-unmatched names.csv phones.csv | csvtk pretty
+        $ csvtk join -f 'username;username' --keep-unmatched names.csv phones.csv \
+            | csvtk pretty
         id   first_name   last_name   username   phone
         11   Rob          Pike        rob        12345
         2    Ken          Thompson    ken        22222

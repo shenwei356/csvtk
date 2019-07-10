@@ -7,8 +7,22 @@ pages:
     - Tutorial: tutorial.md
     - 中文介绍: chinese.md
 - More tools: bioinf.md
-theme: cinder
 
+# theme: cinder
+
+theme:
+    name: 'material'
+    palette:
+        primary: 'light blue'
+        accent: 'blue grey'
+    logo:
+        icon: 'school'
+    favicon: 'files/favicon.ico'
+    feature:
+        tabs: false
+extra:
+  manifest: 'manifest.webmanifest'
+  
 repo_url: https://github.com/shenwei356/csvtk
 site_description: csvtk - CSV/TSV toolkit
 site_author: shenwei356
