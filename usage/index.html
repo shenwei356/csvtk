@@ -1,246 +1,1114 @@
+
+
+
+
 <!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="csvtk - CSV/TSV toolkit"> 
-    <meta name="author" content="shenwei356"> 
-    <link rel="shortcut icon" href="../img/favicon.ico">
-
-    <title>Usage - csvtk - CSV/TSV Toolkit</title>
-
-    <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
-    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/font-hack/2.018/css/hack.min.css">
-    <link href='//fonts.googleapis.com/css?family=PT+Sans:400,400italic,700,700italic&subset=latin-ext,latin' rel='stylesheet' type='text/css'>
-    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,400,300,600,700&subset=latin-ext,latin' rel='stylesheet' type='text/css'>
-    <link href="../css/base.css" rel="stylesheet">
-    <link href="../css/cinder.css" rel="stylesheet">
-    <link rel="stylesheet" href="../css/highlight.css">
-
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
-        <![endif]-->
-
-    <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.5.18/webfont.js"></script>
-    <script>
-    WebFont.load({
-        google: {
-            families: ['Open Sans', 'PT Sans']
-        }
-    });
-    </script>
-
+<html lang="en" class="no-js">
+  <head>
     
-    <script>
-    (function(i, s, o, g, r, a, m) {
-        i['GoogleAnalyticsObject'] = r;
-        i[r] = i[r] || function() {
-            (i[r].q = i[r].q || []).push(arguments)
-        }, i[r].l = 1 * new Date();
-        a = s.createElement(o),
-        m = s.getElementsByTagName(o)[0];
-        a.async = 1;
-        a.src = g;
-        m.parentNode.insertBefore(a, m)
-    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
-
-    ga('create', 'UA-28948626-9', 'bioinf.shenwei.me/csvtk');
-    ga('send', 'pageview');
-    </script>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      
+        <meta name="description" content="csvtk - CSV/TSV toolkit">
+      
+      
+      
+        <meta name="author" content="shenwei356">
+      
+      
+        <meta name="lang:clipboard.copy" content="Copy to clipboard">
+      
+        <meta name="lang:clipboard.copied" content="Copied to clipboard">
+      
+        <meta name="lang:search.language" content="en">
+      
+        <meta name="lang:search.pipeline.stopwords" content="True">
+      
+        <meta name="lang:search.pipeline.trimmer" content="True">
+      
+        <meta name="lang:search.result.none" content="No matching documents">
+      
+        <meta name="lang:search.result.one" content="1 matching document">
+      
+        <meta name="lang:search.result.other" content="# matching documents">
+      
+        <meta name="lang:search.tokenizer" content="[\s\-]+">
+      
+      <link rel="shortcut icon" href="../files/favicon.ico">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-ponylang-0.2.5">
     
-</head>
-
-<body>
-
-    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
-    <div class="container">
-
-        <!-- Collapsed navigation -->
-        <div class="navbar-header">
-            <!-- Expander button -->
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
+    
+      
+        <title>Usage - csvtk - CSV/TSV Toolkit</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/application.dfc6cb0c.css">
+      
+        <link rel="stylesheet" href="../assets/stylesheets/application-palette.6079476c.css">
+      
+    
+    
+      <script src="../assets/javascripts/modernizr.6586f7cd.js"></script>
+    
+    
+      <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+      
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono">
+        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
+      
+      <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    
+    
+    
+  </head>
+  
+    
+    
+    <body dir="ltr" data-md-color-primary="light-blue" data-md-color-accent="blue-grey">
+  
+    <svg class="md-svg">
+      <defs>
+        
+        
+          <svg xmlns="http://www.w3.org/2000/svg" width="416" height="448"
+    viewBox="0 0 416 448" id="github">
+  <path fill="currentColor" d="M160 304q0 10-3.125 20.5t-10.75 19-18.125
+        8.5-18.125-8.5-10.75-19-3.125-20.5 3.125-20.5 10.75-19 18.125-8.5
+        18.125 8.5 10.75 19 3.125 20.5zM320 304q0 10-3.125 20.5t-10.75
+        19-18.125 8.5-18.125-8.5-10.75-19-3.125-20.5 3.125-20.5 10.75-19
+        18.125-8.5 18.125 8.5 10.75 19 3.125 20.5zM360
+        304q0-30-17.25-51t-46.75-21q-10.25 0-48.75 5.25-17.75 2.75-39.25
+        2.75t-39.25-2.75q-38-5.25-48.75-5.25-29.5 0-46.75 21t-17.25 51q0 22 8
+        38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0
+        37.25-1.75t35-7.375 30.5-15 20.25-25.75 8-38.375zM416 260q0 51.75-15.25
+        82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5-41.75
+        1.125q-19.5 0-35.5-0.75t-36.875-3.125-38.125-7.5-34.25-12.875-30.25-20.25-21.5-28.75q-15.5-30.75-15.5-82.75
+        0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25
+        30.875q36.75-8.75 77.25-8.75 37 0 70 8 26.25-20.5
+        46.75-30.25t47.25-9.75q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34
+        99.5z" />
+</svg>
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+    
+      <a href="../#usage-and-examples" tabindex="1" class="md-skip">
+        Skip to content
+      </a>
+    
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex">
+      <div class="md-flex__cell md-flex__cell--shrink">
+          <a href=".." title="csvtk - CSV/TSV Toolkit" class="md-header-nav__button md-logo">
+          
+            <i class="md-icon">school</i>
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          
+            
+              <span class="md-header-nav__topic">
+                csvtk - CSV/TSV Toolkit
+              </span>
+              <span class="md-header-nav__topic">
+                Usage
+              </span>
+            
+          
+        </div>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        
+          
+            <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+            
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+          
+        
+      </div>
+      
+        <div class="md-flex__cell md-flex__cell--shrink">
+          <div class="md-header-nav__source">
             
 
-            <!-- Main title -->
 
-            <a class="navbar-brand" href="..">csvtk - CSV/TSV Toolkit</a>
-        </div>
+  
 
-        <!-- Expanded navigation -->
-        <div class="navbar-collapse collapse">
-                <!-- Main navigation -->
-                <ul class="nav navbar-nav">
-                
-                
-                    <li >
-                        <a href="..">Home</a>
-                    </li>
-                
-                
-                
-                    <li >
-                        <a href="../download/">Download</a>
-                    </li>
-                
-                
-                
-                    <li class="dropdown active">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Documents <b class="caret"></b></a>
-                        <ul class="dropdown-menu">
-                        
-                            
-<li class="active">
-    <a href="./">Usage</a>
-</li>
 
-                        
-                            
-<li >
-    <a href="../tutorial/">Tutorial</a>
-</li>
-
-                        
-                            
-<li >
-    <a href="../chinese/">中文介绍</a>
-</li>
-
-                        
-                        </ul>
-                    </li>
-                
-                
-                
-                    <li >
-                        <a href="../bioinf/">More tools</a>
-                    </li>
-                
-                
-                </ul>
-
-            <ul class="nav navbar-nav navbar-right">
-                    <li>
-                        <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
-                            <i class="fa fa-search"></i> Search
-                        </a>
-                    </li>
-                    <li >
-                        <a rel="next" href="../download/">
-                            <i class="fa fa-arrow-left"></i> Previous
-                        </a>
-                    </li>
-                    <li >
-                        <a rel="prev" href="../tutorial/">
-                            Next <i class="fa fa-arrow-right"></i>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="https://github.com/shenwei356/csvtk/edit/master/docs/usage.md"><i class="fa fa-github"></i> Edit on GitHub</a>
-                    </li>
-            </ul>
-        </div>
+  <a href="https://github.com/shenwei356/csvtk/" title="Go to repository" class="md-source" data-md-source="github">
+    
+      <div class="md-source__icon">
+        <svg viewBox="0 0 24 24" width="24" height="24">
+          <use xlink:href="#github" width="24" height="24"></use>
+        </svg>
+      </div>
+    
+    <div class="md-source__repository">
+      GitHub
     </div>
-</div>
+  </a>
 
-    <div class="container">
+          </div>
+        </div>
+      
+    </div>
+  </nav>
+</header>
+    
+    <div class="md-container">
+      
+        
+      
+      
+      <main class="md-main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <span class="md-nav__button md-logo">
+      
+        <i class="md-icon">school</i>
+      
+    </span>
+    csvtk - CSV/TSV Toolkit
+  </label>
+  
+    <div class="md-nav__source">
+      
+
+
+  
+
+
+  <a href="https://github.com/shenwei356/csvtk/" title="Go to repository" class="md-source" data-md-source="github">
+    
+      <div class="md-source__icon">
+        <svg viewBox="0 0 24 24" width="24" height="24">
+          <use xlink:href="#github" width="24" height="24"></use>
+        </svg>
+      </div>
+    
+    <div class="md-source__repository">
+      GitHub
+    </div>
+  </a>
+
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href=".." title="Home" class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../download/" title="Download" class="md-nav__link">
+      Download
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3" checked>
+    
+    <label class="md-nav__link" for="nav-3">
+      Documents
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        Documents
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
         
         
-        <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
-    <ul class="nav bs-sidenav">
-        <li class="first-level active"><a href="#usage-and-examples">Usage and Examples</a></li>
-            <li class="second-level"><a href="#before-use">Before use</a></li>
-                
-            <li class="second-level"><a href="#table-of-contents">Table of Contents</a></li>
-                
-            <li class="second-level"><a href="#csvtk">csvtk</a></li>
-                
-            <li class="second-level"><a href="#headers">headers</a></li>
-                
-            <li class="second-level"><a href="#dim">dim</a></li>
-                
-            <li class="second-level"><a href="#summary">summary</a></li>
-                
-            <li class="second-level"><a href="#pretty">pretty</a></li>
-                
-            <li class="second-level"><a href="#transpose">transpose</a></li>
-                
-            <li class="second-level"><a href="#csv2json">csv2json</a></li>
-                
-            <li class="second-level"><a href="#csv2md">csv2md</a></li>
-                
-            <li class="second-level"><a href="#xlsx2csv">xlsx2csv</a></li>
-                
-            <li class="second-level"><a href="#head">head</a></li>
-                
-            <li class="second-level"><a href="#concat">concat</a></li>
-                
-            <li class="second-level"><a href="#sample">sample</a></li>
-                
-            <li class="second-level"><a href="#cut">cut</a></li>
-                
-            <li class="second-level"><a href="#uniq">uniq</a></li>
-                
-            <li class="second-level"><a href="#freq">freq</a></li>
-                
-            <li class="second-level"><a href="#inter">inter</a></li>
-                
-            <li class="second-level"><a href="#grep">grep</a></li>
-                
-            <li class="second-level"><a href="#filter">filter</a></li>
-                
-            <li class="second-level"><a href="#filter2">filter2</a></li>
-                
-            <li class="second-level"><a href="#join">join</a></li>
-                
-            <li class="second-level"><a href="#split">split</a></li>
-                
-            <li class="second-level"><a href="#splitxlsx">splitxlsx</a></li>
-                
-            <li class="second-level"><a href="#collapse">collapse</a></li>
-                
-            <li class="second-level"><a href="#add-header">add-header</a></li>
-                
-            <li class="second-level"><a href="#del-header">del-header</a></li>
-                
-            <li class="second-level"><a href="#rename">rename</a></li>
-                
-            <li class="second-level"><a href="#rename2">rename2</a></li>
-                
-            <li class="second-level"><a href="#replace">replace</a></li>
-                
-            <li class="second-level"><a href="#mutate">mutate</a></li>
-                
-            <li class="second-level"><a href="#mutate2">mutate2</a></li>
-                
-            <li class="second-level"><a href="#gather">gather</a></li>
-                
-            <li class="second-level"><a href="#sort">sort</a></li>
-                
-            <li class="second-level"><a href="#plot">plot</a></li>
-                
-            <li class="second-level"><a href="#plot-hist">plot hist</a></li>
-                
-            <li class="second-level"><a href="#plot-box">plot box</a></li>
-                
-            <li class="second-level"><a href="#plot-line">plot line</a></li>
-                
-            <li class="second-level"><a href="#genautocomplete">genautocomplete</a></li>
-                
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Usage
+      </label>
+    
+    <a href="./" title="Usage" class="md-nav__link md-nav__link--active">
+      Usage
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        
+          <li class="md-nav__item">
+    <a href="#before-use" title="Before use" class="md-nav__link">
+    Before use
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#table-of-contents" title="Table of Contents" class="md-nav__link">
+    Table of Contents
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#csvtk" title="csvtk" class="md-nav__link">
+    csvtk
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#headers" title="headers" class="md-nav__link">
+    headers
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#dim" title="dim" class="md-nav__link">
+    dim
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#summary" title="summary" class="md-nav__link">
+    summary
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#pretty" title="pretty" class="md-nav__link">
+    pretty
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#transpose" title="transpose" class="md-nav__link">
+    transpose
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#csv2json" title="csv2json" class="md-nav__link">
+    csv2json
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#csv2md" title="csv2md" class="md-nav__link">
+    csv2md
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#xlsx2csv" title="xlsx2csv" class="md-nav__link">
+    xlsx2csv
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#head" title="head" class="md-nav__link">
+    head
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#concat" title="concat" class="md-nav__link">
+    concat
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#sample" title="sample" class="md-nav__link">
+    sample
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#cut" title="cut" class="md-nav__link">
+    cut
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#uniq" title="uniq" class="md-nav__link">
+    uniq
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#freq" title="freq" class="md-nav__link">
+    freq
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#inter" title="inter" class="md-nav__link">
+    inter
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#grep" title="grep" class="md-nav__link">
+    grep
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#filter" title="filter" class="md-nav__link">
+    filter
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#filter2" title="filter2" class="md-nav__link">
+    filter2
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#join" title="join" class="md-nav__link">
+    join
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#split" title="split" class="md-nav__link">
+    split
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#splitxlsx" title="splitxlsx" class="md-nav__link">
+    splitxlsx
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#collapse" title="collapse" class="md-nav__link">
+    collapse
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#add-header" title="add-header" class="md-nav__link">
+    add-header
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#del-header" title="del-header" class="md-nav__link">
+    del-header
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#rename" title="rename" class="md-nav__link">
+    rename
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#rename2" title="rename2" class="md-nav__link">
+    rename2
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#replace" title="replace" class="md-nav__link">
+    replace
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#mutate" title="mutate" class="md-nav__link">
+    mutate
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#mutate2" title="mutate2" class="md-nav__link">
+    mutate2
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#gather" title="gather" class="md-nav__link">
+    gather
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#sort" title="sort" class="md-nav__link">
+    sort
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#plot" title="plot" class="md-nav__link">
+    plot
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#plot-hist" title="plot hist" class="md-nav__link">
+    plot hist
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#plot-box" title="plot box" class="md-nav__link">
+    plot box
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#plot-line" title="plot line" class="md-nav__link">
+    plot line
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#genautocomplete" title="genautocomplete" class="md-nav__link">
+    genautocomplete
+  </a>
+  
+</li>
+        
+      
+      
+      
+      
+      
     </ul>
-</div></div>
-        <div class="col-md-9" role="main">
+  
+</nav>
+    
+  </li>
 
-<h1 id="usage-and-examples">Usage and Examples</h1>
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../tutorial/" title="Tutorial" class="md-nav__link">
+      Tutorial
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../chinese/" title="中文介绍" class="md-nav__link">
+      中文介绍
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../bioinf/" title="More tools" class="md-nav__link">
+      More tools
+    </a>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        
+          <li class="md-nav__item">
+    <a href="#before-use" title="Before use" class="md-nav__link">
+    Before use
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#table-of-contents" title="Table of Contents" class="md-nav__link">
+    Table of Contents
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#csvtk" title="csvtk" class="md-nav__link">
+    csvtk
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#headers" title="headers" class="md-nav__link">
+    headers
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#dim" title="dim" class="md-nav__link">
+    dim
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#summary" title="summary" class="md-nav__link">
+    summary
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#pretty" title="pretty" class="md-nav__link">
+    pretty
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#transpose" title="transpose" class="md-nav__link">
+    transpose
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#csv2json" title="csv2json" class="md-nav__link">
+    csv2json
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#csv2md" title="csv2md" class="md-nav__link">
+    csv2md
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#xlsx2csv" title="xlsx2csv" class="md-nav__link">
+    xlsx2csv
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#head" title="head" class="md-nav__link">
+    head
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#concat" title="concat" class="md-nav__link">
+    concat
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#sample" title="sample" class="md-nav__link">
+    sample
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#cut" title="cut" class="md-nav__link">
+    cut
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#uniq" title="uniq" class="md-nav__link">
+    uniq
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#freq" title="freq" class="md-nav__link">
+    freq
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#inter" title="inter" class="md-nav__link">
+    inter
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#grep" title="grep" class="md-nav__link">
+    grep
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#filter" title="filter" class="md-nav__link">
+    filter
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#filter2" title="filter2" class="md-nav__link">
+    filter2
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#join" title="join" class="md-nav__link">
+    join
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#split" title="split" class="md-nav__link">
+    split
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#splitxlsx" title="splitxlsx" class="md-nav__link">
+    splitxlsx
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#collapse" title="collapse" class="md-nav__link">
+    collapse
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#add-header" title="add-header" class="md-nav__link">
+    add-header
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#del-header" title="del-header" class="md-nav__link">
+    del-header
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#rename" title="rename" class="md-nav__link">
+    rename
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#rename2" title="rename2" class="md-nav__link">
+    rename2
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#replace" title="replace" class="md-nav__link">
+    replace
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#mutate" title="mutate" class="md-nav__link">
+    mutate
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#mutate2" title="mutate2" class="md-nav__link">
+    mutate2
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#gather" title="gather" class="md-nav__link">
+    gather
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#sort" title="sort" class="md-nav__link">
+    sort
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#plot" title="plot" class="md-nav__link">
+    plot
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#plot-hist" title="plot hist" class="md-nav__link">
+    plot hist
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#plot-box" title="plot box" class="md-nav__link">
+    plot box
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#plot-line" title="plot line" class="md-nav__link">
+    plot line
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#genautocomplete" title="genautocomplete" class="md-nav__link">
+    genautocomplete
+  </a>
+  
+</li>
+        
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/shenwei356/csvtk/edit/master/docs/usage.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                
+                
+                <h1 id="usage-and-examples">Usage and Examples</h1>
 <h2 id="before-use">Before use</h2>
 <p><strong>Attention</strong></p>
 <ol>
@@ -473,7 +1341,8 @@ file   num_cols   num_rows
 7       8       0
 8       1,000   4
 
-$ cat  testdata/digitals.tsv | csvtk size -t -H
+$ cat  testdata/digitals.tsv \
+    | csvtk size -t -H
 file   num_cols   num_rows
 -             3          4
 </code></pre>
@@ -535,40 +1404,47 @@ bar,xyz2,abc3,2,1
 </li>
 <li>
 <p>use flag <code>-i/--ignore-non-digits</code></p>
-<pre><code>$ cat testdata/digitals2.csv | csvtk summary -f f4:sum
+<pre><code>$ cat testdata/digitals2.csv \
+    | csvtk summary -f f4:sum
 [ERRO] column 4 has non-digital data: N/A, you can use flag -i/--ignore-non-digits to skip these data
 
-$ cat testdata/digitals2.csv | csvtk summary -f f4:sum -i
+$ cat testdata/digitals2.csv \
+    | csvtk summary -f f4:sum -i
 f4:sum
 21.50
 </code></pre>
 </li>
 <li>
 <p>multiple fields suported</p>
-<pre><code>$ cat testdata/digitals2.csv | csvtk summary -f f4:sum,f5:sum -i
+<pre><code>$ cat testdata/digitals2.csv \
+    | csvtk summary -f f4:sum,f5:sum -i
 f4:sum,f5:sum
 21.50,118.00
 </code></pre>
 </li>
 <li>
 <p>using fields instead of colname is still supported</p>
-<pre><code>$ cat testdata/digitals2.csv | csvtk summary -f 4:sum,5:sum -i
+<pre><code>$ cat testdata/digitals2.csv \
+    | csvtk summary -f 4:sum,5:sum -i
 f4:sum,f5:sum
 21.50,118.00
 </code></pre>
 </li>
 <li>
 <p>but remember not mixing use digital fields and column names</p>
-<pre><code>$ cat testdata/digitals2.csv | csvtk summary -f f4:sum,5:sum -i
+<pre><code>$ cat testdata/digitals2.csv \
+    | csvtk summary -f f4:sum,5:sum -i
 [ERRO] column "5" not existed in file: -
 
-$ cat testdata/digitals2.csv | csvtk summary -f 4:sum,f5:sum -i
+$ cat testdata/digitals2.csv \
+    | csvtk summary -f 4:sum,f5:sum -i
 [ERRO] fail to parse digital field: f5, you may mix use digital fields and column names
 </code></pre>
 </li>
 <li>
 <p>groupby</p>
-<pre><code>$ cat testdata/digitals2.csv | csvtk summary -i -f f4:sum,f5:sum -g f1,f2 \
+<pre><code>$ cat testdata/digitals2.csv \
+    | csvtk summary -i -f f4:sum,f5:sum -g f1,f2 \
     | csvtk pretty
 f1    f2     f4:sum   f5:sum
 bar   xyz    7.00     106.00
@@ -619,13 +1495,14 @@ foo   1; 1.5; 3; 5; N/A      5.00
 </code></pre>
 </li>
 <li>
-<p><code>countn</code> and <code>count</code></p>
+<p><code>count</code> and <code>countn</code> (count of digits)</p>
 <pre><code>$ cat testdata/digitals2.csv \
     | csvtk summary -f f4:count,f4:countn -i \
     | csvtk pretty
 f4:count   f4:countn
 12         10
 
+# details:
 $ cat testdata/digitals2.csv \
     | csvtk summary -f f4:count,f4:countn,f4:collapse -i -g f1 \
     | csvtk pretty
@@ -1091,7 +1968,8 @@ id2   First_name   Last_name    Username   col
 </li>
 <li>
 <p>simple one</p>
-<pre><code>$ csvtk concat names.csv names.reorder.csv | csvtk pretty
+<pre><code>$ csvtk concat names.csv names.reorder.csv \
+    | csvtk pretty
 id   first_name   last_name   username
 11   Rob          Pike        rob
 2    Ken          Thompson    ken
@@ -1107,7 +1985,8 @@ NA   Robert       Abel        123
 </li>
 <li>
 <p>data with unmatched column names, and ignoring cases</p>
-<pre><code>$ csvtk concat names.csv names.with-unmatched-colname.csv -i | csvtk pretty
+<pre><code>$ csvtk concat names.csv names.with-unmatched-colname.csv -i \
+    | csvtk pretty
 id   first_name   last_name    username
 11   Rob          Pike         rob
 2    Ken          Thompson     ken
@@ -1117,7 +1996,8 @@ NA   Robert       Abel         123
      Rob33        Pike222      rob111
      Ken33        Thompson22   ken111
 
- $ csvtk concat names.csv names.with-unmatched-colname.csv -i -u Unmached | csvtk pretty
+ $ csvtk concat names.csv names.with-unmatched-colname.csv -i -u Unmached \
+    | csvtk pretty
  id         first_name   last_name    username
  11         Rob          Pike         rob
  2          Ken          Thompson     ken
@@ -1131,12 +2011,14 @@ NA   Robert       Abel         123
 <li>
 <p>Sometimes data of one file does not matche any column, they are discared by default.
   But you can keep them using flag <code>-k/--keep-unmatched</code></p>
-<pre><code>$ csvtk concat names.with-unmatched-colname.csv names.csv | csvtk pretty
+<pre><code>$ csvtk concat names.with-unmatched-colname.csv names.csv \
+    | csvtk pretty
 id2   First_name   Last_name    Username   col
 22    Rob33        Pike222      rob111     abc
 44    Ken33        Thompson22   ken111     def
 
-$ csvtk concat names.with-unmatched-colname.csv names.csv -u -k NA | csvtk pretty
+$ csvtk concat names.with-unmatched-colname.csv names.csv -u -k NA \
+    | csvtk pretty
 id2   First_name   Last_name    Username   col
 22    Rob33        Pike222      rob111     abc
 44    Ken33        Thompson22   ken111     def
@@ -1173,7 +2055,7 @@ $ seq 100 | csvtk sample -H -p 0.5 | wc -l
 $ seq 100 | csvtk sample -H -p 0.1 | wc -l
 10
 
-$  seq 100 | csvtk sample -H -p 0.05 -n
+$ seq 100 | csvtk sample -H -p 0.05 -n
 50,50
 52,52
 65,65
@@ -1209,7 +2091,8 @@ NA,"Robert","Abel","123"
 </li>
 <li>
 <p>Select columns by column index: <code>csvtk cut -f 1,2</code></p>
-<pre><code>$ cat testdata/names.csv | csvtk cut -f 1,2
+<pre><code>$ cat testdata/names.csv \
+    | csvtk cut -f 1,2
 id,first_name
 11,Rob
 2,Ken
@@ -1220,7 +2103,8 @@ NA,Robert
 </li>
 <li>
 <p>Select columns by column names: <code>csvtk cut -f first_name,username</code></p>
-<pre><code>$ cat testdata/names.csv | csvtk cut -f first_name,username
+<pre><code>$ cat testdata/names.csv \
+    | csvtk cut -f first_name,username
 first_name,username
 Rob,rob
 Ken,ken
@@ -1234,7 +2118,8 @@ Robert,123
 <ul>
 <li>
 <p>select 3+ columns: <code>csvtk cut -f -1,-2</code></p>
-<pre><code>$ cat testdata/names.csv | csvtk cut -f -1,-2
+<pre><code>$ cat testdata/names.csv \
+    | csvtk cut -f -1,-2
 last_name,username
 Pike,rob
 Thompson,ken
@@ -1245,7 +2130,8 @@ Abel,123
 </li>
 <li>
 <p>select columns except <code>first_name</code>: <code>csvtk cut -f -first_name</code></p>
-<pre><code>$ cat testdata/names.csv | csvtk cut -f -first_name
+<pre><code>$ cat testdata/names.csv \
+    | csvtk cut -f -first_name
 id,last_name,username
 11,Pike,rob
 2,Thompson,ken
@@ -1258,7 +2144,8 @@ NA,Abel,123
 </li>
 <li>
 <p><strong>Fuzzy fields</strong> using wildcard character,  <code>csvtk cut -F -f "*_name,username"</code></p>
-<pre><code>$ cat testdata/names.csv | csvtk cut -F -f "*_name,username"
+<pre><code>$ cat testdata/names.csv \
+    | csvtk cut -F -f "*_name,username"
 first_name,last_name,username
 Rob,Pike,rob
 Ken,Thompson,ken
@@ -1269,7 +2156,8 @@ Robert,Abel,123
 </li>
 <li>
 <p>All fields: <code>csvtk cut -F -f "*"</code> (only works when all colnames are unique)</p>
-<pre><code>$ cat testdata/names.csv | csvtk cut -F -f "*"
+<pre><code>$ cat testdata/names.csv \
+    | csvtk cut -F -f "*"
 id,first_name,last_name,username
 11,Rob,Pike,rob
 2,Ken,Thompson,ken
@@ -1283,7 +2171,8 @@ NA,Robert,Abel,123
 <ul>
 <li>
 <p><code>csvtk cut -f 2-4</code> for column 2,3,4</p>
-<pre><code>$ cat testdata/names.csv | csvtk cut -f 2-4
+<pre><code>$ cat testdata/names.csv \
+    | csvtk cut -f 2-4
 first_name,last_name,username
 Rob,Pike,rob
 Ken,Thompson,ken
@@ -1294,7 +2183,8 @@ Robert,Abel,123
 </li>
 <li>
 <p><code>csvtk cut -f -3--1</code> for discarding column 1,2,3</p>
-<pre><code>$ cat testdata/names.csv | csvtk cut -f -3--1
+<pre><code>$ cat testdata/names.csv \
+    | csvtk cut -f -3--1
 username
 rob
 ken
@@ -1335,7 +2225,8 @@ NA,"Robert","Abel","123"
 </li>
 <li>
 <p>unique first_name (it removes rows with duplicated first_name)</p>
-<pre><code>$ cat testdata/names.csv | csvtk uniq -f first_name
+<pre><code>$ cat testdata/names.csv \
+    | csvtk uniq -f first_name
 id,first_name,last_name,username
 11,Rob,Pike,rob
 2,Ken,Thompson,ken
@@ -1344,7 +2235,9 @@ id,first_name,last_name,username
 </li>
 <li>
 <p>unique first_name, a more common way</p>
-<pre><code>$ cat testdata/names.csv | csvtk cut -f first_name | csvtk uniq -f 1
+<pre><code>$ cat testdata/names.csv \
+    | csvtk cut -f first_name \
+    | csvtk uniq -f 1
 first_name
 Rob
 Ken
@@ -1373,7 +2266,8 @@ Flags:
 <ol>
 <li>
 <p>one filed</p>
-<pre><code>$ cat testdata/names.csv | csvtk freq -f first_name | csvtk pretty
+<pre><code>$ cat testdata/names.csv \
+    | csvtk freq -f first_name | csvtk pretty
 first_name   frequency
 Ken          1
 Rob          1
@@ -1382,7 +2276,9 @@ Robert       3
 </li>
 <li>
 <p>sort by frequency. you can also use <code>csvtk sort</code> with more sorting options</p>
-<pre><code>$ cat testdata/names.csv | csvtk freq -f first_name -n -r | csvtk pretty
+<pre><code>$ cat testdata/names.csv \
+    | csvtk freq -f first_name -n -r \
+    | csvtk pretty
 first_name   frequency
 Robert       3
 Ken          1
@@ -1391,7 +2287,9 @@ Rob          1
 </li>
 <li>
 <p>sorty by key</p>
-<pre><code>$ cat testdata/names.csv | csvtk freq -f first_name -k | csvtk pretty
+<pre><code>$ cat testdata/names.csv \
+    | csvtk freq -f first_name -k \
+    | csvtk pretty
 first_name   frequency
 Ken          1
 Rob          1
@@ -1400,7 +2298,9 @@ Robert       3
 </li>
 <li>
 <p>multiple fields</p>
-<pre><code>$ cat testdata/names.csv | csvtk freq -f first_name,last_name | csvtk pretty
+<pre><code>$ cat testdata/names.csv \
+    | csvtk freq -f first_name,last_name \
+    | csvtk pretty
 first_name   last_name   frequency
 Robert       Abel        1
 Ken          Thompson    1
@@ -1411,7 +2311,8 @@ Robert       Griesemer   1
 </li>
 <li>
 <p>data without header row</p>
-<pre><code>$ cat testdata/ testdata/digitals.tsv  | csvtk -t -H freq -f 1
+<pre><code>$ cat testdata/ testdata/digitals.tsv \
+    | csvtk -t -H freq -f 1
 8       1
 1       1
 4       1
@@ -1422,6 +2323,11 @@ Robert       Griesemer   1
 <h2 id="inter">inter</h2>
 <p>Usage</p>
 <pre><code class="text">intersection of multiple files
+
+Attention:
+
+  1. fields in all files should be the same, 
+     if not, extracting to another file using &quot;csvtk cut&quot;.
 
 Usage:
   csvtk inter [flags]
@@ -1462,7 +2368,7 @@ Usage:
   csvtk grep [flags]
 
 Flags:
-  --delete-matched        delete a pattern right after being matched, this keeps the firstly matched data and speedups when using regular expressions
+      --delete-matched        delete a pattern right after being matched, this keeps the firstly matched data and speedups when using regular expressions
   -f, --fields string         comma separated key fields, column name or index. e.g. -f 1-3 or -f id,id2 or -F -f &quot;group*&quot; (default &quot;1&quot;)
   -F, --fuzzy-fields          using fuzzy fields, e.g., -F -f &quot;*name&quot; or -F -f &quot;id123*&quot;
   -h, --help                  help for grep
@@ -1478,19 +2384,26 @@ Flags:
 </code></pre>
 
 <p>Examples</p>
-<p>Matched parts will be <em>highlight</em></p>
+<p>Matched parts will be <strong><em>highlight</em></strong>.</p>
 <ul>
 <li>
 <p>By exact keys</p>
-<pre><code>$ cat testdata/names.csv | csvtk grep -f last_name -p Pike -p Abel | csvtk pretty
+<pre><code>$ cat testdata/names.csv \
+    | csvtk grep -f last_name -p Pike -p Abel \
+    | csvtk pretty
 id   first_name   last_name   username
 11   Rob          Pike        rob
 NA   Robert       Abel        123
+
+# another form of multiple keys 
+$ csvtk grep -f last_name -p Pike,Abel,Tom
 </code></pre>
 </li>
 <li>
 <p>By regular expression: <code>csvtk grep -f first_name -r -p Rob</code></p>
-<pre><code>$ cat testdata/names.csv | csvtk grep -f first_name -r -p Rob | csvtk pretty
+<pre><code>$ cat testdata/names.csv \
+    | csvtk grep -f first_name -r -p Rob \
+    | csvtk pretty
 id   first_name   last_name   username
 11   Rob          Pike        rob
 4    Robert       Griesemer   gri
@@ -1499,10 +2412,19 @@ NA   Robert       Abel        123
 </code></pre>
 </li>
 <li>
-<p>By pattern list: <code>csvtk grep -f first_name -P name_list.txt</code></p>
+<p>By pattern list</p>
+<pre><code>$ csvtk grep -f first_name -P name_list.txt
+</code></pre>
 </li>
-<li>Remore rows containing missing data (NA): <code>csvtk grep -F -f "*" -r -p "^$" -v</code></li>
-<li>show line number<pre><code>$ cat names.csv | csvtk pretty
+<li>
+<p>Remore rows containing any missing data (NA): </p>
+<pre><code>$ csvtk grep -F -f "*" -r -p "^$" -v
+</code></pre>
+</li>
+<li>
+<p>Show line number</p>
+<pre><code>$ cat names.csv \
+    | csvtk pretty
 id   first_name   last_name   username
 11   Rob          Pike        rob
 2    Ken          Thompson    ken
@@ -1510,7 +2432,9 @@ id   first_name   last_name   username
 1    Robert       Thompson    abc
 NA   Robert       Abel        123
 
-$ cat names.csv | csvtk grep -f first_name -r -i -p rob -n | csvtk pretty
+$ cat names.csv \
+    | csvtk grep -f first_name -r -i -p rob -n \
+    | csvtk pretty
 n   id   first_name   last_name   username
 1   11   Rob          Pike        rob
 3   4    Robert       Griesemer   gri
@@ -1547,7 +2471,9 @@ id,first_name,last_name,username
 1,"Robert","Thompson","abc"
 NA,"Robert","Abel","123"
 
-$ cat testdata/names.csv | csvtk filter -f "id&gt;0" | csvtk pretty
+$ cat testdata/names.csv \
+    | csvtk filter -f "id&gt;0" \
+    | csvtk pretty
 id   first_name   last_name   username
 11   Rob          Pike        rob
 2    Ken          Thompson    ken
@@ -1563,13 +2489,15 @@ id   first_name   last_name   username
 7       8       0
 8       1,000   4
 
-$ cat  testdata/digitals.tsv | csvtk -t -H filter -f "1-3&gt;0"
+$ cat  testdata/digitals.tsv \
+    | csvtk -t -H filter -f "1-3&gt;0"
 4       5       6
 1       2       3
 8       1,000   4
 </code></pre>
 <p>using <code>--any</code> to print record if any of the field satisfy the condition</p>
-<pre><code>$  cat  testdata/digitals.tsv | csvtk -t -H filter -f "1-3&gt;0" --any
+<pre><code>$  cat  testdata/digitals.tsv \
+    | csvtk -t -H filter -f "1-3&gt;0" --any
 4       5       6
 1       2       3
 7       8       0
@@ -1578,7 +2506,8 @@ $ cat  testdata/digitals.tsv | csvtk -t -H filter -f "1-3&gt;0"
 </li>
 <li>
 <p>fuzzy fields</p>
-<pre><code>$  cat testdata/names.csv | csvtk filter -F -f "i*!=0"
+<pre><code>$  cat testdata/names.csv \
+    | csvtk filter -F -f "i*!=0"
 id,first_name,last_name,username
 11,Rob,Pike,rob
 2,Ken,Thompson,ken
@@ -1632,7 +2561,8 @@ id,first_name,last_name,username
 1,"Robert","Thompson","abc"
 NA,"Robert","Abel","123"
 
-$ cat testdata/names.csv | csvtk filter2 -f '$id &gt; 3'
+$ cat testdata/names.csv \
+    | csvtk filter2 -f '$id &gt; 3'
 id,first_name,last_name,username
 11,Rob,Pike,rob
 4,Robert,Griesemer,gri
@@ -1640,7 +2570,8 @@ id,first_name,last_name,username
 </li>
 <li>
 <p>arithmetic and string expressions</p>
-<pre><code>$ cat testdata/names.csv | csvtk filter2 -f '$id &gt; 3 || $username=="ken"'
+<pre><code>$ cat testdata/names.csv \
+    | csvtk filter2 -f '$id &gt; 3 || $username=="ken"'
 id,first_name,last_name,username
 11,Rob,Pike,rob
 2,Ken,Thompson,ken
@@ -1655,12 +2586,14 @@ id,first_name,last_name,username
 7       8       0
 8       1,000   4
 
-$ cat testdata/digitals.tsv | csvtk filter2 -H -t -f '$1 &gt; 2 &amp;&amp; $2 % 2 == 0'
+$ cat testdata/digitals.tsv \
+    | csvtk filter2 -H -t -f '$1 &gt; 2 &amp;&amp; $2 % 2 == 0'
 7       8       0
 8       1,000   4
 
 # comparison between fields and support
-$ cat testdata/digitals.tsv | csvtk filter2 -H -t -f '$2 &lt;= $3 || ( $1 / $2 &gt; 0.5 )'
+$ cat testdata/digitals.tsv \
+    | csvtk filter2 -H -t -f '$2 &lt;= $3 || ( $1 / $2 &gt; 0.5 )'
 4       5       6
 1       2       3
 7       8       0
@@ -1763,20 +2696,23 @@ id,name,hobby
 3,foo,football
 4,wei,programming
 
-$ csvtk join testdata/1.csv testdata/2.csv  | csvtk pretty
+$ csvtk join testdata/1.csv testdata/2.csv \
+    | csvtk pretty
 name   attr       major
 bar    handsome   bioinformatics
 bob    beutiful   microbiology
 bob    beutiful   computer science
 
-$ csvtk join testdata/{1,2,3}.csv -f name -k | csvtk pretty
+$ csvtk join testdata/{1,2,3}.csv -f name -k \
+    | csvtk pretty
 name   attr       major               id   hobby
 foo    cool                           3    football
 bar    handsome   bioinformatics      1    baseball
 bob    beutiful   microbiology        2    basketball
 bob    beutiful   computer science    2    basketball
 
-$ csvtk join testdata/{3,1,2}.csv -f name -k | csvtk pretty
+$ csvtk join testdata/{3,1,2}.csv -f name -k \
+    | csvtk pretty
 id   name   hobby         attr       major
 1    bar    baseball      handsome   bioinformatics
 2    bob    basketball    beutiful   computer science
@@ -1851,7 +2787,7 @@ names-Ken-Thompson.csv  names-Robert-Griesemer.csv  names-Rob-Pike.csv
 </code></pre>
 </li>
 <li>
-<p>flag <code>`-o/--out-file</code> can specify out directory for splitted files</p>
+<p>flag <code>-o/--out-file</code> can specify out directory for splitted files</p>
 <pre><code>$ seq 10000 | csvtk split -H -o result
 $ ls result/*.csv | wc -l
 10000
@@ -1861,7 +2797,7 @@ $ ls result/*.csv | wc -l
 <p>extreme example 1: lots (1M) of rows in groups</p>
 <pre><code>$ yes 2 | head -n 10000000 | gzip -c &gt; t.gz
 
-$ memusg -t ./csvtk -H split t.gz
+$ memusg -t csvtk -H split t.gz
 elapsed time: 7.959s
 peak rss: 35.7 MB
 
@@ -1878,7 +2814,7 @@ f194afd7cecf645c0e3cce50c9bc526e  -
 <p>extreme example 2: lots (10K) of groups</p>
 <pre><code>$ seq 10000 | gzip -c &gt; t2.gz
 
-$ memusg -t ./csvtk -H split t2.gz  -o t2
+$ memusg -t csvtk -H split t2.gz  -o t2
 elapsed time: 20.856s
 peak rss: 23.77 MB
 
@@ -1951,11 +2887,13 @@ index   sheet
 5       Ken
 6       Robert
 
-$ csvtk xlsx2csv accounts.split.xlsx -n Rob | csvtk pretty
+$ csvtk xlsx2csv accounts.split.xlsx -n Rob \
+    | csvtk pretty
 id   first_name   last_name   username
 11   Rob          Pike        rob
 
-$ csvtk xlsx2csv accounts.split.xlsx -n Robert | csvtk pretty
+$ csvtk xlsx2csv accounts.split.xlsx -n Robert \
+    | csvtk pretty
 id   first_name   last_name   username
 4    Robert       Griesemer   gri
 1    Robert       Thompson    abc
@@ -2048,7 +2986,8 @@ Flags:
 <ol>
 <li>
 <p>No new colnames given:</p>
-<pre><code>$ seq 3 | csvtk mutate -H | csvtk add-header
+<pre><code>$ seq 3 | csvtk mutate -H \
+    | csvtk add-header
 [WARN] colnames not given, c1, c2, c3... will be used
 c1,c2
 1,1
@@ -2058,18 +2997,21 @@ c1,c2
 </li>
 <li>
 <p>Adding new colnames:</p>
-<pre><code>$ seq 3 | csvtk mutate -H | csvtk add-header -n a,b
+<pre><code>$ seq 3 | csvtk mutate -H \
+    | csvtk add-header -n a,b
 a,b
 1,1
 2,2
 3,3
-$ seq 3 | csvtk mutate -H | csvtk add-header -n a -n b
+$ seq 3 | csvtk mutate -H \
+    | csvtk add-header -n a -n b
 a,b
 1,1
 2,2
 3,3
 
-$ seq 3 | csvtk mutate -H -t | csvtk add-header -t -n a,b
+$ seq 3 | csvtk mutate -H -t \
+    | csvtk add-header -t -n a,b
 a       b
 1       1
 2       2
@@ -2101,7 +3043,7 @@ $ seq 3 | csvtk add-header | csvtk del-header
 2
 3
 
-$ seq 3 | ./csvtk del-header -H
+$ seq 3 | csvtk del-header -H
 1
 2
 3
@@ -2129,12 +3071,14 @@ rob,12345
 ken,22222
 shenwei,999999
 
-$ cat testdata/phones.csv | csvtk rename -f 1 -n 姓名
-姓名,phone
-gri,11111
-rob,12345
-ken,22222
-shenwei,999999
+$ cat testdata/phones.csv \
+    | csvtk rename -f 1-2 -n 姓名,电话 \
+    | csvtk pretty 
+姓名      电话
+gri       11111
+rob       12345
+ken       22222
+shenwei   999999
 </code></pre>
 </li>
 </ul>
@@ -2168,7 +3112,7 @@ Flags:
 <p>Examples:</p>
 <ul>
 <li>
-<p>replacing with original names by regular express: <code>cat testdata/c.csv | csvtk rename2 -F -f "*" -p "(.*)" -r 'prefix_$1'</code> for adding prefix to all column names.</p>
+<p>Add suffix to all column names.</p>
 <pre><code>$ cat testdata/phones.csv
 username,phone
 gri,11111
@@ -2176,7 +3120,8 @@ rob,12345
 ken,22222
 shenwei,999999
 
-$ cat testdata/phones.csv | csvtk rename2 -F -f "*" -p "(.*)" -r 'prefix_${1}_suffix'
+$ cat testdata/phones.csv \
+    | csvtk rename2 -F -f "*" -p "(.*)" -r 'prefix_${1}_suffix'
 prefix_username_suffix,prefix_phone_suffix
 gri,11111
 rob,12345
@@ -2210,7 +3155,8 @@ ATAGTTCTCGT     sc5
 
 # here we go!!!!
 
-$ csvtk rename2 -t -k &lt;(csvtk cut -t -f 2,1 barcodes.tsv) -f -1 -p '(.+)' -r '{kv}' --key-miss-repl unknown table.tsv
+$ csvtk rename2 -t -k &lt;(csvtk cut -t -f 2,1 barcodes.tsv) \
+    -f -1 -p '(.+)' -r '{kv}' --key-miss-repl unknown table.tsv
 gene    sc5     sc3     sc2     unknown
 gene1   0       0       3       0
 gen1e2  0       0       0       0
@@ -2218,7 +3164,8 @@ gen1e2  0       0       0       0
 </li>
 <li>
 <p><code>{nr}</code>, incase you need this</p>
-<pre><code>$ echo "a,b,c,d" | csvtk rename2  -p '(.+)' -r 'col_{nr}' -f -1 --start-num 2
+<pre><code>$ echo "a,b,c,d" \
+    | csvtk rename2  -p '(.+)' -r 'col_{nr}' -f -1 --start-num 2
 a,col_2,col_3,col_4
 </code></pre>
 </li>
@@ -2266,8 +3213,14 @@ Flags:
 
 <p>Examples</p>
 <ul>
-<li>remove Chinese charactors:  <code>csvtk replace -F -f "*_name" -p "\p{Han}+" -r ""</code></li>
-<li>replace by key-value files: <code>csvtk replace -f 1 -p "(.+)" -r "value of $1 is {kv}" -k kv.tsv</code><pre><code>$ cat data.tsv
+<li>
+<p>remove Chinese charactors</p>
+<pre><code>$ csvtk replace -F -f "*_name" -p "\p{Han}+" -r ""
+</code></pre>
+</li>
+<li>
+<p>replace by key-value files</p>
+<pre><code>$ cat data.tsv
 name    id
 A       ID001
 B       ID002
@@ -2306,17 +3259,25 @@ Flags:
 
 <p>Examples</p>
 <ul>
-<li>In default, copy a column: <code>csvtk mutate -f id -n newname</code></li>
-<li>extract prefix of data as group name using regular expression (get "A" from "A.1" as group name):
-  <code>csvtk mutate -f sample -n group -p "^(.+?)\."</code></li>
-<li>get the first letter as new column<pre><code>$ cat testdata/phones.csv
+<li>
+<p>By default, copy a column: <code>csvtk mutate -f id -n newname</code></p>
+</li>
+<li>
+<p>Extract prefix of data as group name using regular expression (get "A" from "A.1" as group name):</p>
+<pre><code>csvtk mutate -f sample -n group -p "^(.+?)\."
+</code></pre>
+</li>
+<li>
+<p>get the first letter as new column</p>
+<pre><code>$ cat testdata/phones.csv
 username,phone
 gri,11111
 rob,12345
 ken,22222
 shenwei,999999
 
-$ cat testdata/phones.csv | csvtk mutate -f username -p "^(\w)" -n first_letter
+$ cat testdata/phones.csv \ 
+    | csvtk mutate -f username -p "^(\w)" -n first_letter
 username,phone,first_letter
 gri,11111,g
 rob,12345,r
@@ -2364,13 +3325,16 @@ Flags:
 <ol>
 <li>
 <p>Constants</p>
-<pre><code>$ cat testdata/digitals.tsv | csvtk mutate2 -t -H -e " 'abc' "
+<pre><code>$ cat testdata/digitals.tsv \
+    | csvtk mutate2 -t -H -e " 'abc' "
 4       5       6       abc
 1       2       3       abc
 7       8       0       abc
 8       1,000   4       abc
 
-$ val=123 &amp;&amp; cat testdata/digitals.tsv | csvtk mutate2 -t -H -e " $val "
+$ val=123 \
+    &amp;&amp; cat testdata/digitals.tsv \
+    | csvtk mutate2 -t -H -e " $val "
 4       5       6       123
 1       2       3       123
 7       8       0       123
@@ -2442,7 +3406,8 @@ id,first_name,last_name,username
 1,"Robert","Thompson","abc"
 NA,"Robert","Abel","123
 
-$ cat testdata/names.csv | csvtk gather -k item -v value -f -1
+$ cat testdata/names.csv \
+    | csvtk gather -k item -v value -f -1
 id,item,value
 11,first_name,Rob
 11,last_name,Pike
@@ -2492,7 +3457,8 @@ NA,"Robert","Abel","123"
 <ul>
 <li>
 <p>in alphabetical order</p>
-<pre><code>$ cat testdata/names.csv | csvtk sort -k first_name
+<pre><code>$ cat testdata/names.csv \
+    | csvtk sort -k first_name
 id,first_name,last_name,username
 2,Ken,Thompson,ken
 11,Rob,Pike,rob
@@ -2502,8 +3468,9 @@ NA,Robert,Abel,123
 </code></pre>
 </li>
 <li>
-<p>in reversed alphabetical order</p>
-<pre><code>$ cat testdata/names.csv | csvtk sort -k first_name:r
+<p>in reversed alphabetical order (<code>key:r</code>)</p>
+<pre><code>$ cat testdata/names.csv \
+    | csvtk sort -k first_name:r
 id,first_name,last_name,username
 NA,Robert,Abel,123
 1,Robert,Thompson,abc
@@ -2513,8 +3480,9 @@ NA,Robert,Abel,123
 </code></pre>
 </li>
 <li>
-<p>in numerical order</p>
-<pre><code>$ cat testdata/names.csv | csvtk sort -k id:n
+<p>in numerical order (<code>key:n</code>)</p>
+<pre><code>$ cat testdata/names.csv \
+    | csvtk sort -k id:n
 id,first_name,last_name,username
 NA,Robert,Abel,123
 1,Robert,Thompson,abc
@@ -2524,7 +3492,7 @@ NA,Robert,Abel,123
 </code></pre>
 </li>
 <li>
-<p>in natural order</p>
+<p>in natural order (<code>key:N</code>)</p>
 <pre><code>$ cat testdata/names.csv | csvtk sort -k id:N
 id,first_name,last_name,username
 1,Robert,Thompson,abc
@@ -2532,6 +3500,35 @@ id,first_name,last_name,username
 4,Robert,Griesemer,gri
 11,Rob,Pike,rob
 NA,Robert,Abel,123
+</code></pre>
+</li>
+<li>
+<p>in natural order (<code>key:N</code>), a bioinformatics example</p>
+<pre><code>$ echo "X,Y,1,10,2,M,11,1_c,Un_g,1_g" | csvtk transpose 
+X
+Y
+1
+10
+2
+M
+11
+1_c
+Un_g
+1_g
+
+$ echo "X,Y,1,10,2,M,11,1_c,Un_g,1_g" \
+    | csvtk transpose \
+    | csvtk sort -H -k 1:N
+1
+1_c
+1_g
+2
+10
+11
+M
+Un_g
+X
+Y
 </code></pre>
 </li>
 </ul>
@@ -2635,7 +3632,7 @@ Flags:
 <li>File format is determined by the out file suffix.
    Supported formats: eps, jpg|jpeg, pdf, png, svg, and tif|tiff</li>
 <li>If flag -o/--out-file not set (default), image is written to stdout,
-   you can display the image by pipping to "display" command of Imagemagic
+   you can display the image by pipping to  <code>display</code> command of <code>Imagemagic</code>
    or just redirect to file.</li>
 </ol>
 <h2 id="plot-hist">plot hist</h2>
@@ -2673,13 +3670,16 @@ Group A   100      51.00
 </code></pre>
 </li>
 <li>
-<p>plot histogram with data of the second column:
-<code>csvtk -t plot hist testdata/grouped_data.tsv.gz -f 2 --title Histogram -o histogram.png</code></p>
+<p>plot histogram with data of the second column:</p>
+<pre><code>$ csvtk -t plot hist testdata/grouped_data.tsv.gz -f 2 \
+    --title Histogram -o histogram.png
+</code></pre>
 <p><img alt="histogram.png" src="../testdata/figures/histogram.png" /></p>
 </li>
 <li>
-<p>You can also write image to stdout and pipe to "display" command of Imagemagic:
-<code>csvtk -t plot hist testdata/grouped_data.tsv.gz -f 2 | display</code></p>
+<p>You can also write image to stdout and pipe to "display" command of Imagemagic:</p>
+<pre><code>$ csvtk -t plot hist testdata/grouped_data.tsv.gz -f 2 | display
+</code></pre>
 </li>
 </ul>
 <h2 id="plot-box">plot box</h2>
@@ -2708,14 +3708,20 @@ Flags:
 <ul>
 <li>
 <p>plot boxplot with data of the "GC Content" (third) column,
-group information is the "Group" column.
-<code>csvtk -t plot box testdata/grouped_data.tsv.gz -g "Group" -f "GC Content"  --width 3 --title "Box plot &gt; boxplot.png"</code></p>
+group information is the "Group" column.</p>
+<pre><code>csvtk -t plot box testdata/grouped_data.tsv.gz -g "Group" -f "GC Content" \
+    --width 3 --title "Box plot" \
+    &gt; boxplot.png
+</code></pre>
 <p><img alt="boxplot.png" src="../testdata/figures/boxplot.png" /></p>
 </li>
 <li>
 <p>plot horiz boxplot with data of the "Length" (second) column,
-group information is the "Group" column.
-<code>csvtk -t plot box testdata/grouped_data.tsv.gz -g "Group" -f "Length"  --height 3 --width 5 --horiz --title "Horiz box plot &gt; boxplot2.png"</code></p>
+group information is the "Group" column.</p>
+<pre><code>$ csvtk -t plot box testdata/grouped_data.tsv.gz -g "Group" -f "Length" \
+    --height 3 --width 5 --horiz --title "Horiz box plot" \
+    &gt; boxplot2.png`
+</code></pre>
 <p><img alt="boxplot2.png" src="../testdata/figures/boxplot2.png" /></p>
 </li>
 </ul>
@@ -2759,13 +3765,19 @@ A       2.0     2
 </code></pre>
 </li>
 <li>
-<p>plot line plot with X-Y data
-<code>csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group --title "Line plot" &gt; lineplot.png</code></p>
+<p>plot line plot with X-Y data</p>
+<pre><code>$ csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group \
+    --title "Line plot" \
+    &gt; lineplot.png
+</code></pre>
 <p><img alt="lineplot.png" src="../testdata/figures/lineplot.png" /></p>
 </li>
 <li>
-<p>plot scatter
-<code>csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group --title "Scatter" --scatter &gt; lineplot.png</code></p>
+<p>plot scatter</p>
+<pre><code>$ csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group \
+    --title "Scatter" --scatter \
+    &gt; lineplot.png
+</code></pre>
 <p><img alt="scatter.png" src="../testdata/figures/scatter.png" /></p>
 </li>
 </ul>
@@ -2823,55 +3835,87 @@ s.setAttribute('data-timestamp', +new Date());
 })();
 </script>
 
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript></div>
-        
-        
-    </div>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+                
+                  
+                
+              
+              
+                
 
-    <footer class="col-md-12 text-center">
-        <hr>
-        <p>
-        <small>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p></small>
-    </footer>
 
-    <script src="../js/jquery-1.10.2.min.js"></script>
-    <script src="../js/bootstrap-3.0.3.min.js"></script>
-    <script src="../js/highlight.pack.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
-    <script>
-    var base_url = '..';
-    </script>
-    <script data-main="../mkdocs/js/search.js" src="../mkdocs/js/require.js"></script>
-    <script src="../js/base.js"></script>
-    <script src="../search/main.js"></script>
-
-    <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">
-                        <span aria-hidden="true">&times;</span>
-                        <span class="sr-only">Close</span>
-                    </button>
-                    <h4 class="modal-title" id="exampleModalLabel">Search</h4>
-                </div>
-                <div class="modal-body">
-                    <p>
-                        From here you can search these documents. Enter your search terms below.
-                    </p>
-                    <form role="form">
-                        <div class="form-group">
-                            <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
-                        </div>
-                    </form>
-                    <div id="mkdocs-search-results"></div>
-                </div>
-                <div class="modal-footer">
-                </div>
-            </div>
+              
+            </article>
+          </div>
         </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+          <a href="../download/" title="Download" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Download
+              </span>
+            </div>
+          </a>
+        
+        
+          <a href="../tutorial/" title="Tutorial" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Tutorial
+              </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          </a>
+        
+      </nav>
     </div>
-
-    </body>
-
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        powered by
+        <a href="https://www.mkdocs.org">MkDocs</a>
+        and
+        <a href="https://squidfunk.github.io/mkdocs-material/">
+          Material for MkDocs</a>
+      </div>
+      
+        
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+    <script src="../assets/javascripts/application.6f02ae1b.js"></script>
+      
+      <script>app.initialize({version:"1.0.4",url:{base:".."}})</script>
+      
+    
+    
+      
+        <script>!function(e,a,t,n,o,c,i){e.GoogleAnalyticsObject=o,e.ga=e.ga||function(){(e.ga.q=e.ga.q||[]).push(arguments)},e.ga.l=1*new Date,c=a.createElement(t),i=a.getElementsByTagName(t)[0],c.async=1,c.src="https://www.google-analytics.com/analytics.js",i.parentNode.insertBefore(c,i)}(window,document,"script",0,"ga"),ga("create","UA-28948626-9","bioinf.shenwei.me/csvtk"),ga("set","anonymizeIp",!0),ga("send","pageview");var links=document.getElementsByTagName("a");if(Array.prototype.map.call(links,function(e){e.host!=document.location.host&&e.addEventListener("click",function(){var a=e.getAttribute("data-md-action")||"follow";ga("send","event","outbound",a,e.href)})}),document.forms.search){var query=document.forms.search.query;query.addEventListener("blur",function(){if(this.value){var e=document.location.pathname;ga("send","pageview",e+"?q="+this.value)}})}</script>
+      
+    
+  </body>
 </html>
