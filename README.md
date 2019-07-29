@@ -4,12 +4,10 @@
 ( [**Usage**](http://bioinf.shenwei.me/csvtk/usage/)  and [**Tutorial**](http://bioinf.shenwei.me/csvtk/tutorial/)). [中文介绍](http://bioinf.shenwei.me/csvtk/chinese)
 - **Source code:**  [https://github.com/shenwei356/csvtk](https://github.com/shenwei356/csvtk) [![GitHub stars](https://img.shields.io/github/stars/shenwei356/csvtk.svg?style=social&label=Star&?maxAge=2592000)](https://github.com/shenwei356/csvtk)
 [![license](https://img.shields.io/github/license/shenwei356/csvtk.svg?maxAge=2592000)](https://github.com/shenwei356/csvtk/blob/master/LICENSE)
-[![Go Report Card](https://goreportcard.com/badge/github.com/shenwei356/csvtk)](https://goreportcard.com/report/github.com/shenwei356/csvtk)
 [![Build Status](https://travis-ci.org/shenwei356/csvtk.svg?branch=master)](https://travis-ci.org/shenwei356/csvtk)
 - **Latest version:** [![Latest Stable Version](https://img.shields.io/github/release/shenwei356/csvtk.svg?style=flat)](https://github.com/shenwei356/csvtk/releases)
 [![Github Releases](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/total.svg?maxAge=3600)](http://bioinf.shenwei.me/csvtk/download/)
 [![Cross-platform](https://img.shields.io/badge/platform-any-ec2eb4.svg?style=flat)](http://bioinf.shenwei.me/csvtk/download/)
-[![Install-with-conda](	https://anaconda.org/bioconda/csvtk/badges/installer/conda.svg)](http://bioinf.shenwei.me/csvtk/download/)
 [![Anaconda Cloud](https://anaconda.org/bioconda/csvtk/badges/version.svg)](https://anaconda.org/bioconda/csvtk)
 
 
