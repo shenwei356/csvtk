@@ -334,7 +334,8 @@ func appendRows(config Config,
 	var outfh *xopen.Writer
 	var err error
 
-	if _, ok := moreThanOneWrite.Load(key); ok {
+	_, writeOnce := moreThanOneWrite.Load(key)
+	if writeOnce {
 		outfh, err = xopen.WopenFile(outFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	} else {
 		outfh, err = xopen.Wopen(outFile)
@@ -353,7 +354,7 @@ func appendRows(config Config,
 	if printMetaLine && len(csvReader.MetaLine) > 0 {
 		outfh.WriteString(fmt.Sprintf("sep=%s\n", string(writer.Comma)))
 	}
-	if headerRow != nil {
+	if !writeOnce && headerRow != nil {
 		checkError(writer.Write(headerRow))
 	}
 
