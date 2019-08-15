@@ -83,8 +83,7 @@ var corrCmd = &cobra.Command{
 			var col int
 			if config.NoHeaderRow {
 				if len(tok) == 0 {
-					fmt.Fprintf(os.Stderr, "No field specified!")
-					os.Exit(1)
+					continue
 				}
 				pcol, err := strconv.Atoi(tok)
 				if err != nil {
@@ -98,11 +97,9 @@ var corrCmd = &cobra.Command{
 				}
 				targetCols[col] = tok
 			}
-			if len(tok) == 0 {
-				fmt.Fprintf(os.Stderr, "Empty field specified!\n")
-				os.Exit(1)
+			if len(tok) != 0 {
+				targetCols[-(x + 1)] = tok
 			}
-			targetCols[-(x + 1)] = tok
 
 		}
 
@@ -119,6 +116,9 @@ var corrCmd = &cobra.Command{
 					if isHeaderLine {
 						for i, column := range record {
 							field2col[column] = i
+							if printField == "" {
+								targetCols[i] = column
+							}
 						}
 
 						isHeaderLine = false
@@ -126,7 +126,13 @@ var corrCmd = &cobra.Command{
 							outfh.Write([]byte(strings.Join(record, string(config.OutDelimiter)) + "\n"))
 						}
 						continue
-					} // header
+					} else {
+						if len(targetCols) == 0 {
+							for i, _ := range record {
+								targetCols[i] = strconv.Itoa(i + 1)
+							}
+						}
+					}
 
 					for col, field := range targetCols {
 						i := col
