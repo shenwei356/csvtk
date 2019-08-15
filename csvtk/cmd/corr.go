@@ -102,7 +102,7 @@ var corrCmd = &cobra.Command{
 				fmt.Fprintf(os.Stderr, "Empty field specified!\n")
 				os.Exit(1)
 			}
-			targetCols[-x] = tok
+			targetCols[-(x + 1)] = tok
 
 		}
 
@@ -175,7 +175,7 @@ var corrCmd = &cobra.Command{
 				}
 				d1, d2 := Data[col1], Data[col2]
 				if printIgnore {
-					d1, d1 = removeNaNs(d1, d2)
+					d1, d2 = removeNaNs(d1, d2)
 				}
 
 				pearsonr := stat.Correlation(d1, d2, nil)
@@ -198,7 +198,7 @@ func removeNaNs(d1, d2 []float64) ([]float64, []float64) {
 
 	for i, x1 := range d1 {
 		x2 := d2[i]
-		if x1 != math.NaN() && x2 != math.NaN() {
+		if !math.IsNaN(x1) && !math.IsNaN(x2) {
 			r1 = append(r1, x1)
 			r2 = append(r2, x2)
 		}
