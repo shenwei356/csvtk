@@ -69,7 +69,8 @@ var catCmd = &cobra.Command{
 
 			if flagLines {
 				if flagTotal < 0 {
-					panic("help")
+					fmt.Fprintf(os.Stderr, "Cannot read lines unless the of expected number of lines is specified via -s!\n")
+					os.Exit(1)
 				}
 				bar = pb.StartNew(flagTotal)
 				var line []byte
@@ -93,7 +94,8 @@ var catCmd = &cobra.Command{
 				var err error
 				if flagTotal < 0 {
 					if file == "-" {
-						panic("help")
+						fmt.Fprintf(os.Stderr, "Cannot read from stdin unless the number of expected bytes is specified via -s!\n")
+						os.Exit(1)
 					}
 					inputStat, err := os.Stat(file)
 					checkError(err)
