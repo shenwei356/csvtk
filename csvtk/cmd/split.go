@@ -319,7 +319,7 @@ func init() {
 
 }
 
-var moreThanOneWrite sync.Map
+var writtenFiles sync.Map
 
 func appendRows(config Config,
 	printMetaLine bool,
@@ -327,18 +327,18 @@ func appendRows(config Config,
 	headerRow []string,
 	outFile string,
 	rows [][]string,
-	// moreThanOneWrite map[string]bool,
 	key string,
 ) {
 
 	var outfh *xopen.Writer
 	var err error
 
-	if _, ok := moreThanOneWrite.Load(key); ok {
+	_, written := writtenFiles.Load(key)
+	if written {
 		outfh, err = xopen.WopenFile(outFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	} else {
 		outfh, err = xopen.Wopen(outFile)
-		moreThanOneWrite.Store(key, true)
+		writtenFiles.Store(key, true)
 	}
 	checkError(err)
 	defer outfh.Close()
@@ -353,7 +353,7 @@ func appendRows(config Config,
 	if printMetaLine && len(csvReader.MetaLine) > 0 {
 		outfh.WriteString(fmt.Sprintf("sep=%s\n", string(writer.Comma)))
 	}
-	if headerRow != nil {
+	if !written && headerRow != nil {
 		checkError(writer.Write(headerRow))
 	}
 

@@ -37,6 +37,12 @@ var interCmd = &cobra.Command{
 	Short: "intersection of multiple files",
 	Long: `intersection of multiple files
 
+Attention:
+
+  1. fields in all files should be the same, 
+     if not, extracting to another file using "csvtk cut".
+
+
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)

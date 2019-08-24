@@ -117,7 +117,9 @@ What a mess! Let's make it prettier!
 
 1. Rename groups:
 
-        $ csvtk replace -f group -p "A" -r "Ctrl" otu_table2.csv | csvtk replace -f group -p "B" -r "Treatment" > otu_table3.csv
+        $ csvtk replace -f group -p "A" -r "Ctrl" otu_table2.csv \
+            | csvtk replace -f group -p "B" -r "Treatment" \
+            > otu_table3.csv
 
         $ csvtk pretty -s " " otu_table3.csv
         sample Proteobacteria Firmicutes Bacteroidetes Deferribacteres group
@@ -128,20 +130,11 @@ What a mess! Let's make it prettier!
         B.2    .13            .55        .16           .01             Treatment
         B.3    .22            .41        .29           .01             Treatment
 
-1. Statistics of digital data
-
-        $ csvtk stat2 -f 2-5 otu_table3.csv
-        field             num    sum    min    max   mean   stdev
-        Proteobacteria      6   1.06   0.13   0.29   0.18    0.07
-        Firmicutes          6   2.34   0.06   0.55   0.39    0.17
-        Bacteroidetes       6   1.71   0.12   0.62   0.28    0.18
-        Deferribacteres     6   0.44      0   0.24   0.07     0.1
-
-    Please don't be supprised at the `sum`, it's a mock otu table...
 
 1. Sort by abundance of *Proteobacteria* in descending order.
 
-        $ csvtk sort -k Proteobacteria:nr otu_table3.csv | csvtk pretty -s "  "
+        $ csvtk sort -k Proteobacteria:nr otu_table3.csv \
+            | csvtk pretty -s "  "
         sample  Proteobacteria  Firmicutes  Bacteroidetes  Deferribacteres  group
         A.2     .29             .06         .62            .00              Ctrl
         B.3     .22             .41         .29            .01              Treatment
@@ -152,7 +145,8 @@ What a mess! Let's make it prettier!
 
 1. Sort by abundance of *Proteobacteria* in descending order and *Firmicutes* in ascending order
 
-        $ csvtk sort -k Proteobacteria:nr -k Firmicutes:n otu_table3.csv | csvtk pretty -s "  "
+        $ csvtk sort -k Proteobacteria:nr -k Firmicutes:n otu_table3.csv \
+            | csvtk pretty -s "  "
         sample  Proteobacteria  Firmicutes  Bacteroidetes  Deferribacteres  group
         A.2     .29             .06         .62            .00              Ctrl
         B.3     .22             .41         .29            .01              Treatment
@@ -163,7 +157,9 @@ What a mess! Let's make it prettier!
 
 1. Filter samples with abundance greater than 0 in all taxons (columns except for sample and group, you can also use `-f "2-5>0"`).
 
-        $ cat otu_table3.csv | csvtk filter -f "2-5>0" | csvtk pretty -s "  "   
+        $ cat otu_table3.csv \
+            | csvtk filter -f "2-5>0" \
+            | csvtk pretty -s "  "   
         sample  Proteobacteria  Firmicutes  Bacteroidetes  Deferribacteres  group
         A.1     .13             .42         .19            .17              Ctrl
         A.3     .13             .49         .12            .24              Ctrl
@@ -174,7 +170,9 @@ What a mess! Let's make it prettier!
 
 1. Most of the time, we may want to remove samples with abundance of 0 in all taxons.
 
-        $ cat otu_table3.csv | csvtk filter -f "2-5>0" --any | csvtk pretty -s "  "
+        $ cat otu_table3.csv \
+            | csvtk filter -f "2-5>0" --any \
+            | csvtk pretty -s "  "
         sample  Proteobacteria  Firmicutes  Bacteroidetes  Deferribacteres  group
         A.1     .13             .42         .19            .17              Ctrl
         A.2     .29             .06         .62            .00              Ctrl

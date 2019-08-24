@@ -1,15 +1,13 @@
-# csvtk - a cross-platform, efficient and practical CSV/TSV toolkit
+# csvtk - A cross-platform, efficient and practical CSV/TSV toolkit
 
 - **Documents:** [http://bioinf.shenwei.me/csvtk](http://bioinf.shenwei.me/csvtk/)
 ( [**Usage**](http://bioinf.shenwei.me/csvtk/usage/)  and [**Tutorial**](http://bioinf.shenwei.me/csvtk/tutorial/)). [中文介绍](http://bioinf.shenwei.me/csvtk/chinese)
 - **Source code:**  [https://github.com/shenwei356/csvtk](https://github.com/shenwei356/csvtk) [![GitHub stars](https://img.shields.io/github/stars/shenwei356/csvtk.svg?style=social&label=Star&?maxAge=2592000)](https://github.com/shenwei356/csvtk)
 [![license](https://img.shields.io/github/license/shenwei356/csvtk.svg?maxAge=2592000)](https://github.com/shenwei356/csvtk/blob/master/LICENSE)
-[![Go Report Card](https://goreportcard.com/badge/github.com/shenwei356/csvtk)](https://goreportcard.com/report/github.com/shenwei356/csvtk)
 [![Build Status](https://travis-ci.org/shenwei356/csvtk.svg?branch=master)](https://travis-ci.org/shenwei356/csvtk)
 - **Latest version:** [![Latest Stable Version](https://img.shields.io/github/release/shenwei356/csvtk.svg?style=flat)](https://github.com/shenwei356/csvtk/releases)
 [![Github Releases](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/total.svg?maxAge=3600)](http://bioinf.shenwei.me/csvtk/download/)
 [![Cross-platform](https://img.shields.io/badge/platform-any-ec2eb4.svg?style=flat)](http://bioinf.shenwei.me/csvtk/download/)
-[![Install-with-conda](	https://anaconda.org/bioconda/csvtk/badges/installer/conda.svg)](http://bioinf.shenwei.me/csvtk/download/)
 [![Anaconda Cloud](https://anaconda.org/bioconda/csvtk/badges/version.svg)](https://anaconda.org/bioconda/csvtk)
 
 
@@ -248,19 +246,16 @@ Examples
         1    Robert       Thompson    abc
         NA   Robert       Abel        123
 
-1. Summary of selected digital fields: num, sum, min, max, mean, stdev (`stat2`)
+1. Summary of selected digital fields, supporting "group-by"
 
-        $ cat digitals.tsv
-        4       5       6
-        1       2       3
-        7       8       0
-        8       1,000   4
-
-        $ cat digitals.tsv | csvtk stat2 -t -H -f 1-3
-        field   num     sum   min     max     mean    stdev
-        1         4      20     1       8        5     3.16
-        2         4   1,015     2   1,000   253.75   497.51
-        3         4      13     0       6     3.25      2.5
+        $ cat testdata/digitals2.csv \
+            | csvtk summary --ignore-non-digits --fields f4:sum,f5:sum --groups f1,f2 \
+            | csvtk pretty
+        f1    f2     f4:sum   f5:sum
+        bar   xyz    7.00     106.00
+        bar   xyz2   4.00     4.00
+        foo   bar    6.00     3.00
+        foo   bar2   4.50     5.00
 
 1. Select fields/columns (`cut`)
 
@@ -277,7 +272,6 @@ Examples
     - By regular expression: `csvtk grep -f first_name -r -p Rob`
     - By pattern list: `csvtk grep -f first_name -P name_list.txt`
     - Remore rows containing missing data (NA): `csvtk grep -F -f "*" -r -p "^$" -v `
-
 
 1. **Rename column names** (`rename` and `rename2`)
 
@@ -300,6 +294,7 @@ Examples
     - By multiple columns: `csvtk sort -k 1,2` or `csvtk sort -k 1 -k 2` or `csvtk sort -k last_name,age`
     - Sort by number: `csvtk sort -k 1:n` or  `csvtk sort -k 1:nr` for reverse number
     - Complex sort: `csvtk sort -k region -k age:n -k id:nr`
+    - In natural order: `csvtk sort -k chr:N`
 
 1. **Join multiple files by keys** (`join`)
 
@@ -320,25 +315,40 @@ Examples
     - Both arithmetic and string expressions: `csvtk filter2 -f '$id > 3 || $username=="ken"'`
     - More complicated: `csvtk filter2 -H -t -f '$1 > 2 && $2 % 2 == 0'`
 
-
 1. Ploting
     - plot histogram with data of the second column:
-     `csvtk -t plot hist testdata/grouped_data.tsv.gz -f 2 | display`
-    ![histogram.png](testdata/figures/histogram.png)
+     
+            csvtk -t plot hist testdata/grouped_data.tsv.gz -f 2 | display
+
+      ![histogram.png](testdata/figures/histogram.png)
+        
     - plot boxplot with data of the "GC Content" (third) column,
     group information is the "Group" column.
-    `csvtk -t plot box testdata/grouped_data.tsv.gz -g "Group" -f "GC Content" --width 3 | display`
-    ![boxplot.png](testdata/figures/boxplot.png)
+    
+            csvtk -t plot box testdata/grouped_data.tsv.gz -g "Group" \
+                -f "GC Content" --width 3 | display
+            
+      ![boxplot.png](testdata/figures/boxplot.png)
+      
     -  plot horiz boxplot with data of the "Length" (second) column,
     group information is the "Group" column.
-    `csvtk -t plot box testdata/grouped_data.tsv.gz -g "Group" -f "Length"  --height 3 --width 5 --horiz --title "Horiz box plot" | display`
-    ![boxplot2.png](testdata/figures/boxplot2.png)
+    
+            csvtk -t plot box testdata/grouped_data.tsv.gz -g "Group" -f "Length"  \
+                --height 3 --width 5 --horiz --title "Horiz box plot" | display
+      
+      ![boxplot2.png](testdata/figures/boxplot2.png)
+      
     - plot line plot with X-Y data
-    `csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group | display`
-    ![lineplot.png](testdata/figures/lineplot.png)
+    
+            csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group | display
+            
+      ![lineplot.png](testdata/figures/lineplot.png)
+      
     - plot scatter plot with X-Y data
-    `csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group --scatter | display`
-    ![scatter.png](testdata/figures/scatter.png)
+        
+            csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group --scatter | display
+            
+      ![scatter.png](testdata/figures/scatter.png)
 
 ## Acknowledgements
 
@@ -350,7 +360,7 @@ which makes csvtk feature-rich。
 
 ## Contact
 
-[create an issue](https://github.com/shenwei356/csvtk/issues) to report bugs,
+[Create an issue](https://github.com/shenwei356/csvtk/issues) to report bugs,
 propose new functions or ask for help.
 
 Or [leave a comment](https://shenwei356.github.io/csvtk/usage/#disqus_thread).
