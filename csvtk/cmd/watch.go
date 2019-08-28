@@ -21,16 +21,16 @@
 package cmd
 
 import (
-	"bufio"
+	"encoding/csv"
 	"fmt"
 	"math"
 	"os"
 	"runtime"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/bsipos/thist"
+	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
 )
 
@@ -51,7 +51,6 @@ var watchCmd = &cobra.Command{
 		printDump := getFlagBool(cmd, "dump")
 		printLog := getFlagBool(cmd, "log")
 		printQuiet := getFlagBool(cmd, "quiet")
-		outFile := config.OutFile
 		printDelay := getFlagInt(cmd, "delay")
 		printReset := getFlagBool(cmd, "reset")
 		if printDelay < 0 {
@@ -68,16 +67,16 @@ var watchCmd = &cobra.Command{
 			config.OutDelimiter = rune('\t')
 		}
 
-		outw := os.Stdout
-		if outFile != "-" {
-			tw, err := os.Create(outFile)
-			checkError(err)
-			outw = tw
-		}
-		outfh := bufio.NewWriter(outw)
+		outfh, err := xopen.Wopen(config.OutFile)
+		checkError(err)
+		defer outfh.Close()
 
-		defer outfh.Flush()
-		defer outw.Close()
+		writer := csv.NewWriter(outfh)
+		if config.OutTabs || config.Tabs {
+			writer.Comma = '\t'
+		} else {
+			writer.Comma = config.OutDelimiter
+		}
 
 		binMode := "termfit"
 		if printBins > 0 {
@@ -96,32 +95,32 @@ var watchCmd = &cobra.Command{
 		var col int
 		if config.NoHeaderRow {
 			if len(printField) == 0 {
-				fmt.Fprintf(os.Stderr, "No field specified!")
-				os.Exit(1)
+				checkError(fmt.Errorf("flag -f (--field) needed"))
 			}
 			pcol, err := strconv.Atoi(printField)
 			if err != nil {
-				fmt.Fprintf(os.Stderr, "Illegal field number: %s\n", printField)
-				os.Exit(1)
+				checkError(fmt.Errorf("illegal field number: %s", printField))
 			}
 			col = pcol - 1
 			if col < 0 {
-				fmt.Fprintf(os.Stderr, "Illegal field number: %d!\n", pcol)
-				os.Exit(1)
+				checkError(fmt.Errorf("illegal field number: %d", pcol))
 			}
 		}
-		if len(printField) == 0 {
-			fmt.Fprintf(os.Stderr, "No field specified!\n")
-			os.Exit(1)
+		if printField == "" {
+			checkError(fmt.Errorf("flag -f (--field) needed"))
 		}
 
 		var count int
+		var i int
+		var p float64
+
 		for _, file := range files {
 			csvReader, err := newCSVReaderByConfig(config, file)
 			checkError(err)
 			csvReader.Run()
 
 			isHeaderLine := !config.NoHeaderRow
+			checkField := true
 			for chunk := range csvReader.Ch {
 				checkError(chunk.Err)
 
@@ -133,26 +132,31 @@ var watchCmd = &cobra.Command{
 
 						isHeaderLine = false
 						if printPass {
-							outfh.Write([]byte(strings.Join(record, string(config.OutDelimiter)) + "\n"))
+							checkError(writer.Write(record))
 						}
 						continue
 					} // header
 
-					i := col
+					i = col
 					if !config.NoHeaderRow {
 						var ok bool
 						i, ok = field2col[printField]
 						if !ok {
-							fmt.Fprintf(os.Stderr, "Invalid field specified: %s\n", printField)
-							os.Exit(1)
+							checkError(fmt.Errorf("invalid field specified: %s", printField))
 						}
+					} else if checkField {
+						if i > len(record) {
+							checkError(fmt.Errorf(`field (%d) out of range (%d) in file: %s`, i+1, len(record), file))
+						}
+						checkField = false
 					}
-					p, err := strconv.ParseFloat(record[i], 64)
+
+					p, err = strconv.ParseFloat(record[i], 64)
 					if err == nil {
 						count++
 						h.Update(transform(p))
 						if printPass {
-							outfh.Write([]byte(strings.Join(record, string(config.OutDelimiter)) + "\n"))
+							checkError(writer.Write(record))
 						}
 					} else {
 						continue
