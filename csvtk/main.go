@@ -46,8 +46,16 @@ func init() {
 }
 
 func main() {
+	// go tool pprof csvtk pprof
 	// f, _ := os.Create("pprof")
 	// pprof.StartCPUProfile(f)
 	// defer pprof.StopCPUProfile()
+
 	cmd.Execute()
+
+	// go tool pprof --alloc_space csvtk mprof
+	// go tool pprof --inuse_space csvtk mprof
+	// f2, _ := os.Create("mprof")
+	// pprof.WriteHeapProfile(f2)
+	// defer f2.Close()
 }
