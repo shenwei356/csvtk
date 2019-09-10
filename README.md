@@ -90,7 +90,7 @@ It could save you much time of writing Python/R scripts.
 - [`concat`](https://bioinf.shenwei.me/csvtk/usage/#concat): concatenates CSV/TSV files by rows
 - [`sample`](https://bioinf.shenwei.me/csvtk/usage/#sample): sampling by proportion
 - [`cut`](https://bioinf.shenwei.me/csvtk/usage/#cut): selects parts of fields
-- [`grep`](https://bioinf.shenwei.me/csvtk/usage/#grep): greps data by calculate Pearson correlation between numeric columns
+- [`grep`](https://bioinf.shenwei.me/csvtk/usage/#grep): greps data by selected fields with patterns/regular expressions
 - [`uniq`](https://bioinf.shenwei.me/csvtk/usage/#uniq): unique data without sorting
 - [`freq`](https://bioinf.shenwei.me/csvtk/usage/#freq): frequencies of selected fields
 - [`inter`](https://bioinf.shenwei.me/csvtk/usage/#inter): intersection of multiple files
