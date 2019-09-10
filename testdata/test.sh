@@ -143,6 +143,28 @@ run "cat testdata/names.csv | $app cut -f id" fn
 assert_no_stderr
 assert_equal $(cat $STDOUT_FILE | md5sum | cut -d " " -f 1) $(cat testdata/names.csv | $app cut -f 1 | md5sum | cut -d " " -f 1)
 
+# ----------------------------------------------------------------------------
+# csvtk corr
+# ----------------------------------------------------------------------------
+
+CORR_DATA=testdata/corr_data.tsv
+
+float_gt(){
+    CODE=$(awk 'BEGIN {PREC="double"; print ("'$1'" >= "'$2'")}')
+    return $CODE
+}
+
+fun(){
+	csvtk -t corr -f A,B $CORR_DATA > corr.tsv
+}
+run corr fun
+R=$(cut -f 3 corr.tsv)
+# scipy result: 0.8892414849570343
+float_gt $R 0.889
+assert_equal $? 1
+float_gt 0.8893 $R
+assert_equal $? 1
+
 
 # ----------------------------------------------------------------------------
 # csvtk xxx
