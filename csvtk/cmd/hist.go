@@ -24,9 +24,11 @@ import (
 	"fmt"
 	"os"
 	"runtime"
+	"sort"
 	"strconv"
 
 	"github.com/spf13/cobra"
+	"gonum.org/v1/gonum/stat"
 	"gonum.org/v1/plot"
 	"gonum.org/v1/plot/plotter"
 	"gonum.org/v1/plot/plotutil"
@@ -96,6 +98,12 @@ Notes:
 			v[i] = f
 		}
 
+		percentiles := getFlagBool(cmd, "percentiles")
+		if percentiles {
+			sort.Float64s(v)
+			plotConfig.xlab = fmt.Sprintf("%s\nP99=%.3f P95=%.3f\nMEAN=%.3f STDDEV=%.3f\n", plotConfig.xlab, getPercentile(0.99, v), getPercentile(0.95, v), getPercentile(0.5, v), stat.StdDev(v, nil))
+		}
+
 		p, err := plot.New()
 		if err != nil {
 			checkError(err)
@@ -150,8 +158,15 @@ Notes:
 	},
 }
 
+func getPercentile(percentile float64, vals []float64) (p float64) {
+	sort.Float64s(vals)
+	p = stat.Quantile(percentile, stat.Empirical, vals, nil)
+	return
+}
+
 func init() {
 	plotCmd.AddCommand(histCmd)
 	histCmd.Flags().IntP("bins", "", 50, `number of bins`)
 	histCmd.Flags().IntP("color-index", "", 1, `color index, 1-7`)
+	histCmd.Flags().BoolP("percentiles", "", false, `calculate percentiles`)
 }
