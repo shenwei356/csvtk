@@ -90,7 +90,7 @@ Usage
 ```text
 csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.18.2
+Version: 0.19.0
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -120,8 +120,10 @@ Usage:
 
 Available Commands:
   add-header      add column names
+  cat             stream file to stdout and report progress on stderr
   collapse        collapse one field with selected fields as keys
   concat          concatenate CSV/TSV files by rows
+  corr            calculate Pearson correlation between two columns
   csv2json        convert CSV to JSON format
   csv2md          convert CSV to markdown format
   csv2tab         convert CSV to tabular format
@@ -156,6 +158,7 @@ Available Commands:
   transpose       transpose CSV data
   uniq            unique data without sorting
   version         print version information and check for update
+  watch           monitor the specified fields
   xlsx2csv        convert XLSX to CSV format
 
 Flags:
@@ -403,6 +406,70 @@ Examples
         f1    f4:count   f4:countn   f4:collapse
         bar   7          6           NA; 1; 2; 1; 3; 2; 2
         foo   5          4           1; 1.5; 3; 5; N/A
+
+
+## watch
+
+Usage
+
+```text
+monitor the specified fields
+
+Usage:
+  csvtk watch [flags]
+
+Flags:
+  -B, --bins int         number of histogram bins (default -1)
+  -W, --delay int        sleep this many seconds after plotting (default 1)
+  -y, --dump             print histogram data to stderr instead of plotting
+  -f, --field string     field to watch
+  -h, --help             help for watch
+  -O, --image string     save histogram to this PDF/image file
+  -L, --log              log10(x+1) transform numeric values
+  -x, --pass             passthrough mode (forward input to output)
+  -p, --print-freq int   print/report after this many records (-1 for print after EOF) (default -1)
+  -Q, --quiet            supress all plotting to stderr
+  -R, --reset            reset histogram after every report
+```
+
+Examples
+
+1. Read whole file, plot histogram of field on the terminal and PDF
+
+        csvtk -t watch -O hist.pdf -f MyField input.tsv
+
+1. Monitor a TSV stream, print histogram every 1000 records
+
+        cat input.tsv | csvtk -t watch -f MyField -p 1000 -
+
+1. Monitor a TSV stream, print histogram every 1000 records, hang forever for updates
+
+        tail -f +0 input.tsv | csvtk -t watch -f MyField -p 1000 -
+
+## corr
+
+Usage
+
+```text
+calculate Pearson correlation between two columns
+
+Usage:
+  csvtk corr [flags]
+
+Flags:
+  -f, --fields string   comma separated fields
+  -h, --help            help for corr
+  -i, --ignore_nan      Ignore non-numeric fields to avoid returning NaN
+  -L, --log             Calcute correlations on Log10 transformed data
+  -x, --pass            passthrough mode (forward input to output)
+```
+
+Examples
+
+1. Calculate pairwise correlations between field, ignore non-numeric values
+
+        csvtk -t corr -i -f 1,Foo,Bar input.tsv
+
 
 ## pretty
 
@@ -2588,67 +2655,6 @@ Examples
 
     ![scatter.png](testdata/figures/scatter.png)
 
-## corr
-
-Usage
-
-```text
-calculate Pearson correlation between two columns
-
-Usage:
-  csvtk corr [flags]
-
-Flags:
-  -f, --fields string   comma separated fields
-  -h, --help            help for corr
-  -i, --ignore_nan      Ignore non-numeric fields to avoid returning NaN
-  -L, --log             Calcute correlations on Log10 transformed data
-  -x, --pass            passthrough mode (forward input to output)
-```
-
-Examples
-
-1. Calculate pairwise correlations between field, ignore non-numeric values
-
-	csvtk -t corr -i -f 1,Foo,Bar input.tsv
-
-## watch
-
-Usage
-
-```text
-monitor the specified fields
-
-Usage:
-  csvtk watch [flags]
-
-Flags:
-  -B, --bins int         number of histogram bins (default -1)
-  -W, --delay int        sleep this many seconds after plotting (default 1)
-  -y, --dump             print histogram data to stderr instead of plotting
-  -f, --field string     field to watch
-  -h, --help             help for watch
-  -O, --image string     save histogram to this PDF/image file
-  -L, --log              log10(x+1) transform numeric values
-  -x, --pass             passthrough mode (forward input to output)
-  -p, --print-freq int   print/report after this many records (-1 for print after EOF) (default -1)
-  -Q, --quiet            supress all plotting to stderr
-  -R, --reset            reset histogram after every report
-```
-
-Examples
-
-1. Read whole file, plot histogram of field on the terminal and PDF
-
-	csvtk -t watch -O hist.pdf -f MyField input.tsv
-
-2. Monitor a TSV stream, print histogram every 1000 records
-
-	cat input.tsv | csvtk -t watch -f MyField -p 1000 -
-
-2. Monitor a TSV stream, print histogram every 1000 records, hang forever for updates
-
-	tail -f +0 input.tsv | csvtk -t watch -f MyField -p 1000 -
 
 ## cat
 
@@ -2672,11 +2678,11 @@ Examples
 
 1. Stream file, report progress in bytes
 
-	csvtk cat file.tsv
+        csvtk cat file.tsv
 
 2. Stream file from stdin, report progress in lines
 
-	tac input.tsv | csvtk cat -L -s `wc -l < input.tsv` -
+        tac input.tsv | csvtk cat -L -s `wc -l < input.tsv` -
 
 ## genautocomplete
 

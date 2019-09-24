@@ -1,6 +1,11 @@
-- [csvtk v0.18.3](https://github.com/shenwei356/csvtk/releases/tag/v0.18.3)
-[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.18.3/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.18.3)
+- [csvtk v0.19.0](https://github.com/shenwei356/csvtk/releases/tag/v0.19.0)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.19.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.19.0)
+    - [new commands by @bsipos](https://github.com/shenwei356/csvtk/pull/84):
+        - `watch`: online monitoring and histogram of selected field.
+        - `corr`: calculate Pearson correlation between numeric columns.
+        - `cat`: stream file and report progress.
     - `csvtk split`: fix bug of repeatedly output header line when number of output files exceed value of `--buf-groups`. [#83](https://github.com/shenwei356/csvtk/issues/83)
+    - `csvtk plot hist`: new option `--percentiles` to add percentiles to histogram x label. [#88](https://github.com/shenwei356/csvtk/pull/88)
 - [csvtk v0.18.2](https://github.com/shenwei356/csvtk/releases/tag/v0.18.2)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.18.2/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.18.2)
     - `csvtk replace/rename2/splitxlsx`: fix flag conflicts with global flag `-I` since v0.18.0.

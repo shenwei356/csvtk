@@ -63,7 +63,7 @@ It could save you much time of writing Python/R scripts.
 
 ## Subcommands
 
-35 subcommands in total.
+39 subcommands in total.
 
 **Information**
 
@@ -125,9 +125,10 @@ It could save you much time of writing Python/R scripts.
 
 **Misc**
 
+- [`cat`](https://bioinf.shenwei.me/csvtk/usage/#cat) stream file and report progress
+
 - [`version`](https://bioinf.shenwei.me/csvtk/usage/#version)   print version information and check for update
 - [`genautocomplete`](https://bioinf.shenwei.me/csvtk/usage/#genautocomplete) generate shell autocompletion script
-- [`cat`](https://bioinf.shenwei.me/csvtk/usage/#cat) stream file and report progress
 
 
 ## Installation
@@ -156,7 +157,7 @@ And then:
 
 1. **For windows**, just copy `csvtk.exe` to `C:\WINDOWS\system32`.
 
-#### Method 2: Install via conda (latest stable version)  [![Install-with-conda](https://anaconda.org/bioconda/csvtk/badges/installer/conda.svg)](http://bioinf.shenwei.me/csvtk/download/) [![Anaconda Cloud](	https://anaconda.org/bioconda/csvtk/badges/version.svg)](https://anaconda.org/bioconda/csvtk) [![downloads](https://anaconda.org/bioconda/csvtk/badges/downloads.svg)](https://anaconda.org/bioconda/csvtk)
+#### Method 2: Install via conda (latest stable version)  [![Anaconda Cloud](	https://anaconda.org/bioconda/csvtk/badges/version.svg)](https://anaconda.org/bioconda/csvtk) [![downloads](https://anaconda.org/bioconda/csvtk/badges/downloads.svg)](https://anaconda.org/bioconda/csvtk)
 
     conda install -c bioconda csvtk
 
