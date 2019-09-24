@@ -348,6 +348,24 @@
       
         
           <li class="md-nav__item">
+    <a href="#watch" title="watch" class="md-nav__link">
+    watch
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#corr" title="corr" class="md-nav__link">
+    corr
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
     <a href="#pretty" title="pretty" class="md-nav__link">
     pretty
   </a>
@@ -629,6 +647,15 @@
           <li class="md-nav__item">
     <a href="#plot-line" title="plot line" class="md-nav__link">
     plot line
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#cat" title="cat" class="md-nav__link">
+    cat
   </a>
   
 </li>
@@ -768,6 +795,24 @@
       
         
           <li class="md-nav__item">
+    <a href="#watch" title="watch" class="md-nav__link">
+    watch
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
+    <a href="#corr" title="corr" class="md-nav__link">
+    corr
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
     <a href="#pretty" title="pretty" class="md-nav__link">
     pretty
   </a>
@@ -1056,6 +1101,15 @@
       
         
           <li class="md-nav__item">
+    <a href="#cat" title="cat" class="md-nav__link">
+    cat
+  </a>
+  
+</li>
+        
+      
+        
+          <li class="md-nav__item">
     <a href="#genautocomplete" title="genautocomplete" class="md-nav__link">
     genautocomplete
   </a>
@@ -1110,6 +1164,8 @@
 <li><a href="#headers">headers</a></li>
 <li><a href="#dim">dim</a></li>
 <li><a href="#summary">summary</a></li>
+<li><a href="#corr">corr</a></li>
+<li><a href="#watch">watch</a></li>
 </ul>
 <p><strong>Format conversion</strong></p>
 <ul>
@@ -1160,6 +1216,7 @@
 </ul>
 <p><strong>Misc</strong></p>
 <ul>
+<li><a href="#cat">cat</a></li>
 <li><a href="#genautocomplete">genautocomplete</a></li>
 </ul>
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -1168,7 +1225,7 @@
 <p>Usage</p>
 <pre><code class="text">csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.18.2
+Version: 0.19.0
 
 Author: Wei Shen &lt;shenwei356@gmail.com&gt;
 
@@ -1198,8 +1255,10 @@ Usage:
 
 Available Commands:
   add-header      add column names
+  cat             stream file to stdout and report progress on stderr
   collapse        collapse one field with selected fields as keys
   concat          concatenate CSV/TSV files by rows
+  corr            calculate Pearson correlation between two columns
   csv2json        convert CSV to JSON format
   csv2md          convert CSV to markdown format
   csv2tab         convert CSV to tabular format
@@ -1234,6 +1293,7 @@ Available Commands:
   transpose       transpose CSV data
   uniq            unique data without sorting
   version         print version information and check for update
+  watch           monitor the specified fields
   xlsx2csv        convert XLSX to CSV format
 
 Flags:
@@ -1483,6 +1543,66 @@ $ cat testdata/digitals2.csv \
 f1    f4:count   f4:countn   f4:collapse
 bar   7          6           NA; 1; 2; 1; 3; 2; 2
 foo   5          4           1; 1.5; 3; 5; N/A
+</code></pre>
+</li>
+</ol>
+<h2 id="watch">watch</h2>
+<p>Usage</p>
+<pre><code class="text">monitor the specified fields
+
+Usage:
+  csvtk watch [flags]
+
+Flags:
+  -B, --bins int         number of histogram bins (default -1)
+  -W, --delay int        sleep this many seconds after plotting (default 1)
+  -y, --dump             print histogram data to stderr instead of plotting
+  -f, --field string     field to watch
+  -h, --help             help for watch
+  -O, --image string     save histogram to this PDF/image file
+  -L, --log              log10(x+1) transform numeric values
+  -x, --pass             passthrough mode (forward input to output)
+  -p, --print-freq int   print/report after this many records (-1 for print after EOF) (default -1)
+  -Q, --quiet            supress all plotting to stderr
+  -R, --reset            reset histogram after every report
+</code></pre>
+
+<p>Examples</p>
+<ol>
+<li>
+<p>Read whole file, plot histogram of field on the terminal and PDF</p>
+<pre><code>csvtk -t watch -O hist.pdf -f MyField input.tsv
+</code></pre>
+</li>
+<li>
+<p>Monitor a TSV stream, print histogram every 1000 records</p>
+<pre><code>cat input.tsv | csvtk -t watch -f MyField -p 1000 -
+</code></pre>
+</li>
+<li>
+<p>Monitor a TSV stream, print histogram every 1000 records, hang forever for updates</p>
+<pre><code>tail -f +0 input.tsv | csvtk -t watch -f MyField -p 1000 -
+</code></pre>
+</li>
+</ol>
+<h2 id="corr">corr</h2>
+<p>Usage</p>
+<pre><code class="text">calculate Pearson correlation between two columns
+
+Usage:
+  csvtk corr [flags]
+
+Flags:
+  -f, --fields string   comma separated fields
+  -h, --help            help for corr
+  -i, --ignore_nan      Ignore non-numeric fields to avoid returning NaN
+  -L, --log             Calcute correlations on Log10 transformed data
+  -x, --pass            passthrough mode (forward input to output)
+</code></pre>
+
+<p>Examples</p>
+<ol>
+<li>Calculate pairwise correlations between field, ignore non-numeric values<pre><code>csvtk -t corr -i -f 1,Foo,Bar input.tsv
 </code></pre>
 </li>
 </ol>
@@ -3755,6 +3875,34 @@ A       2.0     2
 <p><img alt="scatter.png" src="../testdata/figures/scatter.png" /></p>
 </li>
 </ul>
+<h2 id="cat">cat</h2>
+<p>Usage</p>
+<pre><code class="text">stream file to stdout and report progress on stderr
+
+Usage:
+  csvtk cat [flags]
+
+Flags:
+  -b, --buffsize int     buffer size (default 8192)
+  -h, --help             help for cat
+  -L, --lines            count lines instead of bytes
+  -p, --print-freq int   print frequency (-1 for print after parsing) (default 1)
+  -s, --total int        expected total bytes/lines (default -1)
+</code></pre>
+
+<p>Examples</p>
+<ol>
+<li>
+<p>Stream file, report progress in bytes</p>
+<pre><code>csvtk cat file.tsv
+</code></pre>
+</li>
+<li>
+<p>Stream file from stdin, report progress in lines</p>
+<pre><code>tac input.tsv | csvtk cat -L -s `wc -l &lt; input.tsv` -
+</code></pre>
+</li>
+</ol>
 <h2 id="genautocomplete">genautocomplete</h2>
 <p>Usage</p>
 <pre><code class="text">generate shell autocompletion script

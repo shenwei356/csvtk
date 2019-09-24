@@ -719,12 +719,14 @@ It could save you much time of writing Python/R scripts.</p>
 <li><del>Seamlessly support for data with meta line (e.g., <code>sep=,</code>) of separator declaration used by MS Excel</del></li>
 </ul>
 <h2 id="subcommands">Subcommands</h2>
-<p>35 subcommands in total.</p>
+<p>39 subcommands in total.</p>
 <p><strong>Information</strong></p>
 <ul>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#headers"><code>headers</code></a>: prints headers</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#dim"><code>dim</code></a>: dimensions of CSV file</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#summary"><code>summary</code></a>: summary statistics of selected digital fields (groupby group fields)</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#watch"><code>watch</code></a>: online monitoring and histogram of selected field</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#corr"><code>corr</code></a>: calculate Pearson correlation between numeric columns</li>
 </ul>
 <p><strong>Format conversion</strong></p>
 <ul>
@@ -780,7 +782,12 @@ It could save you much time of writing Python/R scripts.</p>
 </ul>
 <p><strong>Misc</strong></p>
 <ul>
-<li><a href="https://bioinf.shenwei.me/csvtk/usage/#version"><code>version</code></a>   print version information and check for update</li>
+<li>
+<p><a href="https://bioinf.shenwei.me/csvtk/usage/#cat"><code>cat</code></a> stream file and report progress</p>
+</li>
+<li>
+<p><a href="https://bioinf.shenwei.me/csvtk/usage/#version"><code>version</code></a>   print version information and check for update</p>
+</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#genautocomplete"><code>genautocomplete</code></a> generate shell autocompletion script</li>
 </ul>
 <h2 id="installation">Installation</h2>
@@ -813,7 +820,7 @@ And then:</p>
 <p><strong>For windows</strong>, just copy <code>csvtk.exe</code> to <code>C:\WINDOWS\system32</code>.</p>
 </li>
 </ol>
-<h4 id="method-2-install-via-conda-latest-stable-version">Method 2: Install via conda (latest stable version)  <a href="http://bioinf.shenwei.me/csvtk/download/"><img alt="Install-with-conda" src="https://anaconda.org/bioconda/csvtk/badges/installer/conda.svg" /></a> <a href="https://anaconda.org/bioconda/csvtk"><img alt="Anaconda Cloud" src="https://anaconda.org/bioconda/csvtk/badges/version.svg" /></a> <a href="https://anaconda.org/bioconda/csvtk"><img alt="downloads" src="https://anaconda.org/bioconda/csvtk/badges/downloads.svg" /></a></h4>
+<h4 id="method-2-install-via-conda-latest-stable-version">Method 2: Install via conda (latest stable version)  <a href="https://anaconda.org/bioconda/csvtk"><img alt="Anaconda Cloud" src="https://anaconda.org/bioconda/csvtk/badges/version.svg" /></a> <a href="https://anaconda.org/bioconda/csvtk"><img alt="downloads" src="https://anaconda.org/bioconda/csvtk/badges/downloads.svg" /></a></h4>
 <pre><code>conda install -c bioconda csvtk
 </code></pre>
 <h4 id="method-3-for-go-developer-latest-stabledev-version">Method 3: For Go developer (latest stable/dev version)</h4>
