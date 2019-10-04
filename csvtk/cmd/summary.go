@@ -572,29 +572,6 @@ func median(sorted []float64) float64 {
 	return sorted[l/2]
 }
 
-func quartile(sorted []float64) (q1, q2, q3 float64) {
-	l := len(sorted)
-	if l == 0 {
-		return
-	}
-	if l == 1 {
-		q1, q2, q3 = sorted[0], sorted[0], sorted[0]
-		return
-	}
-	var c1, c2 int
-	if l%2 == 0 {
-		c1 = l / 2
-		c2 = l / 2
-	} else {
-		c1 = (l - 1) / 2
-		c2 = (l-1)/2 + 1
-	}
-	q1 = median(sorted[:c1])
-	q2 = median(sorted)
-	q3 = median(sorted[c2:])
-	return
-}
-
 func q1(sorted []float64) float64 {
 	l := len(sorted)
 	if l == 0 {
@@ -603,13 +580,11 @@ func q1(sorted []float64) float64 {
 	if l == 1 {
 		return sorted[0]
 	}
-	var c1 int
-	if l%2 == 0 {
-		c1 = l / 2
-	} else {
-		c1 = (l - 1) / 2
+
+	if l%4 == 0 {
+		return (sorted[l/4-1] + sorted[l/4]) / 2
 	}
-	return median(sorted[:c1])
+	return sorted[l/4]
 }
 
 func q3(sorted []float64) float64 {
@@ -620,11 +595,8 @@ func q3(sorted []float64) float64 {
 	if l == 1 {
 		return sorted[0]
 	}
-	var c2 int
-	if l%2 == 0 {
-		c2 = l / 2
-	} else {
-		c2 = (l-1)/2 + 1
+	if l%4 == 0 {
+		return (sorted[l/4*3-1] + sorted[l/4*3]) / 2
 	}
-	return median(sorted[c2:])
+	return sorted[l/4*3]
 }
