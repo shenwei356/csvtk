@@ -155,7 +155,7 @@ float_gt(){
 }
 
 fun(){
-	csvtk -t corr -f A,B $CORR_DATA > corr.tsv
+	$app -t corr -f A,B $CORR_DATA > corr.tsv
 }
 run corr fun
 R=$(cut -f 3 corr.tsv)
@@ -165,6 +165,7 @@ assert_equal $? 1
 float_gt 0.8893 $R
 assert_equal $? 1
 
+rm corr.tsv
 
 # ----------------------------------------------------------------------------
 # csvtk xxx
