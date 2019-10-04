@@ -499,22 +499,19 @@ func init() {
 		if len(s) == 0 {
 			return math.NaN()
 		}
-		q1, _, _ := quartile(s)
-		return q1
+		return q1(s)
 	}
 	allStats["q2"] = func(s []float64) float64 {
 		if len(s) == 0 {
 			return math.NaN()
 		}
-		_, q2, _ := quartile(s)
-		return q2
+		return median(s)
 	}
 	allStats["q3"] = func(s []float64) float64 {
 		if len(s) == 0 {
 			return math.NaN()
 		}
-		_, _, q3 := quartile(s)
-		return q3
+		return q3(s)
 	}
 
 	allStats2 = make(map[string]func([]string) string)
@@ -580,17 +577,54 @@ func quartile(sorted []float64) (q1, q2, q3 float64) {
 	if l == 0 {
 		return
 	}
-
+	if l == 1 {
+		q1, q2, q3 = sorted[0], sorted[0], sorted[0]
+		return
+	}
 	var c1, c2 int
 	if l%2 == 0 {
 		c1 = l / 2
 		c2 = l / 2
 	} else {
 		c1 = (l - 1) / 2
-		c2 = c1 + 1
+		c2 = (l-1)/2 + 1
 	}
 	q1 = median(sorted[:c1])
 	q2 = median(sorted)
 	q3 = median(sorted[c2:])
 	return
+}
+
+func q1(sorted []float64) float64 {
+	l := len(sorted)
+	if l == 0 {
+		return 0
+	}
+	if l == 1 {
+		return sorted[0]
+	}
+	var c1 int
+	if l%2 == 0 {
+		c1 = l / 2
+	} else {
+		c1 = (l - 1) / 2
+	}
+	return median(sorted[:c1])
+}
+
+func q3(sorted []float64) float64 {
+	l := len(sorted)
+	if l == 0 {
+		return 0
+	}
+	if l == 1 {
+		return sorted[0]
+	}
+	var c2 int
+	if l%2 == 0 {
+		c2 = l / 2
+	} else {
+		c2 = (l-1)/2 + 1
+	}
+	return median(sorted[c2:])
 }

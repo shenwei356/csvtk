@@ -1,3 +1,7 @@
+- [csvtk v0.19.1](https://github.com/shenwei356/csvtk/releases/tag/v0.19.1)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.19.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.19.1)
+    - `csvtk summary`: fix err of q1 and q3 for list containing only one element. [#90](https://github.com/shenwei356/csvtk/issues/90)
+
 - [csvtk v0.19.0](https://github.com/shenwei356/csvtk/releases/tag/v0.19.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.19.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.19.0)
     - [new commands by @bsipos](https://github.com/shenwei356/csvtk/pull/84):
