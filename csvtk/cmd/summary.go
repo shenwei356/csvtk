@@ -499,7 +499,7 @@ func init() {
 		if len(s) == 0 {
 			return math.NaN()
 		}
-		return q1(s)
+		return percentileValue(s, 0.25)
 	}
 	allStats["q2"] = func(s []float64) float64 {
 		if len(s) == 0 {
@@ -511,7 +511,7 @@ func init() {
 		if len(s) == 0 {
 			return math.NaN()
 		}
-		return q3(s)
+		return percentileValue(s, 0.75)
 	}
 
 	allStats2 = make(map[string]func([]string) string)
@@ -572,31 +572,19 @@ func median(sorted []float64) float64 {
 	return sorted[l/2]
 }
 
-func q1(sorted []float64) float64 {
+/* This implementation follows R's summary () and quantile (type=7) functions.
+   See discussion here:
+   http://tolstoy.newcastle.edu.au/R/e17/help/att-1067/Quartiles_in_R.pdf */
+func percentileValue(sorted []float64, percentile float64) float64 {
 	l := len(sorted)
-	if l == 0 {
+	if l == 0 || percentile < 0 || percentile > 1 {
 		return 0
 	}
 	if l == 1 {
 		return sorted[0]
 	}
 
-	if l%4 == 0 {
-		return (sorted[l/4-1] + sorted[l/4]) / 2
-	}
-	return sorted[l/4]
-}
-
-func q3(sorted []float64) float64 {
-	l := len(sorted)
-	if l == 0 {
-		return 0
-	}
-	if l == 1 {
-		return sorted[0]
-	}
-	if l%4 == 0 {
-		return (sorted[l/4*3-1] + sorted[l/4*3]) / 2
-	}
-	return sorted[l/4*3]
+	h := float64(l-1) * percentile
+	fh := math.Floor(h)
+	return sorted[int(fh)] + (h-fh)*(sorted[int(fh)+1]-sorted[int(fh)])
 }
