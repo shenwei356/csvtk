@@ -48,12 +48,12 @@ func getFileList(args []string) []string {
 	if len(args) == 0 {
 		files = append(files, "-")
 	} else {
-		for _, file := range files {
+		for _, file := range args {
 			if isStdin(file) {
 				continue
 			}
 			if _, err := os.Stat(file); os.IsNotExist(err) {
-				checkError(err)
+				checkError(fmt.Errorf("checking file: %s", err))
 			}
 		}
 		files = args
@@ -306,6 +306,18 @@ func getFlagFields(cmd *cobra.Command, flag string) string {
 	return fieldsStr
 }
 
+func nth(i int) string {
+	switch i {
+	case 1:
+		return "1st"
+	case 2:
+		return "2nd"
+	case 3:
+		return "3rd"
+	default:
+		return fmt.Sprintf("%dth", i+1)
+	}
+}
 func parseFields(cmd *cobra.Command,
 	fieldsStr string,
 	noHeaderRow bool) ([]int, []string, bool, bool) {
@@ -372,8 +384,10 @@ func parseFields(cmd *cobra.Command,
 		}
 	} else {
 		colnames = strings.Split(fieldsStr, ",")
-		for _, f := range colnames {
-			if f[0] == '-' {
+		for i, f := range colnames {
+			if f == "" {				
+				checkError(fmt.Errorf(`%s filed should not be empty: %s`, nth(i+1), fieldsStr))
+			} else if f[0] == '-' {
 				negativeFields = true
 			} else {
 				if negativeFields {

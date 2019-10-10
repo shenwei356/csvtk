@@ -1,5 +1,8 @@
 - [csvtk v0.19.1](https://github.com/shenwei356/csvtk/releases/tag/v0.19.1)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.19.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.19.1)
+    - `csvtk`:
+        - fix checking file existence.
+        - show friendly error message when giving empty field like `csvtk cut -f a, b`.
     - `csvtk summary`: fix err of q1 and q3. [#90](https://github.com/shenwei356/csvtk/issues/90)
     - `csvtk version`: makeing checking update optional
 - [csvtk v0.19.0](https://github.com/shenwei356/csvtk/releases/tag/v0.19.0)
