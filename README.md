@@ -52,8 +52,8 @@ It could save you much time of writing Python/R scripts.
 
 - **Cross-platform** (Linux/Windows/Mac OS X/OpenBSD/FreeBSD)
 - **Light weight and out-of-the-box, no dependencies, no compilation, no configuration**
-- **Fast**,  **multiple-CPUs supported**
-- **Practical functions supported by N subcommands**
+- **Fast**,  **multiple-CPUs supported** (some commands)
+- **Practical functions provided by N subcommands**
 - **Support STDIN and gziped input/output file, easy being used in pipe**
 - Most of the subcommands support ***unselecting fields*** and ***fuzzy fields***,
   e.g. `-f "-id,-name"` for all fields except "id" and "name",
@@ -190,7 +190,7 @@ Howto:
 
 ## Compared to `csvkit`
 
-[csvkit](http://csvkit.readthedocs.org/)
+[csvkit](http://csvkit.readthedocs.org/), attention: this table wasn't updated for 2 years.
 
 Features                |  csvtk   |  csvkit   |   Note
 :-----------------------|:--------:|:---------:|:---------
@@ -216,7 +216,7 @@ Similar tools:
 - [xsv](https://github.com/BurntSushi/xsv) - A fast CSV toolkit written in Rust.
 - [miller](https://github.com/johnkerl/miller) - Miller is like sed, awk, cut, join, and sort for
 name-indexed data such as CSV and tabular JSON http://johnkerl.org/miller
-- [tsv-utils-dlang](https://github.com/eBay/tsv-utils-dlang) - Command line utilities for tab-separated value files written in the D programming language.
+- [tsv-utils](https://github.com/eBay/tsv-utils) - Command line utilities for tab-separated value files written in the D programming language.
 
 ## Examples
 
