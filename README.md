@@ -126,7 +126,6 @@ It could save you much time of writing Python/R scripts.
 **Misc**
 
 - [`cat`](https://bioinf.shenwei.me/csvtk/usage/#cat) stream file and report progress
-
 - [`version`](https://bioinf.shenwei.me/csvtk/usage/#version)   print version information and check for update
 - [`genautocomplete`](https://bioinf.shenwei.me/csvtk/usage/#genautocomplete) generate shell autocompletion script
 

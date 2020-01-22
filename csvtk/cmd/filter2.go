@@ -326,4 +326,4 @@ var reFilter2VarSymbol = regexp.MustCompile(`\$`)
 
 // special colname starting with digits, e.g., 123abc
 var reFiler2VarSymbolStartsWithDigits = regexp.MustCompile(`\$(\d+)([^\d +-/*&\|^%><!~=()]+)`) // for preprocess expression
-var reFiler2ColSymbolStartsWithDigits = regexp.MustCompile(`(\d+)([^\d +-/*&\|^%><!~=()]+)`)   // for preparing paramters
+var reFiler2ColSymbolStartsWithDigits = regexp.MustCompile(`^(\d+)([^\d +-/*&\|^%><!~=()]+)`)  // for preparing paramters
