@@ -47,8 +47,8 @@ type CSVReader struct {
 	IgnoreEmptyRow   bool
 	IgnoreIllegalRow bool
 
-	NumEmptyRows   int
-	NumIllegalRows int
+	NumEmptyRows   []int
+	NumIllegalRows []int
 
 	fh *xopen.Reader
 }
@@ -87,12 +87,14 @@ func NewCSVReader(file string, bufferSize int, chunkSize int) (*CSVReader, error
 	ch := make(chan CSVRecordsChunk, bufferSize)
 
 	csvReader := &CSVReader{
-		Reader:     reader,
-		bufferSize: bufferSize,
-		chunkSize:  chunkSize,
-		Ch:         ch,
-		fh:         fh,
-		MetaLine:   metaLine,
+		Reader:         reader,
+		bufferSize:     bufferSize,
+		chunkSize:      chunkSize,
+		Ch:             ch,
+		fh:             fh,
+		MetaLine:       metaLine,
+		NumEmptyRows:   make([]int, 0, 100),
+		NumIllegalRows: make([]int, 0, 100),
 	}
 	return csvReader, nil
 }
@@ -109,6 +111,7 @@ func (csvReader *CSVReader) Run() {
 		var i int
 		var notBlank bool
 		var data string
+		var lineNum int
 		for {
 			record, err := csvReader.Reader.Read()
 			if err == io.EOF {
@@ -116,9 +119,10 @@ func (csvReader *CSVReader) Run() {
 				csvReader.Ch <- CSVRecordsChunk{id, chunkData[0:i], nil}
 				break
 			}
+			lineNum++
 			if err != nil {
 				if csvReader.IgnoreIllegalRow {
-					csvReader.NumIllegalRows++
+					csvReader.NumIllegalRows = append(csvReader.NumIllegalRows, lineNum)
 					continue
 				} else {
 					csvReader.Ch <- CSVRecordsChunk{id, chunkData[0:i], err}
@@ -137,7 +141,7 @@ func (csvReader *CSVReader) Run() {
 					}
 				}
 				if !notBlank {
-					csvReader.NumEmptyRows++
+					csvReader.NumEmptyRows = append(csvReader.NumEmptyRows, lineNum)
 					continue
 				}
 			}

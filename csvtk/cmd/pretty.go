@@ -99,12 +99,7 @@ Attention:
 			outfh.Write(tbl.Bytes())
 		}
 
-		if config.IgnoreEmptyRow {
-			log.Warningf("%d empty rows ignored", csvReader.NumEmptyRows)
-		}
-		if config.IgnoreIllegalRow {
-			log.Warningf("%d illegal rows ignored", csvReader.NumIllegalRows)
-		}
+		readerReport(&config, csvReader, file)
 	},
 }
 

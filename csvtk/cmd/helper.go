@@ -385,7 +385,7 @@ func parseFields(cmd *cobra.Command,
 	} else {
 		colnames = strings.Split(fieldsStr, ",")
 		for i, f := range colnames {
-			if f == "" {				
+			if f == "" {
 				checkError(fmt.Errorf(`%s filed should not be empty: %s`, nth(i+1), fieldsStr))
 			} else if f[0] == '-' {
 				negativeFields = true
@@ -445,6 +445,15 @@ func readCSV(config Config, file string) ([]string, [][]string, *CSVReader) {
 		}
 	}
 	return headerRow, data, csvReader
+}
+
+func readerReport(config *Config, csvReader *CSVReader, file string) {
+	if config.IgnoreEmptyRow && len(csvReader.NumEmptyRows) > 0 {
+		log.Warningf("file '%s': %d empty rows ignored: %d", file, len(csvReader.NumEmptyRows), csvReader.NumEmptyRows)
+	}
+	if config.IgnoreIllegalRow && len(csvReader.NumIllegalRows) > 0 {
+		log.Warningf("file '%s': %d illegal rows ignored: %d", file, len(csvReader.NumIllegalRows), csvReader.NumIllegalRows)
+	}
 }
 
 func readDataFrame(config Config, file string, ignoreCase bool) ([]string, map[string]string, map[string][]string) {
@@ -517,12 +526,7 @@ func readDataFrame(config Config, file string, ignoreCase bool) ([]string, map[s
 		}
 	}
 
-	if config.IgnoreEmptyRow {
-		log.Warningf("file '%s': %d empty rows ignored", file, csvReader.NumEmptyRows)
-	}
-	if config.IgnoreIllegalRow {
-		log.Warningf("file '%s': %d illegal rows ignored", file, csvReader.NumIllegalRows)
-	}
+	readerReport(&config, csvReader, file)
 
 	return colnames, colname2headerRow, df
 }

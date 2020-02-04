@@ -130,12 +130,7 @@ Supported operators and types:
 					}
 				}
 
-				if config.IgnoreEmptyRow {
-					log.Warningf("file '%s': %d empty rows ignored", file, csvReader.NumEmptyRows)
-				}
-				if config.IgnoreIllegalRow {
-					log.Warningf("file '%s': %d illegal rows ignored", file, csvReader.NumIllegalRows)
-				}
+				readerReport(&config, csvReader, file)
 			}
 
 			return
@@ -358,12 +353,7 @@ Supported operators and types:
 				}
 			}
 
-			if config.IgnoreEmptyRow {
-				log.Warningf("file '%s': %d empty rows ignored", file, csvReader.NumEmptyRows)
-			}
-			if config.IgnoreIllegalRow {
-				log.Warningf("file '%s': %d illegal rows ignored", file, csvReader.NumIllegalRows)
-			}
+			readerReport(&config, csvReader, file)
 		}
 	},
 }

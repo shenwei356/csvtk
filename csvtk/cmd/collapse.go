@@ -271,12 +271,7 @@ var collapseCmd = &cobra.Command{
 		writer.Flush()
 		checkError(writer.Error())
 
-		if config.IgnoreEmptyRow {
-			log.Warningf("%d empty rows ignored", csvReader.NumEmptyRows)
-		}
-		if config.IgnoreIllegalRow {
-			log.Warningf("%d illegal rows ignored", csvReader.NumIllegalRows)
-		}
+		readerReport(&config, csvReader, file)
 	},
 }
 
