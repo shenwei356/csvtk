@@ -218,9 +218,14 @@ func getConfigs(cmd *cobra.Command) Config {
 		noHeaderRow = getFlagBool(cmd, "no-header-row")
 	}
 
+	threads := getFlagPositiveInt(cmd, "num-cpus")
+	if threads >= 1000 {
+		checkError(fmt.Errorf("are your seriously? %d threads? It will exhaust your RAM", threads))
+	}
+
 	return Config{
 		ChunkSize: getFlagPositiveInt(cmd, "chunk-size"),
-		NumCPUs:   getFlagPositiveInt(cmd, "num-cpus"),
+		NumCPUs:   threads,
 
 		Delimiter:    getFlagRune(cmd, "delimiter"),
 		OutDelimiter: getFlagRune(cmd, "out-delimiter"),

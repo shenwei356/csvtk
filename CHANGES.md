@@ -1,5 +1,6 @@
 - [csvtk v0.19.2](https://github.com/shenwei356/csvtk/releases/tag/v0.19.2)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.19.2/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.19.2)
+    - `csvtk`: list lines' number of illegal (`-I`) and empty (`-E`) rows. [#97](https://github.com/shenwei356/csvtk/issues/97)
     - `csvtk filter2`: fix bug when column names start with digits, e.g., `1000g2015aug`. Thank @VorontsovIE ([#44](https://github.com/shenwei356/csvtk/issues/44))
 - [csvtk v0.19.1](https://github.com/shenwei356/csvtk/releases/tag/v0.19.1)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.19.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.19.1)
