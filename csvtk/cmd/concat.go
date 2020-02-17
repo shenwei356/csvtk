@@ -22,7 +22,6 @@ package cmd
 
 import (
 	"encoding/csv"
-	"errors"
 	"runtime"
 
 	"github.com/shenwei356/xopen"
@@ -42,9 +41,6 @@ so only columns match that of the first files kept.
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
 		files := getFileList(args)
-		if len(files) < 2 {
-			checkError(errors.New("at least 2 files needed"))
-		}
 		runtime.GOMAXPROCS(config.NumCPUs)
 
 		ignoreCase := getFlagBool(cmd, "ignore-case")
