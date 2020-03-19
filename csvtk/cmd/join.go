@@ -59,7 +59,8 @@ Multiple keys supported, but the orders are ignored.
 		} else if len(allFields) != len(files) {
 			checkError(fmt.Errorf("number of fields (%d) should be equal to number of files (%d)", len(allFields), len(files)))
 		}
-		// ignoreCase := getFlagBool(cmd, "ignore-case")
+
+		ignoreCase := getFlagBool(cmd, "ignore-case")
 
 		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
 		keepUnmatched := getFlagBool(cmd, "keep-unmatched")
@@ -111,6 +112,9 @@ Multiple keys supported, but the orders are ignored.
 					items[i] = record[f-1]
 				}
 				key = strings.Join(items, "_shenwei356_")
+				if ignoreCase {
+					key = strings.ToLower(key)
+				}
 				if _, ok = keysMaps[key]; !ok {
 					keysMaps[key] = [][]string{}
 				}
@@ -136,6 +140,9 @@ Multiple keys supported, but the orders are ignored.
 					items[i] = record0[f-1]
 				}
 				key = strings.Join(items, "_shenwei356_")
+				if ignoreCase {
+					key = strings.ToLower(key)
+				}
 				if records, ok = keysMaps[key]; ok {
 					for _, record2 = range records {
 						record = record0
