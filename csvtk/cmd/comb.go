@@ -70,6 +70,7 @@ var combCmd = &cobra.Command{
 		var _items, items []string
 		var combs [][]string
 		var comb []string
+		var n int
 
 		for _, file := range files {
 			fh, err = xopen.Ropen(file)
@@ -80,11 +81,13 @@ var combCmd = &cobra.Command{
 			scanner := bufio.NewScanner(fh)
 
 			line = 0
+			n = 0
 			for scanner.Scan() {
 				line++
 				if !config.NoHeaderRow && line == 1 {
 					continue
 				}
+				n++
 
 				text = strings.TrimSpace(scanner.Text())
 				if ignoreCase {
@@ -130,6 +133,9 @@ var combCmd = &cobra.Command{
 
 			}
 			checkError(scanner.Err())
+			if n == 0 {
+				log.Warning("no input? or only one row? you may need switch on '-H' for single-line input")
+			}
 		}
 		writer.Flush()
 		checkError(writer.Error())
