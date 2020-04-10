@@ -14,20 +14,20 @@
 ## Introduction
 
 Similar to FASTA/Q format in field of Bioinformatics,
-CSV/TSV formats are basic and ubiquitous file formats in both Bioinformatics and data sicence.
+CSV/TSV formats are basic and ubiquitous file formats in both Bioinformatics and data science.
 
-People usually use spreadsheet softwares like MS Excel to do process table data.
-However it's all by clicking and typing, which is **not
-automatically and time-consuming to repeat**, especially when we want to
+People usually use spreadsheet software like MS Excel to process table data.
+However this is all by clicking and typing, which is **not
+automated and is time-consuming to repeat**, especially when you want to
 apply similar operations with different datasets or purposes.
 
 ***You can also accomplish some CSV/TSV manipulations using shell commands,
-but more codes are needed to handle the header line. Shell commands do not
+but more code is needed to handle the header line. Shell commands do not
 support selecting columns with column names either.***
 
 `csvtk` is **convenient for rapid data investigation
-and also easy to be integrated into analysis pipelines**.
-It could save you much time of writing Python/R scripts.
+and also easy to integrate into analysis pipelines**.
+It could save you lots of time in (not) writing Python/R scripts.
 
 
 ## Table of Contents
