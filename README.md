@@ -100,6 +100,7 @@ It could save you lots of time in (not) writing Python/R scripts.
 - [`split`](https://bioinf.shenwei.me/csvtk/usage/#split) splits CSV/TSV into multiple files according to column values
 - [`splitxlsx`](https://bioinf.shenwei.me/csvtk/usage/#splitxlsx): splits XLSX sheet into multiple sheets according to column values
 - [`collapse`](https://bioinf.shenwei.me/csvtk/usage/#collapse): collapses one field with selected fields as keys
+- [`comb`](https://bioinf.shenwei.me/csvtk/usage/#comb): compute combinations of items at every row
 
 **Edit**
 
@@ -110,6 +111,7 @@ It could save you lots of time in (not) writing Python/R scripts.
 - [`replace`](https://bioinf.shenwei.me/csvtk/usage/#replace): replaces data of selected fields by regular expression
 - [`mutate`](https://bioinf.shenwei.me/csvtk/usage/#mutate): creates new columns from selected fields by regular expression
 - [`mutate2`](https://bioinf.shenwei.me/csvtk/usage/#mutate2): creates new column from selected fields by awk-like arithmetic/string expressions
+- [`seq`](https://bioinf.shenwei.me/csvtk/usage/#sep): separate column into multiple columns using a regular expression separator
 - [`gather`](https://bioinf.shenwei.me/csvtk/usage/#gather): gathers columns into key-value pairs
 
 **Ordering**

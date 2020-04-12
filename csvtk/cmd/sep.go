@@ -25,16 +25,17 @@ import (
 	"fmt"
 	"regexp"
 	"runtime"
+	"strings"
 
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
 )
 
-// mutateCmd represents the mutate command
-var mutateCmd = &cobra.Command{
-	Use:   "mutate",
-	Short: "create new column from selected fields by regular expression",
-	Long: `create new column from selected fields by regular expression
+// sepCmd represents the mutate command
+var sepCmd = &cobra.Command{
+	Use:   "sep",
+	Short: "separate column into multiple columns using a regular expression separator",
+	Long: `separate column into multiple columns using a regular expression separator
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -45,26 +46,39 @@ var mutateCmd = &cobra.Command{
 		}
 		runtime.GOMAXPROCS(config.NumCPUs)
 
+		names := getFlagStringSlice(cmd, "names")
+		numCols := getFlagInt(cmd, "num-cols")
+		if !config.NoHeaderRow {
+			if len(names) == 0 {
+				checkError(fmt.Errorf("flag -n (--name) needed"))
+			} else if numCols > 0 && numCols != len(names) {
+				checkError(fmt.Errorf("number of new column names (%d) does not match -N (--num-cols) (%d)", len(names), numCols))
+			}
+		}
+
+		sep := getFlagString(cmd, "sep")
+		if sep == "" {
+			checkError(fmt.Errorf("flag -s (--sep) needed"))
+		}
+		useRegexp := getFlagBool(cmd, "use-regexp")
 		ignoreCase := getFlagBool(cmd, "ignore-case")
-		naUnmatched := getFlagBool(cmd, "na")
-		pattern := getFlagString(cmd, "pattern")
-		if !regexp.MustCompile(`\(.+\)`).MatchString(pattern) {
-			checkError(fmt.Errorf(`value of -p (--pattern) must contains "(" and ")" to capture data which is used to create new column`))
-		}
 
-		name := getFlagString(cmd, "name")
-		if !config.NoHeaderRow && name == "" {
-			checkError(fmt.Errorf("flag -n (--name) needed"))
+		var err error
+		var sepRe *regexp.Regexp
+		if useRegexp {
+			sepS := sep
+			if ignoreCase {
+				sepS = "(?i)" + sepS
+			}
+			sepRe, err = regexp.Compile(sepS)
+			if err != nil {
+				checkError(fmt.Errorf("failed to compile regular expression: %s: %s", sep, err))
+			}
 		}
-
-		p := pattern
-		if ignoreCase {
-			p = "(?i)" + p
-		}
-		patternRegexp, err := regexp.Compile(p)
-		checkError(err)
 
 		remove := getFlagBool(cmd, "remove")
+		na := getFlagString(cmd, "na")
+		drop := getFlagBool(cmd, "drop")
 
 		fieldStr := getFlagString(cmd, "fields")
 		if fieldStr == "" {
@@ -77,6 +91,7 @@ var mutateCmd = &cobra.Command{
 		if negativeFields {
 			checkError(fmt.Errorf("unselect not allowed"))
 		}
+
 		var fieldsMap map[int]struct{}
 		if len(fields) > 0 {
 			fields2 := make([]int, len(fields))
@@ -93,7 +108,6 @@ var mutateCmd = &cobra.Command{
 			fields = fields2
 		}
 
-		// fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
 		fuzzyFields := false
 
 		outfh, err := xopen.Wopen(config.OutFile)
@@ -119,7 +133,12 @@ var mutateCmd = &cobra.Command{
 			handleHeaderRow := needParseHeaderRow
 			checkFields := true
 
+			checkNewNumCols := true
+			var nNewCols int
+
+			var items []string
 			var record2 []string // for output
+			var line int
 
 			printMetaLine := true
 			for chunk := range csvReader.Ch {
@@ -131,6 +150,8 @@ var mutateCmd = &cobra.Command{
 				}
 
 				for _, record := range chunk.Data {
+					line++
+
 					if parseHeaderRow { // parsing header row
 						colnames2fileds = make(map[string]int, len(record))
 						for i, col := range record {
@@ -225,20 +246,57 @@ var mutateCmd = &cobra.Command{
 						record2 = record
 					}
 					for f := range record {
-						// record2[f] = record[f]
 						if _, ok := fieldsMap[f+1]; ok {
 							if handleHeaderRow {
-								record2 = append(record2, name)
+								record2 = append(record2, names...)
 								handleHeaderRow = false
 							} else {
-								if patternRegexp.MatchString(record[f]) {
-									found := patternRegexp.FindAllStringSubmatch(record[f], -1)
-									record2 = append(record2, found[0][1])
+								if useRegexp {
+									items = sepRe.Split(record[f], -1)
 								} else {
-									if naUnmatched {
-										record2 = append(record2, "")
+									items = strings.Split(record[f], sep)
+								}
+								if checkNewNumCols {
+									if !config.NoHeaderRow {
+										if numCols > 0 {
+											if len(items) <= numCols {
+												nNewCols = numCols
+											} else {
+												checkError(fmt.Errorf("[line %d] number of new columns (%d) > -N (--num-cols) (%d), please increase -N (--num-cols)", line, len(items), numCols))
+											}
+										} else {
+											if len(items) <= len(names) {
+												nNewCols = len(items)
+											} else {
+												checkError(fmt.Errorf("[line %d] number of new columns (%d) > number of new column names (%d), please reset -n (--names) ", line, len(items), len(names)))
+											}
+										}
 									} else {
-										record2 = append(record2, record[f])
+										if numCols > 0 {
+											if len(items) < numCols {
+												nNewCols = numCols
+											} else {
+												nNewCols = len(items)
+											}
+										} else {
+											nNewCols = len(items)
+										}
+									}
+
+									checkNewNumCols = false
+								}
+								record2 = append(record2, items...)
+								if len(items) <= nNewCols {
+									for i := 0; i < numCols-len(items); i++ {
+										record2 = append(record2, na)
+									}
+								} else if drop {
+									record2 = record2[0 : len(record2)-len(items)+nNewCols]
+								} else {
+									if numCols > 0 {
+										checkError(fmt.Errorf("[line %d] number of new columns (%d) > -N (--num-cols) (%d),  please increase -N (--num-cols) or drop extra data using --drop", line, len(items), numCols))
+									} else {
+										checkError(fmt.Errorf("[line %d] number of new columns (%d) exceeds that of first row (%d), please increase -N (--num-cols) or drop extra data using --drop", line, len(items), nNewCols))
 									}
 								}
 							}
@@ -257,11 +315,14 @@ var mutateCmd = &cobra.Command{
 }
 
 func init() {
-	RootCmd.AddCommand(mutateCmd)
-	mutateCmd.Flags().StringP("fields", "f", "1", `select only these fields. e.g -f 1,2 or -f columnA,columnB`)
-	mutateCmd.Flags().StringP("pattern", "p", "^(.+)$", `search regular expression with capture bracket. e.g.`)
-	mutateCmd.Flags().StringP("name", "n", "", `new column name`)
-	mutateCmd.Flags().BoolP("ignore-case", "i", false, "ignore case")
-	mutateCmd.Flags().BoolP("na", "", false, "for unmatched data, use blank instead of original data")
-	mutateCmd.Flags().BoolP("remove", "R", false, `remove input column`)
+	RootCmd.AddCommand(sepCmd)
+	sepCmd.Flags().StringP("fields", "f", "1", `select only these fields. e.g -f 1,2 or -f columnA,columnB`)
+	sepCmd.Flags().StringP("sep", "s", "", `separator`)
+	sepCmd.Flags().BoolP("use-regexp", "r", false, `separator is a regular expression`)
+	sepCmd.Flags().BoolP("ignore-case", "i", false, "ignore case")
+	sepCmd.Flags().StringSliceP("names", "n", []string{}, `new column names`)
+	sepCmd.Flags().IntP("num-cols", "N", 0, `preset number of new created columns`)
+	sepCmd.Flags().BoolP("remove", "R", false, `remove input column`)
+	sepCmd.Flags().StringP("na", "", "", "content for filling NA data")
+	sepCmd.Flags().BoolP("drop", "", false, "drop extra data")
 }

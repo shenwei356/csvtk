@@ -1,10 +1,12 @@
-- [csvtk v0.19.2](https://github.com/shenwei356/csvtk/releases/tag/v0.19.2)
-[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.19.2/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.19.2)
+- [csvtk v0.20.0](https://github.com/shenwei356/csvtk/releases/tag/v0.20.0)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.20.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.20.0)
     - new command `csvtk comb`: compute combinations of items at every row.
+    - new command `csvtk sep`: separate column into multiple columns using a regular expression separator. [#96](https://github.com/shenwei356/csvtk/issues/96)
     - `csvtk`: list lines' number of illegal (`-I`) and empty (`-E`) rows. [#97](https://github.com/shenwei356/csvtk/issues/97)
     - `csvtk filter2`: fix bug when column names start with digits, e.g., `1000g2015aug`. Thank @VorontsovIE ([#44](https://github.com/shenwei356/csvtk/issues/44))
     - `csvtk concat`: allow one input file. [#98](https://github.com/shenwei356/csvtk/issues/98)
     - `csvtk join`: reenable flag `-i/--ignore-case`. [#99](https://github.com/shenwei356/csvtk/issues/99)
+    - `csvtk mutate`: new flag `-R/--remove` for removing input column.
 - [csvtk v0.19.1](https://github.com/shenwei356/csvtk/releases/tag/v0.19.1)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.19.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.19.1)
     - `csvtk`:
