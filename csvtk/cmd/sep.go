@@ -267,6 +267,8 @@ var sepCmd = &cobra.Command{
 										} else {
 											if len(items) <= len(names) {
 												nNewCols = len(items)
+											} else if drop {
+												nNewCols = len(names)
 											} else {
 												checkError(fmt.Errorf("[line %d] number of new columns (%d) > number of new column names (%d), please reset -n (--names) ", line, len(items), len(names)))
 											}
@@ -285,13 +287,14 @@ var sepCmd = &cobra.Command{
 
 									checkNewNumCols = false
 								}
-								record2 = append(record2, items...)
-								if len(items) <= nNewCols {
+
+								if len(items) <= nNewCols { // fill
+									record2 = append(record2, items...)
 									for i := 0; i < numCols-len(items); i++ {
 										record2 = append(record2, na)
 									}
-								} else if drop {
-									record2 = record2[0 : len(record2)-len(items)+nNewCols]
+								} else if drop { // drop
+									record2 = append(record2, items[0:nNewCols]...)
 								} else {
 									if numCols > 0 {
 										checkError(fmt.Errorf("[line %d] number of new columns (%d) > -N (--num-cols) (%d),  please increase -N (--num-cols) or drop extra data using --drop", line, len(items), numCols))
