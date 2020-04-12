@@ -1,7 +1,7 @@
 - [csvtk v0.20.0](https://github.com/shenwei356/csvtk/releases/tag/v0.20.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.20.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.20.0)
     - new command `csvtk comb`: compute combinations of items at every row.
-    - new command `csvtk sep`: separate column into multiple columns using a regular expression separator. [#96](https://github.com/shenwei356/csvtk/issues/96)
+    - new command `csvtk sep`: separate column into multiple columns. [#96](https://github.com/shenwei356/csvtk/issues/96)
     - `csvtk`: list lines' number of illegal (`-I`) and empty (`-E`) rows. [#97](https://github.com/shenwei356/csvtk/issues/97)
     - `csvtk filter2`: fix bug when column names start with digits, e.g., `1000g2015aug`. Thank @VorontsovIE ([#44](https://github.com/shenwei356/csvtk/issues/44))
     - `csvtk concat`: allow one input file. [#98](https://github.com/shenwei356/csvtk/issues/98)

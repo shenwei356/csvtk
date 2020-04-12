@@ -111,7 +111,7 @@ It could save you lots of time in (not) writing Python/R scripts.
 - [`replace`](https://bioinf.shenwei.me/csvtk/usage/#replace): replaces data of selected fields by regular expression
 - [`mutate`](https://bioinf.shenwei.me/csvtk/usage/#mutate): creates new columns from selected fields by regular expression
 - [`mutate2`](https://bioinf.shenwei.me/csvtk/usage/#mutate2): creates new column from selected fields by awk-like arithmetic/string expressions
-- [`seq`](https://bioinf.shenwei.me/csvtk/usage/#sep): separate column into multiple columns using a regular expression separator
+- [`sep`](https://bioinf.shenwei.me/csvtk/usage/#sep): separate column into multiple columns
 - [`gather`](https://bioinf.shenwei.me/csvtk/usage/#gather): gathers columns into key-value pairs
 
 **Ordering**
