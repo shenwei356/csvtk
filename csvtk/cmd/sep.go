@@ -79,6 +79,11 @@ var sepCmd = &cobra.Command{
 		remove := getFlagBool(cmd, "remove")
 		na := getFlagString(cmd, "na")
 		drop := getFlagBool(cmd, "drop")
+		merge := getFlagBool(cmd, "merge")
+
+		if drop && merge {
+			checkError(fmt.Errorf("flag --drop and --merge could not be used at the same time"))
+		}
 
 		fieldStr := getFlagString(cmd, "fields")
 		if fieldStr == "" {
@@ -261,13 +266,15 @@ var sepCmd = &cobra.Command{
 										if numCols > 0 {
 											if len(items) <= numCols {
 												nNewCols = numCols
+											} else if drop || merge {
+												nNewCols = numCols
 											} else {
 												checkError(fmt.Errorf("[line %d] number of new columns (%d) > -N (--num-cols) (%d), please increase -N (--num-cols)", line, len(items), numCols))
 											}
 										} else {
 											if len(items) <= len(names) {
 												nNewCols = len(items)
-											} else if drop {
+											} else if drop || merge {
 												nNewCols = len(names)
 											} else {
 												checkError(fmt.Errorf("[line %d] number of new columns (%d) > number of new column names (%d), please reset -n (--names) ", line, len(items), len(names)))
@@ -295,6 +302,13 @@ var sepCmd = &cobra.Command{
 									}
 								} else if drop { // drop
 									record2 = append(record2, items[0:nNewCols]...)
+								} else if merge {
+									if useRegexp {
+										items = sepRe.Split(record[f], nNewCols)
+									} else {
+										items = strings.SplitN(record[f], sep, nNewCols)
+									}
+									record2 = append(record2, items...)
 								} else {
 									if numCols > 0 {
 										checkError(fmt.Errorf("[line %d] number of new columns (%d) > -N (--num-cols) (%d),  please increase -N (--num-cols) or drop extra data using --drop", line, len(items), numCols))
@@ -327,5 +341,6 @@ func init() {
 	sepCmd.Flags().IntP("num-cols", "N", 0, `preset number of new created columns`)
 	sepCmd.Flags().BoolP("remove", "R", false, `remove input column`)
 	sepCmd.Flags().StringP("na", "", "", "content for filling NA data")
-	sepCmd.Flags().BoolP("drop", "", false, "drop extra data")
+	sepCmd.Flags().BoolP("drop", "", false, "drop extra data, exclusive with --merge")
+	sepCmd.Flags().BoolP("merge", "", false, "only splits at most N times, exclusive with --drop")
 }

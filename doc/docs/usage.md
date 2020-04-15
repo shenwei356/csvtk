@@ -53,6 +53,7 @@
 - [split](#split)
 - [splitxlsx](#splitxlsx)
 - [collapse](#collapse)
+- [comb](#comb)
 
 **Edit**
 
@@ -63,6 +64,7 @@
 - [replace](#replace)
 - [mutate](#mutate)
 - [mutate2](#mutate2)
+- [sep](#sep)
 - [gather](#gather)
 
 **Ordering**
@@ -90,7 +92,7 @@ Usage
 ```text
 csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.19.1
+Version: 0.20.0
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -100,7 +102,7 @@ Source code: https://github.com/shenwei356/csvtk
 Attention:
 
   1. The CSV parser requires all the lines have same number of fields/columns.
-     Even lines with spaces will cause error.
+     Even lines with spaces will cause error. 
      Use '-I/--ignore-illegal-row' to skip these lines if neccessary.
   2. By default, csvtk thinks your files have header row, if not, switch flag "-H" on.
   3. Column names better be unique.
@@ -122,6 +124,7 @@ Available Commands:
   add-header      add column names
   cat             stream file to stdout and report progress on stderr
   collapse        collapse one field with selected fields as keys
+  comb            compute combinations of items at every row
   concat          concatenate CSV/TSV files by rows
   corr            calculate Pearson correlation between two columns
   csv2json        convert CSV to JSON format
@@ -149,6 +152,7 @@ Available Commands:
   rename2         rename column names by regular expression
   replace         replace data of selected fields by regular expression
   sample          sampling by proportion
+  sep             separate column into multiple columns
   sort            sort by selected fields
   space2tab       convert space delimited format to CSV
   split           split CSV/TSV into multiple files according to column values
@@ -1838,6 +1842,91 @@ examples
         Jerry     sequencing center       Bioinformatics
         Nick      sequencing center       Molecular Biology; Microbiology
 
+## comb
+
+Usage
+
+```
+compute combinations of items at every row
+
+Usage:
+  csvtk comb [flags]
+
+Flags:
+  -h, --help          help for comb
+  -i, --ignore-case   ignore-case
+  -S, --nat-sort      sort items in natural order
+  -n, --number int    number of items in a combination, 0 for no limit, i.e., return all combinations (default 2)
+  -s, --sort          sort items in a combination
+
+```
+
+Examples:
+
+```shell
+$ cat players.csv 
+gender,id,name
+male,1,A
+male,2,B
+male,3,C
+female,11,a
+female,12,b
+female,13,c
+female,14,d
+
+# put names of one group in one row
+$ cat players.csv | csvtk collapse -f 1 -v 3 -s ';' | csvtk cut -f 2 
+name
+A;B;C
+a;b;c;d
+
+# n = 2
+$ cat players.csv | csvtk collapse -f 1 -v 3 -s ';' | csvtk cut -f 2 | csvtk comb -d ';' -n 2
+A,B
+A,C
+B,C
+a,b
+a,c
+b,c
+a,d
+b,d
+c,d
+
+# n = 3
+$ cat players.csv | csvtk collapse -f 1 -v 3 -s ';' | csvtk cut -f 2 | csvtk comb -d ';' -n 3
+A,B,C
+a,b,c
+a,b,d
+a,c,d
+b,c,d
+
+# n = 0
+$ cat players.csv | csvtk collapse -f 1 -v 3 -s ';' | csvtk cut -f 2 | csvtk comb -d ';' -n 0
+A
+B
+A,B
+C
+A,C
+B,C
+A,B,C
+a
+b
+a,b
+c
+a,c
+b,c
+a,b,c
+d
+a,d
+b,d
+a,b,d
+c,d
+a,c,d
+b,c,d
+a,b,c,d
+
+```
+        
 ## add-header
 
 Usage
@@ -2253,6 +2342,73 @@ Example
         7       8       0       big
         8       1,000   4       big
 
+## sep
+
+Usage
+
+```text
+separate column into multiple columns
+
+Usage:
+  csvtk sep [flags]
+
+Flags:
+      --drop            drop extra data, exclusive with --merge
+  -f, --fields string   select only these fields. e.g -f 1,2 or -f columnA,columnB (default "1")
+  -h, --help            help for sep
+  -i, --ignore-case     ignore case
+      --merge           only splits at most N times, exclusive with --drop
+      --na string       content for filling NA data
+  -n, --names strings   new column names
+  -N, --num-cols int    preset number of new created columns
+  -R, --remove          remove input column
+  -s, --sep string      separator
+  -r, --use-regexp      separator is a regular expression
+```
+
+Examples:
+
+```shell
+$ cat players.csv | csvtk collapse -f 1 -v 3 -s ';'
+gender,name
+male,A;B;C
+female,a;b;c;d
+
+# set number of new columns as 3.
+$ cat players.csv | csvtk collapse -f 1 -v 3 -s ';' \
+    | csvtk sep -f 2 -s ';' -n p1,p2,p3,p4 -N 4 --na NA \
+    | csvtk pretty
+gender   name      p1   p2   p3   p4
+male     A;B;C     A    B    C    NA
+female   a;b;c;d   a    b    c    d
+    
+# set number of new columns as 3, drop extra values 
+$ cat players.csv | csvtk collapse -f 1 -v 3 -s ';' \
+    | csvtk sep -f 2 -s ';' -n p1,p2,p3  --drop \
+    | csvtk pretty
+gender   name      p1   p2   p3
+male     A;B;C     A    B    C
+female   a;b;c;d   a    b    c
+
+# set number of new columns as 3, split as most 3 parts
+$ cat players.csv | csvtk collapse -f 1 -v 3 -s ';' \
+    | csvtk sep -f 2 -s ';' -n p1,p2,p3  --merge \
+    | csvtk pretty
+gender   name      p1   p2   p3
+male     A;B;C     A    B    C
+female   a;b;c;d   a    b    c;d
+
+#
+$ echo -ne "taxid\tlineage\n9606\tEukaryota;Chordata;Mammalia;Primates;Hominidae;Homo;Homo sapiens\n"
+taxid   lineage
+9606    Eukaryota;Chordata;Mammalia;Primates;Hominidae;Homo;Homo sapiens
+
+$ echo -ne "taxid\tlineage\n9606\tEukaryota;Chordata;Mammalia;Primates;Hominidae;Homo;Homo sapiens\n" \
+    | csvtk sep -t -f 2 -s ';' -n kindom,phylum,class,order,family,genus,species --remove \
+    | csvtk pretty -t
+taxid   kindom      phylum     class      order      family      genus   species
+9606    Eukaryota   Chordata   Mammalia   Primates   Hominidae   Homo    Homo sapiens
+```
 ## gather
 
 Usage
