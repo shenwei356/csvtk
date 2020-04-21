@@ -36,14 +36,15 @@ import (
 
 // combCmd represents the comb command
 var combCmd = &cobra.Command{
-	Use:   "comb",
-	Short: "compute combinations of items at every row",
+	Use:     "comb",
+	Aliases: []string{"combination"},
+	Short:   "compute combinations of items at every row",
 	Long: `compute combinations of items at every row
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
-		files := getFileList(args)
+		files := getFileListFromArgsAndFile(cmd, args, true, "infile-list", true)
 		runtime.GOMAXPROCS(config.NumCPUs)
 
 		sortItems := getFlagBool(cmd, "sort")

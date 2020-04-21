@@ -45,7 +45,7 @@ Weakness : Complicated sheet structures are not well supported, e.g.,
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
-		files := getFileList(args)
+		files := getFileListFromArgsAndFile(cmd, args, true, "infile-list", true)
 		if len(files) > 1 {
 			checkError(fmt.Errorf("no more than one file should be given"))
 		}

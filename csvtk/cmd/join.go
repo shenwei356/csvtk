@@ -32,8 +32,9 @@ import (
 
 // joinCmd represents the join command
 var joinCmd = &cobra.Command{
-	Use:   "join",
-	Short: "join multiple CSV files by selected fields",
+	Use:     "join",
+	Aliases: []string{"merge"},
+	Short:   "join multiple CSV files by selected fields",
 	Long: ` join 2nd and later files to the first file by selected fields.
 
 Multiple keys supported, but the orders are ignored.
@@ -41,7 +42,7 @@ Multiple keys supported, but the orders are ignored.
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
-		files := getFileList(args)
+		files := getFileListFromArgsAndFile(cmd, args, true, "infile-list", true)
 		if len(files) < 2 {
 			checkError(fmt.Errorf("two or more files needed"))
 		}

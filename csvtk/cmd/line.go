@@ -56,7 +56,7 @@ Notes:
 		config := getConfigs(cmd)
 		plotConfig := getPlotConfigs(cmd)
 
-		files := getFileList(args)
+		files := getFileListFromArgsAndFile(cmd, args, true, "infile-list", true)
 		if len(files) > 1 {
 			checkError(fmt.Errorf("no more than one file should be given"))
 		}

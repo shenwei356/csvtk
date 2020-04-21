@@ -40,7 +40,7 @@ so only columns match that of the first files kept.
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
-		files := getFileList(args)
+		files := getFileListFromArgsAndFile(cmd, args, true, "infile-list", true)
 		runtime.GOMAXPROCS(config.NumCPUs)
 
 		ignoreCase := getFlagBool(cmd, "ignore-case")

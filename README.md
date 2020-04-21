@@ -106,7 +106,7 @@ It could save you lots of time in (not) writing Python/R scripts.
 
 - [`add-header`](https://bioinf.shenwei.me/csvtk/usage/#add-header): add column names
 - [`del-header`](https://bioinf.shenwei.me/csvtk/usage/#del-header): delete column names
-- [`rename`](https://bioinf.shenwei.me/csvtk/usage/#rename): renames column names
+- [`rename`](https://bioinf.shenwei.me/csvtk/usage/#rename): renames column names with new names
 - [`rename2`](https://bioinf.shenwei.me/csvtk/usage/#rename2): renames column names by regular expression
 - [`replace`](https://bioinf.shenwei.me/csvtk/usage/#replace): replaces data of selected fields by regular expression
 - [`mutate`](https://bioinf.shenwei.me/csvtk/usage/#mutate): creates new columns from selected fields by regular expression

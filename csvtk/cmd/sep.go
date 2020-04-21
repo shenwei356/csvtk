@@ -33,14 +33,15 @@ import (
 
 // sepCmd represents the mutate command
 var sepCmd = &cobra.Command{
-	Use:   "sep",
-	Short: "separate column into multiple columns",
+	Use:     "sep",
+	Aliases: []string{"separate"},
+	Short:   "separate column into multiple columns",
 	Long: `separate column into multiple columns
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
-		files := getFileList(args)
+		files := getFileListFromArgsAndFile(cmd, args, true, "infile-list", true)
 		if len(files) > 1 {
 			checkError(fmt.Errorf("no more than one file should be given"))
 		}

@@ -42,11 +42,10 @@ Attention:
   1. fields in all files should be the same, 
      if not, extracting to another file using "csvtk cut".
 
-
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
-		files := getFileList(args)
+		files := getFileListFromArgsAndFile(cmd, args, true, "infile-list", true)
 		runtime.GOMAXPROCS(config.NumCPUs)
 
 		fieldStr := getFlagString(cmd, "fields")

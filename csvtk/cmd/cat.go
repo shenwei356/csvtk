@@ -25,6 +25,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+
 	//"runtime"
 
 	"github.com/spf13/cobra"
@@ -40,7 +41,7 @@ var catCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
 		outFile := config.OutFile
-		files := getFileList(args)
+		files := getFileListFromArgsAndFile(cmd, args, true, "infile-list", true)
 		flagLines := getFlagBool(cmd, "lines")
 		flagBuff := getFlagInt(cmd, "buffsize")
 		flagFreq := getFlagInt(cmd, "print-freq")

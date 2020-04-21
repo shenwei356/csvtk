@@ -40,7 +40,7 @@ var dimCmd = &cobra.Command{
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
-		files := getFileList(args)
+		files := getFileListFromArgsAndFile(cmd, args, true, "infile-list", true)
 		runtime.GOMAXPROCS(config.NumCPUs)
 
 		outfh, err := xopen.Wopen(config.OutFile)
