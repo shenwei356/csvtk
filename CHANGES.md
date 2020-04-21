@@ -3,14 +3,14 @@
     - new command `csvtk comb`: compute combinations of items at every row.
     - new command `csvtk sep`: separate column into multiple columns. [#96](https://github.com/shenwei356/csvtk/issues/96)
     - `csvtk`:
-      - list lines' number of illegal (`-I`) and empty (`-E`) rows. [#97](https://github.com/shenwei356/csvtk/issues/97)
-      - new flag `--infile-list` for giving file of input files list (one file per line), if given, they are appended to files from cli arguments
+        - list lines' number of illegal (`-I`) and empty (`-E`) rows. [#97](https://github.com/shenwei356/csvtk/issues/97)
+        - new flag `--infile-list` for giving file of input files list (one file per line), if given, they are appended to files from cli arguments
     - `csvtk join`:
-      - reenable flag `-i/--ignore-case`. [#99](https://github.com/shenwei356/csvtk/issues/99)
-      - **outer join is supported**. [#23](https://github.com/shenwei356/csvtk/issues/23)
-      - new flag `-L/--left-join`: left join, equals to -k/--keep-unmatched, exclusive with `--outer-join`
-      - new flag `-O/--outer-join`: outer join, exclusive with --left-join
-      - rename flag `--fill` to `--na`.
+        - reenable flag `-i/--ignore-case`. [#99](https://github.com/shenwei356/csvtk/issues/99)
+        - **outer join is supported**. [#23](https://github.com/shenwei356/csvtk/issues/23)
+        - new flag `-L/--left-join`: left join, equals to -k/--keep-unmatched, exclusive with `--outer-join`
+        - new flag `-O/--outer-join`: outer join, exclusive with --left-join
+        - rename flag `--fill` to `--na`.
     - `csvtk filter2`: fix bug when column names start with digits, e.g., `1000g2015aug`. Thank @VorontsovIE ([#44](https://github.com/shenwei356/csvtk/issues/44))
     - `csvtk concat`: allow one input file. [#98](https://github.com/shenwei356/csvtk/issues/98)
     - `csvtk mutate`: new flag `-R/--remove` for removing input column.
