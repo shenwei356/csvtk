@@ -143,12 +143,12 @@ Available Commands:
   headers         print headers
   help            Help about any command
   inter           intersection of multiple files
-  join            join multiple CSV files by selected fields
+  join            join files by selected fields (inner, left and outer join)
   mutate          create new column from selected fields by regular expression
   mutate2         create new column from selected fields by awk-like artithmetic/string expressions
   plot            plot common figures
   pretty          convert CSV to readable aligned table
-  rename          rename column names
+  rename          rename column names with new names
   rename2         rename column names by regular expression
   replace         replace data of selected fields by regular expression
   sample          sampling by proportion
@@ -172,6 +172,7 @@ Flags:
   -h, --help                   help for csvtk
   -E, --ignore-empty-row       ignore empty rows
   -I, --ignore-illegal-row     ignore illegal rows
+      --infile-list string     file of input files list (one file per line), if given, they are appended to files from cli arguments
   -l, --lazy-quotes            if given, a quote may appear in an unquoted field and a non-doubled quote may appear in a quoted field
   -H, --no-header-row          specifies that the input CSV file does not have header row
   -j, --num-cpus int           number of CPUs to use (default value depends on your computer) (default 16)
@@ -1485,19 +1486,29 @@ Examples:
 Usage
 
 ```text
-join 2nd and later files to the first file by selected fields.
+join files by selected fields (inner, left and outer join).
 
-Multiple keys supported, but the orders are ignored.
+Attention:
+
+  1. Multiple keys supported, but the orders are ignored.
+  2. Default operation is inner join, use --left-join for left join 
+     and --outer-join for outer join.
 
 Usage:
   csvtk join [flags]
 
+Aliases:
+  join, merge
+
 Flags:
   -f, --fields string    Semicolon separated key fields of all files, if given one, we think all the files have the same key columns. Fields of different files should be separated by ";", e.g -f "1;2" or -f "A,B;C,D" or -f id (default "1")
-      --fill string      fill content for unmatched data
   -F, --fuzzy-fields     using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
+  -h, --help             help for join
   -i, --ignore-case      ignore case
-  -k, --keep-unmatched   keep unmatched data of the first file
+  -k, --keep-unmatched   keep unmatched data of the first file (left join)
+  -L, --left-join        left join, equals to -k/--keep-unmatched, exclusive with --outer-join
+      --na string        content for filling NA data
+  -O, --outer-join       outer join, exclusive with --left-join
 
 ```
 
@@ -1522,39 +1533,58 @@ Examples:
 
 - All files have same key column: `csvtk join -f id file1.csv file2.csv`
 
-        $ csvtk join -f 1 testdata/phones.csv testdata/region.csv
-        username,phone,region
-        gri,11111,somewhere
-        ken,22222,nowhere
-        shenwei,999999,another
+        $ csvtk join -f 1 testdata/phones.csv testdata/region.csv \
+            | csvtk pretty
+        username   phone    region
+        gri        11111    somewhere
+        ken        22222    nowhere
+        shenwei    999999   another
 
-- keep unmatched
+- keep unmatched (left join)
 
-        $ csvtk join -f 1 testdata/phones.csv testdata/region.csv --keep-unmatched
-        username,phone,region
-        gri,11111,somewhere
-        rob,12345,
-        ken,22222,nowhere
-        shenwei,999999,another
+        $ csvtk join -f 1 testdata/phones.csv testdata/region.csv --left-join \
+            | csvtk pretty
+        username   phone    region
+        gri        11111    somewhere
+        rob        12345    
+        ken        22222    nowhere
+        shenwei    999999   another
+
 
 - keep unmatched and fill with something
 
-        $ csvtk join -f 1 testdata/phones.csv testdata/region.csv --keep-unmatched --fill NA
-        username,phone,region
-        gri,11111,somewhere
-        rob,12345,NA
-        ken,22222,nowhere
-        shenwei,999999,another
+        $ csvtk join -f 1 testdata/phones.csv testdata/region.csv --left-join --na NA \
+            | csvtk pretty
+        username   phone    region
+        gri        11111    somewhere
+        rob        12345    NA
+        ken        22222    nowhere
+        shenwei    999999   another
+
+- Outer join
+
+        $ csvtk join -f 1 testdata/phones.csv testdata/region.csv --outer-join --na NA \
+            | csvtk pretty
+        username   phone    region
+        gri        11111    somewhere
+        rob        12345    NA
+        ken        22222    nowhere
+        shenwei    999999   another
+        Thompson   NA       there
 
 - Files have different key columns: `csvtk join -f "username;username;name" testdata/names.csv phone.csv adress.csv -k`. ***Note that fields are separated with `;` not `,`.***
 
-        $ csvtk join -f "username;name"  testdata/phones.csv testdata/region.csv
-        username,phone,region
-        gri,11111,somewhere
-        ken,22222,nowhere
-        shenwei,999999,another
+        $ csvtk join -f "username;name"  testdata/phones.csv testdata/region.csv --left-join --na NA \
+            | csvtk pretty
+        username   phone    region
+        gri        11111    somewhere
+        rob        12345    NA
+        ken        22222    nowhere
+        shenwei    999999   another
+        
 
-- The 2nd or later files have entries with same ID:
+
+- Some special cases
 
         $ cat testdata/1.csv
         name,attr
@@ -1575,29 +1605,36 @@ Examples:
         3,foo,football
         4,wei,programming
 
-        $ csvtk join testdata/1.csv testdata/2.csv \
-            | csvtk pretty
-        name   attr       major
-        bar    handsome   bioinformatics
-        bob    beutiful   microbiology
-        bob    beutiful   computer science
-
-        $ csvtk join testdata/{1,2,3}.csv -f name -k \
+        # nothing special
+        $ csvtk join testdata/{1,2,3}.csv -f name --outer-join --na NA \
             | csvtk pretty
         name   attr       major               id   hobby
-        foo    cool                           3    football
+        foo    cool       NA                  3    football
         bar    handsome   bioinformatics      1    baseball
         bob    beutiful   microbiology        2    basketball
         bob    beutiful   computer science    2    basketball
-
-        $ csvtk join testdata/{3,1,2}.csv -f name -k \
+        wei    NA         NA                  4    programming
+        
+        # just reorder files
+        $ csvtk join testdata/{3,2,1}.csv -f name --outer-join --na NA \
             | csvtk pretty
-        id   name   hobby         attr       major
-        1    bar    baseball      handsome   bioinformatics
-        2    bob    basketball    beutiful   computer science
-        2    bob    basketball    beutiful   computer science
-        3    foo    football      cool
-        4    wei    programming
+        id   name   hobby         major               attr
+        1    bar    baseball      bioinformatics      handsome
+        2    bob    basketball    microbiology        beutiful
+        2    bob    basketball    computer science    beutiful
+        3    foo    football      NA                  cool
+        4    wei    programming   NA                  NA
+        
+        # special case: names in 3.csv contain all names in all files
+        $ csvtk join testdata/{3,2,1}.csv -f name --left-join --na NA \
+            | csvtk pretty
+        id   name   hobby         major               attr
+        1    bar    baseball      bioinformatics      handsome
+        2    bob    basketball    microbiology        beutiful
+        2    bob    basketball    computer science    beutiful
+        3    foo    football      NA                  cool
+        4    wei    programming   NA                  NA
+
 
 ## split
 
@@ -1852,13 +1889,15 @@ compute combinations of items at every row
 Usage:
   csvtk comb [flags]
 
+Aliases:
+  comb, combination
+
 Flags:
   -h, --help          help for comb
   -i, --ignore-case   ignore-case
   -S, --nat-sort      sort items in natural order
   -n, --number int    number of items in a combination, 0 for no limit, i.e., return all combinations (default 2)
   -s, --sort          sort items in a combination
-
 ```
 
 Examples:
@@ -2015,7 +2054,7 @@ Examples:
 Usage
 
 ```text
-rename column names
+rename column names with new names
 
 Usage:
   csvtk rename [flags]

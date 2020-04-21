@@ -34,10 +34,14 @@ import (
 var joinCmd = &cobra.Command{
 	Use:     "join",
 	Aliases: []string{"merge"},
-	Short:   "join multiple CSV files by selected fields",
-	Long: ` join 2nd and later files to the first file by selected fields.
+	Short:   "join files by selected fields (inner, left and outer join)",
+	Long: `join files by selected fields (inner, left and outer join).
 
-Multiple keys supported, but the orders are ignored.
+Attention:
+
+  1. Multiple keys supported
+  2. Default operation is inner join, use --left-join for left join 
+     and --outer-join for outer join.
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -47,7 +51,6 @@ Multiple keys supported, but the orders are ignored.
 			checkError(fmt.Errorf("two or more files needed"))
 		}
 		runtime.GOMAXPROCS(config.NumCPUs)
-
 		allFields := getFlagSemicolonSeparatedStrings(cmd, "fields")
 		if len(allFields) == 0 {
 			checkError(fmt.Errorf("flag -f (--fields) needed"))
@@ -64,8 +67,26 @@ Multiple keys supported, but the orders are ignored.
 		ignoreCase := getFlagBool(cmd, "ignore-case")
 
 		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
+		leftJoin := getFlagBool(cmd, "left-join")
 		keepUnmatched := getFlagBool(cmd, "keep-unmatched")
-		fill := getFlagString(cmd, "fill")
+		outerJoin := getFlagBool(cmd, "outer-join")
+		na := getFlagString(cmd, "na")
+
+		if outerJoin && leftJoin {
+			checkError(fmt.Errorf("flag -O/--out-join and -L/--left-join are exclusive"))
+		}
+
+		if outerJoin {
+			keepUnmatched = true
+			for _, file := range files {
+				if isStdin(file) {
+					checkError(fmt.Errorf("stdin not allowed when using -O/--outer-join"))
+				}
+			}
+		}
+		if leftJoin {
+			keepUnmatched = true
+		}
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
@@ -86,6 +107,35 @@ Multiple keys supported, but the orders are ignored.
 
 		var key string
 		var items []string
+
+		var keys map[string]bool
+		if outerJoin {
+			keys = make(map[string]bool)
+			for i, file := range files {
+				_, fields, _, _, data, _ := parseCSVfile(cmd, config,
+					file, allFields[i], fuzzyFields)
+
+				var f int
+				var ok bool
+				for _, record := range data {
+					items = make([]string, len(fields))
+					for i, f = range fields {
+						items[i] = record[f-1]
+					}
+					key = strings.Join(items, "_shenwei356_")
+					if ignoreCase {
+						key = strings.ToLower(key)
+					}
+					if _, ok = keys[key]; ok {
+						continue
+					}
+					keys[key] = false
+				}
+			}
+		}
+
+		var f int
+		var ok bool
 		for i, file := range files {
 			_, fields, _, headerRow, data, _ := parseCSVfile(cmd, config,
 				file, allFields[i], fuzzyFields)
@@ -95,6 +145,46 @@ Multiple keys supported, but the orders are ignored.
 				if len(HeaderRow) > 0 {
 					withHeaderRow = true
 				}
+
+				if !outerJoin {
+					continue
+				}
+
+				var nCols int
+				items = make([]string, len(fields))
+				for _, record := range Data {
+					nCols = len(record)
+					for i, f = range fields {
+						items[i] = record[f-1]
+					}
+					key = strings.Join(items, "_shenwei356_")
+					if ignoreCase {
+						key = strings.ToLower(key)
+					}
+					keys[key] = true
+				}
+
+				fieldsMap := make(map[int]struct{}, len(fields))
+				for _, f := range fields {
+					fieldsMap[f] = struct{}{}
+				}
+				for key, ok = range keys {
+					if !ok {
+						record := make([]string, nCols)
+						items2 := strings.Split(key, "_shenwei356_")
+						j := 0
+						for i = range record {
+							if _, ok = fieldsMap[i+1]; ok {
+								record[i] = items2[j]
+								j++
+							} else {
+								record[i] = na
+							}
+						}
+						Data = append(Data, record)
+					}
+				}
+
 				continue
 			}
 
@@ -106,8 +196,6 @@ Multiple keys supported, but the orders are ignored.
 			// csv to map
 			keysMaps := make(map[string][][]string)
 			items = make([]string, len(fields))
-			var i, f int
-			var ok bool
 			for _, record := range data {
 				for i, f = range fields {
 					items[i] = record[f-1]
@@ -158,7 +246,7 @@ Multiple keys supported, but the orders are ignored.
 					if keepUnmatched {
 						record = record0
 						for i = 1; i <= len(data[0])-len(fieldsMap); i++ {
-							record = append(record, fill)
+							record = append(record, na)
 						}
 						Data2 = append(Data2, record)
 					}
@@ -186,6 +274,8 @@ func init() {
 		`Fields of different files should be separated by ";", e.g -f "1;2" or -f "A,B;C,D" or -f id`)
 	joinCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
 	joinCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
-	joinCmd.Flags().BoolP("keep-unmatched", "k", false, `keep unmatched data of the first file`)
-	joinCmd.Flags().StringP("fill", "", "", `fill content for unmatched data`)
+	joinCmd.Flags().BoolP("keep-unmatched", "k", false, `keep unmatched data of the first file (left join)`)
+	joinCmd.Flags().BoolP("left-join", "L", false, `left join, equals to -k/--keep-unmatched, exclusive with --outer-join`)
+	joinCmd.Flags().BoolP("outer-join", "O", false, `outer join, exclusive with --left-join`)
+	joinCmd.Flags().StringP("na", "", "", "content for filling NA data")
 }

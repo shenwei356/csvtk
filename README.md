@@ -96,7 +96,7 @@ It could save you lots of time in (not) writing Python/R scripts.
 - [`inter`](https://bioinf.shenwei.me/csvtk/usage/#inter): intersection of multiple files
 - [`filter`](https://bioinf.shenwei.me/csvtk/usage/#filter): filters rows by values of selected fields with arithmetic expression
 - [`filter2`](https://bioinf.shenwei.me/csvtk/usage/#filter2): filters rows by awk-like arithmetic/string expressions
-- [`join`](https://bioinf.shenwei.me/csvtk/usage/#join): joins multiple CSV files by selected fields
+- [`join`](https://bioinf.shenwei.me/csvtk/usage/#join): join files by selected fields (inner, left and outer join)
 - [`split`](https://bioinf.shenwei.me/csvtk/usage/#split) splits CSV/TSV into multiple files according to column values
 - [`splitxlsx`](https://bioinf.shenwei.me/csvtk/usage/#splitxlsx): splits XLSX sheet into multiple sheets according to column values
 - [`collapse`](https://bioinf.shenwei.me/csvtk/usage/#collapse): collapses one field with selected fields as keys
