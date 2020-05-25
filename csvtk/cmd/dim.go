@@ -21,6 +21,7 @@
 package cmd
 
 import (
+	"fmt"
 	"runtime"
 
 	"github.com/shenwei356/xopen"
@@ -43,16 +44,27 @@ var dimCmd = &cobra.Command{
 		files := getFileListFromArgsAndFile(cmd, args, true, "infile-list", true)
 		runtime.GOMAXPROCS(config.NumCPUs)
 
+		tabular := getFlagBool(cmd, "tabular")
+		cols := getFlagBool(cmd, "cols")
+		rows := getFlagBool(cmd, "rows")
+		noFiles := getFlagBool(cmd, "no-files")
+
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
 		defer outfh.Close()
 
-		tbl, err := prettytable.NewTable([]prettytable.Column{
-			{Header: "file"},
-			{Header: "num_cols", AlignRight: true},
-			{Header: "num_rows", AlignRight: true}}...)
-		checkError(err)
-		tbl.Separator = "   "
+		var tbl *prettytable.Table
+		if rows || cols {
+		} else if tabular {
+			outfh.WriteString("file\tnum_cols\tnum_rows\n")
+		} else {
+			tbl, err = prettytable.NewTable([]prettytable.Column{
+				{Header: "file"},
+				{Header: "num_cols", AlignRight: true},
+				{Header: "num_rows", AlignRight: true}}...)
+			checkError(err)
+			tbl.Separator = "   "
+		}
 
 		for _, file := range files {
 			csvReader, err := newCSVReaderByConfig(config, file)
@@ -61,6 +73,7 @@ var dimCmd = &cobra.Command{
 
 			var numCols, numRows uint64
 			once := true
+		HERE:
 			for chunk := range csvReader.Ch {
 				checkError(chunk.Err)
 
@@ -70,8 +83,19 @@ var dimCmd = &cobra.Command{
 						numCols = uint64(len(record))
 						break
 					}
+					if cols {
+						if noFiles {
+							outfh.WriteString(fmt.Sprintf("%d\n", numCols))
+						} else {
+							outfh.WriteString(fmt.Sprintf("%s\t%d\n", file, numCols))
+						}
+						break HERE
+					}
 					once = false
 				}
+			}
+			if cols {
+				continue
 			}
 			if numRows > 0 && !config.NoHeaderRow {
 				numRows--
@@ -79,18 +103,39 @@ var dimCmd = &cobra.Command{
 			if numRows < 0 {
 				numRows = 0
 			}
-			tbl.AddRow(
-				file,
-				humanize.Comma(int64(numCols)),
-				humanize.Comma(int64(numRows)))
-
+			if rows {
+				if noFiles {
+					outfh.WriteString(fmt.Sprintf("%d\n", numRows))
+				} else {
+					outfh.WriteString(fmt.Sprintf("%s\t%d\n", file, numRows))
+				}
+			} else if tabular {
+				if noFiles {
+					outfh.WriteString(fmt.Sprintf("%d\t%d\n", numCols, numRows))
+				} else {
+					outfh.WriteString(fmt.Sprintf("%s\t%d\t%d\n", file, numCols, numRows))
+				}
+			} else {
+				tbl.AddRow(
+					file,
+					humanize.Comma(int64(numCols)),
+					humanize.Comma(int64(numRows)))
+			}
 			readerReport(&config, csvReader, file)
 
 		}
-		outfh.Write(tbl.Bytes())
+		if !(rows || cols) && !tabular {
+			outfh.Write(tbl.Bytes())
+		}
 	},
 }
 
 func init() {
+	dimCmd.Flags().BoolP("tabular", "", false, `output in machine-friendly tabular format`)
+	dimCmd.Flags().BoolP("cols", "", false, "only print number of columns")
+	dimCmd.Flags().BoolP("rows", "", false, "only print number of rows")
+	dimCmd.Flags().BoolP("no-files", "n", false, "do not print file names")
+
 	RootCmd.AddCommand(dimCmd)
+
 }

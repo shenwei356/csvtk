@@ -40,6 +40,8 @@ var headersCmd = &cobra.Command{
 		files := getFileListFromArgsAndFile(cmd, args, true, "infile-list", true)
 		runtime.GOMAXPROCS(config.NumCPUs)
 
+		verbose := getFlagBool(cmd, "verbose")
+
 		if config.NoHeaderRow {
 			log.Warningf("flag -H (--no-header-row) ignored")
 		}
@@ -53,14 +55,20 @@ var headersCmd = &cobra.Command{
 			checkError(err)
 			csvReader.Run()
 
-			outfh.WriteString(fmt.Sprintf("# %s\n", file))
+			if verbose {
+				outfh.WriteString(fmt.Sprintf("# %s\n", file))
+			}
 		LOOP:
 			for chunk := range csvReader.Ch {
 				checkError(chunk.Err)
 
 				for _, record := range chunk.Data {
 					for i, n := range record {
-						outfh.WriteString(fmt.Sprintf("%d\t%s\n", i+1, n))
+						if verbose {
+							outfh.WriteString(fmt.Sprintf("%d\t%s\n", i+1, n))
+						} else {
+							outfh.WriteString(n + "\n")
+						}
 					}
 
 					break LOOP
@@ -73,5 +81,7 @@ var headersCmd = &cobra.Command{
 }
 
 func init() {
+	headersCmd.Flags().BoolP("verbose", "v", false, `print verbose information`)
+
 	RootCmd.AddCommand(headersCmd)
 }
