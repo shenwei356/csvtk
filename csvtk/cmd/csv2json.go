@@ -24,6 +24,8 @@ import (
 	"fmt"
 	"regexp"
 	"runtime"
+	"strconv"
+	"strings"
 
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
@@ -44,6 +46,32 @@ var csv2jsonCmd = &cobra.Command{
 		}
 
 		runtime.GOMAXPROCS(config.NumCPUs)
+
+		blanks := getFlagBool(cmd, "blanks")
+
+		_parseNumCols := getFlagStringSlice(cmd, "parse-num")
+		var parseNumAll, parseNum0, parseNum bool
+		parseNumCols := make(map[int]interface{})
+		var err error
+		var n int
+		for _, c := range _parseNumCols {
+			c = strings.ToLower(c)
+			if c == "a" || c == "all" {
+				parseNum = true
+				parseNumAll = true
+				break
+			}
+			if reIntegers.MatchString(c) {
+				n, _ = strconv.Atoi(c)
+				if n < 1 {
+					checkError(fmt.Errorf("positive column index needed: %s", c))
+				}
+				parseNumCols[n] = struct{}{}
+			} else {
+				checkError(fmt.Errorf("positive column index needed: %s", c))
+			}
+		}
+		parseNum0 = true
 
 		indent := getFlagString(cmd, "indent")
 		hasIndent := indent != ""
@@ -127,6 +155,7 @@ var csv2jsonCmd = &cobra.Command{
 		var col string
 		first := true
 		line := 0
+		var ok bool
 		for chunk := range csvReader.Ch {
 			checkError(chunk.Err)
 
@@ -240,11 +269,21 @@ var csv2jsonCmd = &cobra.Command{
 						outfh.WriteString(indent + `{` + LF)
 					}
 					for i, col = range HeaderRow {
-						if i < len(record)-1 {
-							outfh.WriteString(indent + indent + `"` + unescapeJSONField(col) + `":` + SEP + `"` + unescapeJSONField(record[i]) + `"` + "," + LF)
-						} else {
-							outfh.WriteString(indent + indent + `"` + unescapeJSONField(col) + `":` + SEP + `"` + unescapeJSONField(record[i]) + `"` + LF)
+						if parseNumAll {
+							parseNum = true
+						} else if parseNum0 {
+							if _, ok = parseNumCols[i+1]; ok {
+								parseNum = true
+							}
 						}
+
+						if i < len(record)-1 {
+							outfh.WriteString(indent + indent + `"` + unescapeJSONField(col) + `":` + SEP + processJSONValue(record[i], blanks, parseNum) + "," + LF)
+						} else {
+							outfh.WriteString(indent + indent + `"` + unescapeJSONField(col) + `":` + SEP + processJSONValue(record[i], blanks, parseNum) + LF)
+						}
+
+						parseNum = false
 					}
 					outfh.WriteString(indent + "}")
 				} else {
@@ -253,12 +292,23 @@ var csv2jsonCmd = &cobra.Command{
 					} else {
 						outfh.WriteString(indent + `[` + LF)
 					}
+
 					for i, col = range record {
+						if parseNumAll {
+							parseNum = true
+						} else if parseNum0 {
+							if _, ok = parseNumCols[i+1]; ok {
+								parseNum = true
+							}
+						}
+
 						if i < len(record)-1 {
 							outfh.WriteString(indent + indent + `"` + unescapeJSONField(col) + `"` + "," + LF)
 						} else {
 							outfh.WriteString(indent + indent + `"` + unescapeJSONField(col) + `"` + LF)
 						}
+
+						parseNum = false
 					}
 					outfh.WriteString(indent + "]")
 				}
@@ -280,6 +330,8 @@ func init() {
 	RootCmd.AddCommand(csv2jsonCmd)
 	csv2jsonCmd.Flags().StringP("indent", "i", "  ", `indent. if given blank, output json in one line.`)
 	csv2jsonCmd.Flags().StringP("key", "k", "", "output json as an array of objects keyed by a given filed rather than as a list. e.g -k 1 or -k columnA")
+	csv2jsonCmd.Flags().BoolP("blanks", "b", false, `do not convert "", "na", "n/a", "none", "null", "." to null`)
+	csv2jsonCmd.Flags().StringSliceP("parse-num", "n", []string{}, `parse numeric values for nth column, multiple values are supported and "a"/"all" for all columns`)
 }
 
 func unescapeJSONField(s string) string {
@@ -291,4 +343,22 @@ func unescapeJSONField(s string) string {
 		s2 = append(s2, r)
 	}
 	return string(s2)
+}
+
+func processJSONValue(val string, blanks bool, parseNum bool) string {
+	switch strings.ToLower(val) {
+	case "true":
+		return "true"
+	case "false":
+		return "false"
+	case "", "na", "n/a", "none", "null", ".":
+		if blanks {
+			return `""`
+		}
+		return "null"
+	}
+	if parseNum && reDigitals.MatchString(val) {
+		return val
+	}
+	return `"` + val + `"`
 }

@@ -2,6 +2,9 @@
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.21.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.21.0)
     - `csvtk headers`: new flag `-v/--verbose`.
     - `csvtk dim`: new flags `--tabluar`, `--cols`, `--rows`, `-n/--no-files`.
+    - `csvtk csv2jon`:
+      - new flag `-b/--blank`: do not convert "", "na", "n/a", "none", "null", "." to null
+      - new flag `-n/--parse-num`: parse numeric values for nth column(s), multiple values are supported and "a"/"all" for all columns.
 - [csvtk v0.20.0](https://github.com/shenwei356/csvtk/releases/tag/v0.20.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.20.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.20.0)
     - new command `csvtk comb`: compute combinations of items at every row.

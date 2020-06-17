@@ -128,7 +128,7 @@ var corrCmd = &cobra.Command{
 						continue
 					} else {
 						if len(targetCols) == 0 {
-							for i, _ := range record {
+							for i := range record {
 								targetCols[i] = strconv.Itoa(i + 1)
 							}
 						}

@@ -568,9 +568,11 @@ Usage:
   csvtk csv2json [flags]
 
 Flags:
-  -h, --help            help for csv2json
-  -i, --indent string   indent. if given blank, output json in one line. (default "  ")
-  -k, --key string      output json as an array of objects keyed by a given filed rather than as a list. e.g -k 1 or -k columnA
+  -b, --blanks              do not convert "", "na", "n/a", "none", "null", "." to null
+  -h, --help                help for csv2json
+  -i, --indent string       indent. if given blank, output json in one line. (default "  ")
+  -k, --key string          output json as an array of objects keyed by a given filed rather than as a list. e.g -k 1 or -k columnA
+  -n, --parse-num strings   parse numeric values for nth column(s), multiple values are supported and "a"/"all" for all columns
 
 ```
 
@@ -578,105 +580,144 @@ Examples
 
 - test data
 
-        $ cat data.csv
-        ID,room,name
-        3,G13,Simon
-        5,103,Anna
+        $ cat testdata/data4json.csv 
+        ID,room,name,status
+        3,G13,Simon,true
+        5,103,Anna,TRUE
+        1e-3,2,,N/A
 
 - default operation
 
-        $ cat data.csv | csvtk csv2json
+        $ cat testdata/data4json.csv | csvtk csv2json
         [
           {
             "ID": "3",
             "room": "G13",
-            "name": "Simon"
+            "name": "Simon",
+            "status": true
           },
           {
             "ID": "5",
             "room": "103",
-            "name": "Anna"
+            "name": "Anna",
+            "status": true
+          },
+          {
+            "ID": "1e-3",
+            "room": "2",
+            "name": null,
+            "status": null
           }
         ]
 
 - change indent
 
-        $ cat data.csv | csvtk csv2json -i "    "
-        [
-            {
-                "ID": "3",
-                "room": "G13",
-                "name": "Simon"
-            },
-            {
-                "ID": "5",
-                "room": "103",
-                "name": "Anna"
-            }
-        ]
-
-- change indent 2)
-
-        $ cat data.csv | csvtk csv2json -i ""
-        [{"ID":"3","room":"G13","name":"Simon"},{"ID":"5","room":"103","name":"Anna"}]
+        $ cat testdata/data4json.csv | csvtk csv2json -i ""
+        [{"ID":"3","room":"G13","name":"Simon","status":true},{"ID":"5","room":"103","name":"Anna","status":true},{"ID":"1e-3","room":"2","name":null,"status":null}]
 
 - output json as an array of objects keyed by a given filed rather than as a list.
 
-        $ cat data.csv | csvtk csv2json -k ID
+        $ cat testdata/data4json.csv | csvtk csv2json -k ID
         {
           "3": {
             "ID": "3",
             "room": "G13",
-            "name": "Simon"
+            "name": "Simon",
+            "status": true
           },
           "5": {
             "ID": "5",
             "room": "103",
-            "name": "Anna"
+            "name": "Anna",
+            "status": true
+          },
+          "1e-3": {
+            "ID": "1e-3",
+            "room": "2",
+            "name": null,
+            "status": null
           }
         }
 
 - for CSV without header row
 
-        $ cat data.csv | csvtk csv2json -H
+        $ cat testdata/data4json.csv | csvtk csv2json -H
         [
           [
             "ID",
             "room",
-            "name"
+            "name",
+            "status"
           ],
           [
             "3",
             "G13",
-            "Simon"
+            "Simon",
+            "true"
           ],
           [
             "5",
             "103",
-            "Anna"
+            "Anna",
+            "TRUE"
+          ],
+          [
+            "1e-3",
+            "2",
+            "",
+            "N/A"
           ]
         ]
 
-- for CSV without header row 2)
+- parse numeric values.
 
-        $ cat data.csv | csvtk csv2json -H -k 1
-        {
-          "ID": [
-            "ID",
-            "room",
-            "name"
-          ],
-          "3": [
-            "3",
-            "G13",
-            "Simon"
-          ],
-          "5": [
-            "5",
-            "103",
-            "Anna"
-          ]
-        }
+        # cat testdata/data4json.csv | csvtk csv2json -n all    # for all columns
+        # cat testdata/data4json.csv | csvtk csv2json -n 1,2    # for multiple columns
+        $ cat testdata/data4json.csv | csvtk csv2json -n 1      # for single column
+        [
+          {
+            "ID": 3,
+            "room": "G13",
+            "name": "Simon",
+            "status": true
+          },
+          {
+            "ID": 5,
+            "room": "103",
+            "name": "Anna",
+            "status": true
+          },
+          {
+            "ID": 1e-3,
+            "room": "2",
+            "name": null,
+            "status": null
+          }
+        ]
+
+- do not convert "", "na", "n/a", "none", "null", "." to null (just like csvjon --blanks in csvkit)
+
+        $ cat testdata/data4json.csv | csvtk csv2json --blanks
+        [
+          {
+            "ID": "3",
+            "room": "G13",
+            "name": "Simon",
+            "status": true
+          },
+          {
+            "ID": "5",
+            "room": "103",
+            "name": "Anna",
+            "status": true
+          },
+          {
+            "ID": "1e-3",
+            "room": "2",
+            "name": "",
+            "status": ""
+          }
+        ]
 
 ## csv2md
 
