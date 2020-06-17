@@ -24,7 +24,7 @@
 **Information**
 
 - [headers](#headers)
-- [dim](#dim)
+- [dim/nrow/ncol](#dim/nrow/ncol)
 - [summary](#summary)
 - [corr](#corr)
 - [watch](#watch)
@@ -146,6 +146,8 @@ Available Commands:
   join            join files by selected fields (inner, left and outer join)
   mutate          create new column from selected fields by regular expression
   mutate2         create new column from selected fields by awk-like artithmetic/string expressions
+  ncol            print number of columns
+  nrow            print number of records
   plot            plot common figures
   pretty          convert CSV to readable aligned table
   rename          rename column names with new names
@@ -210,9 +212,11 @@ $ csvtk headers testdata/*.csv
 3       hobby
 ```
 
-## dim
+## dim/nrow/ncol
 
 Usage
+
+dim:
 
 ```text
 dimensions of CSV file
@@ -224,7 +228,45 @@ Aliases:
   dim, size, stats, stat
 
 Flags:
-  -h, --help   help for dim
+      --cols       only print number of columns
+  -h, --help       help for dim
+  -n, --no-files   do not print file names
+      --rows       only print number of rows
+      --tabular    output in machine-friendly tabular format
+
+```
+
+nrow:
+
+```text
+print number of records
+
+Usage:
+  csvtk nrow [flags]
+
+Aliases:
+  nrow, nrows
+
+Flags:
+  -n, --file-name   print file names
+  -h, --help        help for nrow
+
+```
+
+ncol:
+
+```text
+print number of columns
+
+Usage:
+  csvtk ncol [flags]
+
+Aliases:
+  ncol, ncols
+
+Flags:
+  -n, --file-name   print file names
+  -h, --help        help for ncol
 
 ```
 
@@ -243,6 +285,16 @@ Examples
         $ cat testdata/names.csv | csvtk size
         file   num_cols   num_rows
         -             4          5
+        
+        $ cat testdata/names.csv | csvtk nrow
+        5
+        
+        $ cat testdata/names.csv | csvtk ncol
+        4
+        
+        $ csvtk nrow testdata/names.csv testdata/phones.csv -n
+        5       testdata/names.csv
+        4       testdata/phones.csv
 
 2. no header row
 
@@ -256,6 +308,12 @@ Examples
             | csvtk size -t -H
         file   num_cols   num_rows
         -             3          4
+        
+        $ cat testdata/names.csv | csvtk nrow -H
+        3
+        
+        $ cat testdata/names.csv | csvtk ncol -H
+        4
 
 ## summary
 

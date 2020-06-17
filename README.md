@@ -63,12 +63,14 @@ It could save you lots of time in (not) writing Python/R scripts.
 
 ## Subcommands
 
-39 subcommands in total.
+41 subcommands in total.
 
 **Information**
 
 - [`headers`](https://bioinf.shenwei.me/csvtk/usage/#headers): prints headers
-- [`dim`](https://bioinf.shenwei.me/csvtk/usage/#dim): dimensions of CSV file
+- [`dim`](https://bioinf.shenwei.me/csvtk/usage/#dim/nrow/ncol): dimensions of CSV file
+- [`nrow`](https://bioinf.shenwei.me/csvtk/usage/#dim/nrow/ncol): print number of records
+- [`ncol`](https://bioinf.shenwei.me/csvtk/usage/#dim/nrow/ncol: print number of columns
 - [`summary`](https://bioinf.shenwei.me/csvtk/usage/#summary): summary statistics of selected digital fields (groupby group fields)
 - [`watch`](https://bioinf.shenwei.me/csvtk/usage/#watch): online monitoring and histogram of selected field
 - [`corr`](https://bioinf.shenwei.me/csvtk/usage/#corr): calculate Pearson correlation between numeric columns
