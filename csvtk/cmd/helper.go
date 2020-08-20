@@ -504,6 +504,9 @@ func readCSV(config Config, file string) ([]string, [][]string, *CSVReader) {
 }
 
 func readerReport(config *Config, csvReader *CSVReader, file string) {
+	if csvReader == nil {
+		return
+	}
 	if config.IgnoreEmptyRow && len(csvReader.NumEmptyRows) > 0 {
 		log.Warningf("file '%s': %d empty rows ignored: %d", file, len(csvReader.NumEmptyRows), csvReader.NumEmptyRows)
 	}

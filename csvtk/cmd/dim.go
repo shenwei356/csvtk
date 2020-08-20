@@ -67,11 +67,38 @@ var dimCmd = &cobra.Command{
 		}
 
 		for _, file := range files {
+			var numCols, numRows uint64
+
 			csvReader, err := newCSVReaderByConfig(config, file)
-			checkError(err)
+			if err != nil {
+				if err == xopen.ErrNoContent {
+					if rows {
+						if noFiles {
+							outfh.WriteString(fmt.Sprintf("%d\n", numRows))
+						} else {
+							outfh.WriteString(fmt.Sprintf("%s\t%d\n", file, numRows))
+						}
+					} else if tabular {
+						if noFiles {
+							outfh.WriteString(fmt.Sprintf("%d\t%d\n", numCols, numRows))
+						} else {
+							outfh.WriteString(fmt.Sprintf("%s\t%d\t%d\n", file, numCols, numRows))
+						}
+					} else {
+						tbl.AddRow(
+							file,
+							humanize.Comma(int64(numCols)),
+							humanize.Comma(int64(numRows)))
+					}
+
+					continue
+				} else {
+					checkError(err)
+				}
+			}
+
 			csvReader.Run()
 
-			var numCols, numRows uint64
 			once := true
 		HERE:
 			for chunk := range csvReader.Ch {
@@ -103,6 +130,7 @@ var dimCmd = &cobra.Command{
 			if numRows < 0 {
 				numRows = 0
 			}
+
 			if rows {
 				if noFiles {
 					outfh.WriteString(fmt.Sprintf("%d\n", numRows))
@@ -121,6 +149,7 @@ var dimCmd = &cobra.Command{
 					humanize.Comma(int64(numCols)),
 					humanize.Comma(int64(numRows)))
 			}
+
 			readerReport(&config, csvReader, file)
 
 		}

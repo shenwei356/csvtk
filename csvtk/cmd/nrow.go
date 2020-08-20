@@ -48,11 +48,25 @@ var nrowCmd = &cobra.Command{
 		defer outfh.Close()
 
 		for _, file := range files {
-			csvReader, err := newCSVReaderByConfig(config, file)
-			checkError(err)
-			csvReader.Run()
-
 			var numRows uint64
+
+			csvReader, err := newCSVReaderByConfig(config, file)
+			if err != nil {
+				if err == xopen.ErrNoContent {
+					if printFileName {
+						outfh.WriteString(fmt.Sprintf("%d\t%s\n", numRows, file))
+					} else {
+						outfh.WriteString(fmt.Sprintf("%d\n", numRows))
+					}
+					outfh.Flush()
+
+					continue
+				} else {
+					checkError(err)
+				}
+			}
+
+			csvReader.Run()
 
 			for chunk := range csvReader.Ch {
 				checkError(chunk.Err)

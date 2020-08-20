@@ -2,6 +2,7 @@
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.21.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.21.0)
     - `csvtk headers`: new flag `-v/--verbose`.
     - `csvtk dim`: new flags `--tabluar`, `--cols`, `--rows`, `-n/--no-files`.
+    - `csvtk dim/ncol/nrow`: can handle empty files now.
     - new commands: `csvtk nrow/ncol` for printing number of rows or columns.
     - `csvtk csv2jon`:
       - new flag `-b/--blank`: do not convert "", "na", "n/a", "none", "null", "." to null
