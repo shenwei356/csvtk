@@ -104,10 +104,23 @@ var xlsx2csvCmd = &cobra.Command{
 		rows, err := xlsx.GetRows(sheetName)
 		checkError(err)
 
+		var nColsMax int = -1
+		var nCols int
+		for _, row := range rows {
+			nCols = len(row)
+			if nColsMax < nCols {
+				nColsMax = nCols
+			}
+		}
+		emptyRow := make([]string, nColsMax)
+
 		var notBlank bool
 		var data string
 		var numEmptyRows int
 		for _, row := range rows {
+			if len(row) < nColsMax {
+				row = append(row, emptyRow[0:nColsMax-len(row)]...)
+			}
 			if config.IgnoreEmptyRow {
 				notBlank = false
 				for _, data = range row {
