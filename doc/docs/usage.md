@@ -1190,7 +1190,7 @@ Usage:
   csvtk uniq [flags]
 
 Flags:
-  -f, --fields string   select only these fields. e.g -f 1,2 or -f columnA,columnB (default "1")
+  -f, --fields string   select these fields as the key. e.g -f 1,2 or -f columnA,columnB (default "1")
   -F, --fuzzy-fields    using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
   -i, --ignore-case     ignore case
 
@@ -1315,7 +1315,7 @@ Usage:
   csvtk inter [flags]
 
 Flags:
-  -f, --fields string   select only these fields. e.g -f 1,2 or -f columnA,columnB (default "1")
+  -f, --fields string   select these fields as the key. e.g -f 1,2 or -f columnA,columnB (default "1")
   -F, --fuzzy-fields    using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
   -i, --ignore-case     ignore case
 

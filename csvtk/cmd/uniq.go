@@ -69,6 +69,8 @@ var uniqCmd = &cobra.Command{
 		}
 
 		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
+		ignoreCase := getFlagBool(cmd, "ignore-case")
+		keepN := getFlagPositiveInt(cmd, "keep-n")
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
@@ -81,7 +83,7 @@ var uniqCmd = &cobra.Command{
 			writer.Comma = config.OutDelimiter
 		}
 
-		keysMaps := make(map[string]struct{}, 10000)
+		keysMaps := make(map[string]int, 10000)
 
 		file := files[0]
 		csvReader, err := newCSVReaderByConfig(config, file)
@@ -96,6 +98,8 @@ var uniqCmd = &cobra.Command{
 		checkFields := true
 		var items []string
 		var key string
+		var n int
+		var ok bool
 
 		printMetaLine := true
 		for chunk := range csvReader.Ch {
@@ -195,10 +199,17 @@ var uniqCmd = &cobra.Command{
 				}
 
 				key = strings.Join(items, "_shenwei356_")
-				if _, ok := keysMaps[key]; ok {
-					continue
+				if ignoreCase {
+					key = strings.ToLower(key)
 				}
-				keysMaps[key] = struct{}{}
+				if n, ok = keysMaps[key]; ok {
+					if n >= keepN {
+						continue
+					}
+					keysMaps[key]++
+				} else {
+					keysMaps[key] = 1
+				}
 				checkError(writer.Write(record))
 			}
 		}
@@ -211,7 +222,9 @@ var uniqCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(uniqCmd)
-	uniqCmd.Flags().StringP("fields", "f", "1", `select only these fields. e.g -f 1,2 or -f columnA,columnB`)
+	uniqCmd.Flags().StringP("fields", "f", "1", `select these fields as keys. e.g -f 1,2 or -f columnA,columnB`)
 	uniqCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
 	uniqCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
+	uniqCmd.Flags().IntP("keep-n", "n", 1, `keep at most N recordss for a key`)
+
 }

@@ -279,7 +279,7 @@ Attention:
 
 func init() {
 	RootCmd.AddCommand(interCmd)
-	interCmd.Flags().StringP("fields", "f", "1", `select only these fields. e.g -f 1,2 or -f columnA,columnB`)
+	interCmd.Flags().StringP("fields", "f", "1", `select these fields as the key. e.g -f 1,2 or -f columnA,columnB`)
 	interCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
 	interCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
 }
