@@ -223,7 +223,7 @@ Attention:
 			}
 			items = make([]string, len(Fields))
 			var records [][]string
-			var record, record2 []string
+			var record2 []string
 			for _, record0 := range Data {
 				for i, f = range Fields {
 					items[i] = record0[f-1]
@@ -234,7 +234,8 @@ Attention:
 				}
 				if records, ok = keysMaps[key]; ok {
 					for _, record2 = range records {
-						record = record0
+						record := make([]string, len(record0))
+						copy(record, record0)
 						for f, v := range record2 {
 							if _, ok = fieldsMap[f+1]; !ok {
 								record = append(record, v)
@@ -244,7 +245,8 @@ Attention:
 					}
 				} else {
 					if keepUnmatched {
-						record = record0
+						record := make([]string, len(record0))
+						copy(record, record0)
 						for i = 1; i <= len(data[0])-len(fieldsMap); i++ {
 							record = append(record, na)
 						}
