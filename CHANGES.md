@@ -10,7 +10,7 @@
     - `csvtk xlsx2csv`: fix output for ragged table.
     - `csvtk join`: fix bug for joining >2 files.
     - `csvtk freq`: new flag `-n/--keep-n` for keeping first N records of every key.
-    - [csvtk v0.20.0](https://github.com/shenwei356/csvtk/releases/tag/v0.20.0)
+- [csvtk v0.20.0](https://github.com/shenwei356/csvtk/releases/tag/v0.20.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.20.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.20.0)
     - new command `csvtk comb`: compute combinations of items at every row.
     - new command `csvtk sep`: separate column into multiple columns. [#96](https://github.com/shenwei356/csvtk/issues/96)
