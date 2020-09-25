@@ -161,9 +161,9 @@ var dimCmd = &cobra.Command{
 
 func init() {
 	dimCmd.Flags().BoolP("tabular", "", false, `output in machine-friendly tabular format`)
-	dimCmd.Flags().BoolP("cols", "", false, "only print number of columns")
-	dimCmd.Flags().BoolP("rows", "", false, "only print number of rows")
-	dimCmd.Flags().BoolP("no-files", "n", false, "do not print file names")
+	dimCmd.Flags().BoolP("cols", "", false, `only print number of columns (or using "csvtk ncol"`)
+	dimCmd.Flags().BoolP("rows", "", false, `only print number of rows (or using "csvtk nrow")`)
+	dimCmd.Flags().BoolP("no-files", "n", false, "do not print file names (only affect --cols and --rows)")
 
 	RootCmd.AddCommand(dimCmd)
 
