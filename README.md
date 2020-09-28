@@ -44,6 +44,7 @@ It could save you lots of time in (not) writing Python/R scripts.
 - [Acknowledgements](#acknowledgements)
 - [Contact](#contact)
 - [License](#license)
+- [Starchart](#starchart)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -372,3 +373,7 @@ Or [leave a comment](https://shenwei356.github.io/csvtk/usage/#disqus_thread).
 ## License
 
 [MIT License](https://github.com/shenwei356/csvtk/blob/master/LICENSE)
+
+## Starchart
+
+<img src="https://starchart.cc/shenwei356/csvtk.svg" alt="Stargazers over time" style="max-width: 100%">
