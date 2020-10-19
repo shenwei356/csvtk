@@ -62,6 +62,7 @@
 - [rename](#rename)
 - [rename2](#rename2)
 - [replace](#replace)
+- [round](#round)
 - [mutate](#mutate)
 - [mutate2](#mutate2)
 - [sep](#sep)
@@ -2342,6 +2343,51 @@ Examples
         A       N: 1, alias: Tom
         B       N: 2, alias: Bob
         C       N: 3, alias: 004
+
+## round
+
+Usage
+
+```text
+round float to n decimal places
+
+Usage:
+  csvtk round [flags]
+
+Flags:
+  -a, --all-fields          all fields, overides -f/--fields
+  -n, --decimal-width int   limit floats to N decimal points (default 2)
+  -f, --fields string       select only these fields. e.g -f 1,2 or -f columnA,columnB (default "1")
+  -F, --fuzzy-fields        using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
+  -h, --help                help for round
+
+```
+
+Examples:
+
+    $ cat testdata/floats.csv  | csvtk pretty
+    a                        b
+    0.12345                  abc
+    NA                       0.9999198549640733
+    12.3                     e3
+    1.4814505299984235e-05   -3.1415926E05
+
+    # one or more fields
+    $ cat testdata/floats.csv | csvtk round -n 2 -f b | csvtk pretty 
+    a                        b
+    0.12345                  abc
+    NA                       1.00
+    12.3                     e3
+    1.4814505299984235e-05   -3.14E05
+
+    # all fields
+    $ cat testdata/floats.csv | csvtk round -n 2 -a | csvtk pretty 
+    a          b
+    0.12       abc
+    NA         1.00
+    12.30      e3
+    1.48e-05   -3.14E05
+
 
 ## mutate
 

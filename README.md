@@ -112,6 +112,7 @@ It could save you lots of time in (not) writing Python/R scripts.
 - [`rename`](https://bioinf.shenwei.me/csvtk/usage/#rename): renames column names with new names
 - [`rename2`](https://bioinf.shenwei.me/csvtk/usage/#rename2): renames column names by regular expression
 - [`replace`](https://bioinf.shenwei.me/csvtk/usage/#replace): replaces data of selected fields by regular expression
+- [`round`](https://bioinf.shenwei.me/csvtk/usage/#round): round float to n decimal places
 - [`mutate`](https://bioinf.shenwei.me/csvtk/usage/#mutate): creates new columns from selected fields by regular expression
 - [`mutate2`](https://bioinf.shenwei.me/csvtk/usage/#mutate2): creates new column from selected fields by awk-like arithmetic/string expressions
 - [`sep`](https://bioinf.shenwei.me/csvtk/usage/#sep): separate column into multiple columns
