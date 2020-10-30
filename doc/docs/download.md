@@ -19,6 +19,7 @@
     - `csvtk xlsx2csv`: fix output for ragged table. [#110](https://github.com/shenwei356/csvtk/issues/110)
     - `csvtk join`: fix bug for joining >2 files.
     - `csvtk uniq`: new flag `-n/--keep-n` for keeping first N records of every key.
+    - `csvtk cut`: support repeatedly selecting columns. [#106](https://github.com/shenwei356/csvtk/issues/106)
 
 Links:
 
