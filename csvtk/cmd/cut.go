@@ -85,6 +85,7 @@ var cutCmd = &cobra.Command{
 		var colnames2fileds map[string]int   // column name -> field
 		var colnamesMap map[string]*regexp.Regexp
 
+		checkFields := true
 		var items []string
 		var noRecord bool
 
@@ -137,6 +138,7 @@ var cutCmd = &cobra.Command{
 							}
 						}
 
+						// matching colnames
 						var ok bool
 						if negativeFields {
 							for _, col := range record {
@@ -185,8 +187,6 @@ var cutCmd = &cobra.Command{
 							}
 						}
 
-						// matching colnames
-
 					} else {
 						for _, f := range fields {
 							if f > len(record) {
@@ -213,7 +213,36 @@ var cutCmd = &cobra.Command{
 
 					items = make([]string, len(fields))
 
+					checkFields = false
 					parseHeaderRow = false
+				}
+
+				if checkFields {
+					for _, f := range fields {
+						if f > len(record) {
+							checkError(fmt.Errorf(`field (%d) out of range (%d) in file: %s`, f, len(record), file))
+						}
+					}
+
+					if negativeFields {
+						fields2 := make([]int, 0, len(fields))
+						var ok bool
+						for i := range record {
+							if _, ok = fieldsMap[i+1]; !ok {
+								fields2 = append(fields2, i+1)
+							}
+						}
+						fields = fields2
+					}
+
+					if len(fields) == 0 {
+						noRecord = true
+						break
+					}
+
+					items = make([]string, len(fields))
+
+					checkFields = false
 				}
 
 				for i, f := range fields {

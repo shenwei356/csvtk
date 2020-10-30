@@ -1084,7 +1084,7 @@ Flags:
   -F, --fuzzy-fields    using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
   -h, --help            help for cut
   -i, --ignore-case     ignore case (column name)
-  -u, --uniq-column     deduplicate columns when given fuzzy column names
+  -u, --uniq-column     deduplicate columns matched by multiple fuzzy column names
 
 ```
 
