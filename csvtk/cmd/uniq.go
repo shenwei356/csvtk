@@ -225,6 +225,6 @@ func init() {
 	uniqCmd.Flags().StringP("fields", "f", "1", `select these fields as keys. e.g -f 1,2 or -f columnA,columnB`)
 	uniqCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
 	uniqCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
-	uniqCmd.Flags().IntP("keep-n", "n", 1, `keep at most N recordss for a key`)
+	uniqCmd.Flags().IntP("keep-n", "n", 1, `keep at most N records for a key`)
 
 }

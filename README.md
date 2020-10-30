@@ -64,7 +64,7 @@ It could save you lots of time in (not) writing Python/R scripts.
 
 ## Subcommands
 
-41 subcommands in total.
+45 subcommands in total.
 
 **Information**
 

@@ -93,7 +93,7 @@ Usage
 ```text
 csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.20.0
+Version: 0.21.0
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -154,6 +154,7 @@ Available Commands:
   rename          rename column names with new names
   rename2         rename column names by regular expression
   replace         replace data of selected fields by regular expression
+  round           round float to n decimal places
   sample          sampling by proportion
   sep             separate column into multiple columns
   sort            sort by selected fields
@@ -183,6 +184,8 @@ Flags:
   -o, --out-file string        out file ("-" for stdout, suffix .gz for gzipped out) (default "-")
   -T, --out-tabs               specifies that the output is delimited with tabs. Overrides "-D"
   -t, --tabs                   specifies that the input CSV file is delimited with tabs. Overrides "-d" and "-D"
+
+Use "csvtk [command] --help" for more information about a command.
 ```
 
 ## headers
@@ -195,22 +198,28 @@ print headers
 Usage:
   csvtk headers [flags]
 
+Flags:
+  -h, --help      help for headers
+  -v, --verbose   print verbose information
+
 ```
 
 Examples
 
 ```sh
-$ csvtk headers testdata/*.csv
+$ csvtk headers testdata/[12].csv
+name
+attr
+name
+major
+
+$ csvtk headers testdata/[12].csv -v
 # testdata/1.csv
 1       name
 2       attr
 # testdata/2.csv
 1       name
 2       major
-# testdata/3.csv
-1       id
-2       name
-3       hobby
 ```
 
 ## dim/nrow/ncol
@@ -1191,9 +1200,11 @@ Usage:
   csvtk uniq [flags]
 
 Flags:
-  -f, --fields string   select these fields as the key. e.g -f 1,2 or -f columnA,columnB (default "1")
+  -f, --fields string   select these fields as keys. e.g -f 1,2 or -f columnA,columnB (default "1")
   -F, --fuzzy-fields    using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
+  -h, --help            help for uniq
   -i, --ignore-case     ignore case
+  -n, --keep-n int      keep at most N records for a key (default 1)
 
 ```
 
@@ -1228,6 +1239,27 @@ Examples:
         Ken
         Robert
 
+- keep top 2 items for every group.
+
+        $ cat testdata/players.csv 
+        gender,id,name
+        male,1,A
+        male,2,B
+        male,3,C
+        female,11,a
+        female,12,b
+        female,13,c
+        female,14,d
+
+        $ cat testdata/players.csv  \
+            | csvtk sort -k gender:N -k id:nr \
+            | csvtk uniq -f gender -n 2
+        gender,id,name
+        female,14,d
+        female,13,c
+        male,3,C
+        male,2,B
+        
 ## freq
 
 Usage

@@ -6,22 +6,19 @@
 
 ## Current Version
 
-- [csvtk v0.20.0](https://github.com/shenwei356/csvtk/releases/tag/v0.20.0)
-[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.20.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.20.0)
-    - new command `csvtk comb`: compute combinations of items at every row.
-    - new command `csvtk sep`: separate column into multiple columns. [#96](https://github.com/shenwei356/csvtk/issues/96)
-    - `csvtk`:
-        - list lines' number of illegal (`-I`) and empty (`-E`) rows. [#97](https://github.com/shenwei356/csvtk/issues/97)
-        - new flag `--infile-list` for giving file of input files list (one file per line), if given, they are appended to files from cli arguments
-    - `csvtk join`:
-        - reenable flag `-i/--ignore-case`. [#99](https://github.com/shenwei356/csvtk/issues/99)
-        - **outer join is supported**. [#23](https://github.com/shenwei356/csvtk/issues/23)
-        - new flag `-L/--left-join`: left join, equals to -k/--keep-unmatched, exclusive with `--outer-join`
-        - new flag `-O/--outer-join`: outer join, exclusive with --left-join
-        - rename flag `--fill` to `--na`.
-    - `csvtk filter2`: fix bug when column names start with digits, e.g., `1000g2015aug`. Thank @VorontsovIE ([#44](https://github.com/shenwei356/csvtk/issues/44))
-    - `csvtk concat`: allow one input file. [#98](https://github.com/shenwei356/csvtk/issues/98)
-    - `csvtk mutate`: new flag `-R/--remove` for removing input column.
+- [csvtk v0.21.0](https://github.com/shenwei356/csvtk/releases/tag/v0.21.0)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.21.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.21.0)
+    - new command: `csvtk nrow/ncol` for printing number of rows or columns.
+    - new command: `round` to round float to n decimal places. [#112](https://github.com/shenwei356/csvtk/issues/112)
+    - `csvtk headers`: file name and column index is optional outputted with new flag `-v/--verbose`.
+    - `csvtk dim`: new flags `--tabluar`, `--cols`, `--rows`, `-n/--no-files`.
+    - `csvtk dim/ncol/nrow`: can handle empty files now. [#108](https://github.com/shenwei356/csvtk/issues/108)
+    - `csvtk csv2json` [#104](https://github.com/shenwei356/csvtk/issues/104):
+        - new flag `-b/--blank`: do not convert "", "na", "n/a", "none", "null", "." to null
+        - new flag `-n/--parse-num`: parse numeric values for nth column(s), multiple values are supported and "a"/"all" for all columns.
+    - `csvtk xlsx2csv`: fix output for ragged table. [#110](https://github.com/shenwei356/csvtk/issues/110)
+    - `csvtk join`: fix bug for joining >2 files.
+    - `csvtk uniq`: new flag `-n/--keep-n` for keeping first N records of every key.
 
 Links:
 
