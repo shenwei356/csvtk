@@ -1084,6 +1084,7 @@ Flags:
   -F, --fuzzy-fields    using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
   -h, --help            help for cut
   -i, --ignore-case     ignore case (column name)
+  -u, --uniq-column     deduplicate columns when given fuzzy column names
 
 ```
 
@@ -1109,6 +1110,17 @@ Examples
         4,Robert
         1,Robert
         NA,Robert
+        
+        # select more than once
+        $ cat testdata/names.csv \
+            | csvtk cut -f 1,2,2
+        id,first_name,first_name
+        11,Rob,Rob
+        2,Ken,Ken
+        4,Robert,Robert
+        1,Robert,Robert
+        NA,Robert,Robert
+        
 
 - Select columns by column names: `csvtk cut -f first_name,username`
 
@@ -1120,6 +1132,16 @@ Examples
         Robert,gri
         Robert,abc
         Robert,123
+        
+        # select more than once
+        $ cat testdata/names.csv \
+            | csvtk cut -f first_name,username,username
+        first_name,username,username
+        Rob,rob,rob
+        Ken,ken,ken
+        Robert,gri,gri
+        Robert,abc,abc
+        Robert,123,123
 
 - **Unselect**:
     - select 3+ columns: `csvtk cut -f -1,-2`
@@ -1155,7 +1177,7 @@ Examples
         Robert,Thompson,abc
         Robert,Abel,123
 
-- All fields: `csvtk cut -F -f "*"` (only works when all colnames are unique)
+- All fields: `csvtk cut -F -f "*"`
 
         $ cat testdata/names.csv \
             | csvtk cut -F -f "*"

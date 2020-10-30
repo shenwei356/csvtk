@@ -25,7 +25,6 @@ import (
 	"fmt"
 	"regexp"
 	"runtime"
-	"sort"
 	"strings"
 
 	"github.com/shenwei356/xopen"
@@ -52,41 +51,20 @@ var cutCmd = &cobra.Command{
 			checkError(fmt.Errorf("flag -f (--fields) needed"))
 		}
 
+		uniqColumn := getFlagBool(cmd, "uniq-column")
+
 		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
 		fields, colnames, negativeFields, needParseHeaderRow := parseFields(cmd, fieldStr, config.NoHeaderRow)
 		var fieldsMap map[int]struct{}
-		var fieldsOrder map[int]int      // for set the order of fields
-		var colnamesOrder map[string]int // for set the order of fields
 
 		ignoreCase := getFlagBool(cmd, "ignore-case")
 
-		if len(fields) > 0 {
-			fields2 := make([]int, len(fields))
+		if len(fields) > 0 && negativeFields {
 			fieldsMap = make(map[int]struct{}, len(fields))
-			for i, f := range fields {
-				if negativeFields {
-					fieldsMap[f*-1] = struct{}{}
-					fields2[i] = f * -1
-				} else {
-					fieldsMap[f] = struct{}{}
-					fields2[i] = f
-				}
+			for _, f := range fields {
+				fieldsMap[f*-1] = struct{}{}
 			}
-			fields = fields2
-
-			if !negativeFields {
-				fieldsOrder = make(map[int]int, len(fields))
-				i := 0
-				for _, f := range fields {
-					fieldsOrder[f] = i
-					i++
-				}
-			}
-		} else {
-			fieldsOrder = make(map[int]int, len(colnames))
-			colnamesOrder = make(map[string]int, len(colnames))
 		}
-
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
 		defer outfh.Close()
@@ -107,8 +85,8 @@ var cutCmd = &cobra.Command{
 		var colnames2fileds map[string]int   // column name -> field
 		var colnamesMap map[string]*regexp.Regexp
 
-		checkFields := true
 		var items []string
+		var noRecord bool
 
 		printMetaLine := true
 		for chunk := range csvReader.Ch {
@@ -121,112 +99,131 @@ var cutCmd = &cobra.Command{
 
 			for _, record := range chunk.Data {
 				if parseHeaderRow { // parsing header row
-					colnames2fileds = make(map[string]int, len(record))
-					for i, col := range record {
-						if ignoreCase {
-							col = strings.ToLower(col)
+					if len(fields) == 0 { // user gives the colnames
+						// colnames
+						colnames2fileds = make(map[string]int, len(record))
+						for i, col := range record {
+							if ignoreCase {
+								col = strings.ToLower(col)
+							}
+							colnames2fileds[col] = i + 1
 						}
-						colnames2fileds[col] = i + 1
-					}
-					colnamesMap = make(map[string]*regexp.Regexp, len(colnames))
-					i := 0
-					for _, col := range colnames {
-						if ignoreCase {
-							col = strings.ToLower(col)
-						}
-						if !fuzzyFields {
-							if negativeFields {
-								if _, ok := colnames2fileds[col[1:]]; !ok {
-									checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col[1:], file))
-								}
-							} else {
-								if _, ok := colnames2fileds[col]; !ok {
-									checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col, file))
+
+						// colnames from user
+						colnamesMap = make(map[string]*regexp.Regexp, len(colnames))
+						i := 0
+						for _, col := range colnames {
+							if ignoreCase {
+								col = strings.ToLower(col)
+							}
+							if !fuzzyFields {
+								if negativeFields {
+									if _, ok := colnames2fileds[col[1:]]; !ok {
+										checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col[1:], file))
+									} else {
+
+									}
+								} else {
+									if _, ok := colnames2fileds[col]; !ok {
+										checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col, file))
+									}
 								}
 							}
+							if negativeFields {
+								colnamesMap[col[1:]] = fuzzyField2Regexp(col[1:])
+							} else {
+								colnamesMap[col] = fuzzyField2Regexp(col)
+								i++
+							}
 						}
-						if negativeFields {
-							colnamesMap[col[1:]] = fuzzyField2Regexp(col[1:])
-						} else {
-							colnamesMap[col] = fuzzyField2Regexp(col)
-							colnamesOrder[col] = i
-							i++
-						}
-					}
 
-					if len(fields) == 0 { // user gives the colnames
-						fields = []int{}
-						for _, col := range record {
-							var ok bool
+						var ok bool
+						if negativeFields {
+							for _, col := range record {
+								ok = false
+								if fuzzyFields {
+									for _, re := range colnamesMap {
+										if re.MatchString(col) {
+											ok = true
+											break
+										}
+									}
+								} else {
+									_, ok = colnamesMap[col]
+								}
+
+								if !ok {
+									fields = append(fields, colnames2fileds[col])
+								}
+							}
+						} else {
 							if fuzzyFields {
-								for _, re := range colnamesMap {
-									if re.MatchString(col) {
-										ok = true
-										break
+								var flags map[int]interface{}
+								if uniqColumn {
+									flags = make(map[int]interface{}, len(record))
+								}
+								var i int
+								for _, col := range colnames {
+									for _, col2 := range record {
+										if colnamesMap[col].MatchString(col2) {
+											i = colnames2fileds[col2]
+											if uniqColumn {
+												if _, ok = flags[i]; !ok {
+													fields = append(fields, i)
+													flags[i] = struct{}{}
+												}
+											} else {
+												fields = append(fields, i)
+											}
+										}
 									}
 								}
 							} else {
-								_, ok = colnamesMap[col]
-							}
-							if ok {
-								fields = append(fields, colnames2fileds[col])
-								fieldsOrder[colnames2fileds[col]] = colnamesOrder[col]
+								for _, col := range colnames {
+									fields = append(fields, colnames2fileds[col])
+								}
 							}
 						}
 
-					}
+						// matching colnames
 
-					fieldsMap = make(map[int]struct{}, len(fields))
-					for _, f := range fields {
-						fieldsMap[f] = struct{}{}
-					}
-
-					parseHeaderRow = false
-				}
-				if checkFields {
-					for field := range fieldsMap {
-						if field > len(record) {
-							checkError(fmt.Errorf(`field (%d) out of range (%d) in file: %s`, field, len(record), file))
+					} else {
+						for _, f := range fields {
+							if f > len(record) {
+								checkError(fmt.Errorf(`field (%d) out of range (%d) in file: %s`, f, len(record), file))
+							}
 						}
-					}
-					fields2 := []int{}
-					for f := range record {
-						_, ok := fieldsMap[f+1]
+
 						if negativeFields {
-							if !ok {
-								fields2 = append(fields2, f+1)
+							fields2 := make([]int, 0, len(fields))
+							var ok bool
+							for i := range record {
+								if _, ok = fieldsMap[i+1]; !ok {
+									fields2 = append(fields2, i+1)
+								}
 							}
-						} else {
-							if ok {
-								fields2 = append(fields2, f+1)
-							}
+							fields = fields2
 						}
 					}
-					fields = fields2
 
 					if len(fields) == 0 {
-						checkError(fmt.Errorf("no fields matched in file: %s", file))
-					}
-
-					// sort fields
-					orderedFieldss := make([]orderedField, len(fields))
-					for i, f := range fields {
-						orderedFieldss[i] = orderedField{field: f, order: fieldsOrder[f]}
-					}
-					sort.Sort(orderedFields(orderedFieldss))
-					for i, of := range orderedFieldss {
-						fields[i] = of.field
+						noRecord = true
+						break
 					}
 
 					items = make([]string, len(fields))
 
-					checkFields = false
+					parseHeaderRow = false
 				}
 
 				for i, f := range fields {
 					items[i] = record[f-1]
 				}
 				checkError(writer.Write(items))
+			}
+
+			if noRecord {
+				break
 			}
 		}
 
@@ -242,4 +239,5 @@ func init() {
 	cutCmd.Flags().StringP("fields", "f", "", `select only these fields. e.g -f 1,2 or -f columnA,columnB, or -f -columnA for unselect columnA`)
 	cutCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
 	cutCmd.Flags().BoolP("ignore-case", "i", false, `ignore case (column name)`)
+	cutCmd.Flags().BoolP("uniq-column", "u", false, `deduplicate columns matched by multiple fuzzy column names`)
 }
