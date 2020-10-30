@@ -332,8 +332,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#dim" class="md-nav__link">
-    dim
+  <a href="#dimnrowncol" class="md-nav__link">
+    dim/nrow/ncol
   </a>
   
 </li>
@@ -530,6 +530,13 @@
         <li class="md-nav__item">
   <a href="#replace" class="md-nav__link">
     replace
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#round" class="md-nav__link">
+    round
   </a>
   
 </li>
@@ -707,8 +714,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#dim" class="md-nav__link">
-    dim
+  <a href="#dimnrowncol" class="md-nav__link">
+    dim/nrow/ncol
   </a>
   
 </li>
@@ -910,6 +917,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#round" class="md-nav__link">
+    round
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#mutate" class="md-nav__link">
     mutate
   </a>
@@ -1031,7 +1045,7 @@
 <p><strong>Information</strong></p>
 <ul>
 <li><a href="#headers">headers</a></li>
-<li><a href="#dim">dim</a></li>
+<li><a href="#dim/nrow/ncol">dim/nrow/ncol</a></li>
 <li><a href="#summary">summary</a></li>
 <li><a href="#corr">corr</a></li>
 <li><a href="#watch">watch</a></li>
@@ -1069,6 +1083,7 @@
 <li><a href="#rename">rename</a></li>
 <li><a href="#rename2">rename2</a></li>
 <li><a href="#replace">replace</a></li>
+<li><a href="#round">round</a></li>
 <li><a href="#mutate">mutate</a></li>
 <li><a href="#mutate2">mutate2</a></li>
 <li><a href="#sep">sep</a></li>
@@ -1096,7 +1111,7 @@
 <p>Usage</p>
 <pre><code class="text">csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.20.0
+Version: 0.21.0
 
 Author: Wei Shen &lt;shenwei356@gmail.com&gt;
 
@@ -1150,11 +1165,14 @@ Available Commands:
   join            join files by selected fields (inner, left and outer join)
   mutate          create new column from selected fields by regular expression
   mutate2         create new column from selected fields by awk-like artithmetic/string expressions
+  ncol            print number of columns
+  nrow            print number of records
   plot            plot common figures
   pretty          convert CSV to readable aligned table
   rename          rename column names with new names
   rename2         rename column names by regular expression
   replace         replace data of selected fields by regular expression
+  round           round float to n decimal places
   sample          sampling by proportion
   sep             separate column into multiple columns
   sort            sort by selected fields
@@ -1184,6 +1202,8 @@ Flags:
   -o, --out-file string        out file (&quot;-&quot; for stdout, suffix .gz for gzipped out) (default &quot;-&quot;)
   -T, --out-tabs               specifies that the output is delimited with tabs. Overrides &quot;-D&quot;
   -t, --tabs                   specifies that the input CSV file is delimited with tabs. Overrides &quot;-d&quot; and &quot;-D&quot;
+
+Use &quot;csvtk [command] --help&quot; for more information about a command.
 </code></pre>
 
 <h2 id="headers">headers</h2>
@@ -1193,24 +1213,31 @@ Flags:
 Usage:
   csvtk headers [flags]
 
+Flags:
+  -h, --help      help for headers
+  -v, --verbose   print verbose information
+
 </code></pre>
 
 <p>Examples</p>
-<pre><code class="sh">$ csvtk headers testdata/*.csv
+<pre><code class="sh">$ csvtk headers testdata/[12].csv
+name
+attr
+name
+major
+
+$ csvtk headers testdata/[12].csv -v
 # testdata/1.csv
 1       name
 2       attr
 # testdata/2.csv
 1       name
 2       major
-# testdata/3.csv
-1       id
-2       name
-3       hobby
 </code></pre>
 
-<h2 id="dim">dim</h2>
+<h2 id="dimnrowncol">dim/nrow/ncol</h2>
 <p>Usage</p>
+<p>dim:</p>
 <pre><code class="text">dimensions of CSV file
 
 Usage:
@@ -1220,7 +1247,41 @@ Aliases:
   dim, size, stats, stat
 
 Flags:
-  -h, --help   help for dim
+      --cols       only print number of columns
+  -h, --help       help for dim
+  -n, --no-files   do not print file names
+      --rows       only print number of rows
+      --tabular    output in machine-friendly tabular format
+
+</code></pre>
+
+<p>nrow:</p>
+<pre><code class="text">print number of records
+
+Usage:
+  csvtk nrow [flags]
+
+Aliases:
+  nrow, nrows
+
+Flags:
+  -n, --file-name   print file names
+  -h, --help        help for nrow
+
+</code></pre>
+
+<p>ncol:</p>
+<pre><code class="text">print number of columns
+
+Usage:
+  csvtk ncol [flags]
+
+Aliases:
+  ncol, ncols
+
+Flags:
+  -n, --file-name   print file names
+  -h, --help        help for ncol
 
 </code></pre>
 
@@ -1239,6 +1300,16 @@ NA,"Robert","Abel","123"
 $ cat testdata/names.csv | csvtk size
 file   num_cols   num_rows
 -             4          5
+
+$ cat testdata/names.csv | csvtk nrow
+5
+
+$ cat testdata/names.csv | csvtk ncol
+4
+
+$ csvtk nrow testdata/names.csv testdata/phones.csv -n
+5       testdata/names.csv
+4       testdata/phones.csv
 </code></pre>
 </li>
 <li>
@@ -1253,6 +1324,12 @@ $ cat  testdata/digitals.tsv \
     | csvtk size -t -H
 file   num_cols   num_rows
 -             3          4
+
+$ cat testdata/names.csv | csvtk nrow -H
+3
+
+$ cat testdata/names.csv | csvtk ncol -H
+4
 </code></pre>
 </li>
 </ol>
@@ -1565,9 +1642,11 @@ Usage:
   csvtk csv2json [flags]
 
 Flags:
-  -h, --help            help for csv2json
-  -i, --indent string   indent. if given blank, output json in one line. (default &quot;  &quot;)
-  -k, --key string      output json as an array of objects keyed by a given filed rather than as a list. e.g -k 1 or -k columnA
+  -b, --blanks              do not convert &quot;&quot;, &quot;na&quot;, &quot;n/a&quot;, &quot;none&quot;, &quot;null&quot;, &quot;.&quot; to null
+  -h, --help                help for csv2json
+  -i, --indent string       indent. if given blank, output json in one line. (default &quot;  &quot;)
+  -k, --key string          output json as an array of objects keyed by a given filed rather than as a list. e.g -k 1 or -k columnA
+  -n, --parse-num strings   parse numeric values for nth column(s), multiple values are supported and &quot;a&quot;/&quot;all&quot; for all columns
 
 </code></pre>
 
@@ -1575,111 +1654,150 @@ Flags:
 <ul>
 <li>
 <p>test data</p>
-<pre><code>$ cat data.csv
-ID,room,name
-3,G13,Simon
-5,103,Anna
+<pre><code>$ cat testdata/data4json.csv 
+ID,room,name,status
+3,G13,Simon,true
+5,103,Anna,TRUE
+1e-3,2,,N/A
 </code></pre>
 </li>
 <li>
 <p>default operation</p>
-<pre><code>$ cat data.csv | csvtk csv2json
+<pre><code>$ cat testdata/data4json.csv | csvtk csv2json
 [
   {
     "ID": "3",
     "room": "G13",
-    "name": "Simon"
+    "name": "Simon",
+    "status": true
   },
   {
     "ID": "5",
     "room": "103",
-    "name": "Anna"
+    "name": "Anna",
+    "status": true
+  },
+  {
+    "ID": "1e-3",
+    "room": "2",
+    "name": null,
+    "status": null
   }
 ]
 </code></pre>
 </li>
 <li>
 <p>change indent</p>
-<pre><code>$ cat data.csv | csvtk csv2json -i "    "
-[
-    {
-        "ID": "3",
-        "room": "G13",
-        "name": "Simon"
-    },
-    {
-        "ID": "5",
-        "room": "103",
-        "name": "Anna"
-    }
-]
-</code></pre>
-</li>
-<li>
-<p>change indent 2)</p>
-<pre><code>$ cat data.csv | csvtk csv2json -i ""
-[{"ID":"3","room":"G13","name":"Simon"},{"ID":"5","room":"103","name":"Anna"}]
+<pre><code>$ cat testdata/data4json.csv | csvtk csv2json -i ""
+[{"ID":"3","room":"G13","name":"Simon","status":true},{"ID":"5","room":"103","name":"Anna","status":true},{"ID":"1e-3","room":"2","name":null,"status":null}]
 </code></pre>
 </li>
 <li>
 <p>output json as an array of objects keyed by a given filed rather than as a list.</p>
-<pre><code>$ cat data.csv | csvtk csv2json -k ID
+<pre><code>$ cat testdata/data4json.csv | csvtk csv2json -k ID
 {
   "3": {
     "ID": "3",
     "room": "G13",
-    "name": "Simon"
+    "name": "Simon",
+    "status": true
   },
   "5": {
     "ID": "5",
     "room": "103",
-    "name": "Anna"
+    "name": "Anna",
+    "status": true
+  },
+  "1e-3": {
+    "ID": "1e-3",
+    "room": "2",
+    "name": null,
+    "status": null
   }
 }
 </code></pre>
 </li>
 <li>
 <p>for CSV without header row</p>
-<pre><code>$ cat data.csv | csvtk csv2json -H
+<pre><code>$ cat testdata/data4json.csv | csvtk csv2json -H
 [
   [
     "ID",
     "room",
-    "name"
+    "name",
+    "status"
   ],
   [
     "3",
     "G13",
-    "Simon"
+    "Simon",
+    "true"
   ],
   [
     "5",
     "103",
-    "Anna"
+    "Anna",
+    "TRUE"
+  ],
+  [
+    "1e-3",
+    "2",
+    "",
+    "N/A"
   ]
 ]
 </code></pre>
 </li>
 <li>
-<p>for CSV without header row 2)</p>
-<pre><code>$ cat data.csv | csvtk csv2json -H -k 1
-{
-  "ID": [
-    "ID",
-    "room",
-    "name"
-  ],
-  "3": [
-    "3",
-    "G13",
-    "Simon"
-  ],
-  "5": [
-    "5",
-    "103",
-    "Anna"
-  ]
-}
+<p>parse numeric values.</p>
+<pre><code># cat testdata/data4json.csv | csvtk csv2json -n all    # for all columns
+# cat testdata/data4json.csv | csvtk csv2json -n 1,2    # for multiple columns
+$ cat testdata/data4json.csv | csvtk csv2json -n 1      # for single column
+[
+  {
+    "ID": 3,
+    "room": "G13",
+    "name": "Simon",
+    "status": true
+  },
+  {
+    "ID": 5,
+    "room": "103",
+    "name": "Anna",
+    "status": true
+  },
+  {
+    "ID": 1e-3,
+    "room": "2",
+    "name": null,
+    "status": null
+  }
+]
+</code></pre>
+</li>
+<li>
+<p>do not convert "", "na", "n/a", "none", "null", "." to null (just like csvjon --blanks in csvkit)</p>
+<pre><code>$ cat testdata/data4json.csv | csvtk csv2json --blanks
+[
+  {
+    "ID": "3",
+    "room": "G13",
+    "name": "Simon",
+    "status": true
+  },
+  {
+    "ID": "5",
+    "room": "103",
+    "name": "Anna",
+    "status": true
+  },
+  {
+    "ID": "1e-3",
+    "room": "2",
+    "name": "",
+    "status": ""
+  }
+]
 </code></pre>
 </li>
 </ul>
@@ -2041,6 +2159,7 @@ Flags:
   -F, --fuzzy-fields    using fuzzy fields, e.g., -F -f &quot;*name&quot; or -F -f &quot;id123*&quot;
   -h, --help            help for cut
   -i, --ignore-case     ignore case (column name)
+  -u, --uniq-column     deduplicate columns matched by multiple fuzzy column names
 
 </code></pre>
 
@@ -2067,6 +2186,16 @@ id,first_name
 4,Robert
 1,Robert
 NA,Robert
+
+# select more than once
+$ cat testdata/names.csv \
+    | csvtk cut -f 1,2,2
+id,first_name,first_name
+11,Rob,Rob
+2,Ken,Ken
+4,Robert,Robert
+1,Robert,Robert
+NA,Robert,Robert
 </code></pre>
 </li>
 <li>
@@ -2079,6 +2208,16 @@ Ken,ken
 Robert,gri
 Robert,abc
 Robert,123
+
+# select more than once
+$ cat testdata/names.csv \
+    | csvtk cut -f first_name,username,username
+first_name,username,username
+Rob,rob,rob
+Ken,ken,ken
+Robert,gri,gri
+Robert,abc,abc
+Robert,123,123
 </code></pre>
 </li>
 <li>
@@ -2123,7 +2262,7 @@ Robert,Abel,123
 </code></pre>
 </li>
 <li>
-<p>All fields: <code>csvtk cut -F -f "*"</code> (only works when all colnames are unique)</p>
+<p>All fields: <code>csvtk cut -F -f "*"</code></p>
 <pre><code>$ cat testdata/names.csv \
     | csvtk cut -F -f "*"
 id,first_name,last_name,username
@@ -2172,9 +2311,11 @@ Usage:
   csvtk uniq [flags]
 
 Flags:
-  -f, --fields string   select only these fields. e.g -f 1,2 or -f columnA,columnB (default &quot;1&quot;)
+  -f, --fields string   select these fields as keys. e.g -f 1,2 or -f columnA,columnB (default &quot;1&quot;)
   -F, --fuzzy-fields    using fuzzy fields, e.g., -F -f &quot;*name&quot; or -F -f &quot;id123*&quot;
+  -h, --help            help for uniq
   -i, --ignore-case     ignore case
+  -n, --keep-n int      keep at most N records for a key (default 1)
 
 </code></pre>
 
@@ -2210,6 +2351,28 @@ first_name
 Rob
 Ken
 Robert
+</code></pre>
+</li>
+<li>
+<p>keep top 2 items for every group.</p>
+<pre><code>$ cat testdata/players.csv 
+gender,id,name
+male,1,A
+male,2,B
+male,3,C
+female,11,a
+female,12,b
+female,13,c
+female,14,d
+
+$ cat testdata/players.csv  \
+    | csvtk sort -k gender:N -k id:nr \
+    | csvtk uniq -f gender -n 2
+gender,id,name
+female,14,d
+female,13,c
+male,3,C
+male,2,B
 </code></pre>
 </li>
 </ul>
@@ -2301,7 +2464,7 @@ Usage:
   csvtk inter [flags]
 
 Flags:
-  -f, --fields string   select only these fields. e.g -f 1,2 or -f columnA,columnB (default &quot;1&quot;)
+  -f, --fields string   select these fields as the key. e.g -f 1,2 or -f columnA,columnB (default &quot;1&quot;)
   -F, --fuzzy-fields    using fuzzy fields, e.g., -F -f &quot;*name&quot; or -F -f &quot;id123*&quot;
   -i, --ignore-case     ignore case
 
@@ -3324,6 +3487,46 @@ C       N: 3, alias: 004
 </code></pre>
 </li>
 </ul>
+<h2 id="round">round</h2>
+<p>Usage</p>
+<pre><code class="text">round float to n decimal places
+
+Usage:
+  csvtk round [flags]
+
+Flags:
+  -a, --all-fields          all fields, overides -f/--fields
+  -n, --decimal-width int   limit floats to N decimal points (default 2)
+  -f, --fields string       select only these fields. e.g -f 1,2 or -f columnA,columnB (default &quot;1&quot;)
+  -F, --fuzzy-fields        using fuzzy fields, e.g., -F -f &quot;*name&quot; or -F -f &quot;id123*&quot;
+  -h, --help                help for round
+
+</code></pre>
+
+<p>Examples:</p>
+<pre><code>$ cat testdata/floats.csv  | csvtk pretty
+a                        b
+0.12345                  abc
+NA                       0.9999198549640733
+12.3                     e3
+1.4814505299984235e-05   -3.1415926E05
+
+# one or more fields
+$ cat testdata/floats.csv | csvtk round -n 2 -f b | csvtk pretty 
+a                        b
+0.12345                  abc
+NA                       1.00
+12.3                     e3
+1.4814505299984235e-05   -3.14E05
+
+# all fields
+$ cat testdata/floats.csv | csvtk round -n 2 -a | csvtk pretty 
+a          b
+0.12       abc
+NA         1.00
+12.30      e3
+1.48e-05   -3.14E05
+</code></pre>
 <h2 id="mutate">mutate</h2>
 <p>Usage</p>
 <pre><code class="text">create new column from selected fields by regular expression
