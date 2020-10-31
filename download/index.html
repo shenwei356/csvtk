@@ -663,6 +663,28 @@ done
 </ol>
 <h2 id="previous-versions">Previous Versions</h2>
 <ul>
+<li><a href="https://github.com/shenwei356/csvtk/releases/tag/v0.20.0">csvtk v0.20.0</a>
+<a href="https://github.com/shenwei356/csvtk/releases/tag/v0.20.0"><img alt="Github Releases (by Release)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/v0.20.0/total.svg" /></a><ul>
+<li>new command <code>csvtk comb</code>: compute combinations of items at every row.</li>
+<li>new command <code>csvtk sep</code>: separate column into multiple columns. <a href="https://github.com/shenwei356/csvtk/issues/96">#96</a></li>
+<li><code>csvtk</code>:<ul>
+<li>list lines' number of illegal (<code>-I</code>) and empty (<code>-E</code>) rows. <a href="https://github.com/shenwei356/csvtk/issues/97">#97</a></li>
+<li>new flag <code>--infile-list</code> for giving file of input files list (one file per line), if given, they are appended to files from cli arguments</li>
+</ul>
+</li>
+<li><code>csvtk join</code>:<ul>
+<li>reenable flag <code>-i/--ignore-case</code>. <a href="https://github.com/shenwei356/csvtk/issues/99">#99</a></li>
+<li><strong>outer join is supported</strong>. <a href="https://github.com/shenwei356/csvtk/issues/23">#23</a></li>
+<li>new flag <code>-L/--left-join</code>: left join, equals to -k/--keep-unmatched, exclusive with <code>--outer-join</code></li>
+<li>new flag <code>-O/--outer-join</code>: outer join, exclusive with --left-join</li>
+<li>rename flag <code>--fill</code> to <code>--na</code>.</li>
+</ul>
+</li>
+<li><code>csvtk filter2</code>: fix bug when column names start with digits, e.g., <code>1000g2015aug</code>. Thank @VorontsovIE (<a href="https://github.com/shenwei356/csvtk/issues/44">#44</a>)</li>
+<li><code>csvtk concat</code>: allow one input file. <a href="https://github.com/shenwei356/csvtk/issues/98">#98</a></li>
+<li><code>csvtk mutate</code>: new flag <code>-R/--remove</code> for removing input column.</li>
+</ul>
+</li>
 <li><a href="https://github.com/shenwei356/csvtk/releases/tag/v0.19.1">csvtk v0.19.1</a>
 <a href="https://github.com/shenwei356/csvtk/releases/tag/v0.19.1"><img alt="Github Releases (by Release)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/v0.19.1/total.svg" /></a><ul>
 <li><code>csvtk</code>:<ul>
