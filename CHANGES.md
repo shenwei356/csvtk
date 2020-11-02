@@ -1,6 +1,7 @@
 - [csvtk v0.22.0](https://github.com/shenwei356/csvtk/releases/tag/v0.22.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.22.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.22.0)
-    - `csvtk cut`: support selecting format `2-` for choose 2nd column to the end.
+    - `csvtk`: **global flag `-t` does not overide `-D` anymore**. [#114](https://github.com/shenwei356/csvtk/issues/114)
+    - `csvtk cut`: **support range format `2-` to choose 2nd column to the end**. [#106](https://github.com/shenwei356/csvtk/issues/106)
 - [csvtk v0.21.0](https://github.com/shenwei356/csvtk/releases/tag/v0.21.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.21.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.21.0)
     - new command: `csvtk nrow/ncol` for printing number of rows or columns.
