@@ -93,7 +93,7 @@ Usage
 ```text
 csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.21.0
+Version: 0.22.0
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -183,7 +183,7 @@ Flags:
   -D, --out-delimiter string   delimiting character of the output CSV file, e.g., -D $'\t' for tab (default ",")
   -o, --out-file string        out file ("-" for stdout, suffix .gz for gzipped out) (default "-")
   -T, --out-tabs               specifies that the output is delimited with tabs. Overrides "-D"
-  -t, --tabs                   specifies that the input CSV file is delimited with tabs. Overrides "-d" and "-D"
+  -t, --tabs                   specifies that the input CSV file is delimited with tabs. Overrides "-d"
 
 Use "csvtk [command] --help" for more information about a command.
 ```

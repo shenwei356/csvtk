@@ -1,5 +1,5 @@
-- [csvtk v0.21.1](https://github.com/shenwei356/csvtk/releases/tag/v0.21.1)
-[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.21.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.21.1)
+- [csvtk v0.22.0](https://github.com/shenwei356/csvtk/releases/tag/v0.22.0)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.22.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.22.0)
     - `csvtk cut`: support selecting format `2-` for choose 2nd column to the end.
 - [csvtk v0.21.0](https://github.com/shenwei356/csvtk/releases/tag/v0.21.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.21.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.21.0)

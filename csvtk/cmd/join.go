@@ -94,7 +94,11 @@ Attention:
 
 		writer := csv.NewWriter(outfh)
 		if config.OutTabs || config.Tabs {
-			writer.Comma = '\t'
+			if config.OutDelimiter == ',' {
+				writer.Comma = '\t'
+			} else {
+				writer.Comma = config.OutDelimiter
+			}
 		} else {
 			writer.Comma = config.OutDelimiter
 		}
