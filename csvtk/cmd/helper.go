@@ -348,7 +348,7 @@ func NewCSVWriterChanByConfig(config Config) (chan []string, error) {
 var reFields = regexp.MustCompile(`([^,]+)(,[^,]+)*,?`)
 var reDigitals = regexp.MustCompile(`^[\-\+\d\.,]+$|^[\-\+\d\.,]*[eE][\-\+\d]+$`)
 var reIntegers = regexp.MustCompile(`^[\-\+\d]+$`)
-var reIntegerRange = regexp.MustCompile(`^([\-\d]+?)\-([\-\d]+?)$`)
+var reIntegerRange = regexp.MustCompile(`^([\-\d]+?)\-([\-\d]*?)$`)
 
 func getFlagFields(cmd *cobra.Command, flag string) string {
 	fieldsStr, err := cmd.Flags().GetString(flag)
@@ -376,16 +376,18 @@ func nth(i int) string {
 }
 func parseFields(cmd *cobra.Command,
 	fieldsStr string,
-	noHeaderRow bool) ([]int, []string, bool, bool) {
+	noHeaderRow bool) ([]int, []string, bool, bool, map[int]int) {
 
 	var fields []int
 	var colnames []string
 	var parseHeaderRow bool
 	var negativeFields bool
+	var x2ends map[int]int // [2]int{index of x in fields, x}
 	firstField := reFields.FindAllStringSubmatch(fieldsStr, -1)[0][1]
 	if reIntegers.MatchString(firstField) {
 		fields = []int{}
 		fieldsStrs := strings.Split(fieldsStr, ",")
+		var j int
 		for _, s := range fieldsStrs {
 			found := reIntegerRange.FindAllStringSubmatch(s, -1)
 			if len(found) > 0 { // field range
@@ -393,6 +395,16 @@ func parseFields(cmd *cobra.Command,
 				if err != nil {
 					checkError(fmt.Errorf("fail to parse field range: %s. it should be an integer", found[0][1]))
 				}
+
+				if found[0][2] == "" {
+					fields = append(fields, start)
+					if x2ends == nil {
+						x2ends = make(map[int]int, 8)
+					}
+					x2ends[j] = start
+					continue
+				}
+
 				end, err := strconv.Atoi(found[0][2])
 				if err != nil {
 					checkError(fmt.Errorf("fail to parse field range: %s. it should be an integer", found[0][2]))
@@ -405,6 +417,7 @@ func parseFields(cmd *cobra.Command,
 				}
 				for i := start; i <= end; i++ {
 					fields = append(fields, i)
+					j++
 				}
 			} else {
 				field, err := strconv.Atoi(s)
@@ -412,6 +425,7 @@ func parseFields(cmd *cobra.Command,
 					checkError(fmt.Errorf("fail to parse digital field: %s, you may mix use digital fields and column names", s))
 				}
 				fields = append(fields, field)
+				j++
 			}
 		}
 
@@ -464,7 +478,7 @@ func parseFields(cmd *cobra.Command,
 		}
 		parseHeaderRow = true
 	}
-	return fields, colnames, negativeFields, parseHeaderRow
+	return fields, colnames, negativeFields, parseHeaderRow, x2ends
 }
 
 func fuzzyField2Regexp(field string) *regexp.Regexp {
@@ -592,7 +606,7 @@ func readDataFrame(config Config, file string, ignoreCase bool) ([]string, map[s
 
 func parseCSVfile(cmd *cobra.Command, config Config, file string,
 	fieldStr string, fuzzyFields bool) ([]string, []int, [][]string, []string, [][]string, []byte) {
-	fields, colnames, negativeFields, needParseHeaderRow := parseFields(cmd, fieldStr, config.NoHeaderRow)
+	fields, colnames, negativeFields, needParseHeaderRow, _ := parseFields(cmd, fieldStr, config.NoHeaderRow)
 	var fieldsMap map[int]struct{}
 	var fieldsOrder map[int]int      // for set the order of fields
 	var colnamesOrder map[string]int // for set the order of fields

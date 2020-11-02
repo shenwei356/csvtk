@@ -55,7 +55,7 @@ var grepCmd = &cobra.Command{
 		if fieldStr == "" {
 			checkError(fmt.Errorf("flag -f (--fields) needed"))
 		}
-		fields, colnames, negativeFields, needParseHeaderRow := parseFields(cmd, fieldStr, config.NoHeaderRow)
+		fields, colnames, negativeFields, needParseHeaderRow, _ := parseFields(cmd, fieldStr, config.NoHeaderRow)
 		// if !(len(fields) == 1 || len(colnames) == 1) {
 		// 	checkError(fmt.Errorf("single fields needed"))
 		// }
@@ -368,7 +368,7 @@ var grepCmd = &cobra.Command{
 											buf.WriteString(redText(c[f[0]:f[1]]))
 											j = f[1]
 										}
-										buf.WriteString(c[j:len(c)])
+										buf.WriteString(c[j:])
 										record2[i] = buf.String()
 									}
 								} else {

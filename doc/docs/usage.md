@@ -1076,11 +1076,28 @@ Usage
 ```text
 select parts of fields
 
+Examples
+  1. Single column:
+     csvtk cut -f 1
+     csvtk cut -f colA
+  2. Multiple columns (replicates allowed)
+     csvtk cut -f 1,3,2,1
+     csvtk cut -f colA,colB,colA
+  3. Column ranges:
+     csvtk cut -f 1,3-5       # 1, 3, 4, 5
+     csvtk cut -f 3,5-        # 3rd col, and 5th col to the end
+     csvtk cut -f 1-          # for all
+  4. Unselect:
+     csvtk cut -f -1,-3       # discard 1st and 3rd column
+     csvtk cut -f -1--3       # discard 1st to 3rd column
+     csvtk cut -f -2-         # discard 2nd and all columns on the right.
+     csvtu cut -f -colA,-colB # discard colA and colB
+
 Usage:
   csvtk cut [flags]
 
 Flags:
-  -f, --fields string   select only these fields. e.g -f 1,2 or -f columnA,columnB, or -f -columnA for unselect columnA
+  -f, --fields string   select only these fields. type "csvtk cut -h" for examples
   -F, --fuzzy-fields    using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
   -h, --help            help for cut
   -i, --ignore-case     ignore case (column name)
@@ -1177,7 +1194,7 @@ Examples
         Robert,Thompson,abc
         Robert,Abel,123
 
-- All fields: `csvtk cut -F -f "*"`
+- All fields: `csvtk cut -F -f "*"` or `csvtk cut -f 1-`.
 
         $ cat testdata/names.csv \
             | csvtk cut -F -f "*"
@@ -1188,7 +1205,7 @@ Examples
         1,Robert,Thompson,abc
         NA,Robert,Abel,123
 
-- Field ranges:
+- Field ranges (read help message ("csvtk cut -f") for more examples)
     - `csvtk cut -f 2-4` for column 2,3,4
 
             $ cat testdata/names.csv \
@@ -1210,6 +1227,28 @@ Examples
             gri
             abc
             123
+            
+    - `csvtk cut -f 2-,1` for moving 1th column to the end.
+    
+            $ cat testdata/names.csv \
+                | csvtk cut -f 2-,1
+            first_name,last_name,username,id
+            Rob,Pike,rob,11
+            Ken,Thompson,ken,2
+            Robert,Griesemer,gri,4
+            Robert,Thompson,abc,1
+            Robert,Abel,123,NA
+            
+    - `csvtk cut -f 1,1` for duplicating columns
+
+            $ cat testdata/names.csv \
+                | csvtk cut -f 1,1
+            id,id
+            11,11
+            2,2
+            4,4
+            1,1
+            NA,NA
 
 ## uniq
 

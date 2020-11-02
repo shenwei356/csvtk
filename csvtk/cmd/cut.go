@@ -37,6 +37,23 @@ var cutCmd = &cobra.Command{
 	Short: "select parts of fields",
 	Long: `select parts of fields
 
+Examples
+  1. Single column:
+     csvtk cut -f 1
+     csvtk cut -f colA
+  2. Multiple columns (replicates allowed)
+     csvtk cut -f 1,3,2,1
+     csvtk cut -f colA,colB,colA
+  3. Column ranges:
+     csvtk cut -f 1,3-5       # 1, 3, 4, 5
+     csvtk cut -f 3,5-        # 3rd col, and 5th col to the end
+     csvtk cut -f 1-          # for all
+     csvtk cut -f 2-,1        # move 1th col to the end
+  4. Unselect:
+     csvtk cut -f -1,-3       # discard 1st and 3rd column
+     csvtk cut -f -1--3       # discard 1st to 3rd column
+     csvtk cut -f -2-         # discard 2nd and all columns on the right.
+     csvtu cut -f -colA,-colB # discard colA and colB
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
@@ -54,7 +71,7 @@ var cutCmd = &cobra.Command{
 		uniqColumn := getFlagBool(cmd, "uniq-column")
 
 		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
-		fields, colnames, negativeFields, needParseHeaderRow := parseFields(cmd, fieldStr, config.NoHeaderRow)
+		fields, colnames, negativeFields, needParseHeaderRow, x2ends := parseFields(cmd, fieldStr, config.NoHeaderRow)
 		var fieldsMap map[int]struct{}
 
 		ignoreCase := getFlagBool(cmd, "ignore-case")
@@ -188,6 +205,27 @@ var cutCmd = &cobra.Command{
 						}
 
 					} else {
+						if len(x2ends) > 0 { // user use 1-.
+							fields1 := make([]int, 0, len(record))
+
+							for i, f := range fields {
+								if v, ok := x2ends[i]; ok && v == f {
+									if negativeFields {
+										for i = -f; i <= len(record); i++ {
+											fields1 = append(fields1, i*-1)
+										}
+									} else {
+										for i = f; i <= len(record); i++ {
+											fields1 = append(fields1, i)
+										}
+									}
+								} else {
+									fields1 = append(fields1, f)
+								}
+							}
+							fields = fields1
+						}
+
 						for _, f := range fields {
 							if f > len(record) {
 								checkError(fmt.Errorf(`field (%d) out of range (%d) in file: %s`, f, len(record), file))
@@ -195,6 +233,10 @@ var cutCmd = &cobra.Command{
 						}
 
 						if negativeFields {
+							for _, f := range fields { // update fieldsMap
+								fieldsMap[f*-1] = struct{}{}
+							}
+
 							fields2 := make([]int, 0, len(fields))
 							var ok bool
 							for i := range record {
@@ -218,6 +260,27 @@ var cutCmd = &cobra.Command{
 				}
 
 				if checkFields {
+					if len(x2ends) > 0 { // user use 1-.
+						fields1 := make([]int, 0, len(record))
+
+						for i, f := range fields {
+							if v, ok := x2ends[i]; ok && v == f {
+								if negativeFields {
+									for i = -f; i <= len(record); i++ {
+										fields1 = append(fields1, i*-1)
+									}
+								} else {
+									for i = f; i <= len(record); i++ {
+										fields1 = append(fields1, i)
+									}
+								}
+							} else {
+								fields1 = append(fields1, f)
+							}
+						}
+						fields = fields1
+					}
+
 					for _, f := range fields {
 						if f > len(record) {
 							checkError(fmt.Errorf(`field (%d) out of range (%d) in file: %s`, f, len(record), file))
@@ -225,6 +288,10 @@ var cutCmd = &cobra.Command{
 					}
 
 					if negativeFields {
+						for _, f := range fields { // update fieldsMap
+							fieldsMap[f*-1] = struct{}{}
+						}
+
 						fields2 := make([]int, 0, len(fields))
 						var ok bool
 						for i := range record {
@@ -265,7 +332,7 @@ var cutCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(cutCmd)
-	cutCmd.Flags().StringP("fields", "f", "", `select only these fields. e.g -f 1,2 or -f columnA,columnB, or -f -columnA for unselect columnA`)
+	cutCmd.Flags().StringP("fields", "f", "", `select only these fields. type "csvtk cut -h" for examples`)
 	cutCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
 	cutCmd.Flags().BoolP("ignore-case", "i", false, `ignore case (column name)`)
 	cutCmd.Flags().BoolP("uniq-column", "u", false, `deduplicate columns matched by multiple fuzzy column names`)

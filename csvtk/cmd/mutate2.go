@@ -155,7 +155,7 @@ Supported operators and types:
 
 		usingColname := true
 
-		fields, colnames, negativeFields, needParseHeaderRow := parseFields(cmd, fieldStr, config.NoHeaderRow)
+		fields, colnames, negativeFields, needParseHeaderRow, _ := parseFields(cmd, fieldStr, config.NoHeaderRow)
 		if negativeFields {
 			checkError(fmt.Errorf("unselect not allowed"))
 		}
