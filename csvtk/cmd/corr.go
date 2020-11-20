@@ -109,6 +109,7 @@ var corrCmd = &cobra.Command{
 			csvReader.Run()
 
 			isHeaderLine := !config.NoHeaderRow
+			missingHeader := config.NoHeaderRow
 			for chunk := range csvReader.Ch {
 				checkError(chunk.Err)
 
@@ -127,6 +128,15 @@ var corrCmd = &cobra.Command{
 						}
 						continue
 					} else {
+						if missingHeader {
+							for i, _ := range record {
+								fStr := fmt.Sprintf("%d", i+1)
+								field2col[fStr] = i + 1
+								if printField == "" {
+									targetCols[i] = fStr
+								}
+							}
+						}
 						if len(targetCols) == 0 {
 							for i := range record {
 								targetCols[i] = strconv.Itoa(i + 1)
