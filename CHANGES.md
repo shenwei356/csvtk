@@ -1,3 +1,4 @@
+    - If the executable/symlink name is `tsvtk` the `-t` option for tab input is set.
 - [csvtk v0.22.0](https://github.com/shenwei356/csvtk/releases/tag/v0.22.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.22.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.22.0)
     - `csvtk`: **global flag `-t` does not overide `-D` anymore**. [#114](https://github.com/shenwei356/csvtk/issues/114)
