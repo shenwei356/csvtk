@@ -28,8 +28,9 @@ import (
 
 	//"runtime"
 
+	"github.com/cheggaaa/pb"
+	// "gopkg.in/cheggaaa/pb.v2"
 	"github.com/spf13/cobra"
-	"gopkg.in/cheggaaa/pb.v2"
 )
 
 // concateCmd represents the concatenate command

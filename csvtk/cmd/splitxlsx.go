@@ -137,8 +137,7 @@ Weakness : Complicated sheet structures are not well supported, e.g.,
 		keysMap := make(map[string]struct{}, 10)
 		keysList := make([]string, 0, 10)
 		Keys2RowIndex := make(map[string]map[int]struct{}, 10)
-		rows, err := xlsx.GetRows(sheetName)
-		checkError(err)
+		rows := xlsx.GetRows(sheetName)
 		for rowIndex, record := range rows {
 			if parseHeaderRow { // parsing header row
 				colnames2fileds = make(map[string]int, len(record))

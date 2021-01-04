@@ -129,7 +129,7 @@ var corrCmd = &cobra.Command{
 						continue
 					} else {
 						if missingHeader {
-							for i, _ := range record {
+							for i := range record {
 								fStr := fmt.Sprintf("%d", i+1)
 								field2col[fStr] = i + 1
 								if printField == "" {

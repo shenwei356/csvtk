@@ -105,8 +105,7 @@ var xlsx2csvCmd = &cobra.Command{
 			writer.Comma = config.OutDelimiter
 		}
 
-		rows, err := xlsx.GetRows(sheetName)
-		checkError(err)
+		rows := xlsx.GetRows(sheetName)
 
 		var nColsMax int = -1
 		var nCols int
