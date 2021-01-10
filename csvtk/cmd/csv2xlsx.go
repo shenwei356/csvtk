@@ -1,0 +1,113 @@
+// Copyright © 2016-2021 Wei Shen <shenwei356@gmail.com>
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
+package cmd
+
+import (
+	"fmt"
+	"path/filepath"
+	"runtime"
+
+	"github.com/360EntSecGroup-Skylar/excelize"
+	"github.com/spf13/cobra"
+)
+
+// csv2xlsxCmd represents the seq command
+var csv2xlsxCmd = &cobra.Command{
+	Use:   "csv2xlsx",
+	Short: "convert CSV/TSV files to XLSX file",
+	Long: `convert CSV/TSV files to XLSX file
+
+Attention:
+
+  1. Multiple CSV/TSV files are saved as separated sheets in .xlsx file.
+  2. All input files should all be CSV or TSV.
+  3. First rows are freezed unless given '-H/--no-header-row'.
+  
+`,
+	Run: func(cmd *cobra.Command, args []string) {
+		config := getConfigs(cmd)
+		files := getFileListFromArgsAndFile(cmd, args, true, "infile-list", true)
+
+		runtime.GOMAXPROCS(config.NumCPUs)
+
+		singleInput := len(files) == 1
+
+		outFile := config.OutFile
+		if isStdin(outFile) {
+			if singleInput && !isStdin(files[0]) {
+				outFile = files[0] + ".xlsx"
+			} else {
+				outFile = "stdin.xlsx"
+			}
+		}
+
+		xlsx := excelize.NewFile()
+
+		var chunk CSVRecordsChunk
+		var record []string
+
+		var sheet, cell, val string
+		var col, line int
+		for i, file := range files {
+			csvReader, err := newCSVReaderByConfig(config, file)
+			checkError(err)
+			csvReader.Run()
+
+			if singleInput {
+				sheet = "Sheet1"
+			} else {
+				sheet, _ = filepathTrimExtension(filepath.Base(file))
+				if i == 0 {
+					xlsx.SetSheetName("Sheet1", sheet)
+				} else {
+					xlsx.NewSheet(sheet)
+				}
+			}
+			if !config.NoHeaderRow {
+				xlsx.SetPanes(sheet, `{"freeze":true,"split":false,"x_split":0,"y_split":1,"top_left_cell":"A2","active_pane":"bottomLeft"}`)
+			}
+
+			line = 1
+			for chunk = range csvReader.Ch {
+				checkError(chunk.Err)
+
+				for _, record = range chunk.Data {
+					for col, val = range record {
+						cell = fmt.Sprintf("%c%d", 65+col, line)
+						xlsx.SetCellValue(sheet, cell, val)
+					}
+					line++
+				}
+			}
+
+			readerReport(&config, csvReader, file)
+
+		}
+
+		xlsx.SetActiveSheet(1)
+		checkError(xlsx.SaveAs(outFile))
+	},
+}
+
+func init() {
+	RootCmd.AddCommand(csv2xlsxCmd)
+
+}

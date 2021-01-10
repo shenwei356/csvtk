@@ -35,7 +35,9 @@
 - [transpose](#transpose)
 - [csv2md](#csv2md)
 - [csv2json](#csv2json)
+- [csv2xlsx](#csv2xlsx)
 - [xlsx2csv](#xlsx2csv)
+
 
 **Set operations**
 
@@ -134,6 +136,7 @@ Available Commands:
   csv2json        convert CSV to JSON format
   csv2md          convert CSV to markdown format
   csv2tab         convert CSV to tabular format
+  csv2xlsx        convert CSV/TSV files to XLSX file
   cut             select parts of fields
   del-header      delete column names
   dim             dimensions of CSV file
@@ -854,6 +857,55 @@ Examples
     1  |Robert    |Thompson |abc
     NA |Robert    |Abel     |123
 
+## csv2xlsx
+
+Usage
+
+```text
+convert CSV/TSV files to XLSX file
+
+Attention:
+
+  1. Multiple CSV/TSV files are saved as separated sheets in .xlsx file.
+  2. All input files should all be CSV or TSV.
+  3. First rows are freezed unless given '-H/--no-header-row'.
+
+Usage:
+  csvtk csv2xlsx [flags]
+
+Flags:
+  -h, --help   help for csv2xlsx
+
+```
+
+Examples
+
+1. Single input
+
+        $ csvtk csv2xlsx ../testdata/names.csv -o output.xlsx
+        
+        # check content
+
+        $ csvtk xlsx2csv -a output.xlsx
+        index   sheet
+        1       Sheet1
+        
+        $ csvtk xlsx2csv output.xlsx | md5sum 
+        8e9d38a012cb02279a396a2f2dbbbca9  -
+        
+        $ csvtk cut -f 1-  ../testdata/names.csv | md5sum 
+        8e9d38a012cb02279a396a2f2dbbbca9  -
+    
+2. Merging multiple CSV/TSV files into one .xlsx file.
+
+        $ csvtk csv2xlsx ../testdata/names*.csv -o output.xlsx
+        
+        $ csvtk xlsx2csv -a output.xlsx
+        index   sheet
+        1       names
+        2       names.reorder
+        3       names.with-unmatched-colname
+        
 ## xlsx2csv
 
 Usage
