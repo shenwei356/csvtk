@@ -3,7 +3,7 @@
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.22.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.22.0)
     - `csvtk`:
         - **global flag `-t` does not overide `-D` anymore**. [#114](https://github.com/shenwei356/csvtk/issues/114)
-        - If the executable/symlink name is `tsvtk` the `-t/--tabs` option for tab input is set. Thanks @bsipos. [#117](https://github.com/shenwei356/csvtk/pull/117)
+        - **If the executable/symlink name is `tsvtk` the `-t/--tabs` option for tab input is set**. Thanks @bsipos. [#117](https://github.com/shenwei356/csvtk/pull/117)
     - `csvtk cut`: **support range format `2-` to choose 2nd column to the end**. [#106](https://github.com/shenwei356/csvtk/issues/106)
 - [csvtk v0.21.0](https://github.com/shenwei356/csvtk/releases/tag/v0.21.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.21.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.21.0)

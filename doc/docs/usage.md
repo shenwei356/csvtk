@@ -5,15 +5,15 @@
 **Attention**
 
 1. The CSV parser requires all the lines have same number of fields/columns.
-    Even lines with spaces will cause error.
+    Even lines with spaces will cause error. 
     Use '-I/--ignore-illegal-row' to skip these lines if neccessary.
-2. By default, csvtk thinks your files have header row, if not, switch flag `-H` on.
+2. By default, csvtk thinks your files have header row, if not, switch flag "-H" on.
 3. Column names better be unique.
-4. By default, lines starting with `#` will be ignored, if the header row
-    starts with `#`, please assign flag `-C` another rare symbol, e.g. `'$'`.
-5. By default, csvtk handles CSV files, use flag `-t` for tab-delimited files.
-6. If `"` exists in tab-delimited files, use flag `-l`.
-7. Do not mix use digital fields and column names.
+4. By default, lines starting with "#" will be ignored, if the header row
+    starts with "#", please assign flag "-C" another rare symbol, e.g. '$'.
+5. By default, csvtk handles CSV files, use flag "-t" for tab-delimited files.
+6. If double quotes exist in fields, use flag "-l".
+7. Do not mix using digital fields and column names.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -110,13 +110,16 @@ Attention:
   4. By default, lines starting with "#" will be ignored, if the header row
      starts with "#", please assign flag "-C" another rare symbol, e.g. '$'.
   5. By default, csvtk handles CSV files, use flag "-t" for tab-delimited files.
-  6. If " exists in tab-delimited files, use flag "-l".
-  7. Do not mix use digital fields and column names.
+  6. If double quotes exist in fields, use flag "-l".
+  7. Do not mix using digital fields and column names.
 
-Environment variables for frequently used global flags
+Environment variables for frequently used global flags:
 
   - "CSVTK_T" for flag "-t/--tabs"
   - "CSVTK_H" for flag "-H/--no-header-row"
+
+You can also create a soft link named "tsvtk" for "csvtk", 
+which sets "-t/--tabs" by default.
 
 Usage:
   csvtk [command]
