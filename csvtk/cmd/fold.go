@@ -35,9 +35,41 @@ import (
 
 // collapseCmd represents the colapse command
 var collapseCmd = &cobra.Command{
-	Use:   "collapse",
-	Short: "collapse one field with selected fields as keys",
-	Long: `collapse one field with selected fields as keys
+	Use:     "fold",
+	Aliases: []string{"collapse"},
+	Short:   "fold multiple values of a field into cells of groups",
+	Long: `fold multiple values of a field into cells of groups
+
+Attention:
+
+    Only grouping fields and value filed are outputted.
+
+Example:
+
+    $ echo -ne "id,value,meta\n1,a,12\n1,b,34\n2,c,56\n2,d,78\n" \
+        | csvtk pretty
+    id   value   meta
+    1    a       12
+    1    b       34
+    2    c       56
+    2    d       78
+    
+    $ echo -ne "id,value,meta\n1,a,12\n1,b,34\n2,c,56\n2,d,78\n" \
+        | csvtk fold -f id -v value -s ";" \
+        | csvtk pretty
+    id   value
+    1    a;b
+    2    c;d
+    
+    $ echo -ne "id,value,meta\n1,a,12\n1,b,34\n2,c,56\n2,d,78\n" \
+        | csvtk fold -f id -v value -s ";" \
+        | csvtk unfold -f value -s ";" \
+        | csvtk pretty
+    id   value
+    1    a
+    1    b
+    2    c
+    2    d
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -281,9 +313,9 @@ var collapseCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(collapseCmd)
-	collapseCmd.Flags().StringP("fields", "f", "1", `key fields. e.g -f 1,2 or -f columnA,columnB`)
-	collapseCmd.Flags().StringP("vfield", "v", "", `value field`)
+	collapseCmd.Flags().StringP("fields", "f", "1", `key fields for grouping. e.g -f 1,2 or -f columnA,columnB`)
+	collapseCmd.Flags().StringP("vfield", "v", "", `value field for folding`)
 	collapseCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
 	collapseCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields (only for key fields), e.g., -F -f "*name" or -F -f "id123*"`)
-	collapseCmd.Flags().StringP("separater", "s", "; ", "separater for collapsed data")
+	collapseCmd.Flags().StringP("separater", "s", "; ", "separater for folded values")
 }

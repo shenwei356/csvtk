@@ -54,7 +54,6 @@
 - [join](#join)
 - [split](#split)
 - [splitxlsx](#splitxlsx)
-- [collapse](#collapse)
 - [comb](#comb)
 
 **Edit**
@@ -69,6 +68,8 @@
 - [mutate2](#mutate2)
 - [sep](#sep)
 - [gather](#gather)
+- [unfold](#unfold)
+- [fold](#fold)
 
 **Ordering**
 
@@ -1129,20 +1130,22 @@ $ seq 100 | csvtk sample -H -p 0.05 -n
 Usage
 
 ```text
-select parts of fields
+select and arrange fields
 
-Examples
-  1. Single column:
+Examples:
+
+  1. Single column
      csvtk cut -f 1
      csvtk cut -f colA
   2. Multiple columns (replicates allowed)
      csvtk cut -f 1,3,2,1
      csvtk cut -f colA,colB,colA
-  3. Column ranges:
+  3. Column ranges
      csvtk cut -f 1,3-5       # 1, 3, 4, 5
      csvtk cut -f 3,5-        # 3rd col, and 5th col to the end
      csvtk cut -f 1-          # for all
-  4. Unselect:
+     csvtk cut -f 2-,1        # move 1th col to the end
+  4. Unselect
      csvtk cut -f -1,-3       # discard 1st and 3rd column
      csvtk cut -f -1--3       # discard 1st to 3rd column
      csvtk cut -f -2-         # discard 2nd and all columns on the right.
@@ -2060,72 +2063,6 @@ Examples
         1    Robert       Thompson    abc
         NA   Robert       Abel        123
 
-## collapse
-
-Usage
-
-```text
-collapse one field with selected fields as keys
-
-Usage:
-  csvtk collapse [flags]
-
-Flags:
-  -f, --fields string      key fields. e.g -f 1,2 or -f columnA,columnB (default "1")
-  -F, --fuzzy-fields       using fuzzy fields (only for key fields), e.g., -F -f "*name" or -F -f "id123*"
-  -h, --help               help for collapse
-  -i, --ignore-case        ignore case
-  -s, --separater string   separater for collapsed data (default "; ")
-  -v, --vfield string      value field
-
-```
-
-examples
-
-1. data
-
-        $ csvtk pretty teachers.csv
-        lab                     teacher   class
-        computational biology   Tom       Bioinformatics
-        computational biology   Tom       Statistics
-        computational biology   Rob       Bioinformatics
-        sequencing center       Jerry     Bioinformatics
-        sequencing center       Nick      Molecular Biology
-        sequencing center       Nick      Microbiology
-
-1. List teachers for every lab/class. `uniq` is used to deduplicate items.
-
-        $ cat teachers.csv  \
-            | csvtk uniq -f lab,teacher  \
-            | csvtk collapse -f lab -v teacher \
-            | csvtk pretty
-
-        lab                     teacher
-        computational biology   Tom; Rob
-        sequencing center       Jerry; Nick
-
-        $ cat teachers.csv  \
-            | csvtk uniq -f class,teacher  \
-            | csvtk collapse -f class -v teacher -s ", " \
-            | csvtk pretty
-
-        class               teacher
-        Statistics          Tom
-        Bioinformatics      Tom, Rob, Jerry
-        Molecular Biology   Nick
-        Microbiology        Nick
-
-1. Multiple key fields supported
-
-        $ cat teachers.csv  \
-            | csvtk collapse -f teacher,lab -v class \
-            | csvtk pretty
-
-        teacher   lab                     class
-        Tom       computational biology   Bioinformatics; Statistics
-        Rob       computational biology   Bioinformatics
-        Jerry     sequencing center       Bioinformatics
-        Nick      sequencing center       Molecular Biology; Microbiology
 
 ## comb
 
@@ -2741,6 +2678,7 @@ $ echo -ne "taxid\tlineage\n9606\tEukaryota;Chordata;Mammalia;Primates;Hominidae
 taxid   kindom      phylum     class      order      family      genus   species
 9606    Eukaryota   Chordata   Mammalia   Primates   Hominidae   Homo    Homo sapiens
 ```
+
 ## gather
 
 Usage
@@ -2788,6 +2726,147 @@ Examples:
     NA,last_name,Abel
     NA,username,123
 
+## unfold
+
+Usage
+
+```text
+unfold multiple values in cells of a field
+
+Example:
+
+    $ echo -ne "id,values,meta\n1,a;b,12\n2,c,23\n3,d;e;f,34\n" \
+        | csvtk pretty
+    id   values   meta
+    1    a;b      12
+    2    c        23
+    3    d;e;f    34
+
+
+    $ echo -ne "id,values,meta\n1,a;b,12\n2,c,23\n3,d;e;f,34\n" \
+        | csvtk unfold -f values -s ";" \
+        | csvtk pretty
+    id   values   meta
+    1    a        12
+    1    b        12
+    2    c        23
+    3    d        34
+    3    e        34
+    3    f        34
+
+Usage:
+  csvtk unfold [flags]
+
+Flags:
+  -f, --fields string      field to expand, only one field is allowed. type "csvtk unfold -h" for examples
+  -h, --help               help for unfold
+  -s, --separater string   separater for folded values (default "; ")
+```
+
+
+## fold
+
+Usage
+
+```text
+fold multiple values of a field into cells of groups
+
+Attention:
+
+    Only grouping fields and value filed are outputted.
+
+Example:
+
+    $ echo -ne "id,value,meta\n1,a,12\n1,b,34\n2,c,56\n2,d,78\n" \
+        | csvtk pretty
+    id   value   meta
+    1    a       12
+    1    b       34
+    2    c       56
+    2    d       78
+    
+    $ echo -ne "id,value,meta\n1,a,12\n1,b,34\n2,c,56\n2,d,78\n" \
+        | csvtk fold -f id -v value -s ";" \
+        | csvtk pretty
+    id   value
+    1    a;b
+    2    c;d
+    
+    $ echo -ne "id,value,meta\n1,a,12\n1,b,34\n2,c,56\n2,d,78\n" \
+        | csvtk fold -f id -v value -s ";" \
+        | csvtk unfold -f value -s ";" \
+        | csvtk pretty
+    id   value
+    1    a
+    1    b
+    2    c
+    2    d
+
+Usage:
+  csvtk fold [flags]
+
+Aliases:
+  fold, collapse
+
+Flags:
+  -f, --fields string      key fields for grouping. e.g -f 1,2 or -f columnA,columnB (default "1")
+  -F, --fuzzy-fields       using fuzzy fields (only for key fields), e.g., -F -f "*name" or -F -f "id123*"
+  -h, --help               help for fold
+  -i, --ignore-case        ignore case
+  -s, --separater string   separater for folded values (default "; ")
+  -v, --vfield string      value field for folding
+
+
+```
+
+examples
+
+1. data
+
+        $ csvtk pretty teachers.csv
+        lab                     teacher   class
+        computational biology   Tom       Bioinformatics
+        computational biology   Tom       Statistics
+        computational biology   Rob       Bioinformatics
+        sequencing center       Jerry     Bioinformatics
+        sequencing center       Nick      Molecular Biology
+        sequencing center       Nick      Microbiology
+
+1. List teachers for every lab/class. `uniq` is used to deduplicate items.
+
+        $ cat teachers.csv  \
+            | csvtk uniq -f lab,teacher  \
+            | csvtk fold -f lab -v teacher \
+            | csvtk pretty
+
+        lab                     teacher
+        computational biology   Tom; Rob
+        sequencing center       Jerry; Nick
+
+        $ cat teachers.csv  \
+            | csvtk uniq -f class,teacher  \
+            | csvtk fold -f class -v teacher -s ", " \
+            | csvtk pretty
+
+        class               teacher
+        Statistics          Tom
+        Bioinformatics      Tom, Rob, Jerry
+        Molecular Biology   Nick
+        Microbiology        Nick
+
+1. Multiple key fields supported
+
+        $ cat teachers.csv  \
+            | csvtk fold -f teacher,lab -v class \
+            | csvtk pretty
+
+        teacher   lab                     class
+        Tom       computational biology   Bioinformatics; Statistics
+        Rob       computational biology   Bioinformatics
+        Jerry     sequencing center       Bioinformatics
+        Nick      sequencing center       Molecular Biology; Microbiology
+
+        
 ## sort
 
 Usage

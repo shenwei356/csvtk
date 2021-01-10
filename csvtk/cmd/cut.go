@@ -34,22 +34,23 @@ import (
 // cutCmd represents the cut command
 var cutCmd = &cobra.Command{
 	Use:   "cut",
-	Short: "select parts of fields",
-	Long: `select parts of fields
+	Short: "select and arrange fields",
+	Long: `select and arrange fields
 
-Examples
-  1. Single column:
+Examples:
+
+  1. Single column
      csvtk cut -f 1
      csvtk cut -f colA
   2. Multiple columns (replicates allowed)
      csvtk cut -f 1,3,2,1
      csvtk cut -f colA,colB,colA
-  3. Column ranges:
+  3. Column ranges
      csvtk cut -f 1,3-5       # 1, 3, 4, 5
      csvtk cut -f 3,5-        # 3rd col, and 5th col to the end
      csvtk cut -f 1-          # for all
      csvtk cut -f 2-,1        # move 1th col to the end
-  4. Unselect:
+  4. Unselect
      csvtk cut -f -1,-3       # discard 1st and 3rd column
      csvtk cut -f -1--3       # discard 1st to 3rd column
      csvtk cut -f -2-         # discard 2nd and all columns on the right.

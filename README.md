@@ -64,7 +64,7 @@ It could save you lots of time in (not) writing Python/R scripts.
 
 ## Subcommands
 
-46 subcommands in total.
+47 subcommands in total.
 
 **Information**
 
@@ -93,7 +93,7 @@ It could save you lots of time in (not) writing Python/R scripts.
 - [`head`](https://bioinf.shenwei.me/csvtk/usage/#head): prints first N records
 - [`concat`](https://bioinf.shenwei.me/csvtk/usage/#concat): concatenates CSV/TSV files by rows
 - [`sample`](https://bioinf.shenwei.me/csvtk/usage/#sample): sampling by proportion
-- [`cut`](https://bioinf.shenwei.me/csvtk/usage/#cut): selects parts of fields
+- [`cut`](https://bioinf.shenwei.me/csvtk/usage/#cut): select and arrange fields
 - [`grep`](https://bioinf.shenwei.me/csvtk/usage/#grep): greps data by selected fields with patterns/regular expressions
 - [`uniq`](https://bioinf.shenwei.me/csvtk/usage/#uniq): unique data without sorting
 - [`freq`](https://bioinf.shenwei.me/csvtk/usage/#freq): frequencies of selected fields
@@ -103,7 +103,6 @@ It could save you lots of time in (not) writing Python/R scripts.
 - [`join`](https://bioinf.shenwei.me/csvtk/usage/#join): join files by selected fields (inner, left and outer join)
 - [`split`](https://bioinf.shenwei.me/csvtk/usage/#split) splits CSV/TSV into multiple files according to column values
 - [`splitxlsx`](https://bioinf.shenwei.me/csvtk/usage/#splitxlsx): splits XLSX sheet into multiple sheets according to column values
-- [`collapse`](https://bioinf.shenwei.me/csvtk/usage/#collapse): collapses one field with selected fields as keys
 - [`comb`](https://bioinf.shenwei.me/csvtk/usage/#comb): compute combinations of items at every row
 
 **Edit**
@@ -118,6 +117,8 @@ It could save you lots of time in (not) writing Python/R scripts.
 - [`mutate2`](https://bioinf.shenwei.me/csvtk/usage/#mutate2): creates new column from selected fields by awk-like arithmetic/string expressions
 - [`sep`](https://bioinf.shenwei.me/csvtk/usage/#sep): separate column into multiple columns
 - [`gather`](https://bioinf.shenwei.me/csvtk/usage/#gather): gathers columns into key-value pairs
+- [`unfold`](https://bioinf.shenwei.me/csvtk/usage/#unfold): unfold multiple values in cells of a field
+- [`fold`](https://bioinf.shenwei.me/csvtk/usage/#fold): fold multiple values of a field into cells of groups
 
 **Ordering**
 

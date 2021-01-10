@@ -12,6 +12,8 @@
         - **global flag `-t` does not overide `-D` anymore**. [#114](https://github.com/shenwei356/csvtk/issues/114)
         - **If the executable/symlink name is `tsvtk` the `-t/--tabs` option for tab input is set**. Thanks @bsipos. [#117](https://github.com/shenwei356/csvtk/pull/117)
     - new command: `csvtk csv2xlsx` for converting CSV/TSV file(s) to a single `.xlsx` file.
+    - new command: `csvtk unfold` for unfolding multiple values in cells of a field. [#103](https://github.com/shenwei356/csvtk/issues/103)
+    - rename `csvtk collapse` to `csvtk fold`, for folding multiple values of a field into cells of groups.
     - `csvtk cut`: **support range format `2-` to choose 2nd column to the end**. [#106](https://github.com/shenwei356/csvtk/issues/106)
 
 Links:
