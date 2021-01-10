@@ -130,7 +130,6 @@ Usage:
 Available Commands:
   add-header      add column names
   cat             stream file to stdout and report progress on stderr
-  collapse        collapse one field with selected fields as keys
   comb            compute combinations of items at every row
   concat          concatenate CSV/TSV files by rows
   corr            calculate Pearson correlation between two columns
@@ -138,11 +137,12 @@ Available Commands:
   csv2md          convert CSV to markdown format
   csv2tab         convert CSV to tabular format
   csv2xlsx        convert CSV/TSV files to XLSX file
-  cut             select parts of fields
+  cut             select and arrange fields
   del-header      delete column names
   dim             dimensions of CSV file
   filter          filter rows by values of selected fields with arithmetic expression
   filter2         filter rows by awk-like artithmetic/string expressions
+  fold            fold multiple values of a field into cells of groups
   freq            frequencies of selected fields
   gather          gather columns into key-value pairs
   genautocomplete generate shell autocompletion script
@@ -171,6 +171,7 @@ Available Commands:
   summary         summary statistics of selected digital fields (groupby group fields)
   tab2csv         convert tabular format to CSV
   transpose       transpose CSV data
+  unfold          unfold multiple values in cells of a field
   uniq            unique data without sorting
   version         print version information and check for update
   watch           monitor the specified fields
