@@ -8,6 +8,7 @@
     - new command: `csvtk unfold` for unfolding multiple values in cells of a field. [#103](https://github.com/shenwei356/csvtk/issues/103)
     - rename `csvtk collapse` to `csvtk fold`, for folding multiple values of a field into cells of groups.
     - `csvtk cut`: **support range format `2-` to choose 2nd column to the end**. [#106](https://github.com/shenwei356/csvtk/issues/106)
+    - `csvtk round`: fix bug of failing to round scientific notation with value small than one, e.g., `7.1E-1`.
 - [csvtk v0.21.0](https://github.com/shenwei356/csvtk/releases/tag/v0.21.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.21.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.21.0)
     - new command: `csvtk nrow/ncol` for printing number of rows or columns.

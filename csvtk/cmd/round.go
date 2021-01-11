@@ -26,6 +26,7 @@ import (
 	"regexp"
 	"runtime"
 	"strconv"
+	"strings"
 
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
@@ -220,6 +221,9 @@ var roundCmd = &cobra.Command{
 									record2[f] = fmt.Sprintf(decimalFormat, fvalue)
 								} else if found[1] == "" {
 
+								} else if strings.IndexByte(found[2], '-') > 0 { // scientific notation with value < 1
+									fvalue, _ = strconv.ParseFloat(record2[f], 10)
+									record2[f] = fmt.Sprintf(decimalFormat, fvalue)
 								} else {
 									fvalue, _ = strconv.ParseFloat(found[1], 10)
 									record2[f] = fmt.Sprintf(decimalFormat, fvalue) + found[2]
