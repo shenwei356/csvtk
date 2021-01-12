@@ -1,14 +1,10 @@
 
-
-
-
 <!doctype html>
 <html lang="en" class="no-js">
   <head>
     
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
-      <meta http-equiv="x-ua-compatible" content="ie=edge">
       
         <meta name="description" content="csvtk - CSV/TSV toolkit">
       
@@ -17,26 +13,8 @@
         <meta name="author" content="shenwei356">
       
       
-        <meta name="lang:clipboard.copy" content="Copy to clipboard">
-      
-        <meta name="lang:clipboard.copied" content="Copied to clipboard">
-      
-        <meta name="lang:search.language" content="en">
-      
-        <meta name="lang:search.pipeline.stopwords" content="True">
-      
-        <meta name="lang:search.pipeline.trimmer" content="True">
-      
-        <meta name="lang:search.result.none" content="No matching documents">
-      
-        <meta name="lang:search.result.one" content="1 matching document">
-      
-        <meta name="lang:search.result.other" content="# matching documents">
-      
-        <meta name="lang:search.tokenizer" content="[\s\-]+">
-      
       <link rel="shortcut icon" href="../files/favicon.ico">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.3">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.4">
     
     
       
@@ -44,129 +22,117 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/application.adb8469c.css">
-      
-        <link rel="stylesheet" href="../assets/stylesheets/application-palette.a8b3c06d.css">
-      
+      <link rel="stylesheet" href="../assets/stylesheets/main.15aa0b43.min.css">
       
         
+        <link rel="stylesheet" href="../assets/stylesheets/palette.75751829.min.css">
         
-        <meta name="theme-color" content="#03a9f4">
+          
+          
+          <meta name="theme-color" content="#02a6f2">
+        
       
     
     
-      <script src="../assets/javascripts/modernizr.86422ebf.js"></script>
-    
     
       
-        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
-        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
       
     
-    <link rel="stylesheet" href="../assets/fonts/material-icons.css">
     
-      <link rel="manifest" type="application/manifest+json" href="../manifest.webmanifest" crossorigin="use-credentials">
+      <link rel="manifest" href="../manifest.webmanifest" crossorigin="use-credentials">
     
     
     
       
         
-<script>
-  window.ga = window.ga || function() {
-    (ga.q = ga.q || []).push(arguments)
-  }
-  ga.l = +new Date
-  /* Setup integration and send page view */
-  ga("create", "UA-28948626-9", "bioinf.shenwei.me/csvtk")
-  ga("set", "anonymizeIp", true)
-  ga("send", "pageview")
-  /* Register handler to log search on blur */
-  document.addEventListener("DOMContentLoaded", () => {
-    if (document.forms.search) {
-      var query = document.forms.search.query
-      query.addEventListener("blur", function() {
-        if (this.value) {
-          var path = document.location.pathname;
-          ga("send", "pageview", path + "?q=" + this.value)
-        }
-      })
-    }
-  })
-</script>
+<script>window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga("create","UA-28948626-9","bioinf.shenwei.me/csvtk"),ga("set","anonymizeIp",!0),ga("send","pageview"),document.addEventListener("DOMContentLoaded",function(){document.forms.search&&document.forms.search.query.addEventListener("blur",function(){if(this.value){var e=document.location.pathname;ga("send","pageview",e+"?q="+this.value)}})}),document.addEventListener("DOMContentSwitch",function(){ga("send","pageview",document.location.pathname)})</script>
 <script async src="https://www.google-analytics.com/analytics.js"></script>
       
     
     
   </head>
   
-    
-    
-    <body dir="ltr" data-md-color-primary="light-blue" data-md-color-accent="light-blue">
   
-    <svg class="md-svg">
-      <defs>
-        
-        
-          <svg xmlns="http://www.w3.org/2000/svg" width="416" height="448" viewBox="0 0 416 448" id="__github"><path fill="currentColor" d="M160 304q0 10-3.125 20.5t-10.75 19T128 352t-18.125-8.5-10.75-19T96 304t3.125-20.5 10.75-19T128 256t18.125 8.5 10.75 19T160 304zm160 0q0 10-3.125 20.5t-10.75 19T288 352t-18.125-8.5-10.75-19T256 304t3.125-20.5 10.75-19T288 256t18.125 8.5 10.75 19T320 304zm40 0q0-30-17.25-51T296 232q-10.25 0-48.75 5.25Q229.5 240 208 240t-39.25-2.75Q130.75 232 120 232q-29.5 0-46.75 21T56 304q0 22 8 38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0 37.25-1.75t35-7.375 30.5-15 20.25-25.75T360 304zm56-44q0 51.75-15.25 82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5T212 416q-19.5 0-35.5-.75t-36.875-3.125-38.125-7.5-34.25-12.875T37 371.5t-21.5-28.75Q0 312 0 260q0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25 30.875Q171.5 96 212 96q37 0 70 8 26.25-20.5 46.75-30.25T376 64q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34 99.5z"/></svg>
-        
-      </defs>
-    </svg>
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="light-blue" data-md-color-accent="light-blue">
+      
+  
+    
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
-    <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
-    
-      <a href="#usage-and-examples" tabindex="0" class="md-skip">
-        Skip to content
-      </a>
-    
-    
-      <header class="md-header" data-md-component="header">
-  <nav class="md-header-nav md-grid">
-    <div class="md-flex">
-      <div class="md-flex__cell md-flex__cell--shrink">
-        <a href=".." title="csvtk - CSV/TSV Toolkit" aria-label="csvtk - CSV/TSV Toolkit" class="md-header-nav__button md-logo">
-          
-            <i class="md-icon">school</i>
-          
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#usage-and-examples" class="md-skip">
+          Skip to content
         </a>
-      </div>
-      <div class="md-flex__cell md-flex__cell--shrink">
-        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
-      </div>
-      <div class="md-flex__cell md-flex__cell--stretch">
-        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
-          
-            <span class="md-header-nav__topic">
-              csvtk - CSV/TSV Toolkit
-            </span>
-            <span class="md-header-nav__topic">
-              
-                Usage
-              
-            </span>
-          
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href=".." title="csvtk - CSV/TSV Toolkit" class="md-header-nav__button md-logo" aria-label="csvtk - CSV/TSV Toolkit">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      <div class="md-header-nav__ellipsis">
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            csvtk - CSV/TSV Toolkit
+          </span>
+        </div>
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            
+              Usage
+            
+          </span>
         </div>
       </div>
-      <div class="md-flex__cell md-flex__cell--shrink">
-        
-          <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
-          
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
 <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
-      <input type="text" class="md-search__input" aria-label="search" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
-      <label class="md-icon md-search__icon" for="__search"></label>
-      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
-        &#xE5CD;
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
       </button>
     </form>
     <div class="md-search__output">
       <div class="md-search__scrollwrap" data-md-scrollfix>
-        <div class="md-search-result" data-md-component="result">
+        <div class="md-search-result" data-md-component="search-result">
           <div class="md-search-result__meta">
-            Type to start searching
+            Initializing search
           </div>
           <ol class="md-search-result__list"></ol>
         </div>
@@ -174,71 +140,60 @@
     </div>
   </div>
 </div>
+    
+    
+      <div class="md-header-nav__source">
         
-      </div>
-      
-        <div class="md-flex__cell md-flex__cell--shrink">
-          <div class="md-header-nav__source">
-            
-
-
-  
-
-<a href="https://github.com/shenwei356/csvtk/" title="Go to repository" class="md-source" data-md-source="github">
-  
-    <div class="md-source__icon">
-      <svg viewBox="0 0 24 24" width="24" height="24">
-        <use xlink:href="#__github" width="24" height="24"></use>
-      </svg>
-    </div>
-  
+<a href="https://github.com/shenwei356/csvtk/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
   <div class="md-source__repository">
     GitHub
   </div>
 </a>
-          </div>
-        </div>
-      
-    </div>
+      </div>
+    
   </nav>
 </header>
     
-    <div class="md-container">
+    <div class="md-container" data-md-component="container">
+      
       
         
       
-      
-      <main class="md-main" role="main">
-        <div class="md-main__inner md-grid" data-md-component="container">
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
           
             
-              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
-                    <nav class="md-nav md-nav--primary" data-md-level="0">
-  <label class="md-nav__title md-nav__title--site" for="__drawer">
-    <a href=".." title="csvtk - CSV/TSV Toolkit" class="md-nav__button md-logo">
+                    
+
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="csvtk - CSV/TSV Toolkit" class="md-nav__button md-logo" aria-label="csvtk - CSV/TSV Toolkit">
       
-        <i class="md-icon">school</i>
-      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
     </a>
     csvtk - CSV/TSV Toolkit
   </label>
   
     <div class="md-nav__source">
       
-
-
-  
-
-<a href="https://github.com/shenwei356/csvtk/" title="Go to repository" class="md-source" data-md-source="github">
-  
-    <div class="md-source__icon">
-      <svg viewBox="0 0 24 24" width="24" height="24">
-        <use xlink:href="#__github" width="24" height="24"></use>
-      </svg>
-    </div>
-  
+<a href="https://github.com/shenwei356/csvtk/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
   <div class="md-source__repository">
     GitHub
   </div>
@@ -252,8 +207,9 @@
       
 
 
+
   <li class="md-nav__item">
-    <a href=".." title="Home" class="md-nav__link">
+    <a href=".." class="md-nav__link">
       Home
     </a>
   </li>
@@ -264,8 +220,9 @@
       
 
 
+
   <li class="md-nav__item">
-    <a href="../download/" title="Download" class="md-nav__link">
+    <a href="../download/" class="md-nav__link">
       Download
     </a>
   </li>
@@ -275,32 +232,37 @@
       
       
 
+
   
 
 
   <li class="md-nav__item md-nav__item--active">
     
-    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
     
       
     
     
       <label class="md-nav__link md-nav__link--active" for="__toc">
         Usage
+        <span class="md-nav__icon md-icon"></span>
       </label>
     
-    <a href="./" title="Usage" class="md-nav__link md-nav__link--active">
+    <a href="./" class="md-nav__link md-nav__link--active">
       Usage
     </a>
     
       
-<nav class="md-nav md-nav--secondary">
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
     
   
   
-    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
@@ -383,6 +345,13 @@
         <li class="md-nav__item">
   <a href="#csv2md" class="md-nav__link">
     csv2md
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#csv2xlsx" class="md-nav__link">
+    csv2xlsx
   </a>
   
 </li>
@@ -486,13 +455,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#collapse" class="md-nav__link">
-    collapse
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#comb" class="md-nav__link">
     comb
   </a>
@@ -570,6 +532,20 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#unfold" class="md-nav__link">
+    unfold
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fold" class="md-nav__link">
+    fold
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#sort" class="md-nav__link">
     sort
   </a>
@@ -617,10 +593,6 @@
   </a>
   
 </li>
-      
-      
-      
-      
       
     </ul>
   
@@ -634,8 +606,9 @@
       
 
 
+
   <li class="md-nav__item">
-    <a href="../tutorial/" title="Tutorial" class="md-nav__link">
+    <a href="../tutorial/" class="md-nav__link">
       Tutorial
     </a>
   </li>
@@ -646,8 +619,9 @@
       
 
 
+
   <li class="md-nav__item">
-    <a href="../chinese/" title="中文介绍" class="md-nav__link">
+    <a href="../chinese/" class="md-nav__link">
       中文介绍
     </a>
   </li>
@@ -658,8 +632,9 @@
       
 
 
+
   <li class="md-nav__item">
-    <a href="https://github.com/shenwei356" title="More tools" class="md-nav__link">
+    <a href="https://github.com/shenwei356" class="md-nav__link">
       More tools
     </a>
   </li>
@@ -672,17 +647,21 @@
               </div>
             
             
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
-<nav class="md-nav md-nav--secondary">
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
     
   
   
-    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
@@ -765,6 +744,13 @@
         <li class="md-nav__item">
   <a href="#csv2md" class="md-nav__link">
     csv2md
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#csv2xlsx" class="md-nav__link">
+    csv2xlsx
   </a>
   
 </li>
@@ -868,13 +854,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#collapse" class="md-nav__link">
-    collapse
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#comb" class="md-nav__link">
     comb
   </a>
@@ -952,6 +931,20 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#unfold" class="md-nav__link">
+    unfold
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fold" class="md-nav__link">
+    fold
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#sort" class="md-nav__link">
     sort
   </a>
@@ -999,10 +992,6 @@
   </a>
   
 </li>
-      
-      
-      
-      
       
     </ul>
   
@@ -1016,7 +1005,9 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/shenwei356/csvtk/edit/master/docs/usage.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                  <a href="https://github.com/shenwei356/csvtk/edit/master/docs/usage.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
                 
                 
                 <h1 id="usage-and-examples">Usage and Examples</h1>
@@ -1024,20 +1015,18 @@
 <p><strong>Attention</strong></p>
 <ol>
 <li>The CSV parser requires all the lines have same number of fields/columns.
-    Even lines with spaces will cause error.
+    Even lines with spaces will cause error. 
     Use '-I/--ignore-illegal-row' to skip these lines if neccessary.</li>
-<li>By default, csvtk thinks your files have header row, if not, switch flag <code>-H</code> on.</li>
+<li>By default, csvtk thinks your files have header row, if not, switch flag "-H" on.</li>
 <li>Column names better be unique.</li>
-<li>By default, lines starting with <code>#</code> will be ignored, if the header row
-    starts with <code>#</code>, please assign flag <code>-C</code> another rare symbol, e.g. <code>'$'</code>.</li>
-<li>By default, csvtk handles CSV files, use flag <code>-t</code> for tab-delimited files.</li>
-<li>If <code>"</code> exists in tab-delimited files, use flag <code>-l</code>.</li>
-<li>Do not mix use digital fields and column names.</li>
+<li>By default, lines starting with "#" will be ignored, if the header row
+    starts with "#", please assign flag "-C" another rare symbol, e.g. '$'.</li>
+<li>By default, csvtk handles CSV files, use flag "-t" for tab-delimited files.</li>
+<li>If double quotes exist in fields, use flag "-l".</li>
+<li>Do not mix using digital fields and column names.</li>
 </ol>
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
-
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
 <h2 id="table-of-contents">Table of Contents</h2>
 <ul>
 <li><a href="#csvtk">csvtk</a></li>
@@ -1056,6 +1045,7 @@
 <li><a href="#transpose">transpose</a></li>
 <li><a href="#csv2md">csv2md</a></li>
 <li><a href="#csv2json">csv2json</a></li>
+<li><a href="#csv2xlsx">csv2xlsx</a></li>
 <li><a href="#xlsx2csv">xlsx2csv</a></li>
 </ul>
 <p><strong>Set operations</strong></p>
@@ -1073,7 +1063,6 @@
 <li><a href="#join">join</a></li>
 <li><a href="#split">split</a></li>
 <li><a href="#splitxlsx">splitxlsx</a></li>
-<li><a href="#collapse">collapse</a></li>
 <li><a href="#comb">comb</a></li>
 </ul>
 <p><strong>Edit</strong></p>
@@ -1088,6 +1077,8 @@
 <li><a href="#mutate2">mutate2</a></li>
 <li><a href="#sep">sep</a></li>
 <li><a href="#gather">gather</a></li>
+<li><a href="#unfold">unfold</a></li>
+<li><a href="#fold">fold</a></li>
 </ul>
 <p><strong>Ordering</strong></p>
 <ul>
@@ -1109,9 +1100,9 @@
 
 <h2 id="csvtk">csvtk</h2>
 <p>Usage</p>
-<pre><code class="text">csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
+<pre><code class="language-text">csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.21.0
+Version: 0.22.0
 
 Author: Wei Shen &lt;shenwei356@gmail.com&gt;
 
@@ -1128,13 +1119,16 @@ Attention:
   4. By default, lines starting with &quot;#&quot; will be ignored, if the header row
      starts with &quot;#&quot;, please assign flag &quot;-C&quot; another rare symbol, e.g. '$'.
   5. By default, csvtk handles CSV files, use flag &quot;-t&quot; for tab-delimited files.
-  6. If &quot; exists in tab-delimited files, use flag &quot;-l&quot;.
-  7. Do not mix use digital fields and column names.
+  6. If double quotes exist in fields, use flag &quot;-l&quot;.
+  7. Do not mix using digital fields and column names.
 
-Environment variables for frequently used global flags
+Environment variables for frequently used global flags:
 
   - &quot;CSVTK_T&quot; for flag &quot;-t/--tabs&quot;
   - &quot;CSVTK_H&quot; for flag &quot;-H/--no-header-row&quot;
+
+You can also create a soft link named &quot;tsvtk&quot; for &quot;csvtk&quot;, 
+which sets &quot;-t/--tabs&quot; by default.
 
 Usage:
   csvtk [command]
@@ -1142,18 +1136,19 @@ Usage:
 Available Commands:
   add-header      add column names
   cat             stream file to stdout and report progress on stderr
-  collapse        collapse one field with selected fields as keys
   comb            compute combinations of items at every row
   concat          concatenate CSV/TSV files by rows
   corr            calculate Pearson correlation between two columns
   csv2json        convert CSV to JSON format
   csv2md          convert CSV to markdown format
   csv2tab         convert CSV to tabular format
-  cut             select parts of fields
+  csv2xlsx        convert CSV/TSV files to XLSX file
+  cut             select and arrange fields
   del-header      delete column names
   dim             dimensions of CSV file
   filter          filter rows by values of selected fields with arithmetic expression
   filter2         filter rows by awk-like artithmetic/string expressions
+  fold            fold multiple values of a field into cells of groups
   freq            frequencies of selected fields
   gather          gather columns into key-value pairs
   genautocomplete generate shell autocompletion script
@@ -1182,6 +1177,7 @@ Available Commands:
   summary         summary statistics of selected digital fields (groupby group fields)
   tab2csv         convert tabular format to CSV
   transpose       transpose CSV data
+  unfold          unfold multiple values in cells of a field
   uniq            unique data without sorting
   version         print version information and check for update
   watch           monitor the specified fields
@@ -1201,14 +1197,13 @@ Flags:
   -D, --out-delimiter string   delimiting character of the output CSV file, e.g., -D $'\t' for tab (default &quot;,&quot;)
   -o, --out-file string        out file (&quot;-&quot; for stdout, suffix .gz for gzipped out) (default &quot;-&quot;)
   -T, --out-tabs               specifies that the output is delimited with tabs. Overrides &quot;-D&quot;
-  -t, --tabs                   specifies that the input CSV file is delimited with tabs. Overrides &quot;-d&quot; and &quot;-D&quot;
+  -t, --tabs                   specifies that the input CSV file is delimited with tabs. Overrides &quot;-d&quot;
 
 Use &quot;csvtk [command] --help&quot; for more information about a command.
 </code></pre>
-
 <h2 id="headers">headers</h2>
 <p>Usage</p>
-<pre><code class="text">print headers
+<pre><code class="language-text">print headers
 
 Usage:
   csvtk headers [flags]
@@ -1218,9 +1213,8 @@ Flags:
   -v, --verbose   print verbose information
 
 </code></pre>
-
 <p>Examples</p>
-<pre><code class="sh">$ csvtk headers testdata/[12].csv
+<pre><code class="language-sh">$ csvtk headers testdata/[12].csv
 name
 attr
 name
@@ -1234,11 +1228,10 @@ $ csvtk headers testdata/[12].csv -v
 1       name
 2       major
 </code></pre>
-
 <h2 id="dimnrowncol">dim/nrow/ncol</h2>
 <p>Usage</p>
 <p>dim:</p>
-<pre><code class="text">dimensions of CSV file
+<pre><code class="language-text">dimensions of CSV file
 
 Usage:
   csvtk dim [flags]
@@ -1254,9 +1247,8 @@ Flags:
       --tabular    output in machine-friendly tabular format
 
 </code></pre>
-
 <p>nrow:</p>
-<pre><code class="text">print number of records
+<pre><code class="language-text">print number of records
 
 Usage:
   csvtk nrow [flags]
@@ -1269,9 +1261,8 @@ Flags:
   -h, --help        help for nrow
 
 </code></pre>
-
 <p>ncol:</p>
-<pre><code class="text">print number of columns
+<pre><code class="language-text">print number of columns
 
 Usage:
   csvtk ncol [flags]
@@ -1284,7 +1275,6 @@ Flags:
   -h, --help        help for ncol
 
 </code></pre>
-
 <p>Examples</p>
 <ol>
 <li>
@@ -1335,7 +1325,7 @@ $ cat testdata/names.csv | csvtk ncol -H
 </ol>
 <h2 id="summary">summary</h2>
 <p>Usage</p>
-<pre><code class="text">summary statistics of selected digital fields (groupby group fields)
+<pre><code class="language-text">summary statistics of selected digital fields (groupby group fields)
 
 Attention:
 
@@ -1366,7 +1356,6 @@ Flags:
   -s, --separater string    separater for collapsed data (default &quot;; &quot;)
 
 </code></pre>
-
 <p>Examples</p>
 <ol>
 <li>
@@ -1499,7 +1488,7 @@ foo   5          4           1; 1.5; 3; 5; N/A
 </ol>
 <h2 id="watch">watch</h2>
 <p>Usage</p>
-<pre><code class="text">monitor the specified fields
+<pre><code class="language-text">monitor the specified fields
 
 Usage:
   csvtk watch [flags]
@@ -1517,7 +1506,6 @@ Flags:
   -Q, --quiet            supress all plotting to stderr
   -R, --reset            reset histogram after every report
 </code></pre>
-
 <p>Examples</p>
 <ol>
 <li>
@@ -1538,7 +1526,7 @@ Flags:
 </ol>
 <h2 id="corr">corr</h2>
 <p>Usage</p>
-<pre><code class="text">calculate Pearson correlation between two columns
+<pre><code class="language-text">calculate Pearson correlation between two columns
 
 Usage:
   csvtk corr [flags]
@@ -1550,7 +1538,6 @@ Flags:
   -L, --log             Calcute correlations on Log10 transformed data
   -x, --pass            passthrough mode (forward input to output)
 </code></pre>
-
 <p>Examples</p>
 <ol>
 <li>Calculate pairwise correlations between field, ignore non-numeric values<pre><code>csvtk -t corr -i -f 1,Foo,Bar input.tsv
@@ -1559,7 +1546,7 @@ Flags:
 </ol>
 <h2 id="pretty">pretty</h2>
 <p>Usage</p>
-<pre><code class="text">convert CSV to readable aligned table
+<pre><code class="language-text">convert CSV to readable aligned table
 
 Attention:
 
@@ -1576,7 +1563,6 @@ Flags:
   -s, --separator string   fields/columns separator (default &quot;   &quot;)
 
 </code></pre>
-
 <p>Examples:</p>
 <ol>
 <li>
@@ -1615,13 +1601,12 @@ NA | Robert     | Abel      | 123
 </ol>
 <h2 id="transpose">transpose</h2>
 <p>Usage</p>
-<pre><code class="text">transpose CSV data
+<pre><code class="language-text">transpose CSV data
 
 Usage:
   csvtk transpose [flags]
 
 </code></pre>
-
 <p>Examples</p>
 <pre><code>$ cat  testdata/digitals.tsv
 4       5       6
@@ -1636,7 +1621,7 @@ $ csvtk transpose -t  testdata/digitals.tsv
 </code></pre>
 <h2 id="csv2json">csv2json</h2>
 <p>Usage</p>
-<pre><code class="text">convert CSV to JSON format
+<pre><code class="language-text">convert CSV to JSON format
 
 Usage:
   csvtk csv2json [flags]
@@ -1649,7 +1634,6 @@ Flags:
   -n, --parse-num strings   parse numeric values for nth column(s), multiple values are supported and &quot;a&quot;/&quot;all&quot; for all columns
 
 </code></pre>
-
 <p>Examples</p>
 <ul>
 <li>
@@ -1803,7 +1787,7 @@ $ cat testdata/data4json.csv | csvtk csv2json -n 1      # for single column
 </ul>
 <h2 id="csv2md">csv2md</h2>
 <p>Usage</p>
-<pre><code class="text">convert CSV to markdown format
+<pre><code class="language-text">convert CSV to markdown format
 
 Attention:
 
@@ -1817,7 +1801,6 @@ Flags:
   -w, --min-width int       min width (at least 3) (default 3)
 
 </code></pre>
-
 <p>Examples</p>
 <ol>
 <li>
@@ -1931,9 +1914,57 @@ NA |Robert    |Abel     |123
 </table>
 </li>
 </ol>
+<h2 id="csv2xlsx">csv2xlsx</h2>
+<p>Usage</p>
+<pre><code class="language-text">convert CSV/TSV files to XLSX file
+
+Attention:
+
+  1. Multiple CSV/TSV files are saved as separated sheets in .xlsx file.
+  2. All input files should all be CSV or TSV.
+  3. First rows are freezed unless given '-H/--no-header-row'.
+
+Usage:
+  csvtk csv2xlsx [flags]
+
+Flags:
+  -h, --help   help for csv2xlsx
+
+</code></pre>
+<p>Examples</p>
+<ol>
+<li>
+<p>Single input</p>
+<pre><code>$ csvtk csv2xlsx ../testdata/names.csv -o output.xlsx
+
+# check content
+
+$ csvtk xlsx2csv -a output.xlsx
+index   sheet
+1       Sheet1
+
+$ csvtk xlsx2csv output.xlsx | md5sum 
+8e9d38a012cb02279a396a2f2dbbbca9  -
+
+$ csvtk cut -f 1-  ../testdata/names.csv | md5sum 
+8e9d38a012cb02279a396a2f2dbbbca9  -
+</code></pre>
+</li>
+<li>
+<p>Merging multiple CSV/TSV files into one .xlsx file.</p>
+<pre><code>$ csvtk csv2xlsx ../testdata/names*.csv -o output.xlsx
+
+$ csvtk xlsx2csv -a output.xlsx
+index   sheet
+1       names
+2       names.reorder
+3       names.with-unmatched-colname
+</code></pre>
+</li>
+</ol>
 <h2 id="xlsx2csv">xlsx2csv</h2>
 <p>Usage</p>
-<pre><code class="text">convert XLSX to CSV format
+<pre><code class="language-text">convert XLSX to CSV format
 
 Usage:
   csvtk xlsx2csv [flags]
@@ -1945,7 +1976,6 @@ Flags:
   -n, --sheet-name string   sheet to retrieve
 
 </code></pre>
-
 <p>Examples</p>
 <ol>
 <li>
@@ -1980,7 +2010,7 @@ Thompson,there
 </ol>
 <h2 id="head">head</h2>
 <p>Usage</p>
-<pre><code class="text">print first N records
+<pre><code class="language-text">print first N records
 
 Usage:
   csvtk head [flags]
@@ -1989,7 +2019,6 @@ Flags:
   -n, --number int   print first N records (default 10)
 
 </code></pre>
-
 <p>Examples</p>
 <ol>
 <li>
@@ -2010,7 +2039,7 @@ foo,cool
 </ol>
 <h2 id="concat">concat</h2>
 <p>Usage</p>
-<pre><code class="text">concatenate CSV/TSV files by rows
+<pre><code class="language-text">concatenate CSV/TSV files by rows
 
 Note that the second and later files are concatenated to the first one,
 so only columns match that of the first files kept.
@@ -2025,7 +2054,6 @@ Flags:
   -u, --unmatched-repl string   replacement for unmatched data
 
 </code></pre>
-
 <p>Examples</p>
 <ol>
 <li>
@@ -2118,7 +2146,7 @@ NA    NA           NA           NA         NA
 </ol>
 <h2 id="sample">sample</h2>
 <p>Usage</p>
-<pre><code class="text">sampling by proportion
+<pre><code class="language-text">sampling by proportion
 
 Usage:
   csvtk sample [flags]
@@ -2130,9 +2158,8 @@ Flags:
   -s, --rand-seed int      rand seed (default 11)
 
 </code></pre>
-
 <p>Examples</p>
-<pre><code class="sh">$ seq 100 | csvtk sample -H -p 0.5 | wc -l
+<pre><code class="language-sh">$ seq 100 | csvtk sample -H -p 0.5 | wc -l
 46
 
 $ seq 100 | csvtk sample -H -p 0.5 | wc -l
@@ -2146,23 +2173,40 @@ $ seq 100 | csvtk sample -H -p 0.05 -n
 52,52
 65,65
 </code></pre>
-
 <h2 id="cut">cut</h2>
 <p>Usage</p>
-<pre><code class="text">select parts of fields
+<pre><code class="language-text">select and arrange fields
+
+Examples:
+
+  1. Single column
+     csvtk cut -f 1
+     csvtk cut -f colA
+  2. Multiple columns (replicates allowed)
+     csvtk cut -f 1,3,2,1
+     csvtk cut -f colA,colB,colA
+  3. Column ranges
+     csvtk cut -f 1,3-5       # 1, 3, 4, 5
+     csvtk cut -f 3,5-        # 3rd col, and 5th col to the end
+     csvtk cut -f 1-          # for all
+     csvtk cut -f 2-,1        # move 1th col to the end
+  4. Unselect
+     csvtk cut -f -1,-3       # discard 1st and 3rd column
+     csvtk cut -f -1--3       # discard 1st to 3rd column
+     csvtk cut -f -2-         # discard 2nd and all columns on the right.
+     csvtu cut -f -colA,-colB # discard colA and colB
 
 Usage:
   csvtk cut [flags]
 
 Flags:
-  -f, --fields string   select only these fields. e.g -f 1,2 or -f columnA,columnB, or -f -columnA for unselect columnA
+  -f, --fields string   select only these fields. type &quot;csvtk cut -h&quot; for examples
   -F, --fuzzy-fields    using fuzzy fields, e.g., -F -f &quot;*name&quot; or -F -f &quot;id123*&quot;
   -h, --help            help for cut
   -i, --ignore-case     ignore case (column name)
   -u, --uniq-column     deduplicate columns matched by multiple fuzzy column names
 
 </code></pre>
-
 <p>Examples</p>
 <ul>
 <li>
@@ -2262,7 +2306,7 @@ Robert,Abel,123
 </code></pre>
 </li>
 <li>
-<p>All fields: <code>csvtk cut -F -f "*"</code></p>
+<p>All fields: <code>csvtk cut -F -f "*"</code> or <code>csvtk cut -f 1-</code>.</p>
 <pre><code>$ cat testdata/names.csv \
     | csvtk cut -F -f "*"
 id,first_name,last_name,username
@@ -2274,7 +2318,7 @@ NA,Robert,Abel,123
 </code></pre>
 </li>
 <li>
-<p>Field ranges:</p>
+<p>Field ranges (read help message ("csvtk cut -f") for more examples)</p>
 <ul>
 <li>
 <p><code>csvtk cut -f 2-4</code> for column 2,3,4</p>
@@ -2300,12 +2344,36 @@ abc
 123
 </code></pre>
 </li>
+<li>
+<p><code>csvtk cut -f 2-,1</code> for moving 1th column to the end.</p>
+<pre><code>$ cat testdata/names.csv \
+    | csvtk cut -f 2-,1
+first_name,last_name,username,id
+Rob,Pike,rob,11
+Ken,Thompson,ken,2
+Robert,Griesemer,gri,4
+Robert,Thompson,abc,1
+Robert,Abel,123,NA
+</code></pre>
+</li>
+<li>
+<p><code>csvtk cut -f 1,1</code> for duplicating columns</p>
+<pre><code>$ cat testdata/names.csv \
+    | csvtk cut -f 1,1
+id,id
+11,11
+2,2
+4,4
+1,1
+NA,NA
+</code></pre>
+</li>
 </ul>
 </li>
 </ul>
 <h2 id="uniq">uniq</h2>
 <p>Usage</p>
-<pre><code class="text">unique data without sorting
+<pre><code class="language-text">unique data without sorting
 
 Usage:
   csvtk uniq [flags]
@@ -2318,7 +2386,6 @@ Flags:
   -n, --keep-n int      keep at most N records for a key (default 1)
 
 </code></pre>
-
 <p>Examples:</p>
 <ul>
 <li>
@@ -2378,7 +2445,7 @@ male,2,B
 </ul>
 <h2 id="freq">freq</h2>
 <p>Usage</p>
-<pre><code class="text">frequencies of selected fields
+<pre><code class="language-text">frequencies of selected fields
 
 Usage:
   csvtk freq [flags]
@@ -2392,7 +2459,6 @@ Flags:
   -k, --sort-by-key     sort by key
 
 </code></pre>
-
 <p>Examples</p>
 <ol>
 <li>
@@ -2453,7 +2519,7 @@ Robert       Griesemer   1
 </ol>
 <h2 id="inter">inter</h2>
 <p>Usage</p>
-<pre><code class="text">intersection of multiple files
+<pre><code class="language-text">intersection of multiple files
 
 Attention:
 
@@ -2469,7 +2535,6 @@ Flags:
   -i, --ignore-case     ignore case
 
 </code></pre>
-
 <p>Examples:</p>
 <pre><code>$ cat testdata/phones.csv
 username,phone
@@ -2493,7 +2558,7 @@ shenwei
 </code></pre>
 <h2 id="grep">grep</h2>
 <p>Usage</p>
-<pre><code class="text">grep data by selected fields with patterns/regular expressions
+<pre><code class="language-text">grep data by selected fields with patterns/regular expressions
 
 Usage:
   csvtk grep [flags]
@@ -2513,7 +2578,6 @@ Flags:
       --verbose               verbose output
 
 </code></pre>
-
 <p>Examples</p>
 <p>Matched parts will be <strong><em>highlight</em></strong>.</p>
 <ul>
@@ -2576,7 +2640,7 @@ n   id   first_name   last_name   username
 </ul>
 <h2 id="filter">filter</h2>
 <p>Usage</p>
-<pre><code class="text">filter rows by values of selected fields with arithmetic expression
+<pre><code class="language-text">filter rows by values of selected fields with arithmetic expression
 
 Usage:
   csvtk filter [flags]
@@ -2589,7 +2653,6 @@ Flags:
   -n, --line-number     print line number as the first column (&quot;n&quot;)
 
 </code></pre>
-
 <p>Examples</p>
 <ol>
 <li>
@@ -2649,7 +2712,7 @@ id,first_name,last_name,username
 </ol>
 <h2 id="filter2">filter2</h2>
 <p>Usage</p>
-<pre><code class="text">filter rows by awk-like artithmetic/string expressions
+<pre><code class="language-text">filter rows by awk-like artithmetic/string expressions
 
 The artithmetic/string expression is supported by:
 
@@ -2679,7 +2742,6 @@ Flags:
   -n, --line-number     print line number as the first column (&quot;n&quot;)
 
 </code></pre>
-
 <p>Examples:</p>
 <ol>
 <li>
@@ -2733,7 +2795,7 @@ $ cat testdata/digitals.tsv \
 </ol>
 <h2 id="join">join</h2>
 <p>Usage</p>
-<pre><code class="text">join files by selected fields (inner, left and outer join).
+<pre><code class="language-text">join files by selected fields (inner, left and outer join).
 
 Attention:
 
@@ -2758,7 +2820,6 @@ Flags:
   -O, --outer-join       outer join, exclusive with --left-join
 
 </code></pre>
-
 <p>Examples:</p>
 <ul>
 <li>
@@ -2888,7 +2949,7 @@ id   name   hobby         major               attr
 </ul>
 <h2 id="split">split</h2>
 <p>Usage</p>
-<pre><code class="text">split CSV/TSV into multiple files according to column values
+<pre><code class="language-text">split CSV/TSV into multiple files according to column values
 
 Note:
 
@@ -2907,7 +2968,6 @@ Flags:
   -G, --out-gzip         force output gzipped file
 
 </code></pre>
-
 <p>Examples</p>
 <ol>
 <li>
@@ -2994,7 +3054,7 @@ $ zcat t2.gz | md5sum
 </ol>
 <h2 id="splitxlsx">splitxlsx</h2>
 <p>Usage</p>
-<pre><code class="text">split XLSX sheet into multiple sheets according to column values
+<pre><code class="language-text">split XLSX sheet into multiple sheets according to column values
 
 Strengths: Sheet properties are remained unchanged.
 Weakness : Complicated sheet structures are not well supported, e.g.,
@@ -3013,7 +3073,6 @@ Flags:
   -N, --sheet-index int     Nth sheet to retrieve (default 1)
   -n, --sheet-name string   sheet to retrieve
 </code></pre>
-
 <p>Examples</p>
 <ol>
 <li>
@@ -3065,74 +3124,6 @@ NA   Robert       Abel        123
 </code></pre>
 </li>
 </ol>
-<h2 id="collapse">collapse</h2>
-<p>Usage</p>
-<pre><code class="text">collapse one field with selected fields as keys
-
-Usage:
-  csvtk collapse [flags]
-
-Flags:
-  -f, --fields string      key fields. e.g -f 1,2 or -f columnA,columnB (default &quot;1&quot;)
-  -F, --fuzzy-fields       using fuzzy fields (only for key fields), e.g., -F -f &quot;*name&quot; or -F -f &quot;id123*&quot;
-  -h, --help               help for collapse
-  -i, --ignore-case        ignore case
-  -s, --separater string   separater for collapsed data (default &quot;; &quot;)
-  -v, --vfield string      value field
-
-</code></pre>
-
-<p>examples</p>
-<ol>
-<li>
-<p>data</p>
-<pre><code>$ csvtk pretty teachers.csv
-lab                     teacher   class
-computational biology   Tom       Bioinformatics
-computational biology   Tom       Statistics
-computational biology   Rob       Bioinformatics
-sequencing center       Jerry     Bioinformatics
-sequencing center       Nick      Molecular Biology
-sequencing center       Nick      Microbiology
-</code></pre>
-</li>
-<li>
-<p>List teachers for every lab/class. <code>uniq</code> is used to deduplicate items.</p>
-<pre><code>$ cat teachers.csv  \
-    | csvtk uniq -f lab,teacher  \
-    | csvtk collapse -f lab -v teacher \
-    | csvtk pretty
-
-lab                     teacher
-computational biology   Tom; Rob
-sequencing center       Jerry; Nick
-
-$ cat teachers.csv  \
-    | csvtk uniq -f class,teacher  \
-    | csvtk collapse -f class -v teacher -s ", " \
-    | csvtk pretty
-
-class               teacher
-Statistics          Tom
-Bioinformatics      Tom, Rob, Jerry
-Molecular Biology   Nick
-Microbiology        Nick
-</code></pre>
-</li>
-<li>
-<p>Multiple key fields supported</p>
-<pre><code>$ cat teachers.csv  \
-    | csvtk collapse -f teacher,lab -v class \
-    | csvtk pretty
-
-teacher   lab                     class
-Tom       computational biology   Bioinformatics; Statistics
-Rob       computational biology   Bioinformatics
-Jerry     sequencing center       Bioinformatics
-Nick      sequencing center       Molecular Biology; Microbiology
-</code></pre>
-</li>
-</ol>
 <h2 id="comb">comb</h2>
 <p>Usage</p>
 <pre><code>compute combinations of items at every row
@@ -3150,9 +3141,8 @@ Flags:
   -n, --number int    number of items in a combination, 0 for no limit, i.e., return all combinations (default 2)
   -s, --sort          sort items in a combination
 </code></pre>
-
 <p>Examples:</p>
-<pre><code class="shell">$ cat players.csv 
+<pre><code class="language-shell">$ cat players.csv 
 gender,id,name
 male,1,A
 male,2,B
@@ -3214,10 +3204,9 @@ b,c,d
 a,b,c,d
 
 </code></pre>
-
 <h2 id="add-header">add-header</h2>
 <p>Usage</p>
-<pre><code class="text">add column names
+<pre><code class="language-text">add column names
 
 Usage:
   csvtk add-header [flags]
@@ -3227,7 +3216,6 @@ Flags:
   -n, --names strings   column names to add, in CSV format
 
 </code></pre>
-
 <p>Examples:</p>
 <ol>
 <li>
@@ -3267,7 +3255,7 @@ a       b
 </ol>
 <h2 id="del-header">del-header</h2>
 <p>Usage</p>
-<pre><code class="text">delete column names
+<pre><code class="language-text">delete column names
 
 Usage:
   csvtk del-header [flags]
@@ -3276,7 +3264,6 @@ Flags:
   -h, --help   help for del-header
 
 </code></pre>
-
 <p>Examples:</p>
 <pre><code>$ seq 3 | csvtk add-header
 c1
@@ -3296,7 +3283,7 @@ $ seq 3 | csvtk del-header -H
 </code></pre>
 <h2 id="rename">rename</h2>
 <p>Usage</p>
-<pre><code class="text">rename column names with new names
+<pre><code class="language-text">rename column names with new names
 
 Usage:
   csvtk rename [flags]
@@ -3307,7 +3294,6 @@ Flags:
   -n, --names string    comma separated new names
 
 </code></pre>
-
 <p>Examples:</p>
 <ul>
 <li>Setting new names: <code>csvtk rename -f A,B -n a,b</code> or <code>csvtk rename -f 1-3 -n a,b,c</code><pre><code>$ cat testdata/phones.csv
@@ -3330,7 +3316,7 @@ shenwei   999999
 </ul>
 <h2 id="rename2">rename2</h2>
 <p>Usage</p>
-<pre><code class="text">rename column names by regular expression
+<pre><code class="language-text">rename column names by regular expression
 
 Special replacement symbols:
 
@@ -3354,7 +3340,6 @@ Flags:
   -r, --replacement string     renamement. supporting capture variables.  e.g. $1 represents the text of the first submatch. ATTENTION: use SINGLE quote NOT double quotes in *nix OS or use the \ escape character. Ascending number is also supported by &quot;{nr}&quot;.use ${1} instead of $1 when {kv} given!
 
 </code></pre>
-
 <p>Examples:</p>
 <ul>
 <li>
@@ -3418,7 +3403,7 @@ a,col_2,col_3,col_4
 </ul>
 <h2 id="replace">replace</h2>
 <p>Usage</p>
-<pre><code class="text">replace data of selected fields by regular expression
+<pre><code class="language-text">replace data of selected fields by regular expression
 
 Note that the replacement supports capture variables.
 e.g. $1 represents the text of the first submatch.
@@ -3456,7 +3441,6 @@ Flags:
   -r, --replacement string     replacement. supporting capture variables.  e.g. $1 represents the text of the first submatch. ATTENTION: for *nix OS, use SINGLE quote NOT double quotes or use the \ escape character. Record number is also supported by &quot;{nr}&quot;.use ${1} instead of $1 when {kv} given!
 
 </code></pre>
-
 <p>Examples</p>
 <ul>
 <li>
@@ -3489,7 +3473,7 @@ C       N: 3, alias: 004
 </ul>
 <h2 id="round">round</h2>
 <p>Usage</p>
-<pre><code class="text">round float to n decimal places
+<pre><code class="language-text">round float to n decimal places
 
 Usage:
   csvtk round [flags]
@@ -3502,7 +3486,6 @@ Flags:
   -h, --help                help for round
 
 </code></pre>
-
 <p>Examples:</p>
 <pre><code>$ cat testdata/floats.csv  | csvtk pretty
 a                        b
@@ -3529,7 +3512,7 @@ NA         1.00
 </code></pre>
 <h2 id="mutate">mutate</h2>
 <p>Usage</p>
-<pre><code class="text">create new column from selected fields by regular expression
+<pre><code class="language-text">create new column from selected fields by regular expression
 
 Usage:
   csvtk mutate [flags]
@@ -3542,7 +3525,6 @@ Flags:
   -p, --pattern string   search regular expression with capture bracket. e.g. (default &quot;^(.+)$&quot;)
 
 </code></pre>
-
 <p>Examples</p>
 <ul>
 <li>
@@ -3574,7 +3556,7 @@ shenwei,999999,s
 </ul>
 <h2 id="mutate2">mutate2</h2>
 <p>Usage</p>
-<pre><code class="text">create new column from selected fields by awk-like artithmetic/string expressions
+<pre><code class="language-text">create new column from selected fields by awk-like artithmetic/string expressions
 
 The artithmetic/string expression is supported by:
 
@@ -3606,7 +3588,6 @@ Flags:
   -n, --name string         new column name
 
 </code></pre>
-
 <p>Example</p>
 <ol>
 <li>
@@ -3670,7 +3651,7 @@ NA   Robert       Abel        123        Robert Abel
 </ol>
 <h2 id="sep">sep</h2>
 <p>Usage</p>
-<pre><code class="text">separate column into multiple columns
+<pre><code class="language-text">separate column into multiple columns
 
 Usage:
   csvtk sep [flags]
@@ -3688,9 +3669,8 @@ Flags:
   -s, --sep string      separator
   -r, --use-regexp      separator is a regular expression
 </code></pre>
-
 <p>Examples:</p>
-<pre><code class="shell">$ cat players.csv | csvtk collapse -f 1 -v 3 -s ';'
+<pre><code class="language-shell">$ cat players.csv | csvtk collapse -f 1 -v 3 -s ';'
 gender,name
 male,A;B;C
 female,a;b;c;d
@@ -3730,10 +3710,9 @@ $ echo -ne &quot;taxid\tlineage\n9606\tEukaryota;Chordata;Mammalia;Primates;Homi
 taxid   kindom      phylum     class      order      family      genus   species
 9606    Eukaryota   Chordata   Mammalia   Primates   Hominidae   Homo    Homo sapiens
 </code></pre>
-
 <h2 id="gather">gather</h2>
 <p>Usage</p>
-<pre><code class="text">gather columns into key-value pairs
+<pre><code class="language-text">gather columns into key-value pairs
 
 Usage:
   csvtk gather [flags]
@@ -3745,7 +3724,6 @@ Flags:
   -v, --value string    name of value column to create in output
 
 </code></pre>
-
 <p>Examples:</p>
 <pre><code>$ cat testdata/names.csv
 id,first_name,last_name,username
@@ -3774,9 +3752,144 @@ NA,first_name,Robert
 NA,last_name,Abel
 NA,username,123
 </code></pre>
+<h2 id="unfold">unfold</h2>
+<p>Usage</p>
+<pre><code class="language-text">unfold multiple values in cells of a field
+
+Example:
+
+    $ echo -ne &quot;id,values,meta\n1,a;b,12\n2,c,23\n3,d;e;f,34\n&quot; \
+        | csvtk pretty
+    id   values   meta
+    1    a;b      12
+    2    c        23
+    3    d;e;f    34
+
+
+    $ echo -ne &quot;id,values,meta\n1,a;b,12\n2,c,23\n3,d;e;f,34\n&quot; \
+        | csvtk unfold -f values -s &quot;;&quot; \
+        | csvtk pretty
+    id   values   meta
+    1    a        12
+    1    b        12
+    2    c        23
+    3    d        34
+    3    e        34
+    3    f        34
+
+Usage:
+  csvtk unfold [flags]
+
+Flags:
+  -f, --fields string      field to expand, only one field is allowed. type &quot;csvtk unfold -h&quot; for examples
+  -h, --help               help for unfold
+  -s, --separater string   separater for folded values (default &quot;; &quot;)
+</code></pre>
+<h2 id="fold">fold</h2>
+<p>Usage</p>
+<pre><code class="language-text">fold multiple values of a field into cells of groups
+
+Attention:
+
+    Only grouping fields and value filed are outputted.
+
+Example:
+
+    $ echo -ne &quot;id,value,meta\n1,a,12\n1,b,34\n2,c,56\n2,d,78\n&quot; \
+        | csvtk pretty
+    id   value   meta
+    1    a       12
+    1    b       34
+    2    c       56
+    2    d       78
+
+    $ echo -ne &quot;id,value,meta\n1,a,12\n1,b,34\n2,c,56\n2,d,78\n&quot; \
+        | csvtk fold -f id -v value -s &quot;;&quot; \
+        | csvtk pretty
+    id   value
+    1    a;b
+    2    c;d
+
+    $ echo -ne &quot;id,value,meta\n1,a,12\n1,b,34\n2,c,56\n2,d,78\n&quot; \
+        | csvtk fold -f id -v value -s &quot;;&quot; \
+        | csvtk unfold -f value -s &quot;;&quot; \
+        | csvtk pretty
+    id   value
+    1    a
+    1    b
+    2    c
+    2    d
+
+Usage:
+  csvtk fold [flags]
+
+Aliases:
+  fold, collapse
+
+Flags:
+  -f, --fields string      key fields for grouping. e.g -f 1,2 or -f columnA,columnB (default &quot;1&quot;)
+  -F, --fuzzy-fields       using fuzzy fields (only for key fields), e.g., -F -f &quot;*name&quot; or -F -f &quot;id123*&quot;
+  -h, --help               help for fold
+  -i, --ignore-case        ignore case
+  -s, --separater string   separater for folded values (default &quot;; &quot;)
+  -v, --vfield string      value field for folding
+
+
+</code></pre>
+<p>examples</p>
+<ol>
+<li>
+<p>data</p>
+<pre><code>$ csvtk pretty teachers.csv
+lab                     teacher   class
+computational biology   Tom       Bioinformatics
+computational biology   Tom       Statistics
+computational biology   Rob       Bioinformatics
+sequencing center       Jerry     Bioinformatics
+sequencing center       Nick      Molecular Biology
+sequencing center       Nick      Microbiology
+</code></pre>
+</li>
+<li>
+<p>List teachers for every lab/class. <code>uniq</code> is used to deduplicate items.</p>
+<pre><code>$ cat teachers.csv  \
+    | csvtk uniq -f lab,teacher  \
+    | csvtk fold -f lab -v teacher \
+    | csvtk pretty
+
+lab                     teacher
+computational biology   Tom; Rob
+sequencing center       Jerry; Nick
+
+$ cat teachers.csv  \
+    | csvtk uniq -f class,teacher  \
+    | csvtk fold -f class -v teacher -s ", " \
+    | csvtk pretty
+
+class               teacher
+Statistics          Tom
+Bioinformatics      Tom, Rob, Jerry
+Molecular Biology   Nick
+Microbiology        Nick
+</code></pre>
+</li>
+<li>
+<p>Multiple key fields supported</p>
+<pre><code>$ cat teachers.csv  \
+    | csvtk fold -f teacher,lab -v class \
+    | csvtk pretty
+
+teacher   lab                     class
+Tom       computational biology   Bioinformatics; Statistics
+Rob       computational biology   Bioinformatics
+Jerry     sequencing center       Bioinformatics
+Nick      sequencing center       Molecular Biology; Microbiology
+</code></pre>
+</li>
+</ol>
 <h2 id="sort">sort</h2>
 <p>Usage</p>
-<pre><code class="text">sort by selected fields
+<pre><code class="language-text">sort by selected fields
 
 Usage:
   csvtk sort [flags]
@@ -3787,7 +3900,6 @@ Flags:
   -k, --keys strings     keys (multiple values supported). sort type supported, &quot;N&quot; for natural order, &quot;n&quot; for number, &quot;u&quot; for user-defined order and &quot;r&quot; for reverse. e.g., &quot;-k 1&quot; or &quot;-k A:r&quot; or &quot;&quot;-k 1:nr -k 2&quot; (default [1])
   -L, --levels strings   user-defined level file (one level per line, multiple values supported). format: &lt;field&gt;:&lt;level-file&gt;.  e.g., &quot;-k name:u -L name:level.txt&quot;
 </code></pre>
-
 <p>Examples</p>
 <ul>
 <li>
@@ -3934,7 +4046,7 @@ id,size
 </ul>
 <h2 id="plot">plot</h2>
 <p>Usage</p>
-<pre><code class="text">plot common figures
+<pre><code class="language-text">plot common figures
 
 Notes:
 
@@ -3972,7 +4084,6 @@ Flags:
       --ylab string          y label text
 
 </code></pre>
-
 <p><strong><em>Note that most of the flags of <code>plot</code> are global flags of the subcommands
 <code>hist</code>, <code>box</code> and <code>line</code></em></strong></p>
 <p><strong>Notes of image output</strong></p>
@@ -3986,7 +4097,7 @@ Flags:
 </ol>
 <h2 id="plot-hist">plot hist</h2>
 <p>Usage</p>
-<pre><code class="text">plot histogram
+<pre><code class="language-text">plot histogram
 
 Notes:
 
@@ -4005,7 +4116,6 @@ Flags:
       --color-index int   color index, 1-7 (default 1)
 
 </code></pre>
-
 <p>Examples</p>
 <ul>
 <li>
@@ -4033,7 +4143,7 @@ Group A   100      51.00
 </ul>
 <h2 id="plot-box">plot box</h2>
 <p>Usage</p>
-<pre><code class="text">plot boxplot
+<pre><code class="language-text">plot boxplot
 
 Notes:
 
@@ -4052,7 +4162,6 @@ Flags:
       --horiz             horize box plot
 
 </code></pre>
-
 <p>Examples</p>
 <ul>
 <li>
@@ -4076,7 +4185,7 @@ group information is the "Group" column.</p>
 </ul>
 <h2 id="plot-line">plot line</h2>
 <p>Usage</p>
-<pre><code class="text">line plot and scatter plot
+<pre><code class="language-text">line plot and scatter plot
 
 Notes:
 
@@ -4100,7 +4209,6 @@ Flags:
       --scatter               only plot points
 
 </code></pre>
-
 <p>Examples</p>
 <ul>
 <li>
@@ -4132,7 +4240,7 @@ A       2.0     2
 </ul>
 <h2 id="cat">cat</h2>
 <p>Usage</p>
-<pre><code class="text">stream file to stdout and report progress on stderr
+<pre><code class="language-text">stream file to stdout and report progress on stderr
 
 Usage:
   csvtk cat [flags]
@@ -4144,7 +4252,6 @@ Flags:
   -p, --print-freq int   print frequency (-1 for print after parsing) (default 1)
   -s, --total int        expected total bytes/lines (default -1)
 </code></pre>
-
 <p>Examples</p>
 <ol>
 <li>
@@ -4160,7 +4267,7 @@ Flags:
 </ol>
 <h2 id="genautocomplete">genautocomplete</h2>
 <p>Usage</p>
-<pre><code class="text">generate shell autocompletion script
+<pre><code class="language-text">generate shell autocompletion script
 
 Note: The current version supports Bash only.
 This should work for *nix systems with Bash installed.
@@ -4188,9 +4295,7 @@ Flags:
       --type string   autocompletion type (currently only bash supported) (default &quot;bash&quot;)
 
 </code></pre>
-
 <div id="disqus_thread"></div>
-
 <script>
 /**
 * RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
@@ -4211,11 +4316,7 @@ s.setAttribute('data-timestamp', +new Date());
 (d.head || d.body).appendChild(s);
 })();
 </script>
-
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
-                
-                  
-                
                 
               
               
@@ -4232,34 +4333,34 @@ s.setAttribute('data-timestamp', +new Date());
 <footer class="md-footer">
   
     <div class="md-footer-nav">
-      <nav class="md-footer-nav__inner md-grid">
+      <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
         
-          <a href="../download/" title="Download" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
-            <div class="md-flex__cell md-flex__cell--shrink">
-              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+          <a href="../download/" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
             </div>
-            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
-              <span class="md-flex__ellipsis">
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
                 Download
-              </span>
+              </div>
             </div>
           </a>
         
         
-          <a href="../tutorial/" title="Tutorial" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
-            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
-              <span class="md-flex__ellipsis">
+          <a href="../tutorial/" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
                 Tutorial
-              </span>
+              </div>
             </div>
-            <div class="md-flex__cell md-flex__cell--shrink">
-              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
             </div>
           </a>
         
@@ -4270,11 +4371,10 @@ s.setAttribute('data-timestamp', +new Date());
     <div class="md-footer-meta__inner md-grid">
       <div class="md-footer-copyright">
         
-        powered by
-        <a href="https://www.mkdocs.org" target="_blank" rel="noopener">MkDocs</a>
-        and
+        Made with
         <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
-          Material for MkDocs</a>
+          Material for MkDocs
+        </a>
       </div>
       
     </div>
@@ -4283,9 +4383,18 @@ s.setAttribute('data-timestamp', +new Date());
       
     </div>
     
-      <script src="../assets/javascripts/application.c33a9706.js"></script>
+      <script src="../assets/javascripts/vendor.93c04032.min.js"></script>
+      <script src="../assets/javascripts/bundle.83e5331e.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
       
-      <script>app.initialize({version:"1.0.4",url:{base:".."}})</script>
+      <script>
+        app = initialize({
+          base: "..",
+          features: [],
+          search: Object.assign({
+            worker: "../assets/javascripts/worker/search.8c7e0a7e.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
       
     
   </body>
