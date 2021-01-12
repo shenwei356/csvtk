@@ -1,5 +1,5 @@
 site_name: csvtk - CSV/TSV Toolkit
-pages:
+nav:
 - Home: index.md
 - Download: download.md
 - Usage: usage.md
@@ -10,17 +10,17 @@ pages:
 # theme: cinder
 
 theme:
-    name: 'material'
+    name: material
     palette:
-        primary: 'light blue'
-        accent: 'light blue'
-    logo:
-        icon: 'school'
-    favicon: 'files/favicon.ico'
+        primary: light blue
+        accent: light blue
+    icon:
+        logon: material/school
+    favicon: files/favicon.ico
     feature:
         tabs: false
 extra:
-  manifest: 'manifest.webmanifest'
+  manifest: manifest.webmanifest
   
 repo_url: https://github.com/shenwei356/csvtk
 site_description: csvtk - CSV/TSV toolkit
