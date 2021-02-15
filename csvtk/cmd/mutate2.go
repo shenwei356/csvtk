@@ -152,6 +152,8 @@ Supported operators and types:
 
 		fieldStr := strings.Join(fs, ",")
 
+		hasNullCoalescence := reNullCoalescence.MatchString(exprStr)
+
 		exprStr = reFilter2VarField.ReplaceAllString(exprStr, "shenwei$1")
 		exprStr = reFilter2VarSymbol.ReplaceAllString(exprStr, "")
 		expression, err := govaluate.NewEvaluableExpression(exprStr)
@@ -317,7 +319,12 @@ Supported operators and types:
 												parameters[fmt.Sprintf("shenwei%d", fieldTmp)] = valueFloat
 											}
 										} else {
-											parameters[fmt.Sprintf("shenwei%d", fieldTmp)] = value
+											if value == "" && hasNullCoalescence {
+												parameters[fmt.Sprintf("shenwei%d", fieldTmp)] = nil
+											} else {
+												parameters[fmt.Sprintf("shenwei%d", fieldTmp)] = value
+											}
+
 										}
 									}
 								} else {
@@ -331,7 +338,11 @@ Supported operators and types:
 												parameters[col] = valueFloat
 											}
 										} else {
-											parameters[col] = value
+											if value == "" && hasNullCoalescence {
+												parameters[col] = nil
+											} else {
+												parameters[col] = value
+											}
 										}
 									}
 								}
@@ -369,3 +380,5 @@ func init() {
 	mutate2Cmd.Flags().IntP("digits", "L", 2, `number of digits after the decimal dot`)
 	mutate2Cmd.Flags().BoolP("numeric-as-string", "s", false, `treat even numeric fields as strings to avoid converting big numbers into scientific notation`)
 }
+
+var reNullCoalescence = regexp.MustCompile(`\?\?`)
