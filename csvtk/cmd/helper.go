@@ -424,7 +424,7 @@ func parseFields(cmd *cobra.Command,
 			} else {
 				field, err := strconv.Atoi(s)
 				if err != nil {
-					checkError(fmt.Errorf("fail to parse digital field: %s, you may mix use digital fields and column names", s))
+					checkError(fmt.Errorf("failed to parse %s as a field number, you may mix the use of field numbers and column names", s))
 				}
 				fields = append(fields, field)
 				j++

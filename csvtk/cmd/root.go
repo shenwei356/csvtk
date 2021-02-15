@@ -52,7 +52,7 @@ Attention:
      starts with "#", please assign flag "-C" another rare symbol, e.g. '$'.
   5. By default, csvtk handles CSV files, use flag "-t" for tab-delimited files.
   6. If double quotes exist in fields, use flag "-l".
-  7. Do not mix using digital fields and column names.
+  7. Do not mix use field (column) numbers and names.
 
 Environment variables for frequently used global flags:
 

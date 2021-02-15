@@ -72,7 +72,7 @@ It could save you lots of time in (not) writing Python/R scripts.
 - [`dim`](https://bioinf.shenwei.me/csvtk/usage/#dim/nrow/ncol): dimensions of CSV file
 - [`nrow`](https://bioinf.shenwei.me/csvtk/usage/#dim/nrow/ncol): print number of records
 - [`ncol`](https://bioinf.shenwei.me/csvtk/usage/#dim/nrow/ncol): print number of columns
-- [`summary`](https://bioinf.shenwei.me/csvtk/usage/#summary): summary statistics of selected digital fields (groupby group fields)
+- [`summary`](https://bioinf.shenwei.me/csvtk/usage/#summary): summary statistics of selected numeric or text fields (groupby group fields)
 - [`watch`](https://bioinf.shenwei.me/csvtk/usage/#watch): online monitoring and histogram of selected field
 - [`corr`](https://bioinf.shenwei.me/csvtk/usage/#corr): calculate Pearson correlation between numeric columns
 
@@ -240,7 +240,7 @@ More [examples](http://shenwei356.github.io/csvtk/usage/) and [tutorial](http://
     starts with `#`, please assign flag `-C` another rare symbol, e.g. `'$'`.
 5. By default, csvtk handles CSV files, use flag `-t` for tab-delimited files.
 6. If `"` exists in tab-delimited files, use flag `-l`.
-7. Do not mix use digital fields and column names.
+7. Do not mix use field (column) numbers and names.
 
 Examples
 
@@ -254,7 +254,7 @@ Examples
         1    Robert       Thompson    abc
         NA   Robert       Abel        123
 
-1. Summary of selected digital fields, supporting "group-by"
+1. Summary of selected numeric fields, supporting "group-by"
 
         $ cat testdata/digitals2.csv \
             | csvtk summary --ignore-non-digits --fields f4:sum,f5:sum --groups f1,f2 \

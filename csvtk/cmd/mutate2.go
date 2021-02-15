@@ -143,7 +143,7 @@ Supported operators and types:
 		digits := getFlagNonNegativeInt(cmd, "digits")
 		formatDigitals := fmt.Sprintf("%%.%df", digits)
 
-		digitsAsString := getFlagBool(cmd, "digits-as-string")
+		digitsAsString := getFlagBool(cmd, "numeric-as-string")
 
 		fs := make([]string, 0)
 		for _, f := range reFilter2.FindAllStringSubmatch(exprStr, -1) {
@@ -366,6 +366,6 @@ func init() {
 	RootCmd.AddCommand(mutate2Cmd)
 	mutate2Cmd.Flags().StringP("expression", "e", "", `artithmetic/string expressions. e.g. "'string'", '"abc"', ' $a + "-" + $b ', '$1 + $2', '$a / $b', ' $1 > 100 ? "big" : "small" '`)
 	mutate2Cmd.Flags().StringP("name", "n", "", `new column name`)
-	mutate2Cmd.Flags().IntP("digits", "L", 2, `number of digits after the dot`)
-	mutate2Cmd.Flags().BoolP("digits-as-string", "s", false, `treate digits as string to avoid converting big digits into scientific notation`)
+	mutate2Cmd.Flags().IntP("digits", "L", 2, `number of digits after the decimal dot`)
+	mutate2Cmd.Flags().BoolP("numeric-as-string", "s", false, `treat even numeric fields as strings to avoid converting big numbers into scientific notation`)
 }

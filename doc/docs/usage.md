@@ -13,7 +13,7 @@
     starts with "#", please assign flag "-C" another rare symbol, e.g. '$'.
 5. By default, csvtk handles CSV files, use flag "-t" for tab-delimited files.
 6. If double quotes exist in fields, use flag "-l".
-7. Do not mix using digital fields and column names.
+7. Do not mix use field (column) numbers and names.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -114,7 +114,7 @@ Attention:
      starts with "#", please assign flag "-C" another rare symbol, e.g. '$'.
   5. By default, csvtk handles CSV files, use flag "-t" for tab-delimited files.
   6. If double quotes exist in fields, use flag "-l".
-  7. Do not mix using digital fields and column names.
+  7. Do not mix use field (column) numbers and names.
 
 Environment variables for frequently used global flags:
 
@@ -338,17 +338,17 @@ Examples
 Usage
 
 ```text
-summary statistics of selected digital fields (groupby group fields)
+summary statistics of selected numeric or text fields (groupby group fields)
 
 Attention:
 
-  1. Do not mix use digital fields and column names.
+  1. Do not mix use field (column) numbers and names.
 
 Available operations:
  
   # numeric/statistical operations
   # provided by github.com/gonum/stat and github.com/gonum/floats
-  countn (count of digits), min, max, sum,
+  countn (count numeric values), min, max, sum,
   mean, stdev, variance, median, q1, q2, q3,
   entropy (Shannon entropy),
   prod (product of the elements)
@@ -364,7 +364,7 @@ Flags:
   -f, --fields strings      operations on these fields. e.g -f 1:count,1:sum or -f colA:mean. available operations: collapse, count, countn, countunique, entropy, first, last, max, mean, median, min, prod, q1, q2, q3, rand, stdev, sum, uniq, variance
   -g, --groups string       group via fields. e.g -f 1,2 or -f columnA,columnB
   -h, --help                help for summary
-  -i, --ignore-non-digits   ignore non-digital values like "NA" or "N/A"
+  -i, --ignore-non-numbers   ignore non-digital values like "NA" or "N/A"
   -S, --rand-seed int       rand seed for operation "rand" (default 11)
   -s, --separater string    separater for collapsed data (default "; ")
 
@@ -389,11 +389,11 @@ Examples
         bar,xyz2,abc3,2,3
         bar,xyz2,abc3,2,1
 
-1. use flag `-i/--ignore-non-digits`
+1. use flag `-i/--ignore-non-numbers`
 
         $ cat testdata/digitals2.csv \
             | csvtk summary -f f4:sum
-        [ERRO] column 4 has non-digital data: N/A, you can use flag -i/--ignore-non-digits to skip these data
+        [ERRO] column 4 has non-digital data: N/A, you can use flag -i/--ignore-non-numbers to skip these data
 
         $ cat testdata/digitals2.csv \
             | csvtk summary -f f4:sum -i
@@ -414,7 +414,7 @@ Examples
         f4:sum,f5:sum
         21.50,118.00
 
-1. but remember not mixing use digital fields and column names
+1. but remember do not mix use column numbers and names
 
         $ cat testdata/digitals2.csv \
             | csvtk summary -f f4:sum,5:sum -i
@@ -422,7 +422,7 @@ Examples
 
         $ cat testdata/digitals2.csv \
             | csvtk summary -f 4:sum,f5:sum -i
-        [ERRO] fail to parse digital field: f5, you may mix use digital fields and column names
+        [ERRO] failed to parse f5 as a field number, you may mix the use of field numbers and column names
 
 1. groupby
 
@@ -2552,8 +2552,8 @@ Usage:
   csvtk mutate2 [flags]
 
 Flags:
-  -L, --digits int          number of digits after the dot (default 2)
-  -s, --digits-as-string    treate digits as string to avoid converting big digits into scientific notation
+  -L, --digits int          number of digits after the decimal dot (default 2)
+  -s, --numeric-as-string    treat even numeric fields as strings to avoid converting big numbers into scientific notation
   -e, --expression string   arithmetic/string expressions. e.g. "'string'", '"abc"', ' $a + "-" + $b ', '$1 + $2', '$a / $b', ' $1 > 100 ? "big" : "small" '
   -h, --help                help for mutate2
   -n, --name string         new column name

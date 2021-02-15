@@ -42,18 +42,18 @@ var separater string
 // summaryCmd represents the stat2 command
 var summaryCmd = &cobra.Command{
 	Use:   "summary",
-	Short: "summary statistics of selected digital fields (groupby group fields)",
-	Long: `summary statistics of selected digital fields (groupby group fields)
+	Short: "summary statistics of selected numeric or text fields (groupby group fields)",
+	Long: `summary statistics of selected numeric or text fields (groupby group fields)
 
 Attention:
 
-  1. Do not mix use digital fields and column names.
+  1. Do not mix use field (column) numbers and names.
 
 Available operations:
  
   # numeric/statistical operations
   # provided by github.com/gonum/stat and github.com/gonum/floats
-  countn (count of digits), min, max, sum,
+  countn (count numeric values), min, max, sum,
   mean, stdev, variance, median, q1, q2, q3,
   entropy (Shannon entropy), 
   prod (product of the elements)
@@ -70,7 +70,7 @@ Available operations:
 		}
 		runtime.GOMAXPROCS(config.NumCPUs)
 
-		ignore := getFlagBool(cmd, "ignore-non-digits")
+		ignore := getFlagBool(cmd, "ignore-non-numbers")
 		decimalWidth := getFlagNonNegativeInt(cmd, "decimal-width")
 		decimalFormat := fmt.Sprintf("%%.%df", decimalWidth)
 		groupsStr := getFlagString(cmd, "groups")
@@ -375,7 +375,7 @@ Available operations:
 						if ignore {
 							continue
 						}
-						checkError(fmt.Errorf("column %d has non-digital data: %s, you can use flag -i/--ignore-non-digits to skip these data", f, record[f-1]))
+						checkError(fmt.Errorf("column %d has non-numeric data: %s, you can use flag -i/--ignore-non-numbers to skip these data", f, record[f-1]))
 					}
 					v, e = strconv.ParseFloat(removeComma(record[f-1]), 64)
 					checkError(e)
@@ -553,7 +553,7 @@ func init() {
 	RootCmd.AddCommand(summaryCmd)
 	summaryCmd.Flags().StringP("groups", "g", "", `group via fields. e.g -f 1,2 or -f columnA,columnB`)
 	summaryCmd.Flags().StringSliceP("fields", "f", []string{}, fmt.Sprintf(`operations on these fields. e.g -f 1:count,1:sum or -f colA:mean. available operations: %s`, strings.Join(allStatsList, ", ")))
-	summaryCmd.Flags().BoolP("ignore-non-digits", "i", false, `ignore non-digital values like "NA" or "N/A"`)
+	summaryCmd.Flags().BoolP("ignore-non-numbers", "i", false, `ignore non-numeric values like "NA" or "N/A"`)
 	summaryCmd.Flags().IntP("decimal-width", "n", 2, "limit floats to N decimal points")
 	summaryCmd.Flags().StringP("separater", "s", "; ", "separater for collapsed data")
 	summaryCmd.Flags().Int64P("rand-seed", "S", 11, `rand seed for operation "rand"`)
