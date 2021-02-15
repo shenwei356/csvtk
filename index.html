@@ -309,8 +309,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#bash-completion" class="md-nav__link">
-    Bash-completion
+  <a href="#shell-completion" class="md-nav__link">
+    Shell-completion
   </a>
   
 </li>
@@ -523,8 +523,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#bash-completion" class="md-nav__link">
-    Bash-completion
+  <a href="#shell-completion" class="md-nav__link">
+    Shell-completion
   </a>
   
 </li>
@@ -621,7 +621,7 @@ It could save you lots of time in (not) writing Python/R scripts.</p>
 <li><a href="#features">Features</a></li>
 <li><a href="#subcommands">Subcommands</a></li>
 <li><a href="#installation">Installation</a></li>
-<li><a href="#bash-completion">Bash-completion</a></li>
+<li><a href="#shell-completion">Shell-completion</a></li>
 <li><a href="#compared-to-csvkit">Compared to <code>csvkit</code></a></li>
 <li><a href="#examples">Examples</a></li>
 <li><a href="#acknowledgements">Acknowledgements</a></li>
@@ -652,7 +652,7 @@ It could save you lots of time in (not) writing Python/R scripts.</p>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#dim/nrow/ncol"><code>dim</code></a>: dimensions of CSV file</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#dim/nrow/ncol"><code>nrow</code></a>: print number of records</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#dim/nrow/ncol"><code>ncol</code></a>: print number of columns</li>
-<li><a href="https://bioinf.shenwei.me/csvtk/usage/#summary"><code>summary</code></a>: summary statistics of selected digital fields (groupby group fields)</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#summary"><code>summary</code></a>: summary statistics of selected numeric or text fields (groupby group fields)</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#watch"><code>watch</code></a>: online monitoring and histogram of selected field</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#corr"><code>corr</code></a>: calculate Pearson correlation between numeric columns</li>
 </ul>
@@ -717,7 +717,7 @@ It could save you lots of time in (not) writing Python/R scripts.</p>
 <ul>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#cat"><code>cat</code></a> stream file and report progress</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#version"><code>version</code></a>   print version information and check for update</li>
-<li><a href="https://bioinf.shenwei.me/csvtk/usage/#genautocomplete"><code>genautocomplete</code></a> generate shell autocompletion script</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#genautocomplete"><code>genautocomplete</code></a> generate shell autocompletion script (bash|zsh|fish|powershell)</li>
 </ul>
 <h2 id="installation">Installation</h2>
 <p><a href="https://github.com/shenwei356/csvtk/releases">Download Page</a></p>
@@ -758,25 +758,26 @@ And then:</p>
 <h4 id="method-4-for-archlinux-aur-users-may-be-not-the-latest">Method 4: For ArchLinux AUR users (may be not the latest)</h4>
 <pre><code>yaourt -S csvtk
 </code></pre>
-<h2 id="bash-completion">Bash-completion</h2>
-<p>Note: The current version supports Bash only.
-This should work for *nix systems with Bash installed.</p>
-<p>Howto:</p>
-<ol>
-<li>
-<p>run: <code>csvtk genautocomplete</code></p>
-</li>
-<li>
-<p>create and edit <code>~/.bash_completion</code> file if you don't have it.</p>
-<pre><code>nano ~/.bash_completion
+<h2 id="shell-completion">Shell-completion</h2>
+<p>Bash:</p>
+<pre><code># generate completion shell
+csvtk genautocomplete --shell bash
+
+# configure if never did
+echo "for bcfile in ~/.bash_completion.d/* ; do source $bcfile; done" &gt;&gt; ~/.bash_completion
+echo "source ~/.bash_completion" &gt;&gt; ~/.bashrc
 </code></pre>
-<p>add the following:</p>
-<pre><code>for bcfile in ~/.bash_completion.d/* ; do
-  . $bcfile
-done
+<p>Zsh:</p>
+<pre><code># generate completion shell
+csvtk genautocomplete --shell zsh --file ~/.zfunc/_csvtk
+
+# configure if never did
+echo 'fpath=( ~/.zfunc "${fpath[@]}" )' &gt;&gt; ~/.zshrc
+echo "autoload -U compinit; compinit" &gt;&gt; ~/.zshrc
 </code></pre>
-</li>
-</ol>
+<p>fish:</p>
+<pre><code>csvtk genautocomplete --shell fish --file ~/.config/fish/completions/csvtk.fish
+</code></pre>
 <h2 id="compared-to-csvkit">Compared to <code>csvkit</code></h2>
 <p><a href="http://csvkit.readthedocs.org/">csvkit</a>, attention: this table wasn't updated for 2 years.</p>
 <table>
@@ -902,7 +903,7 @@ name-indexed data such as CSV and tabular JSON http://johnkerl.org/miller</li>
     starts with <code>#</code>, please assign flag <code>-C</code> another rare symbol, e.g. <code>'$'</code>.</li>
 <li>By default, csvtk handles CSV files, use flag <code>-t</code> for tab-delimited files.</li>
 <li>If <code>"</code> exists in tab-delimited files, use flag <code>-l</code>.</li>
-<li>Do not mix use digital fields and column names.</li>
+<li>Do not mix use field (column) numbers and names.</li>
 </ol>
 <p>Examples</p>
 <ol>
@@ -918,7 +919,7 @@ NA   Robert       Abel        123
 </code></pre>
 </li>
 <li>
-<p>Summary of selected digital fields, supporting "group-by"</p>
+<p>Summary of selected numeric fields, supporting "group-by"</p>
 <pre><code>$ cat testdata/digitals2.csv \
     | csvtk summary --ignore-non-digits --fields f4:sum,f5:sum --groups f1,f2 \
     | csvtk pretty

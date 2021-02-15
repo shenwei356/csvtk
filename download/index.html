@@ -308,8 +308,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#bash-completion" class="md-nav__link">
-    Bash-completion
+  <a href="#shell-completion" class="md-nav__link">
+    Shell-completion
   </a>
   
 </li>
@@ -460,8 +460,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#bash-completion" class="md-nav__link">
-    Bash-completion
+  <a href="#shell-completion" class="md-nav__link">
+    Shell-completion
   </a>
   
 </li>
@@ -613,25 +613,26 @@ And then:</p>
 <h4 id="method-5-for-archlinux-aur-users-may-be-not-the-latest">Method 5: For ArchLinux AUR users (may be not the latest)</h4>
 <pre><code>yaourt -S csvtk
 </code></pre>
-<h2 id="bash-completion">Bash-completion</h2>
-<p>Note: The current version supports Bash only.
-This should work for *nix systems with Bash installed.</p>
-<p>Howto:</p>
-<ol>
-<li>
-<p>run: <code>csvtk genautocomplete</code></p>
-</li>
-<li>
-<p>create and edit <code>~/.bash_completion</code> file if you don't have it.</p>
-<pre><code>nano ~/.bash_completion
+<h2 id="shell-completion">Shell-completion</h2>
+<p>Bash:</p>
+<pre><code># generate completion shell
+csvtk genautocomplete --shell bash
+
+# configure if never did
+echo "for bcfile in ~/.bash_completion.d/* ; do source $bcfile; done" &gt;&gt; ~/.bash_completion
+echo "source ~/.bash_completion" &gt;&gt; ~/.bashrc
 </code></pre>
-<p>add the following:</p>
-<pre><code>for bcfile in ~/.bash_completion.d/* ; do
-  . $bcfile
-done
+<p>Zsh:</p>
+<pre><code># generate completion shell
+csvtk genautocomplete --shell zsh --file ~/.zfunc/_csvtk
+
+# configure if never did
+echo 'fpath=( ~/.zfunc "${fpath[@]}" )' &gt;&gt; ~/.zshrc
+echo "autoload -U compinit; compinit" &gt;&gt; ~/.zshrc
 </code></pre>
-</li>
-</ol>
+<p>fish:</p>
+<pre><code>csvtk genautocomplete --shell fish --file ~/.config/fish/completions/csvtk.fish
+</code></pre>
 <h2 id="previous-versions">Previous Versions</h2>
 <ul>
 <li><a href="https://github.com/shenwei356/csvtk/releases/tag/v0.21.0">csvtk v0.21.0</a>

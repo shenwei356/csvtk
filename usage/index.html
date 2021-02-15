@@ -1023,7 +1023,7 @@
     starts with "#", please assign flag "-C" another rare symbol, e.g. '$'.</li>
 <li>By default, csvtk handles CSV files, use flag "-t" for tab-delimited files.</li>
 <li>If double quotes exist in fields, use flag "-l".</li>
-<li>Do not mix using digital fields and column names.</li>
+<li>Do not mix use field (column) numbers and names.</li>
 </ol>
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -1120,7 +1120,7 @@ Attention:
      starts with &quot;#&quot;, please assign flag &quot;-C&quot; another rare symbol, e.g. '$'.
   5. By default, csvtk handles CSV files, use flag &quot;-t&quot; for tab-delimited files.
   6. If double quotes exist in fields, use flag &quot;-l&quot;.
-  7. Do not mix using digital fields and column names.
+  7. Do not mix use field (column) numbers and names.
 
 Environment variables for frequently used global flags:
 
@@ -1325,17 +1325,17 @@ $ cat testdata/names.csv | csvtk ncol -H
 </ol>
 <h2 id="summary">summary</h2>
 <p>Usage</p>
-<pre><code class="language-text">summary statistics of selected digital fields (groupby group fields)
+<pre><code class="language-text">summary statistics of selected numeric or text fields (groupby group fields)
 
 Attention:
 
-  1. Do not mix use digital fields and column names.
+  1. Do not mix use field (column) numbers and names.
 
 Available operations:
 
   # numeric/statistical operations
   # provided by github.com/gonum/stat and github.com/gonum/floats
-  countn (count of digits), min, max, sum,
+  countn (count numeric values), min, max, sum,
   mean, stdev, variance, median, q1, q2, q3,
   entropy (Shannon entropy),
   prod (product of the elements)
@@ -1351,7 +1351,7 @@ Flags:
   -f, --fields strings      operations on these fields. e.g -f 1:count,1:sum or -f colA:mean. available operations: collapse, count, countn, countunique, entropy, first, last, max, mean, median, min, prod, q1, q2, q3, rand, stdev, sum, uniq, variance
   -g, --groups string       group via fields. e.g -f 1,2 or -f columnA,columnB
   -h, --help                help for summary
-  -i, --ignore-non-digits   ignore non-digital values like &quot;NA&quot; or &quot;N/A&quot;
+  -i, --ignore-non-numbers   ignore non-digital values like &quot;NA&quot; or &quot;N/A&quot;
   -S, --rand-seed int       rand seed for operation &quot;rand&quot; (default 11)
   -s, --separater string    separater for collapsed data (default &quot;; &quot;)
 
@@ -1377,10 +1377,10 @@ bar,xyz2,abc3,2,1
 </code></pre>
 </li>
 <li>
-<p>use flag <code>-i/--ignore-non-digits</code></p>
+<p>use flag <code>-i/--ignore-non-numbers</code></p>
 <pre><code>$ cat testdata/digitals2.csv \
     | csvtk summary -f f4:sum
-[ERRO] column 4 has non-digital data: N/A, you can use flag -i/--ignore-non-digits to skip these data
+[ERRO] column 4 has non-digital data: N/A, you can use flag -i/--ignore-non-numbers to skip these data
 
 $ cat testdata/digitals2.csv \
     | csvtk summary -f f4:sum -i
@@ -1405,14 +1405,14 @@ f4:sum,f5:sum
 </code></pre>
 </li>
 <li>
-<p>but remember not mixing use digital fields and column names</p>
+<p>but remember do not mix use column numbers and names</p>
 <pre><code>$ cat testdata/digitals2.csv \
     | csvtk summary -f f4:sum,5:sum -i
 [ERRO] column "5" not existed in file: -
 
 $ cat testdata/digitals2.csv \
     | csvtk summary -f 4:sum,f5:sum -i
-[ERRO] fail to parse digital field: f5, you may mix use digital fields and column names
+[ERRO] failed to parse f5 as a field number, you may mix the use of field numbers and column names
 </code></pre>
 </li>
 <li>
@@ -1569,6 +1569,7 @@ Flags:
 <p>default</p>
 <pre><code>$ csvtk pretty testdata/names.csv
 id   first_name   last_name   username
+--   ----------   ---------   --------
 11   Rob          Pike        rob
 2    Ken          Thompson    ken
 4    Robert       Griesemer   gri
@@ -1580,6 +1581,7 @@ NA   Robert       Abel        123
 <p>align right</p>
 <pre><code>$ csvtk pretty testdata/names.csv -r
 id   first_name   last_name   username
+--   ----------   ---------   --------
 11          Rob        Pike        rob
  2          Ken    Thompson        ken
  4       Robert   Griesemer        gri
@@ -1591,6 +1593,7 @@ NA       Robert        Abel        123
 <p>custom separator</p>
 <pre><code>$ csvtk pretty testdata/names.csv -s " | "
 id | first_name | last_name | username
+-- | ---------- | --------- | --------
 11 | Rob        | Pike      | rob
 2  | Ken        | Thompson  | ken
 4  | Robert     | Griesemer | gri
@@ -3153,13 +3156,18 @@ female,13,c
 female,14,d
 
 # put names of one group in one row
-$ cat players.csv | csvtk collapse -f 1 -v 3 -s ';' | csvtk cut -f 2 
+$ cat players.csv \
+    | csvtk collapse -f 1 -v 3 -s ';' \
+    | csvtk cut -f 2 
 name
 A;B;C
 a;b;c;d
 
 # n = 2
-$ cat players.csv | csvtk collapse -f 1 -v 3 -s ';' | csvtk cut -f 2 | csvtk comb -d ';' -n 2
+$ cat players.csv \
+    | csvtk collapse -f 1 -v 3 -s ';' \
+    | csvtk cut -f 2 \
+    | csvtk comb -d ';' -n 2
 A,B
 A,C
 B,C
@@ -3171,7 +3179,10 @@ b,d
 c,d
 
 # n = 3
-$ cat players.csv | csvtk collapse -f 1 -v 3 -s ';' | csvtk cut -f 2 | csvtk comb -d ';' -n 3
+$ cat players.csv \
+    | csvtk collapse -f 1 -v 3 -s ';' \
+    | csvtk cut -f 2 \
+    | csvtk comb -d ';' -n 3
 A,B,C
 a,b,c
 a,b,d
@@ -3179,7 +3190,10 @@ a,c,d
 b,c,d
 
 # n = 0
-$ cat players.csv | csvtk collapse -f 1 -v 3 -s ';' | csvtk cut -f 2 | csvtk comb -d ';' -n 0
+$ cat players.csv \
+    | csvtk collapse -f 1 -v 3 -s ';' \
+    | csvtk cut -f 2 \
+    | csvtk comb -d ';' -n 0
 A
 B
 A,B
@@ -3581,8 +3595,8 @@ Usage:
   csvtk mutate2 [flags]
 
 Flags:
-  -L, --digits int          number of digits after the dot (default 2)
-  -s, --digits-as-string    treate digits as string to avoid converting big digits into scientific notation
+  -L, --digits int          number of digits after the decimal dot (default 2)
+  -s, --numeric-as-string    treat even numeric fields as strings to avoid converting big numbers into scientific notation
   -e, --expression string   arithmetic/string expressions. e.g. &quot;'string'&quot;, '&quot;abc&quot;', ' $a + &quot;-&quot; + $b ', '$1 + $2', '$a / $b', ' $1 &gt; 100 ? &quot;big&quot; : &quot;small&quot; '
   -h, --help                help for mutate2
   -n, --name string         new column name
@@ -3640,12 +3654,31 @@ NA   Robert       Abel        123        Robert Abel
 </code></pre>
 </li>
 <li>
-<p>Ternary conditional</p>
+<p>Ternary condition (<code>? :</code>)</p>
 <pre><code>$ cat testdata/digitals.tsv | csvtk mutate2 -t -H -e '$1 &gt; 5 ? "big" : "small" '
 4       5       6       small
 1       2       3       small
 7       8       0       big
 8       1,000   4       big
+</code></pre>
+</li>
+<li>
+<p>Null coalescence (<code>??</code>)</p>
+<pre><code>$ echo -e "one,two\na1,a2\n,b2\na2," | csvtk pretty 
+one   two
+---   ---
+a1    a2
+    b2
+a2
+
+$ echo -e "one,two\na1,a2\n,b2\na2," \
+    | csvtk mutate2 -n three -e '$one ?? $two' \
+    | csvtk pretty
+one   two   three
+---   ---   -----
+a1    a2    a1
+    b2    b2
+a2          a2
 </code></pre>
 </li>
 </ol>
@@ -4269,30 +4302,37 @@ Flags:
 <p>Usage</p>
 <pre><code class="language-text">generate shell autocompletion script
 
-Note: The current version supports Bash only.
-This should work for *nix systems with Bash installed.
+Supported shell: bash|zsh|fish|powershell
 
-Howto:
+Bash:
 
-1. run: csvtk genautocomplete
+    # generate completion shell
+    csvtk genautocomplete --shell bash
 
-2. create and edit ~/.bash_completion file if you don't have it.
+    # configure if never did
+    echo &quot;for bcfile in ~/.bash_completion.d/* ; do source $bcfile; done&quot; &gt;&gt; ~/.bash_completion
+    echo &quot;source ~/.bash_completion&quot; &gt;&gt; ~/.bashrc
 
-        nano ~/.bash_completion
+Zsh:
 
-   add the following:
+    # generate completion shell
+    csvtk genautocomplete --shell zsh --file ~/.zfunc/_csvtk
 
-        for bcfile in ~/.bash_completion.d/* ; do
-          . $bcfile
-        done
+    # configure if never did
+    echo 'fpath=( ~/.zfunc &quot;${fpath[@]}&quot; )' &gt;&gt; ~/.zshrc
+    echo &quot;autoload -U compinit; compinit&quot; &gt;&gt; ~/.zshrc
+
+fish:
+
+    csvtk genautocomplete --shell fish --file ~/.config/fish/completions/csvtk.fish
 
 Usage:
   csvtk genautocomplete [flags]
 
 Flags:
-      --file string   autocompletion file (default &quot;/home/shenwei/.bash_completion.d/csvtk.sh&quot;)
-  -h, --help          help for genautocomplete
-      --type string   autocompletion type (currently only bash supported) (default &quot;bash&quot;)
+      --file string    autocompletion file (default &quot;/home/shenwei/.bash_completion.d/csvtk.sh&quot;)
+  -h, --help           help for genautocomplete
+      --shell string   autocompletion type (bash|zsh|fish|powershell) (default &quot;bash&quot;)
 
 </code></pre>
 <div id="disqus_thread"></div>
