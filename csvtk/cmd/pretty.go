@@ -24,6 +24,7 @@ import (
 	"bytes"
 	"fmt"
 	"runtime"
+	"strings"
 
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
@@ -81,12 +82,56 @@ Attention:
 				MinWidth: minWidth, MaxWidth: maxWidth}
 		}
 		tbl, err := prettytable.NewTable(columns...)
-		checkError(err)
 		tbl.Separator = separator
-		for _, record := range data {
+		checkError(err)
+		var i int
+		var r string
+		var record []string
+		var record2 []interface{}
+		if len(headerRow) > 0 {
+			record2 = make([]interface{}, len(headerRow))
+		} else if len(data) > 0 {
+			record2 = make([]interface{}, len(data[0]))
+		}
+
+		if !config.NoHeaderRow {
+			// header separator
+			maxLens := make([]int, len(headerRow))
+			var l int
+			for i, r = range headerRow {
+				maxLens[i] = len(r)
+			}
+			for _, record = range data {
+				for i, r = range record {
+					l = len(r)
+					if l > maxLens[i] {
+						maxLens[i] = l
+					}
+				}
+			}
+			if maxWidth > 0 {
+				for i = range headerRow {
+					if maxLens[i] > maxWidth {
+						maxLens[i] = maxWidth
+					}
+				}
+			}
+			if minWidth > 0 {
+				for i = range headerRow {
+					if maxLens[i] < minWidth {
+						maxLens[i] = minWidth
+					}
+				}
+			}
+			for i, l = range maxLens {
+				record2[i] = strings.Repeat("-", l)
+			}
+			tbl.AddRow(record2...)
+		}
+
+		for _, record = range data {
 			// have to do this stupid conversion
-			record2 := make([]interface{}, len(record))
-			for i, r := range record {
+			for i, r = range record {
 				record2[i] = r
 			}
 			tbl.AddRow(record2...)

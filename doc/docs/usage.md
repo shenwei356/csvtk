@@ -581,6 +581,7 @@ Examples:
 
         $ csvtk pretty testdata/names.csv
         id   first_name   last_name   username
+        --   ----------   ---------   --------
         11   Rob          Pike        rob
         2    Ken          Thompson    ken
         4    Robert       Griesemer   gri
@@ -591,6 +592,7 @@ Examples:
 
         $ csvtk pretty testdata/names.csv -r
         id   first_name   last_name   username
+        --   ----------   ---------   --------
         11          Rob        Pike        rob
          2          Ken    Thompson        ken
          4       Robert   Griesemer        gri
@@ -602,6 +604,7 @@ Examples:
 
         $ csvtk pretty testdata/names.csv -s " | "
         id | first_name | last_name | username
+        -- | ---------- | --------- | --------
         11 | Rob        | Pike      | rob
         2  | Ken        | Thompson  | ken
         4  | Robert     | Griesemer | gri
