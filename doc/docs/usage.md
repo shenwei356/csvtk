@@ -3262,30 +3262,37 @@ Usage
 ```text
 generate shell autocompletion script
 
-Note: The current version supports Bash only.
-This should work for *nix systems with Bash installed.
+Supported shell: bash|zsh|fish|powershell
 
-Howto:
+Bash:
 
-1. run: csvtk genautocomplete
+    # generate completion shell
+    csvtk genautocomplete --shell bash
 
-2. create and edit ~/.bash_completion file if you don't have it.
+    # configure if never did
+    echo "for bcfile in ~/.bash_completion.d/* ; do source $bcfile; done" >> ~/.bash_completion
+    echo "source ~/.bash_completion" >> ~/.bashrc
 
-        nano ~/.bash_completion
+Zsh:
 
-   add the following:
+    # generate completion shell
+    csvtk genautocomplete --shell zsh --file ~/.zfunc/_csvtk
 
-        for bcfile in ~/.bash_completion.d/* ; do
-          . $bcfile
-        done
+    # configure if never did
+    echo 'fpath=( ~/.zfunc "${fpath[@]}" )' >> ~/.zshrc
+    echo "autoload -U compinit; compinit" >> ~/.zshrc
+
+fish:
+
+    csvtk genautocomplete --shell fish --file ~/.config/fish/completions/csvtk.fish
 
 Usage:
   csvtk genautocomplete [flags]
 
 Flags:
-      --file string   autocompletion file (default "/home/shenwei/.bash_completion.d/csvtk.sh")
-  -h, --help          help for genautocomplete
-      --type string   autocompletion type (currently only bash supported) (default "bash")
+      --file string    autocompletion file (default "/home/shenwei/.bash_completion.d/csvtk.sh")
+  -h, --help           help for genautocomplete
+      --shell string   autocompletion type (bash|zsh|fish|powershell) (default "bash")
 
 ```
 

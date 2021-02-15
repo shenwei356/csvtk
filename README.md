@@ -38,7 +38,7 @@ It could save you lots of time in (not) writing Python/R scripts.
 - [Features](#features)
 - [Subcommands](#subcommands)
 - [Installation](#installation)
-- [Bash-completion](#bash-completion)
+- [Shell-completion](#shell-completion)
 - [Compared to `csvkit`](#compared-to-csvkit)
 - [Examples](#examples)
 - [Acknowledgements](#acknowledgements)
@@ -135,7 +135,7 @@ It could save you lots of time in (not) writing Python/R scripts.
 
 - [`cat`](https://bioinf.shenwei.me/csvtk/usage/#cat) stream file and report progress
 - [`version`](https://bioinf.shenwei.me/csvtk/usage/#version)   print version information and check for update
-- [`genautocomplete`](https://bioinf.shenwei.me/csvtk/usage/#genautocomplete) generate shell autocompletion script
+- [`genautocomplete`](https://bioinf.shenwei.me/csvtk/usage/#genautocomplete) generate shell autocompletion script (bash|zsh|fish|powershell)
 
 
 ## Installation
@@ -176,24 +176,30 @@ And then:
 
     yaourt -S csvtk
 
-## Bash-completion
+## Shell-completion
 
-Note: The current version supports Bash only.
-This should work for *nix systems with Bash installed.
+Bash:
 
-Howto:
+    # generate completion shell
+    csvtk genautocomplete --shell bash
 
-1. run: `csvtk genautocomplete`
+    # configure if never did
+    echo "for bcfile in ~/.bash_completion.d/* ; do source $bcfile; done" >> ~/.bash_completion
+    echo "source ~/.bash_completion" >> ~/.bashrc
 
-2. create and edit `~/.bash_completion` file if you don't have it.
+Zsh:
 
-        nano ~/.bash_completion
+    # generate completion shell
+    csvtk genautocomplete --shell zsh --file ~/.zfunc/_csvtk
 
-    add the following:
+    # configure if never did
+    echo 'fpath=( ~/.zfunc "${fpath[@]}" )' >> ~/.zshrc
+    echo "autoload -U compinit; compinit" >> ~/.zshrc
 
-        for bcfile in ~/.bash_completion.d/* ; do
-          . $bcfile
-        done
+fish:
+
+    csvtk genautocomplete --shell fish --file ~/.config/fish/completions/csvtk.fish
+
 
 ## Compared to `csvkit`
 
