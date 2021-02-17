@@ -183,8 +183,9 @@ Bash:
     # generate completion shell
     csvtk genautocomplete --shell bash
 
-    # configure if never did
-    echo "for bcfile in ~/.bash_completion.d/* ; do source $bcfile; done" >> ~/.bash_completion
+    # configure if never did.
+    # install bash-completion if the "complete" command is not found.
+    echo "for bcfile in ~/.bash_completion.d/* ; do source \$bcfile; done" >> ~/.bash_completion
     echo "source ~/.bash_completion" >> ~/.bashrc
 
 Zsh:

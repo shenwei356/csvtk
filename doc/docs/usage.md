@@ -1736,6 +1736,8 @@ Examples:
         1       2       3
         7       8       0
 
+
+
 ## join
 
 Usage
@@ -2103,13 +2105,18 @@ female,13,c
 female,14,d
 
 # put names of one group in one row
-$ cat players.csv | csvtk collapse -f 1 -v 3 -s ';' | csvtk cut -f 2 
+$ cat players.csv \
+    | csvtk collapse -f 1 -v 3 -s ';' \
+    | csvtk cut -f 2 
 name
 A;B;C
 a;b;c;d
 
 # n = 2
-$ cat players.csv | csvtk collapse -f 1 -v 3 -s ';' | csvtk cut -f 2 | csvtk comb -d ';' -n 2
+$ cat players.csv \
+    | csvtk collapse -f 1 -v 3 -s ';' \
+    | csvtk cut -f 2 \
+    | csvtk comb -d ';' -n 2
 A,B
 A,C
 B,C
@@ -2121,7 +2128,10 @@ b,d
 c,d
 
 # n = 3
-$ cat players.csv | csvtk collapse -f 1 -v 3 -s ';' | csvtk cut -f 2 | csvtk comb -d ';' -n 3
+$ cat players.csv \
+    | csvtk collapse -f 1 -v 3 -s ';' \
+    | csvtk cut -f 2 \
+    | csvtk comb -d ';' -n 3
 A,B,C
 a,b,c
 a,b,d
@@ -2129,7 +2139,10 @@ a,c,d
 b,c,d
 
 # n = 0
-$ cat players.csv | csvtk collapse -f 1 -v 3 -s ';' | csvtk cut -f 2 | csvtk comb -d ';' -n 0
+$ cat players.csv \
+    | csvtk collapse -f 1 -v 3 -s ';' \
+    | csvtk cut -f 2 \
+    | csvtk comb -d ';' -n 0
 A
 B
 A,B
@@ -2607,13 +2620,31 @@ Example
         7       8       0       true
         8       1,000   4       true
 
-1. Ternary conditional
+1. Ternary condition (`? :`)
 
         $ cat testdata/digitals.tsv | csvtk mutate2 -t -H -e '$1 > 5 ? "big" : "small" '
         4       5       6       small
         1       2       3       small
         7       8       0       big
         8       1,000   4       big
+
+1. Null coalescence (`??`)
+
+        $ echo -e "one,two\na1,a2\n,b2\na2," | csvtk pretty 
+        one   two
+        ---   ---
+        a1    a2
+            b2
+        a2    
+
+        $ echo -e "one,two\na1,a2\n,b2\na2," \
+            | csvtk mutate2 -n three -e '$one ?? $two' \
+            | csvtk pretty
+        one   two   three
+        ---   ---   -----
+        a1    a2    a1
+            b2    b2
+        a2          a2
 
 ## sep
 
@@ -3269,8 +3300,9 @@ Bash:
     # generate completion shell
     csvtk genautocomplete --shell bash
 
-    # configure if never did
-    echo "for bcfile in ~/.bash_completion.d/* ; do source $bcfile; done" >> ~/.bash_completion
+    # configure if never did.
+    # install bash-completion if the "complete" command is not found.
+    echo "for bcfile in ~/.bash_completion.d/* ; do source \$bcfile; done" >> ~/.bash_completion
     echo "source ~/.bash_completion" >> ~/.bashrc
 
 Zsh:
