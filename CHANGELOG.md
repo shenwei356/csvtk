@@ -1,3 +1,4 @@
+
 - [csvtk v0.22.1](https://github.com/shenwei356/csvtk/releases/tag/v0.22.1)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.22.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.22.1)
     - `csvtk pretty`: add header separator line. [#123](https://github.com/shenwei356/csvtk/issues/123)

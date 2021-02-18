@@ -38,7 +38,7 @@ It could save you lots of time in (not) writing Python/R scripts.
 - [Features](#features)
 - [Subcommands](#subcommands)
 - [Installation](#installation)
-- [Shell-completion](#shell-completion)
+- [Command-line completion](#command-line-completion)
 - [Compared to `csvkit`](#compared-to-csvkit)
 - [Examples](#examples)
 - [Acknowledgements](#acknowledgements)
@@ -176,7 +176,7 @@ And then:
 
     yaourt -S csvtk
 
-## Shell-completion
+## Command-line completion
 
 Bash:
 
