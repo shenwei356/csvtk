@@ -21,11 +21,11 @@
 package cmd
 
 import (
-	"fmt"
+	"bufio"
 	"runtime"
 	"strings"
 
-	"github.com/shenwei356/breader"
+	"github.com/shenwei356/util/stringutil"
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
 )
@@ -46,25 +46,20 @@ var space2tabCmd = &cobra.Command{
 		checkError(err)
 		defer outfh.Close()
 
-		type Slice []string
-		fn := func(line string) (interface{}, bool, error) {
-			line = strings.TrimRight(line, "\r\n")
-			// check comment line
-			if len(strings.TrimSpace(line)) == 0 || rune(line[0]) == config.CommentChar {
-				return "", false, nil
-			}
-			return Slice(strings.Split(line, "\t ")), true, nil
-		}
+		var line string
 		for _, file := range files {
-			reader, err := breader.NewBufferedReader(file, config.NumCPUs, config.ChunkSize, fn)
+			fh, err := xopen.Ropen(file)
 			checkError(err)
 
-			for chunk := range reader.Ch {
-				for _, data := range chunk.Data {
-					items := data.(Slice)
-					outfh.WriteString(fmt.Sprintf("%s\n", strings.Join(items, "\t")))
+			scanner := bufio.NewScanner(fh)
+			for scanner.Scan() {
+				line = strings.TrimRight(scanner.Text(), "\r\n")
+				if len(strings.TrimSpace(line)) == 0 || rune(line[0]) == config.CommentChar {
+					continue
 				}
+				outfh.WriteString(strings.Join(stringutil.Split(line, "\t "), "\t") + "\n")
 			}
+			checkError(scanner.Err())
 		}
 	},
 }

@@ -14,10 +14,11 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/mxschmitt/golang-combinations v1.1.0
 	github.com/pkg/errors v0.9.1
+	github.com/shenwei356/bpool v0.0.0-20160710042833-f9e0ee4d0403 // indirect
 	github.com/shenwei356/breader v0.1.0
 	github.com/shenwei356/go-logging v0.0.0-20171012171522-c6b9702d88ba
 	github.com/shenwei356/natsort v0.0.0-20190418160752-600d539c017d
-	github.com/shenwei356/util v0.2.0
+	github.com/shenwei356/util v0.3.0
 	github.com/shenwei356/xopen v0.0.0-20181203091311-f4f16ddd3992
 	github.com/spf13/cobra v1.1.3
 	github.com/tatsushid/go-prettytable v0.0.0-20141013043238-ed2d14c29939

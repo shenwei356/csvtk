@@ -202,6 +202,7 @@ github.com/russross/blackfriday/v2 v2.0.1/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQD
 github.com/ruudk/golang-pdf417 v0.0.0-20181029194003-1af4ab5afa58/go.mod h1:6lfFZQK844Gfx8o5WFuvpxWRwnSoipWe/p622j1v06w=
 github.com/ryanuber/columnize v0.0.0-20160712163229-9b3edd62028f/go.mod h1:sm1tb6uqfes/u+d4ooFouqFdy9/2g9QGwK3SQygK0Ts=
 github.com/sean-/seed v0.0.0-20170313163322-e2103e2c3529/go.mod h1:DxrIzT+xaE7yg65j358z/aeFdxmN0P9QXhEzd20vsDc=
+github.com/shenwei356/bpool v0.0.0-20160710042833-f9e0ee4d0403 h1:/3JklLnHXiWUBxWc3joQYavDQJpncRhRA909cUb7eOw=
 github.com/shenwei356/bpool v0.0.0-20160710042833-f9e0ee4d0403/go.mod h1:YkgdTWfNnJgv5HVJbVSDmxQtkK3/jZWDoqcG26BVU8k=
 github.com/shenwei356/breader v0.1.0 h1:g7q33VI15Mroj2TTab06CF6prbQAez+6p8fAoK4qkjo=
 github.com/shenwei356/breader v0.1.0/go.mod h1:YXIrHIPtbJCP6Kv27qGp+cXQl7hyzD0iQrEVYCy/gqw=
@@ -209,8 +210,8 @@ github.com/shenwei356/go-logging v0.0.0-20171012171522-c6b9702d88ba h1:UvnrxFDPm
 github.com/shenwei356/go-logging v0.0.0-20171012171522-c6b9702d88ba/go.mod h1:LiqYp/K5yCEWOi7Ux/iOF/kjDxtsdYjOGcKHDbEOXFU=
 github.com/shenwei356/natsort v0.0.0-20190418160752-600d539c017d h1:eeXLHcXyGEr72V1SOSEI7vSzUOTJvHutwF7Ykm+hscQ=
 github.com/shenwei356/natsort v0.0.0-20190418160752-600d539c017d/go.mod h1:SiiGiRFyRtV7S9RamOrmQR5gpGIRhWJM1w0EtmuQ1io=
-github.com/shenwei356/util v0.2.0 h1:VguRZZ7iwzZi8VpaxVudPybg4rjUmdpWSny49sN0BSo=
-github.com/shenwei356/util v0.2.0/go.mod h1:VCi8sqN8zQ5Oi8QdcGuhrG3/gKQkiXJ7FIR1NouzoU8=
+github.com/shenwei356/util v0.3.0 h1:gTVa3sGwcyGEHgNpXTzdL3MaaJN/bGAypVKSCnT4QfU=
+github.com/shenwei356/util v0.3.0/go.mod h1:n3qhc3bQzlqJ2/5v79hgl0Gd3WzJOkI8XcUix25Brdg=
 github.com/shenwei356/xopen v0.0.0-20181203091311-f4f16ddd3992 h1:RXEEyKj0JL3SrRIYsWIEyy4AwjHbI3I8aDGK6CA4+YI=
 github.com/shenwei356/xopen v0.0.0-20181203091311-f4f16ddd3992/go.mod h1:6EQUa6I7Zsl2GQKqcL9qGLrTzVE+oZyly+uhzovQYSk=
 github.com/shurcooL/sanitized_anchor_name v1.0.0/go.mod h1:1NzhyTcUVG4SuEtjjoZeVRXNmyL/1OwPU0+IJeTBvfc=
