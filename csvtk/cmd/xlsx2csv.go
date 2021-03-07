@@ -26,7 +26,7 @@ import (
 	"runtime"
 	"sort"
 
-	"github.com/360EntSecGroup-Skylar/excelize"
+	"github.com/360EntSecGroup-Skylar/excelize/v2"
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
 )
@@ -105,7 +105,8 @@ var xlsx2csvCmd = &cobra.Command{
 			writer.Comma = config.OutDelimiter
 		}
 
-		rows := xlsx.GetRows(sheetName)
+		rows, err := xlsx.GetRows(sheetName)
+		checkError(err)
 
 		var nColsMax int = -1
 		var nCols int

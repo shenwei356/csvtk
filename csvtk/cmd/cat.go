@@ -28,8 +28,7 @@ import (
 
 	//"runtime"
 
-	"github.com/cheggaaa/pb"
-	// "gopkg.in/cheggaaa/pb.v2"
+	"github.com/cheggaaa/pb/v3"
 	"github.com/spf13/cobra"
 )
 
@@ -75,6 +74,7 @@ var catCmd = &cobra.Command{
 					os.Exit(1)
 				}
 				bar = pb.StartNew(flagTotal)
+				bar.SetWriter(os.Stderr)
 				var line []byte
 				var err error
 				var count int

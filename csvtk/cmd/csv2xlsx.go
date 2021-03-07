@@ -25,7 +25,7 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/360EntSecGroup-Skylar/excelize"
+	"github.com/360EntSecGroup-Skylar/excelize/v2"
 	"github.com/spf13/cobra"
 )
 
