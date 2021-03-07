@@ -26,7 +26,6 @@ import (
 	"strings"
 
 	"github.com/shenwei356/breader"
-	"github.com/shenwei356/util/stringutil"
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
 )
@@ -54,7 +53,7 @@ var space2tabCmd = &cobra.Command{
 			if len(strings.TrimSpace(line)) == 0 || rune(line[0]) == config.CommentChar {
 				return "", false, nil
 			}
-			return Slice(stringutil.Split(line, "\t ")), true, nil
+			return Slice(strings.Split(line, "\t ")), true, nil
 		}
 		for _, file := range files {
 			reader, err := breader.NewBufferedReader(file, config.NumCPUs, config.ChunkSize, fn)

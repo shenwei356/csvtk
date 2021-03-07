@@ -32,7 +32,6 @@ import (
 	"strings"
 
 	"github.com/shenwei356/breader"
-	"github.com/shenwei356/util/stringutil"
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
 )
@@ -169,13 +168,13 @@ func getFlagString(cmd *cobra.Command, flag string) string {
 func getFlagCommaSeparatedStrings(cmd *cobra.Command, flag string) []string {
 	value, err := cmd.Flags().GetString(flag)
 	checkError(err)
-	return stringutil.Split(value, ",")
+	return strings.Split(value, ",")
 }
 
 func getFlagSemicolonSeparatedStrings(cmd *cobra.Command, flag string) []string {
 	value, err := cmd.Flags().GetString(flag)
 	checkError(err)
-	return stringutil.Split(value, ";")
+	return strings.Split(value, ";")
 }
 
 func getFlagCommaSeparatedInts(cmd *cobra.Command, flag string) []int {
