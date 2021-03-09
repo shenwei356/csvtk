@@ -407,7 +407,7 @@ func init() {
 	RootCmd.AddCommand(grepCmd)
 	grepCmd.Flags().StringP("fields", "f", "1", `comma separated key fields, column name or index. e.g. -f 1-3 or -f id,id2 or -F -f "group*"`)
 	grepCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
-	grepCmd.Flags().StringSliceP("pattern", "p", []string{""}, `query pattern (multiple values supported)`)
+	grepCmd.Flags().StringSliceP("pattern", "p", []string{""}, `query pattern (multiple values supported). Attention: use double quotation marks for patterns containing comma, e.g., -p '"A{2,}"'`)
 	grepCmd.Flags().StringP("pattern-file", "P", "", `pattern files (one pattern per line)`)
 	grepCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
 	grepCmd.Flags().BoolP("use-regexp", "r", false, `patterns are regular expression`)

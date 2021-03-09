@@ -1518,7 +1518,7 @@ Flags:
   -v, --invert                invert match
   -n, --line-number           print line number as the first column ("n")
   -N, --no-highlight          no highlight
-  -p, --pattern strings       query pattern (multiple values supported)
+  -p, --pattern strings       query pattern (multiple values supported). Attention: use double quotation marks for patterns containing comma, e.g., -p '"A{2,}"'
   -P, --pattern-file string   pattern files (one pattern per line)
   -r, --use-regexp            patterns are regular expression
       --verbose               verbose output
