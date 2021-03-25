@@ -1515,6 +1515,7 @@ Flags:
   -F, --fuzzy-fields          using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
   -h, --help                  help for grep
   -i, --ignore-case           ignore case
+      --immediate-output      print output immediately, do not use write buffer
   -v, --invert                invert match
   -n, --line-number           print line number as the first column ("n")
   -N, --no-highlight          no highlight

@@ -92,6 +92,8 @@ var grepCmd = &cobra.Command{
 		printLineNumber := getFlagBool(cmd, "line-number")
 		deleteMatched := getFlagBool(cmd, "delete-matched")
 
+		immediateOutput := getFlagBool(cmd, "immediate-output")
+
 		patternsMap := make(map[string]*regexp.Regexp)
 		var outAll bool
 		for _, pattern := range patterns {
@@ -391,6 +393,10 @@ var grepCmd = &cobra.Command{
 						record = recordWithN
 					}
 					checkError(writer.Write(record))
+
+					if immediateOutput {
+						writer.Flush()
+					}
 				}
 			}
 
@@ -416,4 +422,5 @@ func init() {
 	grepCmd.Flags().BoolP("verbose", "", false, `verbose output`)
 	grepCmd.Flags().BoolP("line-number", "n", false, `print line number as the first column ("n")`)
 	grepCmd.Flags().BoolP("delete-matched", "", false, "delete a pattern right after being matched, this keeps the firstly matched data and speedups when using regular expressions")
+	grepCmd.Flags().BoolP("immediate-output", "", false, "print output immediately, do not use write buffer")
 }
