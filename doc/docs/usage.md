@@ -559,10 +559,6 @@ Usage
 ```text
 convert CSV to readable aligned table
 
-Attention:
-
-  pretty treats the first row as header line and requires them to be unique
-
 Usage:
   csvtk pretty [flags]
 
@@ -861,6 +857,90 @@ Examples
     4  |Robert    |Griesemer|gri
     1  |Robert    |Thompson |abc
     NA |Robert    |Abel     |123
+
+## csv2rst
+
+Usage
+
+
+```text
+convert CSV to readable aligned table
+
+Attention:
+
+  1. row span is not supported.
+
+Usage:
+  csvtk csv2rst [flags]
+
+Flags:
+  -k, --cross string               charactor of cross (default "+")
+  -s, --header string              charactor of separator between header row and data rowws (default "=")
+  -h, --help                       help for csv2rst
+  -b, --horizontal-border string   charactor of horizontal border (default "-")
+  -p, --padding string             charactor of padding (default " ")
+  -B, --vertical-border string     charactor of vertical border (default "|")
+
+```
+
+Example
+
+1. With header row
+
+        $ csvtk csv2rst testdata/names.csv 
+        +----+------------+-----------+----------+
+        | id | first_name | last_name | username |
+        +====+============+===========+==========+
+        | 11 | Rob        | Pike      | rob      |
+        +----+------------+-----------+----------+
+        | 2  | Ken        | Thompson  | ken      |
+        +----+------------+-----------+----------+
+        | 4  | Robert     | Griesemer | gri      |
+        +----+------------+-----------+----------+
+        | 1  | Robert     | Thompson  | abc      |
+        +----+------------+-----------+----------+
+        | NA | Robert     | Abel      | 123      |
+        +----+------------+-----------+----------+
+
+1. No header row
+
+        $ csvtk csv2rst -H -t  testdata/digitals.tsv 
+        +---+-------+---+
+        | 4 | 5     | 6 |
+        +---+-------+---+
+        | 1 | 2     | 3 |
+        +---+-------+---+
+        | 7 | 8     | 0 |
+        +---+-------+---+
+        | 8 | 1,000 | 4 |
+        +---+-------+---+
+        
+1. Misc
+
+
+        $ cat testdata/names.csv | head -n 1 | csvtk csv2rst 
+        +----+------------+-----------+----------+
+        | id | first_name | last_name | username |
+        +====+============+===========+==========+
+        
+        $ cat testdata/names.csv | head -n 1 | csvtk csv2rst -H
+        +----+------------+-----------+----------+
+        | id | first_name | last_name | username |
+        +----+------------+-----------+----------+
+        
+        $ echo | csvtk csv2rst -H
+        [ERRO] xopen: no content
+        
+        $ echo "a" | csvtk csv2rst -H
+        +---+
+        | a |
+        +---+
+        
+        # some online rst render reports error
+        $ echo "沈伟" | csvtk csv2rst -H
+        +--------+
+        | 沈伟 |
+        +--------+
 
 ## csv2xlsx
 

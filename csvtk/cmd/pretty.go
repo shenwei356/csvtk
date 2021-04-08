@@ -37,10 +37,6 @@ var prettyCmd = &cobra.Command{
 	Short: "convert CSV to readable aligned table",
 	Long: `convert CSV to readable aligned table
 
-Attention:
-
-  pretty treats the first row as header line and requires them to be unique
-
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
