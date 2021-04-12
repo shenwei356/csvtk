@@ -91,7 +91,7 @@ Attention:
 
 				for _, record = range chunk.Data {
 					for col, val = range record {
-						cell = fmt.Sprintf("%c%d", 65+col, line)
+						cell = fmt.Sprintf("%s%d", ExcelColumnIndex(col), line)
 						xlsx.SetCellValue(sheet, cell, val)
 					}
 					line++
@@ -110,4 +110,19 @@ Attention:
 func init() {
 	RootCmd.AddCommand(csv2xlsxCmd)
 
+}
+
+func ExcelColumnIndex(col int) string {
+	s := make([]byte, 0, 8)
+
+	s = append(s, byte(col%26+65))
+	for col >= 26 {
+		col = col / 26
+		s = append(s, byte(col%26+64))
+	}
+
+	for i, j := 0, len(s)-1; i < j; i, j = i+1, j-1 {
+		s[i], s[j] = s[j], s[i]
+	}
+	return string(s)
 }

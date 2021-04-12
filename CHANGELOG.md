@@ -8,6 +8,7 @@
     - `csvtk genautocomplete`: supports bash|zsh|fish|powershell. [#126](https://github.com/shenwei356/csvtk/issues/126)
     - `csvtk cat`: fix progress bar. [#130](https://github.com/shenwei356/csvtk/issues/130)
     - `csvtk grep`: new flag `immediate-output`.
+    - `csvtk csv2xlsx`: fix bug for table with > 26 columns. [138](https://github.com/shenwei356/csvtk/issues/138)
 - [csvtk v0.22.0](https://github.com/shenwei356/csvtk/releases/tag/v0.22.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.22.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.22.0)
     - `csvtk`:
