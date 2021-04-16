@@ -1,7 +1,7 @@
 
 - [csvtk v0.23.0](https://github.com/shenwei356/csvtk/releases/tag/v0.23.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.23.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.23.0)
-    - new comand: `csvtk csv2rst` for converting CSV to reStructuredText format.
+    - new comand: `csvtk csv2rst` for converting CSV to reStructuredText format. [#137](https://github.com/shenwei356/csvtk/issues/137)
     - `csvtk pretty`: add header separator line. [#123](https://github.com/shenwei356/csvtk/issues/123)
     - `csvtk mutate2/summary`: fix message and doc. Thanks @VladimirAlexiev  [#127](https://github.com/shenwei356/csvtk/issues/127)
     - `csvtk mutate2`: fix null coalescence: ??. [#129](https://github.com/shenwei356/csvtk/issues/129)
