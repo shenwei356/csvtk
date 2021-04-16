@@ -350,6 +350,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#csv2rst" class="md-nav__link">
+    csv2rst
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#csv2xlsx" class="md-nav__link">
     csv2xlsx
   </a>
@@ -749,6 +756,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#csv2rst" class="md-nav__link">
+    csv2rst
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#csv2xlsx" class="md-nav__link">
     csv2xlsx
   </a>
@@ -1102,7 +1116,7 @@
 <p>Usage</p>
 <pre><code class="language-text">csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.22.0
+Version: 0.23.0
 
 Author: Wei Shen &lt;shenwei356@gmail.com&gt;
 
@@ -1141,6 +1155,7 @@ Available Commands:
   corr            calculate Pearson correlation between two columns
   csv2json        convert CSV to JSON format
   csv2md          convert CSV to markdown format
+  csv2rst         convert CSV to reStructuredText format
   csv2tab         convert CSV to tabular format
   csv2xlsx        convert CSV/TSV files to XLSX file
   cut             select and arrange fields
@@ -1151,7 +1166,7 @@ Available Commands:
   fold            fold multiple values of a field into cells of groups
   freq            frequencies of selected fields
   gather          gather columns into key-value pairs
-  genautocomplete generate shell autocompletion script
+  genautocomplete generate shell autocompletion script (bash|zsh|fish|powershell)
   grep            grep data by selected fields with patterns/regular expressions
   head            print first N records
   headers         print headers
@@ -1174,7 +1189,7 @@ Available Commands:
   space2tab       convert space delimited format to CSV
   split           split CSV/TSV into multiple files according to column values
   splitxlsx       split XLSX sheet into multiple sheets according to column values
-  summary         summary statistics of selected digital fields (groupby group fields)
+  summary         summary statistics of selected numeric or text fields (groupby group fields)
   tab2csv         convert tabular format to CSV
   transpose       transpose CSV data
   unfold          unfold multiple values in cells of a field
@@ -1548,10 +1563,6 @@ Flags:
 <p>Usage</p>
 <pre><code class="language-text">convert CSV to readable aligned table
 
-Attention:
-
-  pretty treats the first row as header line and requires them to be unique
-
 Usage:
   csvtk pretty [flags]
 
@@ -1915,6 +1926,88 @@ NA |Robert    |Abel     |123
 </tr>
 </tbody>
 </table>
+</li>
+</ol>
+<h2 id="csv2rst">csv2rst</h2>
+<p>Usage</p>
+<pre><code class="language-text">convert CSV to readable aligned table
+
+Attention:
+
+  1. row span is not supported.
+
+Usage:
+  csvtk csv2rst [flags]
+
+Flags:
+  -k, --cross string               charactor of cross (default &quot;+&quot;)
+  -s, --header string              charactor of separator between header row and data rowws (default &quot;=&quot;)
+  -h, --help                       help for csv2rst
+  -b, --horizontal-border string   charactor of horizontal border (default &quot;-&quot;)
+  -p, --padding string             charactor of padding (default &quot; &quot;)
+  -B, --vertical-border string     charactor of vertical border (default &quot;|&quot;)
+
+</code></pre>
+<p>Example</p>
+<ol>
+<li>
+<p>With header row</p>
+<pre><code>$ csvtk csv2rst testdata/names.csv 
++----+------------+-----------+----------+
+| id | first_name | last_name | username |
++====+============+===========+==========+
+| 11 | Rob        | Pike      | rob      |
++----+------------+-----------+----------+
+| 2  | Ken        | Thompson  | ken      |
++----+------------+-----------+----------+
+| 4  | Robert     | Griesemer | gri      |
++----+------------+-----------+----------+
+| 1  | Robert     | Thompson  | abc      |
++----+------------+-----------+----------+
+| NA | Robert     | Abel      | 123      |
++----+------------+-----------+----------+
+</code></pre>
+</li>
+<li>
+<p>No header row</p>
+<pre><code>$ csvtk csv2rst -H -t  testdata/digitals.tsv 
++---+-------+---+
+| 4 | 5     | 6 |
++---+-------+---+
+| 1 | 2     | 3 |
++---+-------+---+
+| 7 | 8     | 0 |
++---+-------+---+
+| 8 | 1,000 | 4 |
++---+-------+---+
+</code></pre>
+</li>
+<li>
+<p>Misc</p>
+<pre><code>$ cat testdata/names.csv | head -n 1 | csvtk csv2rst 
++----+------------+-----------+----------+
+| id | first_name | last_name | username |
++====+============+===========+==========+
+
+$ cat testdata/names.csv | head -n 1 | csvtk csv2rst -H
++----+------------+-----------+----------+
+| id | first_name | last_name | username |
++----+------------+-----------+----------+
+
+$ echo | csvtk csv2rst -H
+[ERRO] xopen: no content
+
+$ echo "a" | csvtk csv2rst -H
++---+
+| a |
++---+
+
+# some online rst render reports error
+$ echo "沈伟" | csvtk csv2rst -H
++--------+
+| 沈伟 |
++--------+
+</code></pre>
 </li>
 </ol>
 <h2 id="csv2xlsx">csv2xlsx</h2>
@@ -2563,6 +2656,15 @@ shenwei
 <p>Usage</p>
 <pre><code class="language-text">grep data by selected fields with patterns/regular expressions
 
+Attentions:
+
+  1. By default, we directly compare the colmn value with patterns,
+     use &quot;-r/--use-regexp&quot; for partly matching.
+  2. Multiple patterns can be given by setting '-p/--patern' more than once,
+     or giving comma separated values (CSV formats). 
+     Therefore, please use double quotation marks for patterns containing
+     comma, e.g., -p '&quot;A{2,}&quot;'
+
 Usage:
   csvtk grep [flags]
 
@@ -2572,10 +2674,11 @@ Flags:
   -F, --fuzzy-fields          using fuzzy fields, e.g., -F -f &quot;*name&quot; or -F -f &quot;id123*&quot;
   -h, --help                  help for grep
   -i, --ignore-case           ignore case
+      --immediate-output      print output immediately, do not use write buffer
   -v, --invert                invert match
   -n, --line-number           print line number as the first column (&quot;n&quot;)
   -N, --no-highlight          no highlight
-  -p, --pattern strings       query pattern (multiple values supported)
+  -p, --pattern strings       query pattern (multiple values supported). Attention: use double quotation marks for patterns containing comma, e.g., -p '&quot;A{2,}&quot;'
   -P, --pattern-file string   pattern files (one pattern per line)
   -r, --use-regexp            patterns are regular expression
       --verbose               verbose output
@@ -4309,8 +4412,9 @@ Bash:
     # generate completion shell
     csvtk genautocomplete --shell bash
 
-    # configure if never did
-    echo &quot;for bcfile in ~/.bash_completion.d/* ; do source $bcfile; done&quot; &gt;&gt; ~/.bash_completion
+    # configure if never did.
+    # install bash-completion if the &quot;complete&quot; command is not found.
+    echo &quot;for bcfile in ~/.bash_completion.d/* ; do source \$bcfile; done&quot; &gt;&gt; ~/.bash_completion
     echo &quot;source ~/.bash_completion&quot; &gt;&gt; ~/.bashrc
 
 Zsh:
