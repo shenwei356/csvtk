@@ -96,7 +96,7 @@ Usage
 ```text
 csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.22.0
+Version: 0.23.0
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -135,6 +135,7 @@ Available Commands:
   corr            calculate Pearson correlation between two columns
   csv2json        convert CSV to JSON format
   csv2md          convert CSV to markdown format
+  csv2rst         convert CSV to reStructuredText format
   csv2tab         convert CSV to tabular format
   csv2xlsx        convert CSV/TSV files to XLSX file
   cut             select and arrange fields
@@ -145,7 +146,7 @@ Available Commands:
   fold            fold multiple values of a field into cells of groups
   freq            frequencies of selected fields
   gather          gather columns into key-value pairs
-  genautocomplete generate shell autocompletion script
+  genautocomplete generate shell autocompletion script (bash|zsh|fish|powershell)
   grep            grep data by selected fields with patterns/regular expressions
   head            print first N records
   headers         print headers
@@ -168,7 +169,7 @@ Available Commands:
   space2tab       convert space delimited format to CSV
   split           split CSV/TSV into multiple files according to column values
   splitxlsx       split XLSX sheet into multiple sheets according to column values
-  summary         summary statistics of selected digital fields (groupby group fields)
+  summary         summary statistics of selected numeric or text fields (groupby group fields)
   tab2csv         convert tabular format to CSV
   transpose       transpose CSV data
   unfold          unfold multiple values in cells of a field

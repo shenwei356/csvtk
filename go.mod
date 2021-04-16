@@ -3,7 +3,6 @@ module github.com/shenwei356/csvtk
 go 1.16
 
 require (
-	github.com/360EntSecGroup-Skylar/excelize v1.4.1
 	github.com/360EntSecGroup-Skylar/excelize/v2 v2.3.2
 	github.com/Knetic/govaluate v3.0.0+incompatible
 	github.com/bsipos/thist v1.0.0
