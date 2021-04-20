@@ -64,9 +64,9 @@ And then:
 
     conda install -c bioconda csvtk
 
-#### Method 3: Install via homebrew  (latest stable version)
+#### Method 3: Install via homebrew
 
-    brew install brewsci/bio/csvtk
+    brew install csvtk
 
 #### Method 4: For Go developer (latest stable/dev version)
 

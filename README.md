@@ -169,11 +169,15 @@ And then:
 
     conda install -c bioconda csvtk
 
-#### Method 3: For Go developer (latest stable/dev version)
+#### Method 3: Install via homebrew
+
+    brew install csvtk
+
+#### Method 4: For Go developer (latest stable/dev version)
 
     go get -u github.com/shenwei356/csvtk/csvtk
 
-#### Method 4: For ArchLinux AUR users (may be not the latest)
+#### Method 5: For ArchLinux AUR users (may be not the latest)
 
     yaourt -S csvtk
 
