@@ -321,7 +321,9 @@ Attentions:
 						hitOne = false
 						if useRegexp {
 							if outAll {
-								hitOne = true
+								if target != "" {
+									hitOne = true
+								}
 							} else {
 								for k, re = range patternsMap {
 									if re.MatchString(target) {
