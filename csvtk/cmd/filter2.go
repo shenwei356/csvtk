@@ -259,10 +259,12 @@ Supported operators and types:
 					if !usingColname {
 						for _, fieldTmp = range fields {
 							value = record[fieldTmp-1]
+							col = fmt.Sprintf("shenwei%d", fieldTmp)
+
 							if reDigitals.MatchString(value) {
-								parameters[fmt.Sprintf("shenwei%d", fieldTmp)] = removeComma(value)
+								parameters[col] = removeComma(value)
 							} else {
-								parameters[fmt.Sprintf("shenwei%d", fieldTmp)] = quote + value + quote
+								parameters[col] = quote + value + quote
 							}
 						}
 					} else {

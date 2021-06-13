@@ -25,7 +25,6 @@ import (
 	"fmt"
 	"regexp"
 	"runtime"
-	"strconv"
 	"strings"
 
 	"github.com/Knetic/govaluate"
@@ -154,10 +153,16 @@ Supported operators and types:
 
 		hasNullCoalescence := reNullCoalescence.MatchString(exprStr)
 
+		var quote string = `'`
+		if strings.Contains(exprStr, `"`) {
+			quote = `"`
+		}
+		exprStr = reFiler2VarSymbolStartsWithDigits.ReplaceAllString(exprStr, "shenwei_$1$2")
 		exprStr = reFilter2VarField.ReplaceAllString(exprStr, "shenwei$1")
-		exprStr = reFilter2VarSymbol.ReplaceAllString(exprStr, "")
-		expression, err := govaluate.NewEvaluableExpression(exprStr)
-		checkError(err)
+		// exprStr = reFilter2VarSymbol.ReplaceAllString(exprStr, "")
+
+		var exprStr1 string
+		var expression *govaluate.EvaluableExpression
 
 		usingColname := true
 
@@ -195,14 +200,16 @@ Supported operators and types:
 			var colnames2fileds map[string]int   // column name -> field
 			var colnamesMap map[string]*regexp.Regexp
 
-			parameters := make(map[string]interface{}, len(colnamesMap))
+			parameters := make(map[string]string, len(colnamesMap))
+			parameters2 := make(map[string]interface{}, len(colnamesMap))
+			parameters2["shenweiNULL"] = nil
 
 			handleHeaderRow := needParseHeaderRow
 			checkFields := true
 			var col string
 			var fieldTmp int
 			var value string
-			var valueFloat float64
+			// var valueFloat float64
 			var result interface{}
 
 			var record2 []string // for output
@@ -311,42 +318,60 @@ Supported operators and types:
 								if !usingColname {
 									for _, fieldTmp = range fields {
 										value = record[fieldTmp-1]
+										col = fmt.Sprintf("shenwei%d", fieldTmp)
+
 										if reDigitals.MatchString(value) {
 											if digitsAsString {
-												parameters[fmt.Sprintf("shenwei%d", fieldTmp)] = value
+												parameters[col] = quote + value + quote
 											} else {
-												valueFloat, _ = strconv.ParseFloat(removeComma(value), 64)
-												parameters[fmt.Sprintf("shenwei%d", fieldTmp)] = valueFloat
+												parameters[col] = removeComma(value)
 											}
 										} else {
 											if value == "" && hasNullCoalescence {
-												parameters[fmt.Sprintf("shenwei%d", fieldTmp)] = nil
+												parameters[col] = "shenweiNULL"
 											} else {
-												parameters[fmt.Sprintf("shenwei%d", fieldTmp)] = value
+												parameters[col] = quote + value + quote
 											}
-
 										}
 									}
 								} else {
 									for col = range colnamesMap {
 										value = record[colnames2fileds[col]-1]
+
+										if reFiler2ColSymbolStartsWithDigits.MatchString(col) {
+											col = fmt.Sprintf("shenwei_%s", col)
+										} else {
+											col = "$" + col
+										}
+
 										if reDigitals.MatchString(value) {
 											if digitsAsString {
-												parameters[col] = value
+												parameters[col] = quote + value + quote
 											} else {
-												valueFloat, _ = strconv.ParseFloat(removeComma(value), 64)
-												parameters[col] = valueFloat
+												parameters[col] = removeComma(value)
 											}
 										} else {
 											if value == "" && hasNullCoalescence {
-												parameters[col] = nil
+												parameters[col] = "shenweiNULL"
 											} else {
-												parameters[col] = value
+												parameters[col] = quote + value + quote
 											}
 										}
 									}
 								}
-								result, err = expression.Evaluate(parameters)
+
+								exprStr1 = exprStr
+								for col, value = range parameters {
+									exprStr1 = strings.ReplaceAll(exprStr1, col, value)
+								}
+								expression, err = govaluate.NewEvaluableExpression(exprStr1)
+								checkError(err)
+
+								if hasNullCoalescence {
+									result, err = expression.Evaluate(parameters2)
+								} else {
+									result, err = expression.Evaluate(nil)
+								}
 								if err != nil {
 									checkError(fmt.Errorf("data: %s, err: %s", record, err))
 								}
