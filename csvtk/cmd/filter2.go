@@ -25,7 +25,6 @@ import (
 	"fmt"
 	"regexp"
 	"runtime"
-	"strconv"
 	"strings"
 
 	"github.com/Knetic/govaluate"
@@ -86,12 +85,18 @@ Supported operators and types:
 
 		fieldStr := strings.Join(fs, ",")
 
+		var quote string = `'`
+		if strings.Contains(filterStr, `"`) {
+			quote = `"`
+		}
 		filterStr0 := filterStr
 		filterStr = reFiler2VarSymbolStartsWithDigits.ReplaceAllString(filterStr, "shenwei_$1$2")
 		filterStr = reFilter2VarField.ReplaceAllString(filterStr, "shenwei$1")
-		filterStr = reFilter2VarSymbol.ReplaceAllString(filterStr, "")
-		expression, err := govaluate.NewEvaluableExpression(filterStr)
-		checkError(err)
+		// filterStr = reFilter2VarSymbol.ReplaceAllString(filterStr, "")
+
+		var filterStr1 string
+		var expression *govaluate.EvaluableExpression
+		var err error
 
 		usingColname := true
 
@@ -137,14 +142,13 @@ Supported operators and types:
 			var colnames2fileds map[string]int   // column name -> field
 			var colnamesMap map[string]*regexp.Regexp
 
-			parameters := make(map[string]interface{}, len(colnamesMap))
+			parameters := make(map[string]string, len(colnamesMap))
 
 			checkFields := true
 			var flag bool
 			var col string
 			var fieldTmp int
 			var value string
-			var valueFloat float64
 			var result interface{}
 			var N int64
 			var recordWithN []string
@@ -256,10 +260,9 @@ Supported operators and types:
 						for _, fieldTmp = range fields {
 							value = record[fieldTmp-1]
 							if reDigitals.MatchString(value) {
-								valueFloat, _ = strconv.ParseFloat(removeComma(value), 64)
-								parameters[fmt.Sprintf("shenwei%d", fieldTmp)] = valueFloat
+								parameters[fmt.Sprintf("shenwei%d", fieldTmp)] = removeComma(value)
 							} else {
-								parameters[fmt.Sprintf("shenwei%d", fieldTmp)] = value
+								parameters[fmt.Sprintf("shenwei%d", fieldTmp)] = quote + value + quote
 							}
 						}
 					} else {
@@ -268,20 +271,29 @@ Supported operators and types:
 
 							if reFiler2ColSymbolStartsWithDigits.MatchString(col) {
 								col = fmt.Sprintf("shenwei_%s", col)
+							} else {
+								col = "$" + col
 							}
 
 							if reDigitals.MatchString(value) {
-								valueFloat, _ = strconv.ParseFloat(removeComma(value), 64)
-								parameters[col] = valueFloat
+								parameters[col] = removeComma(value)
 							} else {
-								parameters[col] = value
+								parameters[col] = quote + value + quote
 							}
 						}
 					}
 
-					result, err = expression.Evaluate(parameters)
+					filterStr1 = filterStr
+					for col, value = range parameters {
+						filterStr1 = strings.ReplaceAll(filterStr1, col, value)
+					}
+					expression, err = govaluate.NewEvaluableExpression(filterStr1)
+					checkError(err)
+
+					result, err = expression.Evaluate(nil)
 					if err != nil {
 						flag = false
+						log.Warningf("row %d: %s", N, err)
 						continue
 					}
 					switch result.(type) {
