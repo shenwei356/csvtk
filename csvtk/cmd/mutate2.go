@@ -25,6 +25,7 @@ import (
 	"fmt"
 	"regexp"
 	"runtime"
+	"strconv"
 	"strings"
 
 	"github.com/Knetic/govaluate"
@@ -209,7 +210,7 @@ Supported operators and types:
 			var col string
 			var fieldTmp int
 			var value string
-			// var valueFloat float64
+			var valueFloat float64
 			var result interface{}
 
 			var record2 []string // for output
@@ -324,7 +325,8 @@ Supported operators and types:
 											if digitsAsString {
 												parameters[col] = quote + value + quote
 											} else {
-												parameters[col] = removeComma(value)
+												valueFloat, _ = strconv.ParseFloat(removeComma(value), 64)
+												parameters[col] = fmt.Sprintf("%.16f", valueFloat)
 											}
 										} else {
 											if value == "" && hasNullCoalescence {
@@ -348,7 +350,8 @@ Supported operators and types:
 											if digitsAsString {
 												parameters[col] = quote + value + quote
 											} else {
-												parameters[col] = removeComma(value)
+												valueFloat, _ = strconv.ParseFloat(removeComma(value), 64)
+												parameters[col] = fmt.Sprintf("%.16f", valueFloat)
 											}
 										} else {
 											if value == "" && hasNullCoalescence {

@@ -25,6 +25,7 @@ import (
 	"fmt"
 	"regexp"
 	"runtime"
+	"strconv"
 	"strings"
 
 	"github.com/Knetic/govaluate"
@@ -152,6 +153,7 @@ Supported operators and types:
 			var result interface{}
 			var N int64
 			var recordWithN []string
+			var valueFloat float64
 
 			printMetaLine := true
 			for chunk := range csvReader.Ch {
@@ -262,7 +264,8 @@ Supported operators and types:
 							col = fmt.Sprintf("shenwei%d", fieldTmp)
 
 							if reDigitals.MatchString(value) {
-								parameters[col] = removeComma(value)
+								valueFloat, _ = strconv.ParseFloat(removeComma(value), 64)
+								parameters[col] = fmt.Sprintf("%.16f", valueFloat)
 							} else {
 								parameters[col] = quote + value + quote
 							}
@@ -278,7 +281,8 @@ Supported operators and types:
 							}
 
 							if reDigitals.MatchString(value) {
-								parameters[col] = removeComma(value)
+								valueFloat, _ = strconv.ParseFloat(removeComma(value), 64)
+								parameters[col] = fmt.Sprintf("%.16f", valueFloat)
 							} else {
 								parameters[col] = quote + value + quote
 							}
