@@ -2477,13 +2477,13 @@ Note that the replacement supports capture variables.
 e.g. $1 represents the text of the first submatch.
 ATTENTION: use SINGLE quote NOT double quotes in *nix OS.
 
-Examples: Adding space to all bases.
+Examples: Adding space to cell values.
 
-  csvtk replace -p "(.)" -r '$1 ' -s
+  csvtk replace -p "(.)" -r '$1 '
 
 Or use the \ escape character.
 
-  csvtk replace -p "(.)" -r "\$1 " -s
+  csvtk replace -p "(.)" -r "\$1 "
 
 more on: http://shenwei356.github.io/csvtk/usage/#replace
 
