@@ -77,6 +77,9 @@ Examples:
 
 		ignoreCase := getFlagBool(cmd, "ignore-case")
 
+		allowMissingColumn := getFlagBool(cmd, "allow-missing-col")
+		blankMissingColumn := getFlagBool(cmd, "blank-missing-col")
+
 		if len(fields) > 0 && negativeFields {
 			fieldsMap = make(map[int]struct{}, len(fields))
 			for _, f := range fields {
@@ -104,12 +107,15 @@ Examples:
 		csvReader.Run()
 
 		parseHeaderRow := needParseHeaderRow // parsing header row
-		var colnames2fileds map[string]int   // column name -> field
+		handleHeaderRow := len(colnames) > 0
+		var colnames2fileds map[string]int // column name -> field
 		var colnamesMap map[string]*regexp.Regexp
 
 		checkFields := true
 		var items []string
 		var noRecord bool
+
+		var ignoreFields []bool
 
 		printMetaLine := true
 		for chunk := range csvReader.Ch {
@@ -142,13 +148,17 @@ Examples:
 							if !fuzzyFields {
 								if negativeFields {
 									if _, ok := colnames2fileds[col[1:]]; !ok {
-										checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col[1:], file))
+										if !allowMissingColumn {
+											checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col[1:], file))
+										}
 									} else {
 
 									}
 								} else {
 									if _, ok := colnames2fileds[col]; !ok {
-										checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col, file))
+										if !allowMissingColumn {
+											checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col, file))
+										}
 									}
 								}
 							}
@@ -231,9 +241,16 @@ Examples:
 							fields = fields1
 						}
 
-						for _, f := range fields {
+						if ignoreFields == nil {
+							ignoreFields = make([]bool, len(fields))
+						}
+						for i, f := range fields {
 							if f > len(record) {
-								checkError(fmt.Errorf(`field (%d) out of range (%d) in file: %s`, f, len(record), file))
+								if !allowMissingColumn {
+									checkError(fmt.Errorf(`field (%d) out of range (%d) in file: %s`, f, len(record), file))
+								} else {
+									ignoreFields[i] = true
+								}
 							}
 						}
 
@@ -286,9 +303,16 @@ Examples:
 						fields = fields1
 					}
 
-					for _, f := range fields {
+					if ignoreFields == nil {
+						ignoreFields = make([]bool, len(fields))
+					}
+					for i, f := range fields {
 						if f > len(record) {
-							checkError(fmt.Errorf(`field (%d) out of range (%d) in file: %s`, f, len(record), file))
+							if !allowMissingColumn {
+								checkError(fmt.Errorf(`field (%d) out of range (%d) in file: %s`, f, len(record), file))
+							} else {
+								ignoreFields[i] = true
+							}
 						}
 					}
 
@@ -317,6 +341,39 @@ Examples:
 					checkFields = false
 				}
 
+				if allowMissingColumn {
+					items = items[:0]
+					for i, f := range fields {
+						if needParseHeaderRow { // using column
+							if f == 0 || f > len(record) {
+								if blankMissingColumn {
+									if handleHeaderRow {
+										items = append(items, colnames[i])
+									} else {
+										items = append(items, "")
+									}
+
+								}
+								continue
+							}
+						} else {
+							if ignoreFields[i] {
+								if blankMissingColumn {
+									items = append(items, "")
+								}
+								continue
+							}
+						}
+						items = append(items, record[f-1])
+					}
+
+					if handleHeaderRow {
+						handleHeaderRow = false
+					}
+					checkError(writer.Write(items))
+					continue
+				}
+
 				for i, f := range fields {
 					items[i] = record[f-1]
 				}
@@ -341,4 +398,6 @@ func init() {
 	cutCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
 	cutCmd.Flags().BoolP("ignore-case", "i", false, `ignore case (column name)`)
 	cutCmd.Flags().BoolP("uniq-column", "u", false, `deduplicate columns matched by multiple fuzzy column names`)
+	cutCmd.Flags().BoolP("allow-missing-col", "m", false, `allow missing column`)
+	cutCmd.Flags().BoolP("blank-missing-col", "b", false, `blank missing column`)
 }

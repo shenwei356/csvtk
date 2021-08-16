@@ -1,8 +1,9 @@
-- [csvtk v0.23.1](https://github.com/shenwei356/csvtk/releases/tag/v0.23.1)
-[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.23.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.23.1)
+- [csvtk v0.24.0](https://github.com/shenwei356/csvtk/releases/tag/v0.24.0)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.24.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.24.0)
     - `csvtk grep`: fix bug for searching with `-r -p .`.
     - `csvtk filter2`: fix bug for date expression. [#146](https://github.com/shenwei356/csvtk/issues/146)
     - `csvtk mutate2/filter2`: change the way of rexpression evaluation.
+    - `csvtk cut`: new flags `-m/--allow-missing-col` and `-b/--blank-missing-col`. [#156](--blank-missing-col )
 - [csvtk v0.23.0](https://github.com/shenwei356/csvtk/releases/tag/v0.23.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.23.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.23.0)
     - new comand: `csvtk csv2rst` for converting CSV to reStructuredText format. [#137](https://github.com/shenwei356/csvtk/issues/137)
