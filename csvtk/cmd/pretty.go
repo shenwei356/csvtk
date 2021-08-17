@@ -95,7 +95,11 @@ var prettyCmd = &cobra.Command{
 			maxLens := make([]int, len(headerRow))
 			var l int
 			for i, r = range headerRow {
-				maxLens[i] = len(r)
+				if len(r) > 0 {
+					maxLens[i] = len(r)
+				} else {
+					maxLens[i] = 1
+				}
 			}
 			for _, record = range data {
 				for i, r = range record {
