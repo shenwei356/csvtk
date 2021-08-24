@@ -58,6 +58,9 @@ Supported operators and types:
   Ternary conditional: ? :
   Null coalescence: ??
 
+Custom functions:
+  len(), length of string(s), e.g., len($1), len($a), len($1, $2)
+
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
@@ -96,11 +99,42 @@ Supported operators and types:
 			checkError(fmt.Errorf("flag -e (--expression) needed"))
 		}
 
+		// custom functions
+		functions := map[string]govaluate.ExpressionFunction{
+			"len": func(args ...interface{}) (interface{}, error) {
+				n := 0
+				for _, s := range args {
+					switch s.(type) {
+					case int:
+						n += len(fmt.Sprintf("%d", s.(int)))
+					case float64:
+						n += len(fmt.Sprintf("%f", s.(float64)))
+					case string:
+						n += len(s.(string))
+					}
+
+				}
+				return fmt.Sprintf("%d", n), nil
+			},
+		}
+
+		containCustomFuncs := false
+		for f := range functions {
+			if regexp.MustCompile(f + `\(.+\)`).MatchString(exprStr) {
+				containCustomFuncs = true
+				break
+			}
+		}
+
 		// expressions doe not contains `$`
 		if !reFilter2.MatchString(exprStr) {
 			// checkError(fmt.Errorf("invalid expression: %s", exprStr))
 			var expression *govaluate.EvaluableExpression
-			expression, err = govaluate.NewEvaluableExpression(exprStr)
+			if containCustomFuncs {
+				expression, err = govaluate.NewEvaluableExpressionWithFunctions(exprStr, functions)
+			} else {
+				expression, err = govaluate.NewEvaluableExpression(exprStr)
+			}
 			checkError(err)
 			var result interface{}
 			result, err = expression.Evaluate(nil)
@@ -322,7 +356,7 @@ Supported operators and types:
 										col = fmt.Sprintf("shenwei%d", fieldTmp)
 
 										if reDigitals.MatchString(value) {
-											if digitsAsString {
+											if digitsAsString || containCustomFuncs {
 												parameters[col] = quote + value + quote
 											} else {
 												valueFloat, _ = strconv.ParseFloat(removeComma(value), 64)
@@ -347,7 +381,7 @@ Supported operators and types:
 										}
 
 										if reDigitals.MatchString(value) {
-											if digitsAsString {
+											if digitsAsString || containCustomFuncs {
 												parameters[col] = quote + value + quote
 											} else {
 												valueFloat, _ = strconv.ParseFloat(removeComma(value), 64)
@@ -367,7 +401,11 @@ Supported operators and types:
 								for col, value = range parameters {
 									exprStr1 = strings.ReplaceAll(exprStr1, col, value)
 								}
-								expression, err = govaluate.NewEvaluableExpression(exprStr1)
+								if containCustomFuncs {
+									expression, err = govaluate.NewEvaluableExpressionWithFunctions(exprStr1, functions)
+								} else {
+									expression, err = govaluate.NewEvaluableExpression(exprStr1)
+								}
 								checkError(err)
 
 								if hasNullCoalescence {
