@@ -3050,7 +3050,35 @@ Flags:
 
 Examples
 
-TODO: add examples
+```
+$ csvtk xlsx2csv date.xlsx | csvtk pretty 
+data                  value
+-------------------   -----
+2021-08-25 11:24:21   1
+08/25/21 11:24 p8     2
+NA                    3
+                      4
+
+$ csvtk xlsx2csv date.xlsx  \
+    | csvtk fmtdate --format "YYYY-MM-DD hh:mm:ss" \
+    | csvtk pretty 
+data                  value
+-------------------   -----
+2021-08-25 11:24:21   1
+2021-08-25 11:24:00   2
+                      3
+                      4
+
+$ csvtk xlsx2csv date.xlsx  \
+    | csvtk fmtdate --format "YYYY-MM-DD hh:mm:ss" -k \
+    | csvtk pretty 
+data                  value
+-------------------   -----
+2021-08-25 11:24:21   1
+2021-08-25 11:24:00   2
+NA                    3
+                      4
+```
         
 ## sort
 
