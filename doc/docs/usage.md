@@ -96,7 +96,7 @@ Usage
 ```text
 csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.23.0
+Version: 0.24.0
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -143,6 +143,7 @@ Available Commands:
   dim             dimensions of CSV file
   filter          filter rows by values of selected fields with arithmetic expression
   filter2         filter rows by awk-like artithmetic/string expressions
+  fmtdate         format date of selected fields
   fold            fold multiple values of a field into cells of groups
   freq            frequencies of selected fields
   gather          gather columns into key-value pairs
@@ -2992,6 +2993,64 @@ examples
         Jerry     sequencing center       Bioinformatics
         Nick      sequencing center       Molecular Biology; Microbiology
 
+## fmtdate
+
+Usage
+
+```text
+format date of selected fields
+
+Date parsing is supported by: https://github.com/araddon/dateparse
+Date formating is supported by: https://github.com/metakeule/fmtdate
+
+Time zones: 
+    format: Asia/Shanghai
+    whole list: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+
+Output format is in MS Excel (TM) syntax.
+Placeholders:
+
+    M    - month (1)
+    MM   - month (01)
+    MMM  - month (Jan)
+    MMMM - month (January)
+    D    - day (2)
+    DD   - day (02)
+    DDD  - day (Mon)
+    DDDD - day (Monday)
+    YY   - year (06)
+    YYYY - year (2006)
+    hh   - hours (15)
+    mm   - minutes (04)
+    ss   - seconds (05)
+
+    AM/PM hours: 'h' followed by optional 'mm' and 'ss' followed by 'pm', e.g.
+
+    hpm        - hours (03PM)
+    h:mmpm     - hours:minutes (03:04PM)
+    h:mm:sspm  - hours:minutes:seconds (03:04:05PM)
+
+    Time zones: a time format followed by 'ZZZZ', 'ZZZ' or 'ZZ', e.g.
+
+    hh:mm:ss ZZZZ (16:05:06 +0100)
+    hh:mm:ss ZZZ  (16:05:06 CET)
+    hh:mm:ss ZZ   (16:05:06 +01:00)
+
+Usage:
+  csvtk fmtdate [flags]
+
+Flags:
+  -f, --fields string      select only these fields. e.g -f 1,2 or -f columnA,columnB (default "1")
+      --format string      output date format in MS Excel (TM) syntax, type "csvtk fmtdate -h" for details (default "YYYY-MM-DD hh:mm:ss")
+  -F, --fuzzy-fields       using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
+  -h, --help               help for fmtdate
+  -k, --keep-unparsed      keep the key as value when no value found for the key
+  -z, --time-zone string   timezone aka "Asia/Shanghai" or "America/Los_Angeles" formatted time-zone, type "csvtk fmtdate -h" for details
+```
+
+Examples
+
+TODO: add examples
         
 ## sort
 

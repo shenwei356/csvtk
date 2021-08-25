@@ -1,4 +1,4 @@
-# csvtk - A cross-platform, efficient and practical CSV/TSV toolkit
+# csvtk - a cross-platform, efficient and practical CSV/TSV toolkit
 
 - **Documents:** [http://bioinf.shenwei.me/csvtk](http://bioinf.shenwei.me/csvtk/)
 ( [**Usage**](http://bioinf.shenwei.me/csvtk/usage/)  and [**Tutorial**](http://bioinf.shenwei.me/csvtk/tutorial/)). [中文介绍](http://bioinf.shenwei.me/csvtk/chinese)
@@ -64,7 +64,7 @@ It could save you lots of time in (not) writing Python/R scripts.
 
 ## Subcommands
 
-48 subcommands in total.
+49 subcommands in total.
 
 **Information**
 
@@ -120,6 +120,7 @@ It could save you lots of time in (not) writing Python/R scripts.
 - [`gather`](https://bioinf.shenwei.me/csvtk/usage/#gather): gathers columns into key-value pairs
 - [`unfold`](https://bioinf.shenwei.me/csvtk/usage/#unfold): unfold multiple values in cells of a field
 - [`fold`](https://bioinf.shenwei.me/csvtk/usage/#fold): fold multiple values of a field into cells of groups
+- [`fmtdate`](https://bioinf.shenwei.me/csvtk/usage/#fmtdate): format date of selected fields
 
 **Ordering**
 

@@ -27,8 +27,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/360EntSecGroup-Skylar/excelize/v2"
 	"github.com/spf13/cobra"
+	"github.com/xuri/excelize/v2"
 )
 
 // splitXlsxCmd represents the splitXlsx command

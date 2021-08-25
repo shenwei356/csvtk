@@ -26,9 +26,9 @@ import (
 	"runtime"
 	"sort"
 
-	"github.com/360EntSecGroup-Skylar/excelize/v2"
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
+	"github.com/xuri/excelize/v2"
 )
 
 // xlsx2csvCmd represents the seq command
