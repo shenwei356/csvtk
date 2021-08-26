@@ -29,6 +29,7 @@ import (
 	"strings"
 
 	"github.com/Knetic/govaluate"
+	"github.com/mattn/go-runewidth"
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
 )
@@ -59,7 +60,9 @@ Supported operators and types:
   Null coalescence: ??
 
 Custom functions:
-  len(), length of string(s), e.g., len($1), len($a), len($1, $2)
+  - len(), length of strings, e.g., len($1), len($a), len($1, $2)
+  - ulen(), length of unicode strings/width of unicode strings rendered
+    to a terminal, e.g., len("沈伟")==6, ulen("沈伟")==4
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -111,6 +114,21 @@ Custom functions:
 						n += len(fmt.Sprintf("%f", s.(float64)))
 					case string:
 						n += len(s.(string))
+					}
+
+				}
+				return fmt.Sprintf("%d", n), nil
+			},
+			"ulen": func(args ...interface{}) (interface{}, error) {
+				n := 0
+				for _, s := range args {
+					switch s.(type) {
+					case int:
+						n += runewidth.StringWidth(fmt.Sprintf("%d", s.(int)))
+					case float64:
+						n += runewidth.StringWidth(fmt.Sprintf("%f", s.(float64)))
+					case string:
+						n += runewidth.StringWidth(s.(string))
 					}
 
 				}
