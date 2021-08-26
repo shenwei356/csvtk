@@ -25,6 +25,7 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/mattn/go-runewidth"
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
 )
@@ -71,8 +72,8 @@ Attention:
 		if len(headerRow) > 0 {
 			maxLens = make([]int, len(headerRow))
 			for i, r = range headerRow {
-				l = len(r)
-				// l = utf8.RuneCountInString(r)
+				// l = len(r)
+				l = runewidth.StringWidth(r)
 
 				maxLens[i] = l
 			}
@@ -87,8 +88,8 @@ Attention:
 		}
 		for _, record = range data {
 			for i, r = range record {
-				l = len(r)
-				// l = utf8.RuneCountInString(r)
+				// l = len(r)
+				l = runewidth.StringWidth(r)
 
 				if l > maxLens[i] {
 					maxLens[i] = l
@@ -113,8 +114,8 @@ Attention:
 		if len(colnames) > 0 {
 			outfh.WriteString(borderY)
 			for i, r = range colnames {
-				l = len(r)
-				// l = utf8.RuneCountInString(r)
+				// l = len(r)
+				l = runewidth.StringWidth(r)
 
 				outfh.WriteString(padding + r + padding + strings.Repeat(" ", maxLens[i]-l))
 				outfh.WriteString(borderY)
@@ -137,8 +138,8 @@ Attention:
 		for _, row := range data {
 			outfh.WriteString(borderY)
 			for i, r = range row {
-				l = len(r)
-				// l = utf8.RuneCountInString(r)
+				// l = len(r)
+				l = runewidth.StringWidth(r)
 
 				outfh.WriteString(padding + r + padding + strings.Repeat(" ", maxLens[i]-l))
 				outfh.WriteString(borderY)

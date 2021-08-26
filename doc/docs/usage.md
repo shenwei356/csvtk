@@ -821,44 +821,44 @@ Examples
 1. give single alignment symbol
 
         $ cat testdata/names.csv | csvtk csv2md -a left
-        id |first_name|last_name|username
-        :--|:---------|:--------|:-------
-        11 |Rob       |Pike     |rob
-        2  |Ken       |Thompson |ken
-        4  |Robert    |Griesemer|gri
-        1  |Robert    |Thompson |abc
-        NA |Robert    |Abel     |12
+        |id |first_name|last_name|username|
+        |:--|:---------|:--------|:-------|
+        |11 |Rob       |Pike     |rob     |
+        |2  |Ken       |Thompson |ken     |
+        |4  |Robert    |Griesemer|gri     |
+        |1  |Robert    |Thompson |abc     |
+        |NA |Robert    |Abel     |123     |
 
     result:
 
-    id |first_name|last_name|username
-    :--|:---------|:--------|:-------
-    11 |Rob       |Pike     |rob
-    2  |Ken       |Thompson |ken
-    4  |Robert    |Griesemer|gri
-    1  |Robert    |Thompson |abc
-    NA |Robert    |Abel     |12
+    |id |first_name|last_name|username|
+    |:--|:---------|:--------|:-------|
+    |11 |Rob       |Pike     |rob     |
+    |2  |Ken       |Thompson |ken     |
+    |4  |Robert    |Griesemer|gri     |
+    |1  |Robert    |Thompson |abc     |
+    |NA |Robert    |Abel     |123     |
 
 2. give alignment symbols of all fields
 
         $ cat testdata/names.csv | csvtk csv2md -a c,l,l,l
-        id |first_name|last_name|username
-        :-:|:---------|:--------|:-------
-        11 |Rob       |Pike     |rob
-        2  |Ken       |Thompson |ken
-        4  |Robert    |Griesemer|gri
-        1  |Robert    |Thompson |abc
-        NA |Robert    |Abel     |123
+        |id |first_name|last_name|username|
+        |:-:|:---------|:--------|:-------|
+        |11 |Rob       |Pike     |rob     |
+        |2  |Ken       |Thompson |ken     |
+        |4  |Robert    |Griesemer|gri     |
+        |1  |Robert    |Thompson |abc     |
+        |NA |Robert    |Abel     |123     |
 
     result
 
-    id |first_name|last_name|username
-    :-:|:---------|:--------|:-------
-    11 |Rob       |Pike     |rob
-    2  |Ken       |Thompson |ken
-    4  |Robert    |Griesemer|gri
-    1  |Robert    |Thompson |abc
-    NA |Robert    |Abel     |123
+    |id |first_name|last_name|username|
+    |:-:|:---------|:--------|:-------|
+    |11 |Rob       |Pike     |rob     |
+    |2  |Ken       |Thompson |ken     |
+    |4  |Robert    |Griesemer|gri     |
+    |1  |Robert    |Thompson |abc     |
+    |NA |Robert    |Abel     |123     |
 
 ## csv2rst
 
@@ -917,6 +917,21 @@ Example
         | 8 | 1,000 | 4 |
         +---+-------+---+
         
+1. Unicode
+
+        $ cat  testdata/unicode.csv | csvtk csv2rst
+        +-------+---------+
+        | value | name    |
+        +=======+=========+
+        | 1     | 沈伟    |
+        +-------+---------+
+        | 2     | 沈伟b   |
+        +-------+---------+
+        | 3     | 沈小伟  |
+        +-------+---------+
+        | 4     | 沈小伟b |
+        +-------+---------+
+        
 1. Misc
 
 
@@ -938,11 +953,10 @@ Example
         | a |
         +---+
         
-        # some online rst render reports error
         $ echo "沈伟" | csvtk csv2rst -H
-        +--------+
+        +------+
         | 沈伟 |
-        +--------+
+        +------+
 
 ## csv2xlsx
 

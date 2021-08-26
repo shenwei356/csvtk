@@ -23,7 +23,9 @@ package cmd
 import (
 	"fmt"
 	"runtime"
+	"strings"
 
+	"github.com/mattn/go-runewidth"
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
 	"github.com/tatsushid/go-prettytable"
@@ -136,8 +138,14 @@ Attention:
 			alignRow[i] = a
 		}
 
+		j := len(header) - 1
 		columns := make([]prettytable.Column, len(header))
 		for i, c := range header {
+			if i == 0 {
+				c = separator + c
+			} else if i == j {
+				c = c + strings.Repeat(" ", widths[i]-runewidth.StringWidth(c)) + separator
+			}
 			columns[i] = prettytable.Column{Header: c, AlignRight: false, MinWidth: minWidth}
 		}
 		tbl, err := prettytable.NewTable(columns...)
@@ -146,6 +154,11 @@ Attention:
 
 		record2 := make([]interface{}, len(alignRow))
 		for i, c := range alignRow {
+			if i == 0 {
+				c = separator + c
+			} else if i == j {
+				c = c + separator
+			}
 			record2[i] = c
 		}
 		tbl.AddRow(record2...)
@@ -153,6 +166,11 @@ Attention:
 			// have to do this stupid conversion
 			record2 := make([]interface{}, len(record))
 			for i, c := range record {
+				if i == 0 {
+					c = separator + c
+				} else if i == j {
+					c = c + strings.Repeat(" ", widths[i]-runewidth.StringWidth(c)) + separator
+				}
 				record2[i] = c
 			}
 			tbl.AddRow(record2...)

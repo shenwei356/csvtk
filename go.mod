@@ -10,6 +10,7 @@ require (
 	github.com/dustin/go-humanize v1.0.0
 	github.com/fatih/color v1.10.0
 	github.com/mattn/go-colorable v0.1.8
+	github.com/mattn/go-runewidth v0.0.10
 	github.com/metakeule/fmtdate v1.1.2
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/mxschmitt/golang-combinations v1.1.0
