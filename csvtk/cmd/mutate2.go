@@ -136,6 +136,8 @@ Custom functions:
 			},
 		}
 
+		emptyParams := make(map[string]interface{})
+
 		containCustomFuncs := false
 		for f := range functions {
 			if regexp.MustCompile(f + `\(.+\)`).MatchString(exprStr) {
@@ -155,7 +157,7 @@ Custom functions:
 			}
 			checkError(err)
 			var result interface{}
-			result, err = expression.Evaluate(nil)
+			result, err = expression.Evaluate(emptyParams)
 			if err != nil {
 				checkError(fmt.Errorf("fail to evaluate: %s", exprStr))
 			}
@@ -429,7 +431,7 @@ Custom functions:
 								if hasNullCoalescence {
 									result, err = expression.Evaluate(parameters2)
 								} else {
-									result, err = expression.Evaluate(nil)
+									result, err = expression.Evaluate(emptyParams)
 								}
 								if err != nil {
 									checkError(fmt.Errorf("data: %s, err: %s", record, err))

@@ -71,6 +71,7 @@ Attention:
 		keepUnmatched := getFlagBool(cmd, "keep-unmatched")
 		outerJoin := getFlagBool(cmd, "outer-join")
 		na := getFlagString(cmd, "na")
+		ignoreNull := getFlagBool(cmd, "ignore-null")
 
 		if outerJoin && leftJoin {
 			checkError(fmt.Errorf("flag -O/--out-join and -L/--left-join are exclusive"))
@@ -127,6 +128,9 @@ Attention:
 						items[i] = record[f-1]
 					}
 					key = strings.Join(items, "_shenwei356_")
+					if ignoreNull && key == "" { // skip empty cell
+						continue
+					}
 					if ignoreCase {
 						key = strings.ToLower(key)
 					}
@@ -162,6 +166,9 @@ Attention:
 						items[i] = record[f-1]
 					}
 					key = strings.Join(items, "_shenwei356_")
+					if ignoreNull && key == "" { // skip empty cell
+						continue
+					}
 					if ignoreCase {
 						key = strings.ToLower(key)
 					}
@@ -205,6 +212,9 @@ Attention:
 					items[i] = record[f-1]
 				}
 				key = strings.Join(items, "_shenwei356_")
+				if ignoreNull && key == "" { // skip empty cell
+					continue
+				}
 				if ignoreCase {
 					key = strings.ToLower(key)
 				}
@@ -233,6 +243,9 @@ Attention:
 					items[i] = record0[f-1]
 				}
 				key = strings.Join(items, "_shenwei356_")
+				if ignoreNull && key == "" { // skip empty cell
+					continue
+				}
 				if ignoreCase {
 					key = strings.ToLower(key)
 				}
@@ -284,4 +297,5 @@ func init() {
 	joinCmd.Flags().BoolP("left-join", "L", false, `left join, equals to -k/--keep-unmatched, exclusive with --outer-join`)
 	joinCmd.Flags().BoolP("outer-join", "O", false, `outer join, exclusive with --left-join`)
 	joinCmd.Flags().StringP("na", "", "", "content for filling NA data")
+	joinCmd.Flags().BoolP("ignore-null", "n", false, "do not match NULL values")
 }
