@@ -142,7 +142,7 @@ Available Commands:
   del-header      delete column names
   dim             dimensions of CSV file
   filter          filter rows by values of selected fields with arithmetic expression
-  filter2         filter rows by awk-like artithmetic/string expressions
+  filter2         filter rows by awk-like arithmetic/string expressions
   fmtdate         format date of selected fields
   fold            fold multiple values of a field into cells of groups
   freq            frequencies of selected fields
@@ -155,7 +155,7 @@ Available Commands:
   inter           intersection of multiple files
   join            join files by selected fields (inner, left and outer join)
   mutate          create new column from selected fields by regular expression
-  mutate2         create new column from selected fields by awk-like artithmetic/string expressions
+  mutate2         create new column from selected fields by awk-like arithmetic/string expressions
   ncol            print number of columns
   nrow            print number of records
   plot            plot common figures
@@ -1764,9 +1764,9 @@ Examples
 Usage
 
 ```text
-filter rows by awk-like artithmetic/string expressions
+filter rows by awk-like arithmetic/string expressions
 
-The artithmetic/string expression is supported by:
+The arithmetic/string expression is supported by:
 
   https://github.com/Knetic/govaluate
 
@@ -2646,9 +2646,9 @@ Examples
 Usage
 
 ```text
-create new column from selected fields by awk-like artithmetic/string expressions
+create new column from selected fields by awk-like arithmetic/string expressions
 
-The artithmetic/string expression is supported by:
+The arithmetic/string expression is supported by:
 
   https://github.com/Knetic/govaluate
 

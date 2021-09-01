@@ -37,10 +37,10 @@ import (
 // mutate2Cmd represents the mutate command
 var mutate2Cmd = &cobra.Command{
 	Use:   "mutate2",
-	Short: "create new column from selected fields by awk-like artithmetic/string expressions",
-	Long: `create new column from selected fields by awk-like artithmetic/string expressions
+	Short: "create new column from selected fields by awk-like arithmetic/string expressions",
+	Long: `create new column from selected fields by awk-like arithmetic/string expressions
 
-The artithmetic/string expression is supported by:
+The arithmetic/string expression is supported by:
 
   https://github.com/Knetic/govaluate
 
@@ -461,7 +461,7 @@ Custom functions:
 
 func init() {
 	RootCmd.AddCommand(mutate2Cmd)
-	mutate2Cmd.Flags().StringP("expression", "e", "", `artithmetic/string expressions. e.g. "'string'", '"abc"', ' $a + "-" + $b ', '$1 + $2', '$a / $b', ' $1 > 100 ? "big" : "small" '`)
+	mutate2Cmd.Flags().StringP("expression", "e", "", `arithmetic/string expressions. e.g. "'string'", '"abc"', ' $a + "-" + $b ', '$1 + $2', '$a / $b', ' $1 > 100 ? "big" : "small" '`)
 	mutate2Cmd.Flags().StringP("name", "n", "", `new column name`)
 	mutate2Cmd.Flags().IntP("digits", "L", 2, `number of digits after the decimal dot`)
 	mutate2Cmd.Flags().BoolP("numeric-as-string", "s", false, `treat even numeric fields as strings to avoid converting big numbers into scientific notation`)
