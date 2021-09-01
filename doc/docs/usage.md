@@ -1604,9 +1604,9 @@ grep data by selected fields with patterns/regular expressions
 
 Attentions:
 
-  1. By default, we directly compare the colmn value with patterns,
+  1. By default, we directly compare the column value with patterns,
      use "-r/--use-regexp" for partly matching.
-  2. Multiple patterns can be given by setting '-p/--patern' more than once,
+  2. Multiple patterns can be given by setting '-p/--pattern' more than once,
      or giving comma separated values (CSV formats). 
      Therefore, please use double quotation marks for patterns containing
      comma, e.g., -p '"A{2,}"'
