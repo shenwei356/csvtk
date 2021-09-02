@@ -225,7 +225,7 @@ fish:
     - `csvtk replace`: fix bug when replacing with key-value pairs brought in v0.8.0
 - [csvtk v0.9.0](https://github.com/shenwei356/csvtk/releases/tag/v0.9.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.9.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.9.0)
-    - add subcommand `csvtk mutate2`: create new column from selected fields by **awk-like artithmetic/string expressions**
+    - add subcommand `csvtk mutate2`: create new column from selected fields by **awk-like arithmetic/string expressions**
     - add new command `genautocomplete` to generate **shell autocompletion** script!
 - [csvtk v0.8.0](https://github.com/shenwei356/csvtk/releases/tag/v0.8.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.8.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.8.0)
@@ -261,7 +261,7 @@ All relevant commands have been fixed.
       fields out of range are not ignored now**.
       Affected commands include `cut`, `filter`, `freq`, `grep`, `inter`, `mutate`,
       `rename`, `rename2`, `replace`, `stat2`, and `uniq`.
-    - **New command: `csvtk filter2`, filtering rows by artithmetic/string expressions like `awk`**.
+    - **New command: `csvtk filter2`, filtering rows by arithmetic/string expressions like `awk`**.
 - [csvtk v0.5.0](https://github.com/shenwei356/csvtk/releases/tag/v0.5.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.5.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.5.0)
     - `csvtk cut`: delete flag `-n/--names`, move it to a new command `csvtk headers`

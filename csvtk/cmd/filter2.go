@@ -36,10 +36,10 @@ import (
 // filter2Cmd represents the filter command
 var filter2Cmd = &cobra.Command{
 	Use:   "filter2",
-	Short: "filter rows by awk-like artithmetic/string expressions",
-	Long: `filter rows by awk-like artithmetic/string expressions
+	Short: "filter rows by awk-like arithmetic/string expressions",
+	Long: `filter rows by awk-like arithmetic/string expressions
 
-The artithmetic/string expression is supported by:
+The arithmetic/string expression is supported by:
 
   https://github.com/Knetic/govaluate
 
