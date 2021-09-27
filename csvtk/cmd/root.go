@@ -93,4 +93,6 @@ func init() {
 	RootCmd.PersistentFlags().BoolP("ignore-empty-row", "E", false, `ignore empty rows`)
 	RootCmd.PersistentFlags().BoolP("ignore-illegal-row", "I", false, `ignore illegal rows`)
 	RootCmd.PersistentFlags().StringP("infile-list", "", "", "file of input files list (one file per line), if given, they are appended to files from cli arguments")
+
+	RootCmd.CompletionOptions.DisableDefaultCmd = true
 }
