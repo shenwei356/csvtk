@@ -95,4 +95,5 @@ func init() {
 	RootCmd.PersistentFlags().StringP("infile-list", "", "", "file of input files list (one file per line), if given, they are appended to files from cli arguments")
 
 	RootCmd.CompletionOptions.DisableDefaultCmd = true
+	RootCmd.SetHelpCommand(&cobra.Command{Hidden: true})
 }
