@@ -117,7 +117,7 @@ Custom functions:
 					}
 
 				}
-				return fmt.Sprintf("%d", n), nil
+				return float64(n), nil
 			},
 			"ulen": func(args ...interface{}) (interface{}, error) {
 				n := 0
@@ -132,7 +132,7 @@ Custom functions:
 					}
 
 				}
-				return fmt.Sprintf("%d", n), nil
+				return float64(n), nil
 			},
 		}
 

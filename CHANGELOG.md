@@ -4,8 +4,9 @@
     - `csvtk grep`: fix bug for searching with `-r -p .`.
     - `csvtk filter2`: fix bug for date expression. [#146](https://github.com/shenwei356/csvtk/issues/146)
     - `csvtk csv2rst`: fix bug for data containing unicode. [#137](https://github.com/shenwei356/csvtk/issues/137)
-    - `csvtk mutate2/filter2`: change the way of rexpression evaluation.
-    - `csvtk mutate2`: add custom functions: `len()`. [#153](https://github.com/shenwei356/csvtk/issues/153)
+    - `csvtk mutate2/filter2`: 
+        - change the way of rexpression evaluation.
+        - add custom functions: `len()`. [#153](https://github.com/shenwei356/csvtk/issues/153)
     - `csvtk cut`: new flags `-m/--allow-missing-col` and `-b/--blank-missing-col`. [#156](https://github.com/shenwei356/csvtk/issues/156)
     - `csvtk pretty`: still add header row for empty column.
     - `csvtk csv2md`: better format.

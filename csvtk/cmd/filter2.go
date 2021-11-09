@@ -29,6 +29,7 @@ import (
 	"strings"
 
 	"github.com/Knetic/govaluate"
+	"github.com/mattn/go-runewidth"
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
 )
@@ -58,6 +59,11 @@ Supported operators and types:
   Ternary conditional: ? :
   Null coalescence: ??
 
+Custom functions:
+  - len(), length of strings, e.g., len($1), len($a), len($1, $2)
+  - ulen(), length of unicode strings/width of unicode strings rendered
+    to a terminal, e.g., len("沈伟")==6, ulen("沈伟")==4
+
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
@@ -85,6 +91,54 @@ Supported operators and types:
 		}
 
 		fieldStr := strings.Join(fs, ",")
+
+		// ------------------------------------------------------
+
+		// custom functions
+		functions := map[string]govaluate.ExpressionFunction{
+			"len": func(args ...interface{}) (interface{}, error) {
+				n := 0
+				for _, s := range args {
+					switch s.(type) {
+					case int:
+						n += len(fmt.Sprintf("%d", s.(int)))
+					case float64:
+						n += len(fmt.Sprintf("%f", s.(float64)))
+					case string:
+						n += len(s.(string))
+					}
+
+				}
+				return float64(n), nil
+			},
+			"ulen": func(args ...interface{}) (interface{}, error) {
+				n := 0
+				for _, s := range args {
+					switch s.(type) {
+					case int:
+						n += runewidth.StringWidth(fmt.Sprintf("%d", s.(int)))
+					case float64:
+						n += runewidth.StringWidth(fmt.Sprintf("%f", s.(float64)))
+					case string:
+						n += runewidth.StringWidth(s.(string))
+					}
+
+				}
+				return float64(n), nil
+			},
+		}
+
+		emptyParams := make(map[string]interface{})
+
+		containCustomFuncs := false
+		for f := range functions {
+			if regexp.MustCompile(f + `\(.+\)`).MatchString(filterStr) {
+				containCustomFuncs = true
+				break
+			}
+		}
+
+		// -----------------------------------
 
 		var quote string = `'`
 		if strings.Contains(filterStr, `"`) {
@@ -293,10 +347,14 @@ Supported operators and types:
 					for col, value = range parameters {
 						filterStr1 = strings.ReplaceAll(filterStr1, col, value)
 					}
-					expression, err = govaluate.NewEvaluableExpression(filterStr1)
+					if containCustomFuncs {
+						expression, err = govaluate.NewEvaluableExpressionWithFunctions(filterStr1, functions)
+					} else {
+						expression, err = govaluate.NewEvaluableExpression(filterStr1)
+					}
 					checkError(err)
 
-					result, err = expression.Evaluate(nil)
+					result, err = expression.Evaluate(emptyParams)
 					if err != nil {
 						flag = false
 						log.Warningf("row %d: %s", N, err)
@@ -304,7 +362,7 @@ Supported operators and types:
 					}
 					switch result.(type) {
 					case bool:
-						if result.(bool) == true {
+						if result.(bool) {
 							flag = true
 						}
 					default:
