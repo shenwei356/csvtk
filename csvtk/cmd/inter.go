@@ -226,9 +226,7 @@ Attention:
 							items[i] = record[f-1]
 						}
 						itemsCopy := make([]string, len(items))
-						for i, item := range items {
-							itemsCopy[i] = item
-						}
+						copy(itemsCopy, items)
 						valuesMaps[key] = itemsCopy
 						continue
 					}

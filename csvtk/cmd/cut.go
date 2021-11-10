@@ -151,8 +151,6 @@ Examples:
 										if !allowMissingColumn {
 											checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col[1:], file))
 										}
-									} else {
-
 									}
 								} else {
 									if _, ok := colnames2fileds[col]; !ok {

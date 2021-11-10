@@ -127,9 +127,6 @@ var dimCmd = &cobra.Command{
 			if numRows > 0 && !config.NoHeaderRow {
 				numRows--
 			}
-			if numRows < 0 {
-				numRows = 0
-			}
 
 			if rows {
 				if noFiles {

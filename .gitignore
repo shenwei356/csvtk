@@ -30,3 +30,4 @@ csvtk/binaries*
 doc/site
 *ssshtest
 .vscode
+.brename_detail.txt

@@ -78,7 +78,7 @@ func getPlotConfigs(cmd *cobra.Command) *plotConfigs {
 	config := new(plotConfigs)
 
 	config.dataFieldStr = getFlagString(cmd, "data-field")
-	if strings.Index(config.dataFieldStr, ",") >= 0 {
+	if strings.Contains(config.dataFieldStr, ",") {
 		checkError(fmt.Errorf("only one field allowed for flag --data-field"))
 	}
 	if config.dataFieldStr[0] == '-' {
@@ -87,7 +87,7 @@ func getPlotConfigs(cmd *cobra.Command) *plotConfigs {
 
 	config.groupFieldStr = getFlagString(cmd, "group-field")
 	if len(config.groupFieldStr) > 0 {
-		if strings.Index(config.groupFieldStr, ",") >= 0 {
+		if strings.Contains(config.groupFieldStr, ",") {
 			checkError(fmt.Errorf("only one field allowed for flag --group-field"))
 		}
 		if config.groupFieldStr[0] == '-' {

@@ -74,7 +74,7 @@ Notes:
 		if dataFieldXStr == "" {
 			checkError(fmt.Errorf("flag -x (--data-field-x) needed"))
 		}
-		if strings.Index(dataFieldXStr, ",") >= 0 {
+		if strings.Contains(dataFieldXStr, ",") {
 			checkError(fmt.Errorf("only one field allowed for flag -x (--data-field-x)"))
 		}
 		if dataFieldXStr[0] == '-' {
@@ -85,7 +85,7 @@ Notes:
 		if dataFieldYStr == "" {
 			checkError(fmt.Errorf("flag -y (--data-field-y) needed"))
 		}
-		if strings.Index(dataFieldYStr, ",") >= 0 {
+		if strings.Contains(dataFieldYStr, ",") {
 			checkError(fmt.Errorf("only one field allowed for flag -y (--data-field-y)"))
 		}
 		if dataFieldXStr[0] == '-' {
@@ -94,7 +94,7 @@ Notes:
 
 		groupFieldStr := getFlagString(cmd, "group-field")
 		if len(groupFieldStr) > 0 {
-			if strings.Index(groupFieldStr, ",") >= 0 {
+			if strings.Contains(groupFieldStr, ",") {
 				checkError(fmt.Errorf("only one field allowed for flag --group-field"))
 			}
 			if groupFieldStr[0] == '-' {

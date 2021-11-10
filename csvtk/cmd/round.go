@@ -217,15 +217,15 @@ var roundCmd = &cobra.Command{
 							} else {
 								found = founds[0]
 								if found[2] == "" {
-									fvalue, _ = strconv.ParseFloat(found[1], 10)
+									fvalue, _ = strconv.ParseFloat(found[1], 64)
 									record2[f] = fmt.Sprintf(decimalFormat, fvalue)
 								} else if found[1] == "" {
 
 								} else if strings.IndexByte(found[2], '-') > 0 { // scientific notation with value < 1
-									fvalue, _ = strconv.ParseFloat(record2[f], 10)
+									fvalue, _ = strconv.ParseFloat(record2[f], 64)
 									record2[f] = fmt.Sprintf(decimalFormat, fvalue)
 								} else {
-									fvalue, _ = strconv.ParseFloat(found[1], 10)
+									fvalue, _ = strconv.ParseFloat(found[1], 64)
 									record2[f] = fmt.Sprintf(decimalFormat, fvalue) + found[2]
 								}
 							}

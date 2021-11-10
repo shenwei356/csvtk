@@ -484,7 +484,7 @@ func parseFields(cmd *cobra.Command,
 }
 
 func fuzzyField2Regexp(field string) *regexp.Regexp {
-	if strings.IndexAny(field, "*") >= 0 {
+	if strings.ContainsAny(field, "*") {
 		field = strings.Replace(field, "*", ".*?", -1)
 	}
 

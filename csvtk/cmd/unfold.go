@@ -228,7 +228,7 @@ Example:
 							fieldsMap[f] = struct{}{}
 						}
 
-						record2 = make([]string, len(record))
+						// record2 = make([]string, len(record))
 
 						checkFields = false
 					}
@@ -240,9 +240,9 @@ Example:
 					}
 					nr++
 
-					for f := range record {
-						record2[f] = record[f]
-					}
+					// copy(record2, record)
+					record2 = record
+
 					for f := range fieldsMap {
 						for _, v := range strings.Split(record[f-1], separater) {
 							record2[f-1] = v

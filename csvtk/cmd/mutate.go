@@ -124,6 +124,7 @@ var mutateCmd = &cobra.Command{
 			checkFields := true
 
 			var record2 []string // for output
+			var ok bool
 
 			printMetaLine := true
 			for chunk := range csvReader.Ch {
@@ -228,26 +229,32 @@ var mutateCmd = &cobra.Command{
 					} else {
 						record2 = record
 					}
+
+					if handleHeaderRow {
+						record2 = append(record2, name)
+						handleHeaderRow = false
+						checkError(writer.Write(record2))
+						continue
+					}
+
 					for f := range record {
 						// record2[f] = record[f]
-						if _, ok := fieldsMap[f+1]; ok {
-							if handleHeaderRow {
-								record2 = append(record2, name)
-								handleHeaderRow = false
-							} else {
-								if patternRegexp.MatchString(record[f]) {
-									found := patternRegexp.FindAllStringSubmatch(record[f], -1)
-									record2 = append(record2, found[0][1])
-								} else {
-									if naUnmatched {
-										record2 = append(record2, "")
-									} else {
-										record2 = append(record2, record[f])
-									}
-								}
-							}
-							break
+						_, ok = fieldsMap[f+1]
+						if !ok {
+							continue
 						}
+
+						if patternRegexp.MatchString(record[f]) {
+							found := patternRegexp.FindAllStringSubmatch(record[f], -1)
+							record2 = append(record2, found[0][1])
+						} else {
+							if naUnmatched {
+								record2 = append(record2, "")
+							} else {
+								record2 = append(record2, record[f])
+							}
+						}
+						break
 					}
 					checkError(writer.Write(record2))
 				}

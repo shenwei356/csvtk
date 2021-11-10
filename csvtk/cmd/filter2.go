@@ -25,6 +25,7 @@ import (
 	"fmt"
 	"regexp"
 	"runtime"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -85,6 +86,8 @@ Custom functions:
 			checkError(fmt.Errorf("invalid filter: %s", filterStr))
 		}
 
+		digitsAsString := getFlagBool(cmd, "numeric-as-string")
+
 		fs := make([]string, 0)
 		for _, f := range reFilter2.FindAllStringSubmatch(filterStr, -1) {
 			fs = append(fs, f[1])
@@ -139,6 +142,8 @@ Custom functions:
 		}
 
 		// -----------------------------------
+
+		hasNullCoalescence := reNullCoalescence.MatchString(filterStr)
 
 		var quote string = `'`
 		if strings.Contains(filterStr, `"`) {
@@ -198,6 +203,8 @@ Custom functions:
 			var colnamesMap map[string]*regexp.Regexp
 
 			parameters := make(map[string]string, len(colnamesMap))
+			parameters2 := make(map[string]interface{}, len(colnamesMap))
+			parameters2["shenweiNULL"] = nil
 
 			checkFields := true
 			var flag bool
@@ -208,6 +215,8 @@ Custom functions:
 			var N int64
 			var recordWithN []string
 			var valueFloat float64
+
+			keys := make([]string, 0, 8)
 
 			printMetaLine := true
 			for chunk := range csvReader.Ch {
@@ -311,17 +320,25 @@ Custom functions:
 						checkFields = false
 					}
 
-					flag = false
+					// prepaire parameters
 					if !usingColname {
 						for _, fieldTmp = range fields {
 							value = record[fieldTmp-1]
 							col = fmt.Sprintf("shenwei%d", fieldTmp)
 
 							if reDigitals.MatchString(value) {
-								valueFloat, _ = strconv.ParseFloat(removeComma(value), 64)
-								parameters[col] = fmt.Sprintf("%.16f", valueFloat)
+								if digitsAsString || containCustomFuncs {
+									parameters[col] = quote + value + quote
+								} else {
+									valueFloat, _ = strconv.ParseFloat(removeComma(value), 64)
+									parameters[col] = fmt.Sprintf("%.16f", valueFloat)
+								}
 							} else {
-								parameters[col] = quote + value + quote
+								if value == "" && hasNullCoalescence {
+									parameters[col] = "shenweiNULL"
+								} else {
+									parameters[col] = quote + value + quote
+								}
 							}
 						}
 					} else {
@@ -335,18 +352,39 @@ Custom functions:
 							}
 
 							if reDigitals.MatchString(value) {
-								valueFloat, _ = strconv.ParseFloat(removeComma(value), 64)
-								parameters[col] = fmt.Sprintf("%.16f", valueFloat)
+								if digitsAsString || containCustomFuncs {
+									parameters[col] = quote + value + quote
+								} else {
+									valueFloat, _ = strconv.ParseFloat(removeComma(value), 64)
+									parameters[col] = fmt.Sprintf("%.16f", valueFloat)
+								}
 							} else {
-								parameters[col] = quote + value + quote
+								if value == "" && hasNullCoalescence {
+									parameters[col] = "shenweiNULL"
+								} else {
+									parameters[col] = quote + value + quote
+								}
 							}
 						}
 					}
 
-					filterStr1 = filterStr
-					for col, value = range parameters {
-						filterStr1 = strings.ReplaceAll(filterStr1, col, value)
+					// sort variable names by length, so we can replace variables in the right order.
+					// e.g., for -e '$reads_mapped/$reads', we should firstly replace $reads_mapped then $reads.
+					keys = keys[:0]
+					for col = range parameters {
+						keys = append(keys, col)
 					}
+					sort.Slice(keys, func(i, j int) bool {
+						return len(keys[i]) > len(keys[j])
+					})
+
+					// replace variable with column data
+					filterStr1 = filterStr
+					for _, col = range keys {
+						filterStr1 = strings.ReplaceAll(filterStr1, col, parameters[col])
+					}
+
+					// evaluate
 					if containCustomFuncs {
 						expression, err = govaluate.NewEvaluableExpressionWithFunctions(filterStr1, functions)
 					} else {
@@ -354,7 +392,14 @@ Custom functions:
 					}
 					checkError(err)
 
-					result, err = expression.Evaluate(emptyParams)
+					// check result
+					flag = false
+
+					if hasNullCoalescence {
+						result, err = expression.Evaluate(parameters2)
+					} else {
+						result, err = expression.Evaluate(emptyParams)
+					}
 					if err != nil {
 						flag = false
 						log.Warningf("row %d: %s", N, err)
@@ -393,12 +438,14 @@ func init() {
 	RootCmd.AddCommand(filter2Cmd)
 	filter2Cmd.Flags().StringP("filter", "f", "", `awk-like filter condition. e.g. '$age>12' or '$1 > $3' or '$name=="abc"' or '$1 % 2 == 0'`)
 	filter2Cmd.Flags().BoolP("line-number", "n", false, `print line number as the first column ("n")`)
+	filter2Cmd.Flags().BoolP("numeric-as-string", "s", false, `treat even numeric fields as strings to avoid converting big numbers into scientific notation`)
 }
 
-var reFilter2 = regexp.MustCompile(`\$([^ +-/*&\|^%><!~=()]+)`)
+var reFilter2 = regexp.MustCompile(`\$([^ +-/*&\|^%><!~=()"']+)`)
 var reFilter2VarField = regexp.MustCompile(`\$(\d+)`)
-var reFilter2VarSymbol = regexp.MustCompile(`\$`)
+
+// var reFilter2VarSymbol = regexp.MustCompile(`\$`)
 
 // special colname starting with digits, e.g., 123abc
-var reFiler2VarSymbolStartsWithDigits = regexp.MustCompile(`\$(\d+)([^\d +-/*&\|^%><!~=()]+)`) // for preprocess expression
-var reFiler2ColSymbolStartsWithDigits = regexp.MustCompile(`^(\d+)([^\d +-/*&\|^%><!~=()]+)`)  // for preparing paramters
+var reFiler2VarSymbolStartsWithDigits = regexp.MustCompile(`\$(\d+)([^\d +-/*&\|^%><!~=()"']+)`) // for preprocess expression
+var reFiler2ColSymbolStartsWithDigits = regexp.MustCompile(`^(\d+)([^\d +-/*&\|^%><!~=()"']+)`)  // for preparing paramters

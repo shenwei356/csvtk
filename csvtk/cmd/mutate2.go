@@ -25,6 +25,7 @@ import (
 	"fmt"
 	"regexp"
 	"runtime"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -268,6 +269,7 @@ Custom functions:
 			var result interface{}
 
 			var record2 []string // for output
+			keys := make([]string, 0, 8)
 
 			printMetaLine := true
 			for chunk := range csvReader.Ch {
@@ -363,92 +365,106 @@ Custom functions:
 					}
 
 					record2 = record
-					for f := range record {
-						record2[f] = record[f]
-						if _, ok := fieldsMap[f+1]; ok {
-							if handleHeaderRow {
-								record2 = append(record2, name)
-								handleHeaderRow = false
+
+					// print header row
+					if handleHeaderRow {
+						record2 = append(record2, name)
+						handleHeaderRow = false
+
+						checkError(writer.Write(record2))
+						continue
+					}
+
+					// prepaire parameters
+					if !usingColname {
+						for _, fieldTmp = range fields {
+							value = record[fieldTmp-1]
+							col = fmt.Sprintf("shenwei%d", fieldTmp)
+
+							if reDigitals.MatchString(value) {
+								if digitsAsString || containCustomFuncs {
+									parameters[col] = quote + value + quote
+								} else {
+									valueFloat, _ = strconv.ParseFloat(removeComma(value), 64)
+									parameters[col] = fmt.Sprintf("%.16f", valueFloat)
+								}
 							} else {
-								if !usingColname {
-									for _, fieldTmp = range fields {
-										value = record[fieldTmp-1]
-										col = fmt.Sprintf("shenwei%d", fieldTmp)
-
-										if reDigitals.MatchString(value) {
-											if digitsAsString || containCustomFuncs {
-												parameters[col] = quote + value + quote
-											} else {
-												valueFloat, _ = strconv.ParseFloat(removeComma(value), 64)
-												parameters[col] = fmt.Sprintf("%.16f", valueFloat)
-											}
-										} else {
-											if value == "" && hasNullCoalescence {
-												parameters[col] = "shenweiNULL"
-											} else {
-												parameters[col] = quote + value + quote
-											}
-										}
-									}
+								if value == "" && hasNullCoalescence {
+									parameters[col] = "shenweiNULL"
 								} else {
-									for col = range colnamesMap {
-										value = record[colnames2fileds[col]-1]
-
-										if reFiler2ColSymbolStartsWithDigits.MatchString(col) {
-											col = fmt.Sprintf("shenwei_%s", col)
-										} else {
-											col = "$" + col
-										}
-
-										if reDigitals.MatchString(value) {
-											if digitsAsString || containCustomFuncs {
-												parameters[col] = quote + value + quote
-											} else {
-												valueFloat, _ = strconv.ParseFloat(removeComma(value), 64)
-												parameters[col] = fmt.Sprintf("%.16f", valueFloat)
-											}
-										} else {
-											if value == "" && hasNullCoalescence {
-												parameters[col] = "shenweiNULL"
-											} else {
-												parameters[col] = quote + value + quote
-											}
-										}
-									}
-								}
-
-								exprStr1 = exprStr
-								for col, value = range parameters {
-									exprStr1 = strings.ReplaceAll(exprStr1, col, value)
-								}
-								if containCustomFuncs {
-									expression, err = govaluate.NewEvaluableExpressionWithFunctions(exprStr1, functions)
-								} else {
-									expression, err = govaluate.NewEvaluableExpression(exprStr1)
-								}
-								checkError(err)
-
-								if hasNullCoalescence {
-									result, err = expression.Evaluate(parameters2)
-								} else {
-									result, err = expression.Evaluate(emptyParams)
-								}
-								if err != nil {
-									checkError(fmt.Errorf("data: %s, err: %s", record, err))
-								}
-								switch result.(type) {
-								case bool:
-									record2 = append(record2, fmt.Sprintf("%v", result))
-								case float32, float64:
-									record2 = append(record2, fmt.Sprintf(formatDigitals, result))
-								case int, int32, int64:
-									record2 = append(record2, fmt.Sprintf("%d", result))
-								default:
-									record2 = append(record2, fmt.Sprintf("%s", result))
+									parameters[col] = quote + value + quote
 								}
 							}
-							break
 						}
+					} else {
+						for col = range colnamesMap {
+							value = record[colnames2fileds[col]-1]
+
+							if reFiler2ColSymbolStartsWithDigits.MatchString(col) {
+								col = fmt.Sprintf("shenwei_%s", col)
+							} else {
+								col = "$" + col
+							}
+
+							if reDigitals.MatchString(value) {
+								if digitsAsString || containCustomFuncs {
+									parameters[col] = quote + value + quote
+								} else {
+									valueFloat, _ = strconv.ParseFloat(removeComma(value), 64)
+									parameters[col] = fmt.Sprintf("%.16f", valueFloat)
+								}
+							} else {
+								if value == "" && hasNullCoalescence {
+									parameters[col] = "shenweiNULL"
+								} else {
+									parameters[col] = quote + value + quote
+								}
+							}
+						}
+					}
+
+					// sort variable names by length, so we can replace variables in the right order.
+					// e.g., for -e '$reads_mapped/$reads', we should firstly replace $reads_mapped then $reads.
+					keys = keys[:0]
+					for col = range parameters {
+						keys = append(keys, col)
+					}
+					sort.Slice(keys, func(i, j int) bool {
+						return len(keys[i]) > len(keys[j])
+					})
+
+					// replace variable with column data
+					exprStr1 = exprStr
+					for _, col = range keys {
+						exprStr1 = strings.ReplaceAll(exprStr1, col, parameters[col])
+					}
+
+					// evaluate
+					if containCustomFuncs {
+						expression, err = govaluate.NewEvaluableExpressionWithFunctions(exprStr1, functions)
+					} else {
+						expression, err = govaluate.NewEvaluableExpression(exprStr1)
+					}
+					checkError(err)
+
+					// check result
+					if hasNullCoalescence {
+						result, err = expression.Evaluate(parameters2)
+					} else {
+						result, err = expression.Evaluate(emptyParams)
+					}
+					if err != nil {
+						checkError(fmt.Errorf("data: %s, err: %s", record, err))
+					}
+					switch result.(type) {
+					case bool:
+						record2 = append(record2, fmt.Sprintf("%v", result))
+					case float32, float64:
+						record2 = append(record2, fmt.Sprintf(formatDigitals, result))
+					case int, int32, int64:
+						record2 = append(record2, fmt.Sprintf("%d", result))
+					default:
+						record2 = append(record2, fmt.Sprintf("%s", result))
 					}
 					checkError(writer.Write(record2))
 				}
