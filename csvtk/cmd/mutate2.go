@@ -195,8 +195,8 @@ Custom functions:
 			return
 		}
 
-		digits := getFlagNonNegativeInt(cmd, "digits")
-		formatDigitals := fmt.Sprintf("%%.%df", digits)
+		decimalWidth := getFlagNonNegativeInt(cmd, "decimal-width")
+		decimalFormat := fmt.Sprintf("%%.%df", decimalWidth)
 
 		digitsAsString := getFlagBool(cmd, "numeric-as-string")
 
@@ -460,7 +460,7 @@ Custom functions:
 					case bool:
 						record2 = append(record2, fmt.Sprintf("%v", result))
 					case float32, float64:
-						record2 = append(record2, fmt.Sprintf(formatDigitals, result))
+						record2 = append(record2, fmt.Sprintf(decimalFormat, result))
 					case int, int32, int64:
 						record2 = append(record2, fmt.Sprintf("%d", result))
 					default:
@@ -478,9 +478,9 @@ Custom functions:
 func init() {
 	RootCmd.AddCommand(mutate2Cmd)
 	mutate2Cmd.Flags().StringP("expression", "e", "", `arithmetic/string expressions. e.g. "'string'", '"abc"', ' $a + "-" + $b ', '$1 + $2', '$a / $b', ' $1 > 100 ? "big" : "small" '`)
-	mutate2Cmd.Flags().StringP("name", "n", "", `new column name`)
 	mutate2Cmd.Flags().IntP("digits", "L", 2, `number of digits after the decimal dot`)
 	mutate2Cmd.Flags().BoolP("numeric-as-string", "s", false, `treat even numeric fields as strings to avoid converting big numbers into scientific notation`)
+	mutate2Cmd.Flags().IntP("decimal-width", "w", 2, "limit floats to N decimal points")
 }
 
 var reNullCoalescence = regexp.MustCompile(`\?\?`)

@@ -12,6 +12,9 @@
     - `csvtk pretty`: still add header row for empty column.
     - `csvtk csv2md`: better format.
     - `csvtk join`: new flag `-n/--ignore-null`. [#163](https://github.com/shenwei356/csvtk/issues/163)
+    - `csvtk mutate2/summary`:
+        - `mutate2`: remove the option `-L/--digits`.
+        - use the same option `-w/--decimal-width` to limit floats to N decimal points.
 - [csvtk v0.23.0](https://github.com/shenwei356/csvtk/releases/tag/v0.23.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.23.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.23.0)
     - new comand: `csvtk csv2rst` for converting CSV to reStructuredText format. [#137](https://github.com/shenwei356/csvtk/issues/137)

@@ -554,7 +554,7 @@ func init() {
 	summaryCmd.Flags().StringP("groups", "g", "", `group via fields. e.g -f 1,2 or -f columnA,columnB`)
 	summaryCmd.Flags().StringSliceP("fields", "f", []string{}, fmt.Sprintf(`operations on these fields. e.g -f 1:count,1:sum or -f colA:mean. available operations: %s`, strings.Join(allStatsList, ", ")))
 	summaryCmd.Flags().BoolP("ignore-non-numbers", "i", false, `ignore non-numeric values like "NA" or "N/A"`)
-	summaryCmd.Flags().IntP("decimal-width", "n", 2, "limit floats to N decimal points")
+	summaryCmd.Flags().IntP("decimal-width", "w", 2, "limit floats to N decimal points")
 	summaryCmd.Flags().StringP("separater", "s", "; ", "separater for collapsed data")
 	summaryCmd.Flags().Int64P("rand-seed", "S", 11, `rand seed for operation "rand"`)
 }
