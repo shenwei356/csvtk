@@ -8,6 +8,7 @@
         - change the way of rexpression evaluation.
         - add custom functions: `len()`. [#153](https://github.com/shenwei356/csvtk/issues/153)
         - fix bug when using two or more columns with common prefixes in column names. [#173](https://github.com/shenwei356/csvtk/issues/173)
+        - fix value with single or double quotes. [#174](https://github.com/shenwei356/csvtk/issues/174)
     - `csvtk cut`: new flags `-m/--allow-missing-col` and `-b/--blank-missing-col`. [#156](https://github.com/shenwei356/csvtk/issues/156)
     - `csvtk pretty`: still add header row for empty column.
     - `csvtk csv2md`: better format.

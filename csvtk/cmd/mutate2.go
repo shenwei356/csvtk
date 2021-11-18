@@ -209,10 +209,7 @@ Custom functions:
 
 		hasNullCoalescence := reNullCoalescence.MatchString(exprStr)
 
-		var quote string = `'`
-		if strings.Contains(exprStr, `"`) {
-			quote = `"`
-		}
+		var quote string
 		exprStr = reFiler2VarSymbolStartsWithDigits.ReplaceAllString(exprStr, "shenwei_$1$2")
 		exprStr = reFilter2VarField.ReplaceAllString(exprStr, "shenwei$1")
 		// exprStr = reFilter2VarSymbol.ReplaceAllString(exprStr, "")
@@ -381,6 +378,8 @@ Custom functions:
 							value = record[fieldTmp-1]
 							col = fmt.Sprintf("shenwei%d", fieldTmp)
 
+							quote = `'`
+
 							if reDigitals.MatchString(value) {
 								if digitsAsString || containCustomFuncs {
 									parameters[col] = quote + value + quote
@@ -389,6 +388,13 @@ Custom functions:
 									parameters[col] = fmt.Sprintf("%.16f", valueFloat)
 								}
 							} else {
+								if strings.Contains(value, `'`) {
+									value = strings.ReplaceAll(value, `'`, `\'`)
+								}
+								if strings.Contains(value, `"`) {
+									value = strings.ReplaceAll(value, `"`, `\"`)
+								}
+
 								if value == "" && hasNullCoalescence {
 									parameters[col] = "shenweiNULL"
 								} else {
@@ -406,6 +412,8 @@ Custom functions:
 								col = "$" + col
 							}
 
+							quote = `'`
+
 							if reDigitals.MatchString(value) {
 								if digitsAsString || containCustomFuncs {
 									parameters[col] = quote + value + quote
@@ -417,6 +425,13 @@ Custom functions:
 								if value == "" && hasNullCoalescence {
 									parameters[col] = "shenweiNULL"
 								} else {
+									if strings.Contains(value, `'`) {
+										value = strings.ReplaceAll(value, `'`, `\'`)
+									}
+									if strings.Contains(value, `"`) {
+										value = strings.ReplaceAll(value, `"`, `\"`)
+									}
+
 									parameters[col] = quote + value + quote
 								}
 							}
