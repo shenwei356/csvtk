@@ -1,21 +1,22 @@
 - [csvtk v0.24.0](https://github.com/shenwei356/csvtk/releases/tag/v0.24.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.24.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.24.0)
+    - **Incompatible changes**:
+        - `csvtk mutate2/summary`:
+          - `mutate2`: remove the option `-L/--digits`.
+          - use the same option `-w/--decimal-width` to limit floats to N decimal points.
     - new command `csvtk fmtdate`: format date of selected fields. [#159](https://github.com/shenwei356/csvtk/issues/159)
     - `csvtk grep`: fix bug for searching with `-r -p .`.
-    - `csvtk filter2`: fix bug for date expression. [#146](https://github.com/shenwei356/csvtk/issues/146)
     - `csvtk csv2rst`: fix bug for data containing unicode. [#137](https://github.com/shenwei356/csvtk/issues/137)
+    - `csvtk filter2`: fix bug for date expression. [#146](https://github.com/shenwei356/csvtk/issues/146)
     - `csvtk mutate2/filter2`: 
         - change the way of rexpression evaluation.
         - add custom functions: `len()`. [#153](https://github.com/shenwei356/csvtk/issues/153)
-        - fix bug when using two or more columns with common prefixes in column names. [#173](https://github.com/shenwei356/csvtk/issues/173)
+        - **fix bug when using two or more columns with common prefixes in column names**. [#173](https://github.com/shenwei356/csvtk/issues/173)
         - fix value with single or double quotes. [#174](https://github.com/shenwei356/csvtk/issues/174)
     - `csvtk cut`: new flags `-m/--allow-missing-col` and `-b/--blank-missing-col`. [#156](https://github.com/shenwei356/csvtk/issues/156)
     - `csvtk pretty`: still add header row for empty column.
     - `csvtk csv2md`: better format.
     - `csvtk join`: new flag `-n/--ignore-null`. [#163](https://github.com/shenwei356/csvtk/issues/163)
-    - `csvtk mutate2/summary`:
-        - `mutate2`: remove the option `-L/--digits`.
-        - use the same option `-w/--decimal-width` to limit floats to N decimal points.
 - [csvtk v0.23.0](https://github.com/shenwei356/csvtk/releases/tag/v0.23.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.23.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.23.0)
     - new comand: `csvtk csv2rst` for converting CSV to reStructuredText format. [#137](https://github.com/shenwei356/csvtk/issues/137)

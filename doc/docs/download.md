@@ -4,35 +4,21 @@
  executable binary files **for most popular operating system** are freely available
   in [release](https://github.com/shenwei356/csvtk/releases) page.
 
-## Current Version
+OS     |Arch      |File, 中国镜像                                                                                                                                                                              |Download Count
+:------|:---------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Linux  |32-bit    |[csvtk_linux_386.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.24.0/csvtk_linux_386.tar.gz),<br/> [中国镜像](http://app.shenwei.me/data/csvtk/csvtk_linux_386.tar.gz)                            |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_386.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.24.0/csvtk_linux_386.tar.gz)
+Linux  |**64-bit**|[**csvtk_linux_amd64.tar.gz**](https://github.com/shenwei356/csvtk/releases/download/v0.24.0/csvtk_linux_amd64.tar.gz),<br/> [中国镜像](http://app.shenwei.me/data/csvtk/csvtk_linux_amd64.tar.gz)                  |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_amd64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.24.0/csvtk_linux_amd64.tar.gz)
+Linux  |**64-bit**|[**csvtk_linux_arm64.tar.gz**](https://github.com/shenwei356/csvtk/releases/download/v0.24.0/csvtk_linux_arm64.tar.gz),<br/> [中国镜像](http://app.shenwei.me/data/csvtk/csvtk_linux_arm64.tar.gz)                  |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_arm64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.24.0/csvtk_linux_arm64.tar.gz)
+macOS  |**64-bit**|[**csvtk_darwin_amd64.tar.gz**](https://github.com/shenwei356/csvtk/releases/download/v0.24.0/csvtk_darwin_amd64.tar.gz),<br/> [中国镜像](http://app.shenwei.me/data/csvtk/csvtk_darwin_amd64.tar.gz)               |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_darwin_amd64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.24.0/csvtk_darwin_amd64.tar.gz)
+macOS  |**arm64** |[**csvtk_darwin_arm64.tar.gz**](https://github.com/shenwei356/csvtk/releases/download/v0.24.0/csvtk_darwin_arm64.tar.gz),<br/> [中国镜像](http://app.shenwei.me/data/csvtk/csvtk_darwin_arm64.tar.gz)               |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_darwin_arm64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.24.0/csvtk_darwin_arm64.tar.gz)
+Windows|32-bit    |[csvtk_windows_386.exe.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.24.0/csvtk_windows_386.exe.tar.gz),<br/> [中国镜像](http://app.shenwei.me/data/csvtk/csvtk_windows_386.exe.tar.gz)          |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_windows_386.exe.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.24.0/csvtk_windows_386.exe.tar.gz)
+Windows|**64-bit**|[**csvtk_windows_amd64.exe.tar.gz**](https://github.com/shenwei356/csvtk/releases/download/v0.24.0/csvtk_windows_amd64.exe.tar.gz),<br/> [中国镜像](http://app.shenwei.me/data/csvtk/csvtk_windows_amd64.exe.tar.gz)|[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_windows_amd64.exe.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.24.0/csvtk_windows_amd64.exe.tar.gz)
 
-- [csvtk v0.23.0](https://github.com/shenwei356/csvtk/releases/tag/v0.23.0)
-[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.23.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.23.0)
-    - new comand: `csvtk csv2rst` for converting CSV to reStructuredText format. [#137](https://github.com/shenwei356/csvtk/issues/137)
-    - `csvtk pretty`: add header separator line. [#123](https://github.com/shenwei356/csvtk/issues/123)
-    - `csvtk mutate2/summary`: fix message and doc. Thanks @VladimirAlexiev  [#127](https://github.com/shenwei356/csvtk/issues/127)
-    - `csvtk mutate2`: fix null coalescence: ??. [#129](https://github.com/shenwei356/csvtk/issues/129)
-    - `csvtk genautocomplete`: supports bash|zsh|fish|powershell. [#126](https://github.com/shenwei356/csvtk/issues/126)
-    - `csvtk cat`: fix progress bar. [#130](https://github.com/shenwei356/csvtk/issues/130)
-    - `csvtk grep`: new flag `immediate-output`.
-    - `csvtk csv2xlsx`: fix bug for table with > 26 columns. [138](https://github.com/shenwei356/csvtk/issues/138)
-
-Links:
-
-***Tips***
+**Notes**
 
 - run `csvtk version` to check update !!!
 - run `csvtk genautocomplete` to update Bash completion !!!
 
-OS     |Arch      |File, 中国镜像                                                                                                                                                                              |Download Count
-:------|:---------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-Linux  |32-bit    |[csvtk_linux_386.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.23.0/csvtk_linux_386.tar.gz),<br/> [中国镜像](http://app.shenwei.me/data/csvtk/csvtk_linux_386.tar.gz)                            |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_386.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.23.0/csvtk_linux_386.tar.gz)
-Linux  |**64-bit**|[**csvtk_linux_amd64.tar.gz**](https://github.com/shenwei356/csvtk/releases/download/v0.23.0/csvtk_linux_amd64.tar.gz),<br/> [中国镜像](http://app.shenwei.me/data/csvtk/csvtk_linux_amd64.tar.gz)                  |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_amd64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.23.0/csvtk_linux_amd64.tar.gz)
-Linux  |**64-bit**|[**csvtk_linux_arm64.tar.gz**](https://github.com/shenwei356/csvtk/releases/download/v0.23.0/csvtk_linux_arm64.tar.gz),<br/> [中国镜像](http://app.shenwei.me/data/csvtk/csvtk_linux_arm64.tar.gz)                  |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_arm64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.23.0/csvtk_linux_arm64.tar.gz)
-macOS  |**64-bit**|[**csvtk_darwin_amd64.tar.gz**](https://github.com/shenwei356/csvtk/releases/download/v0.23.0/csvtk_darwin_amd64.tar.gz),<br/> [中国镜像](http://app.shenwei.me/data/csvtk/csvtk_darwin_amd64.tar.gz)               |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_darwin_amd64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.23.0/csvtk_darwin_amd64.tar.gz)
-macOS  |**arm64** |[**csvtk_darwin_arm64.tar.gz**](https://github.com/shenwei356/csvtk/releases/download/v0.23.0/csvtk_darwin_arm64.tar.gz),<br/> [中国镜像](http://app.shenwei.me/data/csvtk/csvtk_darwin_arm64.tar.gz)               |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_darwin_arm64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.23.0/csvtk_darwin_arm64.tar.gz)
-Windows|32-bit    |[csvtk_windows_386.exe.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.23.0/csvtk_windows_386.exe.tar.gz),<br/> [中国镜像](http://app.shenwei.me/data/csvtk/csvtk_windows_386.exe.tar.gz)          |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_windows_386.exe.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.23.0/csvtk_windows_386.exe.tar.gz)
-Windows|**64-bit**|[**csvtk_windows_amd64.exe.tar.gz**](https://github.com/shenwei356/csvtk/releases/download/v0.23.0/csvtk_windows_amd64.exe.tar.gz),<br/> [中国镜像](http://app.shenwei.me/data/csvtk/csvtk_windows_amd64.exe.tar.gz)|[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_windows_amd64.exe.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.23.0/csvtk_windows_amd64.exe.tar.gz)
 
 ## Installation
 
@@ -64,7 +50,7 @@ And then:
 
     conda install -c bioconda csvtk
 
-#### Method 3: Install via homebrew
+#### Method 3: Install via homebrew (may be not the latest)
 
     brew install csvtk
 
@@ -101,8 +87,37 @@ fish:
 
     csvtk genautocomplete --shell fish --file ~/.config/fish/completions/csvtk.fish
 
-## Previous Versions
+## Changelog
 
+- [csvtk v0.24.0](https://github.com/shenwei356/csvtk/releases/tag/v0.24.0)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.24.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.24.0)
+    - **Incompatible changes**:
+        - `csvtk mutate2/summary`:
+          - `mutate2`: remove the option `-L/--digits`.
+          - use the same option `-w/--decimal-width` to limit floats to N decimal points.
+    - new command `csvtk fmtdate`: format date of selected fields. [#159](https://github.com/shenwei356/csvtk/issues/159)
+    - `csvtk grep`: fix bug for searching with `-r -p .`.
+    - `csvtk csv2rst`: fix bug for data containing unicode. [#137](https://github.com/shenwei356/csvtk/issues/137)
+    - `csvtk filter2`: fix bug for date expression. [#146](https://github.com/shenwei356/csvtk/issues/146)
+    - `csvtk mutate2/filter2`: 
+        - change the way of rexpression evaluation.
+        - add custom functions: `len()`. [#153](https://github.com/shenwei356/csvtk/issues/153)
+        - **fix bug when using two or more columns with common prefixes in column names**. [#173](https://github.com/shenwei356/csvtk/issues/173)
+        - fix value with single or double quotes. [#174](https://github.com/shenwei356/csvtk/issues/174)
+    - `csvtk cut`: new flags `-m/--allow-missing-col` and `-b/--blank-missing-col`. [#156](https://github.com/shenwei356/csvtk/issues/156)
+    - `csvtk pretty`: still add header row for empty column.
+    - `csvtk csv2md`: better format.
+    - `csvtk join`: new flag `-n/--ignore-null`. [#163](https://github.com/shenwei356/csvtk/issues/163)
+- [csvtk v0.23.0](https://github.com/shenwei356/csvtk/releases/tag/v0.23.0)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.23.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.23.0)
+    - new comand: `csvtk csv2rst` for converting CSV to reStructuredText format. [#137](https://github.com/shenwei356/csvtk/issues/137)
+    - `csvtk pretty`: add header separator line. [#123](https://github.com/shenwei356/csvtk/issues/123)
+    - `csvtk mutate2/summary`: fix message and doc. Thanks @VladimirAlexiev  [#127](https://github.com/shenwei356/csvtk/issues/127)
+    - `csvtk mutate2`: fix null coalescence: ??. [#129](https://github.com/shenwei356/csvtk/issues/129)
+    - `csvtk genautocomplete`: supports bash|zsh|fish|powershell. [#126](https://github.com/shenwei356/csvtk/issues/126)
+    - `csvtk cat`: fix progress bar. [#130](https://github.com/shenwei356/csvtk/issues/130)
+    - `csvtk grep`: new flag `immediate-output`.
+    - `csvtk csv2xlsx`: fix bug for table with > 26 columns. [138](https://github.com/shenwei356/csvtk/issues/138)
 - [csvtk v0.22.0](https://github.com/shenwei356/csvtk/releases/tag/v0.22.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.22.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.22.0)
     - `csvtk`:
