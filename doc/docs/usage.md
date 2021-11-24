@@ -1255,11 +1255,13 @@ Usage:
   csvtk cut [flags]
 
 Flags:
-  -f, --fields string   select only these fields. type "csvtk cut -h" for examples
-  -F, --fuzzy-fields    using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
-  -h, --help            help for cut
-  -i, --ignore-case     ignore case (column name)
-  -u, --uniq-column     deduplicate columns matched by multiple fuzzy column names
+  -m, --allow-missing-col   allow missing column
+  -b, --blank-missing-col   blank missing column
+  -f, --fields string       select only these fields. type "csvtk cut -h" for examples
+  -F, --fuzzy-fields        using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
+  -h, --help                help for cut
+  -i, --ignore-case         ignore case (column name)
+  -u, --uniq-column         deduplicate columns matched by multiple fuzzy column names
 
 ```
 
@@ -1785,14 +1787,20 @@ Supported operators and types:
   Ternary conditional: ? :
   Null coalescence: ??
 
+Custom functions:
+  - len(), length of strings, e.g., len($1), len($a), len($1, $2)
+  - ulen(), length of unicode strings/width of unicode strings rendered
+    to a terminal, e.g., len("沈伟")==6, ulen("沈伟")==4
+
 Usage:
   csvtk filter2 [flags]
 
 Flags:
-  -f, --filter string   awk-like filter condition. e.g. '$age>12' or '$1 > $3' or '$name=="abc"' or '$1 % 2 == 0'
-  -h, --help            help for filter2
-  -n, --line-number     print line number as the first column ("n")
-
+  -f, --filter string       awk-like filter condition. e.g. '$age>12' or '$1 > $3' or '$name=="abc"' or '$1 % 2 == 0'
+  -h, --help                help for filter2
+  -n, --line-number         print line number as the first column ("n")
+  -s, --numeric-as-string   treat even numeric fields as strings to avoid converting big numbers into scientific notation
+  
 ```
 
 Examples:
@@ -1853,7 +1861,7 @@ join files by selected fields (inner, left and outer join).
 
 Attention:
 
-  1. Multiple keys supported, but the orders are ignored.
+  1. Multiple keys supported
   2. Default operation is inner join, use --left-join for left join 
      and --outer-join for outer join.
 
@@ -1868,6 +1876,7 @@ Flags:
   -F, --fuzzy-fields     using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
   -h, --help             help for join
   -i, --ignore-case      ignore case
+  -n, --ignore-null      do not match NULL values
   -k, --keep-unmatched   keep unmatched data of the first file (left join)
   -L, --left-join        left join, equals to -k/--keep-unmatched, exclusive with --outer-join
       --na string        content for filling NA data
@@ -2667,15 +2676,20 @@ Supported operators and types:
   Ternary conditional: ? :
   Null coalescence: ??
 
+Custom functions:
+  - len(), length of strings, e.g., len($1), len($a), len($1, $2)
+  - ulen(), length of unicode strings/width of unicode strings rendered
+    to a terminal, e.g., len("沈伟")==6, ulen("沈伟")==4
+
 Usage:
   csvtk mutate2 [flags]
 
 Flags:
-  -L, --digits int          number of digits after the decimal dot (default 2)
-  -s, --numeric-as-string    treat even numeric fields as strings to avoid converting big numbers into scientific notation
+  -w, --decimal-width int   limit floats to N decimal points (default 2)
   -e, --expression string   arithmetic/string expressions. e.g. "'string'", '"abc"', ' $a + "-" + $b ', '$1 + $2', '$a / $b', ' $1 > 100 ? "big" : "small" '
   -h, --help                help for mutate2
   -n, --name string         new column name
+  -s, --numeric-as-string   treat even numeric fields as strings to avoid converting big numbers into scientific notation
 
 ```
 
