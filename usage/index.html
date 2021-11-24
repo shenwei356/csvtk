@@ -553,6 +553,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#fmtdate" class="md-nav__link">
+    fmtdate
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#sort" class="md-nav__link">
     sort
   </a>
@@ -959,6 +966,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#fmtdate" class="md-nav__link">
+    fmtdate
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#sort" class="md-nav__link">
     sort
   </a>
@@ -1116,7 +1130,7 @@
 <p>Usage</p>
 <pre><code class="language-text">csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.23.0
+Version: 0.24.0
 
 Author: Wei Shen &lt;shenwei356@gmail.com&gt;
 
@@ -1162,7 +1176,8 @@ Available Commands:
   del-header      delete column names
   dim             dimensions of CSV file
   filter          filter rows by values of selected fields with arithmetic expression
-  filter2         filter rows by awk-like artithmetic/string expressions
+  filter2         filter rows by awk-like arithmetic/string expressions
+  fmtdate         format date of selected fields
   fold            fold multiple values of a field into cells of groups
   freq            frequencies of selected fields
   gather          gather columns into key-value pairs
@@ -1174,7 +1189,7 @@ Available Commands:
   inter           intersection of multiple files
   join            join files by selected fields (inner, left and outer join)
   mutate          create new column from selected fields by regular expression
-  mutate2         create new column from selected fields by awk-like artithmetic/string expressions
+  mutate2         create new column from selected fields by awk-like arithmetic/string expressions
   ncol            print number of columns
   nrow            print number of records
   plot            plot common figures
@@ -1820,13 +1835,13 @@ Flags:
 <li>
 <p>give single alignment symbol</p>
 <pre><code>$ cat testdata/names.csv | csvtk csv2md -a left
-id |first_name|last_name|username
-:--|:---------|:--------|:-------
-11 |Rob       |Pike     |rob
-2  |Ken       |Thompson |ken
-4  |Robert    |Griesemer|gri
-1  |Robert    |Thompson |abc
-NA |Robert    |Abel     |12
+|id |first_name|last_name|username|
+|:--|:---------|:--------|:-------|
+|11 |Rob       |Pike     |rob     |
+|2  |Ken       |Thompson |ken     |
+|4  |Robert    |Griesemer|gri     |
+|1  |Robert    |Thompson |abc     |
+|NA |Robert    |Abel     |123     |
 </code></pre>
 <p>result:</p>
 <table>
@@ -1867,7 +1882,7 @@ NA |Robert    |Abel     |12
 <td align="left">NA</td>
 <td align="left">Robert</td>
 <td align="left">Abel</td>
-<td align="left">12</td>
+<td align="left">123</td>
 </tr>
 </tbody>
 </table>
@@ -1875,13 +1890,13 @@ NA |Robert    |Abel     |12
 <li>
 <p>give alignment symbols of all fields</p>
 <pre><code>$ cat testdata/names.csv | csvtk csv2md -a c,l,l,l
-id |first_name|last_name|username
-:-:|:---------|:--------|:-------
-11 |Rob       |Pike     |rob
-2  |Ken       |Thompson |ken
-4  |Robert    |Griesemer|gri
-1  |Robert    |Thompson |abc
-NA |Robert    |Abel     |123
+|id |first_name|last_name|username|
+|:-:|:---------|:--------|:-------|
+|11 |Rob       |Pike     |rob     |
+|2  |Ken       |Thompson |ken     |
+|4  |Robert    |Griesemer|gri     |
+|1  |Robert    |Thompson |abc     |
+|NA |Robert    |Abel     |123     |
 </code></pre>
 <p>result</p>
 <table>
@@ -1983,6 +1998,22 @@ Flags:
 </code></pre>
 </li>
 <li>
+<p>Unicode</p>
+<pre><code>$ cat  testdata/unicode.csv | csvtk csv2rst
++-------+---------+
+| value | name    |
++=======+=========+
+| 1     | 沈伟    |
++-------+---------+
+| 2     | 沈伟b   |
++-------+---------+
+| 3     | 沈小伟  |
++-------+---------+
+| 4     | 沈小伟b |
++-------+---------+
+</code></pre>
+</li>
+<li>
 <p>Misc</p>
 <pre><code>$ cat testdata/names.csv | head -n 1 | csvtk csv2rst 
 +----+------------+-----------+----------+
@@ -2002,11 +2033,10 @@ $ echo "a" | csvtk csv2rst -H
 | a |
 +---+
 
-# some online rst render reports error
 $ echo "沈伟" | csvtk csv2rst -H
-+--------+
++------+
 | 沈伟 |
-+--------+
++------+
 </code></pre>
 </li>
 </ol>
@@ -2296,11 +2326,13 @@ Usage:
   csvtk cut [flags]
 
 Flags:
-  -f, --fields string   select only these fields. type &quot;csvtk cut -h&quot; for examples
-  -F, --fuzzy-fields    using fuzzy fields, e.g., -F -f &quot;*name&quot; or -F -f &quot;id123*&quot;
-  -h, --help            help for cut
-  -i, --ignore-case     ignore case (column name)
-  -u, --uniq-column     deduplicate columns matched by multiple fuzzy column names
+  -m, --allow-missing-col   allow missing column
+  -b, --blank-missing-col   blank missing column
+  -f, --fields string       select only these fields. type &quot;csvtk cut -h&quot; for examples
+  -F, --fuzzy-fields        using fuzzy fields, e.g., -F -f &quot;*name&quot; or -F -f &quot;id123*&quot;
+  -h, --help                help for cut
+  -i, --ignore-case         ignore case (column name)
+  -u, --uniq-column         deduplicate columns matched by multiple fuzzy column names
 
 </code></pre>
 <p>Examples</p>
@@ -2658,9 +2690,9 @@ shenwei
 
 Attentions:
 
-  1. By default, we directly compare the colmn value with patterns,
+  1. By default, we directly compare the column value with patterns,
      use &quot;-r/--use-regexp&quot; for partly matching.
-  2. Multiple patterns can be given by setting '-p/--patern' more than once,
+  2. Multiple patterns can be given by setting '-p/--pattern' more than once,
      or giving comma separated values (CSV formats). 
      Therefore, please use double quotation marks for patterns containing
      comma, e.g., -p '&quot;A{2,}&quot;'
@@ -2818,9 +2850,9 @@ id,first_name,last_name,username
 </ol>
 <h2 id="filter2">filter2</h2>
 <p>Usage</p>
-<pre><code class="language-text">filter rows by awk-like artithmetic/string expressions
+<pre><code class="language-text">filter rows by awk-like arithmetic/string expressions
 
-The artithmetic/string expression is supported by:
+The arithmetic/string expression is supported by:
 
   https://github.com/Knetic/govaluate
 
@@ -2839,13 +2871,19 @@ Supported operators and types:
   Ternary conditional: ? :
   Null coalescence: ??
 
+Custom functions:
+  - len(), length of strings, e.g., len($1), len($a), len($1, $2)
+  - ulen(), length of unicode strings/width of unicode strings rendered
+    to a terminal, e.g., len(&quot;沈伟&quot;)==6, ulen(&quot;沈伟&quot;)==4
+
 Usage:
   csvtk filter2 [flags]
 
 Flags:
-  -f, --filter string   awk-like filter condition. e.g. '$age&gt;12' or '$1 &gt; $3' or '$name==&quot;abc&quot;' or '$1 % 2 == 0'
-  -h, --help            help for filter2
-  -n, --line-number     print line number as the first column (&quot;n&quot;)
+  -f, --filter string       awk-like filter condition. e.g. '$age&gt;12' or '$1 &gt; $3' or '$name==&quot;abc&quot;' or '$1 % 2 == 0'
+  -h, --help                help for filter2
+  -n, --line-number         print line number as the first column (&quot;n&quot;)
+  -s, --numeric-as-string   treat even numeric fields as strings to avoid converting big numbers into scientific notation
 
 </code></pre>
 <p>Examples:</p>
@@ -2905,7 +2943,7 @@ $ cat testdata/digitals.tsv \
 
 Attention:
 
-  1. Multiple keys supported, but the orders are ignored.
+  1. Multiple keys supported
   2. Default operation is inner join, use --left-join for left join 
      and --outer-join for outer join.
 
@@ -2920,6 +2958,7 @@ Flags:
   -F, --fuzzy-fields     using fuzzy fields, e.g., -F -f &quot;*name&quot; or -F -f &quot;id123*&quot;
   -h, --help             help for join
   -i, --ignore-case      ignore case
+  -n, --ignore-null      do not match NULL values
   -k, --keep-unmatched   keep unmatched data of the first file (left join)
   -L, --left-join        left join, equals to -k/--keep-unmatched, exclusive with --outer-join
       --na string        content for filling NA data
@@ -3526,13 +3565,13 @@ Note that the replacement supports capture variables.
 e.g. $1 represents the text of the first submatch.
 ATTENTION: use SINGLE quote NOT double quotes in *nix OS.
 
-Examples: Adding space to all bases.
+Examples: Adding space to cell values.
 
-  csvtk replace -p &quot;(.)&quot; -r '$1 ' -s
+  csvtk replace -p &quot;(.)&quot; -r '$1 '
 
 Or use the \ escape character.
 
-  csvtk replace -p &quot;(.)&quot; -r &quot;\$1 &quot; -s
+  csvtk replace -p &quot;(.)&quot; -r &quot;\$1 &quot;
 
 more on: http://shenwei356.github.io/csvtk/usage/#replace
 
@@ -3673,9 +3712,9 @@ shenwei,999999,s
 </ul>
 <h2 id="mutate2">mutate2</h2>
 <p>Usage</p>
-<pre><code class="language-text">create new column from selected fields by awk-like artithmetic/string expressions
+<pre><code class="language-text">create new column from selected fields by awk-like arithmetic/string expressions
 
-The artithmetic/string expression is supported by:
+The arithmetic/string expression is supported by:
 
   https://github.com/Knetic/govaluate
 
@@ -3694,15 +3733,20 @@ Supported operators and types:
   Ternary conditional: ? :
   Null coalescence: ??
 
+Custom functions:
+  - len(), length of strings, e.g., len($1), len($a), len($1, $2)
+  - ulen(), length of unicode strings/width of unicode strings rendered
+    to a terminal, e.g., len(&quot;沈伟&quot;)==6, ulen(&quot;沈伟&quot;)==4
+
 Usage:
   csvtk mutate2 [flags]
 
 Flags:
-  -L, --digits int          number of digits after the decimal dot (default 2)
-  -s, --numeric-as-string    treat even numeric fields as strings to avoid converting big numbers into scientific notation
+  -w, --decimal-width int   limit floats to N decimal points (default 2)
   -e, --expression string   arithmetic/string expressions. e.g. &quot;'string'&quot;, '&quot;abc&quot;', ' $a + &quot;-&quot; + $b ', '$1 + $2', '$a / $b', ' $1 &gt; 100 ? &quot;big&quot; : &quot;small&quot; '
   -h, --help                help for mutate2
   -n, --name string         new column name
+  -s, --numeric-as-string   treat even numeric fields as strings to avoid converting big numbers into scientific notation
 
 </code></pre>
 <p>Example</p>
@@ -4023,6 +4067,86 @@ Nick      sequencing center       Molecular Biology; Microbiology
 </code></pre>
 </li>
 </ol>
+<h2 id="fmtdate">fmtdate</h2>
+<p>Usage</p>
+<pre><code class="language-text">format date of selected fields
+
+Date parsing is supported by: https://github.com/araddon/dateparse
+Date formating is supported by: https://github.com/metakeule/fmtdate
+
+Time zones: 
+    format: Asia/Shanghai
+    whole list: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+
+Output format is in MS Excel (TM) syntax.
+Placeholders:
+
+    M    - month (1)
+    MM   - month (01)
+    MMM  - month (Jan)
+    MMMM - month (January)
+    D    - day (2)
+    DD   - day (02)
+    DDD  - day (Mon)
+    DDDD - day (Monday)
+    YY   - year (06)
+    YYYY - year (2006)
+    hh   - hours (15)
+    mm   - minutes (04)
+    ss   - seconds (05)
+
+    AM/PM hours: 'h' followed by optional 'mm' and 'ss' followed by 'pm', e.g.
+
+    hpm        - hours (03PM)
+    h:mmpm     - hours:minutes (03:04PM)
+    h:mm:sspm  - hours:minutes:seconds (03:04:05PM)
+
+    Time zones: a time format followed by 'ZZZZ', 'ZZZ' or 'ZZ', e.g.
+
+    hh:mm:ss ZZZZ (16:05:06 +0100)
+    hh:mm:ss ZZZ  (16:05:06 CET)
+    hh:mm:ss ZZ   (16:05:06 +01:00)
+
+Usage:
+  csvtk fmtdate [flags]
+
+Flags:
+  -f, --fields string      select only these fields. e.g -f 1,2 or -f columnA,columnB (default &quot;1&quot;)
+      --format string      output date format in MS Excel (TM) syntax, type &quot;csvtk fmtdate -h&quot; for details (default &quot;YYYY-MM-DD hh:mm:ss&quot;)
+  -F, --fuzzy-fields       using fuzzy fields, e.g., -F -f &quot;*name&quot; or -F -f &quot;id123*&quot;
+  -h, --help               help for fmtdate
+  -k, --keep-unparsed      keep the key as value when no value found for the key
+  -z, --time-zone string   timezone aka &quot;Asia/Shanghai&quot; or &quot;America/Los_Angeles&quot; formatted time-zone, type &quot;csvtk fmtdate -h&quot; for details
+</code></pre>
+<p>Examples</p>
+<pre><code>$ csvtk xlsx2csv date.xlsx | csvtk pretty 
+data                  value
+-------------------   -----
+2021-08-25 11:24:21   1
+08/25/21 11:24 p8     2
+NA                    3
+                      4
+
+$ csvtk xlsx2csv date.xlsx  \
+    | csvtk fmtdate --format &quot;YYYY-MM-DD hh:mm:ss&quot; \
+    | csvtk pretty 
+data                  value
+-------------------   -----
+2021-08-25 11:24:21   1
+2021-08-25 11:24:00   2
+                      3
+                      4
+
+$ csvtk xlsx2csv date.xlsx  \
+    | csvtk fmtdate --format &quot;YYYY-MM-DD hh:mm:ss&quot; -k \
+    | csvtk pretty 
+data                  value
+-------------------   -----
+2021-08-25 11:24:21   1
+2021-08-25 11:24:00   2
+NA                    3
+                      4
+</code></pre>
 <h2 id="sort">sort</h2>
 <p>Usage</p>
 <pre><code class="language-text">sort by selected fields
