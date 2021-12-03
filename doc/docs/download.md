@@ -4,6 +4,12 @@
  executable binary files **for most popular operating system** are freely available
   in [release](https://github.com/shenwei356/csvtk/releases) page.
 
+## Current Version
+
+- [csvtk v0.24.0](https://github.com/shenwei356/csvtk/releases/tag/v0.24.0) [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.24.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.24.0)
+
+### Links
+
 OS     |Arch      |File, 中国镜像                                                                                                                                                                              |Download Count
 :------|:---------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Linux  |32-bit    |[csvtk_linux_386.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.24.0/csvtk_linux_386.tar.gz),<br/> [中国镜像](http://app.shenwei.me/data/csvtk/csvtk_linux_386.tar.gz)                            |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_386.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.24.0/csvtk_linux_386.tar.gz)
@@ -87,7 +93,7 @@ fish:
 
     csvtk genautocomplete --shell fish --file ~/.config/fish/completions/csvtk.fish
 
-## Changelog
+## Release history
 
 - [csvtk v0.24.0](https://github.com/shenwei356/csvtk/releases/tag/v0.24.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.24.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.24.0)
