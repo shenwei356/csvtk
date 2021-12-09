@@ -1,3 +1,7 @@
+- [csvtk v0.25.0](https://github.com/shenwei356/csvtk/releases/tag/v0.25.0)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.25.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.25.0)
+    - `csvtk`: report empty files.
+    - `csvtk join`: fix loading file with no records.
 - [csvtk v0.24.0](https://github.com/shenwei356/csvtk/releases/tag/v0.24.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.24.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.24.0)
     - **Incompatible changes**:

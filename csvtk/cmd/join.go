@@ -147,6 +147,10 @@ Attention:
 		for i, file := range files {
 			_, fields, _, headerRow, data, _ := parseCSVfile(cmd, config,
 				file, allFields[i], fuzzyFields)
+			if len(data) == 0 {
+				log.Warningf("no data found in file: %s", file)
+				continue
+			}
 			if firstFile {
 				HeaderRow, Data, Fields = headerRow, data, fields
 				firstFile = false
