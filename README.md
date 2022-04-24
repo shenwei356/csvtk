@@ -228,7 +228,7 @@ Pretty output           |   Yes    |  Yes      | convert CSV to readable aligned
 **frequency**           |   Yes    |  --       | frequencies of selected fields
 **Sampling**            |   Yes    |  --       | sampling by proportion
 **Mutate fields**       |   Yes    |  --       | create new columns from selected fields
-**Repalce**             |   Yes    |  --       | replace data of selected fields
+**Replace**             |   Yes    |  --       | replace data of selected fields
 
 Similar tools:
 
