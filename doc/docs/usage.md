@@ -1772,6 +1772,12 @@ The arithmetic/string expression is supported by:
 
   https://github.com/Knetic/govaluate
 
+Variables formats:
+  $1 or ${1}                        The first field/column
+  $a or ${a}                        Column "a"
+  ${a,b} or ${a b} or ${a (b)}      Column name with special charactors, 
+                                    e.g., commas, spaces, and parentheses
+
 Supported operators and types:
 
   Modifiers: + - / * & | ^ ** % >> <<
@@ -2661,6 +2667,12 @@ The arithmetic/string expression is supported by:
 
   https://github.com/Knetic/govaluate
 
+Variables formats:
+  $1 or ${1}                        The first field/column
+  $a or ${a}                        Column "a"
+  ${a,b} or ${a b} or ${a (b)}      Column name with special charactors, 
+                                    e.g., commas, spaces, and parentheses
+
 Supported operators and types:
 
   Modifiers: + - / * & | ^ ** % >> <<
@@ -2726,7 +2738,7 @@ Example
 
 1. Math
 
-        $ cat testdata/digitals.tsv | csvtk mutate2 -t -H -e '$1 + $3' -L 0
+        $ cat testdata/digitals.tsv | csvtk mutate2 -t -H -e '$1 + $3' -w 0
         4       5       6       10
         1       2       3       4
         7       8       0       7
@@ -2754,7 +2766,7 @@ Example
         one   two
         ---   ---
         a1    a2
-            b2
+              b2
         a2    
 
         $ echo -e "one,two\na1,a2\n,b2\na2," \
@@ -2763,7 +2775,7 @@ Example
         one   two   three
         ---   ---   -----
         a1    a2    a1
-            b2    b2
+              b2    b2
         a2          a2
 
 ## sep

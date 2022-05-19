@@ -72,7 +72,7 @@ Examples:
 		uniqColumn := getFlagBool(cmd, "uniq-column")
 
 		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
-		fields, colnames, negativeFields, needParseHeaderRow, x2ends := parseFields(cmd, fieldStr, config.NoHeaderRow)
+		fields, colnames, negativeFields, needParseHeaderRow, x2ends := parseFields(cmd, fieldStr, ",", config.NoHeaderRow)
 		var fieldsMap map[int]struct{}
 
 		ignoreCase := getFlagBool(cmd, "ignore-case")

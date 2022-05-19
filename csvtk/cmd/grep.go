@@ -64,7 +64,7 @@ Attentions:
 		if fieldStr == "" {
 			checkError(fmt.Errorf("flag -f (--fields) needed"))
 		}
-		fields, colnames, negativeFields, needParseHeaderRow, _ := parseFields(cmd, fieldStr, config.NoHeaderRow)
+		fields, colnames, negativeFields, needParseHeaderRow, _ := parseFields(cmd, fieldStr, ",", config.NoHeaderRow)
 		// if !(len(fields) == 1 || len(colnames) == 1) {
 		// 	checkError(fmt.Errorf("single fields needed"))
 		// }

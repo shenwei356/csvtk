@@ -77,7 +77,7 @@ Example:
 			checkError(fmt.Errorf("flag -s (--separater) needed"))
 		}
 
-		fields, colnames, negativeFields, needParseHeaderRow, _ := parseFields(cmd, fieldStr, config.NoHeaderRow)
+		fields, colnames, negativeFields, needParseHeaderRow, _ := parseFields(cmd, fieldStr, ",", config.NoHeaderRow)
 		if negativeFields {
 			checkError(fmt.Errorf("negative field not allowed"))
 		}

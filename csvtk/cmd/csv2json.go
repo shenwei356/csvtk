@@ -90,7 +90,7 @@ var csv2jsonCmd = &cobra.Command{
 		keyed := fieldStr != ""
 		var parseHeaderRow bool
 		if keyed {
-			fields, colnames, negativeFields, needParseHeaderRow, _ = parseFields(cmd, fieldStr, config.NoHeaderRow)
+			fields, colnames, negativeFields, needParseHeaderRow, _ = parseFields(cmd, fieldStr, ",", config.NoHeaderRow)
 
 			if len(fields) > 0 {
 				if len(fields) > 1 {

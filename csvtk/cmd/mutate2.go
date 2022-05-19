@@ -45,6 +45,12 @@ The arithmetic/string expression is supported by:
 
   https://github.com/Knetic/govaluate
 
+Variables formats:
+  $1 or ${1}                        The first field/column
+  $a or ${a}                        Column "a"
+  ${a,b} or ${a b} or ${a (b)}      Column name with special charactors, 
+                                    e.g., commas, spaces, and parentheses
+
 Supported operators and types:
 
   Modifiers: + - / * & | ^ ** % >> <<
@@ -201,11 +207,19 @@ Custom functions:
 		digitsAsString := getFlagBool(cmd, "numeric-as-string")
 
 		fs := make([]string, 0)
+		varType := make(map[string]int)
 		for _, f := range reFilter2.FindAllStringSubmatch(exprStr, -1) {
-			fs = append(fs, f[1])
+			if reFilter2b.MatchString(f[0]) {
+				varType[f[1]] = 1
+				fs = append(fs, f[1])
+			} else {
+				varType[f[2]] = 0
+				fs = append(fs, f[2])
+			}
 		}
 
-		fieldStr := strings.Join(fs, ",")
+		varSep := "__sep__"
+		fieldStr := strings.Join(fs, varSep)
 
 		hasNullCoalescence := reNullCoalescence.MatchString(exprStr)
 
@@ -219,7 +233,7 @@ Custom functions:
 
 		usingColname := true
 
-		fields, colnames, negativeFields, needParseHeaderRow, _ := parseFields(cmd, fieldStr, config.NoHeaderRow)
+		fields, colnames, negativeFields, needParseHeaderRow, _ := parseFields(cmd, fieldStr, varSep, config.NoHeaderRow)
 		if negativeFields {
 			checkError(fmt.Errorf("unselect not allowed"))
 		}
@@ -376,7 +390,12 @@ Custom functions:
 					if !usingColname {
 						for _, fieldTmp = range fields {
 							value = record[fieldTmp-1]
-							col = fmt.Sprintf("shenwei%d", fieldTmp)
+							col = strconv.Itoa(fieldTmp)
+							if varType[col] == 1 {
+								col = "${" + col + "}"
+							} else {
+								col = fmt.Sprintf("shenwei%d", fieldTmp)
+							}
 
 							quote = `'`
 
@@ -408,6 +427,8 @@ Custom functions:
 
 							if reFiler2ColSymbolStartsWithDigits.MatchString(col) {
 								col = fmt.Sprintf("shenwei_%s", col)
+							} else if varType[col] == 1 {
+								col = "${" + col + "}"
 							} else {
 								col = "$" + col
 							}

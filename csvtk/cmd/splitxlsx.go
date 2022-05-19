@@ -107,7 +107,7 @@ Weakness : Complicated sheet structures are not well supported, e.g.,
 			sheetName2Index[sheet] = i
 		}
 
-		fields, colnames, negativeFields, needParseHeaderRow, _ := parseFields(cmd, fieldStr, config.NoHeaderRow)
+		fields, colnames, negativeFields, needParseHeaderRow, _ := parseFields(cmd, fieldStr, ",", config.NoHeaderRow)
 		var fieldsMap map[int]struct{}
 		if len(fields) > 0 {
 			fields2 := make([]int, len(fields))

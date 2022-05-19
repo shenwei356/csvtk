@@ -376,8 +376,10 @@ func nth(i int) string {
 		return fmt.Sprintf("%dth", i+1)
 	}
 }
+
 func parseFields(cmd *cobra.Command,
 	fieldsStr string,
+	varSep string,
 	noHeaderRow bool) ([]int, []string, bool, bool, map[int]int) {
 
 	var fields []int
@@ -388,7 +390,7 @@ func parseFields(cmd *cobra.Command,
 	firstField := reFields.FindAllStringSubmatch(fieldsStr, -1)[0][1]
 	if reIntegers.MatchString(firstField) {
 		fields = []int{}
-		fieldsStrs := strings.Split(fieldsStr, ",")
+		fieldsStrs := strings.Split(fieldsStr, varSep)
 		var j int
 		for _, s := range fieldsStrs {
 			found := reIntegerRange.FindAllStringSubmatch(s, -1)
@@ -455,7 +457,7 @@ func parseFields(cmd *cobra.Command,
 			parseHeaderRow = true
 		}
 	} else {
-		colnames = strings.Split(fieldsStr, ",")
+		colnames = strings.Split(fieldsStr, varSep)
 		for i, f := range colnames {
 			if f == "" {
 				checkError(fmt.Errorf(`%s filed should not be empty: %s`, nth(i+1), fieldsStr))
@@ -608,7 +610,7 @@ func readDataFrame(config Config, file string, ignoreCase bool) ([]string, map[s
 
 func parseCSVfile(cmd *cobra.Command, config Config, file string,
 	fieldStr string, fuzzyFields bool) ([]string, []int, [][]string, []string, [][]string, []byte) {
-	fields, colnames, negativeFields, needParseHeaderRow, _ := parseFields(cmd, fieldStr, config.NoHeaderRow)
+	fields, colnames, negativeFields, needParseHeaderRow, _ := parseFields(cmd, fieldStr, ",", config.NoHeaderRow)
 	var fieldsMap map[int]struct{}
 	var fieldsOrder map[int]int      // for set the order of fields
 	var colnamesOrder map[string]int // for set the order of fields

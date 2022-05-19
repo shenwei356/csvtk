@@ -145,7 +145,7 @@ Available operations:
 		fieldsStr := strings.Join(tmp, ",")
 
 		fuzzyFields := false
-		fields, colnames, negativeFields, needParseHeaderRow, _ := parseFields(cmd, fieldsStr, config.NoHeaderRow)
+		fields, colnames, negativeFields, needParseHeaderRow, _ := parseFields(cmd, fieldsStr, ",", config.NoHeaderRow)
 		if negativeFields {
 			checkError(fmt.Errorf(`negative field not supported by this command`))
 		}

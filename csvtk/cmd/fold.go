@@ -101,7 +101,7 @@ Example:
 
 		fieldStr = fmt.Sprintf("%s,%s", fieldStr, vfieldStr)
 
-		fields, colnames, negativeFields, needParseHeaderRow, _ := parseFields(cmd, fieldStr, config.NoHeaderRow)
+		fields, colnames, negativeFields, needParseHeaderRow, _ := parseFields(cmd, fieldStr, ",", config.NoHeaderRow)
 		var fieldsMap map[int]struct{}
 		var fieldsOrder map[int]int      // for set the order of fields
 		var colnamesOrder map[string]int // for set the order of fields
