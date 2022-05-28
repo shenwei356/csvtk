@@ -145,10 +145,24 @@ var sortCmd = &cobra.Command{
 		}
 
 		file := files[0]
-		_, _, _, headerRow, data, metaLine := parseCSVfile(cmd, config,
+		colnames, fields, _, headerRow, data, metaLine := parseCSVfile(cmd, config,
 			file, fieldsStr, fuzzyFields)
 		if len(data) == 0 {
 			checkError(fmt.Errorf("no data to sort"))
+		}
+
+		// checking keys
+		_m := make(map[string]interface{}, len(fields))
+		for _, f := range fields {
+			_m[strconv.Itoa(f)] = struct{}{}
+		}
+		for _, f := range colnames {
+			_m[f] = struct{}{}
+		}
+		for _, f := range fieldsStrs {
+			if _, ok := _m[f]; !ok {
+				checkError(fmt.Errorf("filed %s not matched in file: %s", f, file))
+			}
 		}
 
 		var list []stringutil.MultiKeyStringSlice // data
