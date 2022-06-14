@@ -72,6 +72,9 @@ func init() {
 
 	plotCmd.PersistentFlags().StringP("format", "", "png", `image format for stdout when flag -o/--out-file not given. available values: eps, jpg|jpeg, pdf, png, svg, and tif|tiff.`)
 
+	plotCmd.PersistentFlags().StringSliceP("na-values", "", []string{"", "NA", "N/A"}, `NA values, case ignored`)
+	plotCmd.PersistentFlags().BoolP("skip-na", "", false, "skip NA values in --na-values")
+
 }
 
 func getPlotConfigs(cmd *cobra.Command) *plotConfigs {

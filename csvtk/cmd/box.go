@@ -26,6 +26,7 @@ import (
 	"runtime"
 	"sort"
 	"strconv"
+	"strings"
 
 	"github.com/shenwei356/util/stringutil"
 	"github.com/spf13/cobra"
@@ -61,6 +62,16 @@ Notes:
 		}
 		runtime.GOMAXPROCS(config.NumCPUs)
 
+		skipNA := getFlagBool(cmd, "skip-na")
+		naValues := getFlagStringSlice(cmd, "na-values")
+		if skipNA && len(naValues) == 0 {
+			log.Errorf("the value of --na-values should not be empty when using --skip-na")
+		}
+		naMap := make(map[string]interface{}, len(naValues))
+		for _, na := range naValues {
+			naMap[strings.ToLower(na)] = struct{}{}
+		}
+
 		file := files[0]
 		headerRow, fields, data, _, _, _ := parseCSVfile(cmd, config, file, plotConfig.fieldStr, false)
 
@@ -77,6 +88,12 @@ Notes:
 		var order int
 		var groupName string
 		for _, d := range data {
+			if skipNA {
+				if _, ok = naMap[strings.ToLower(d[0])]; ok {
+					continue
+				}
+			}
+
 			f, err = strconv.ParseFloat(d[0], 64)
 			if err != nil {
 				if len(headerRow) > 0 {
