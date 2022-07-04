@@ -387,7 +387,7 @@ func parseFields(cmd *cobra.Command,
 	var parseHeaderRow bool
 	var negativeFields bool
 	var x2ends map[int]int // [2]int{index of x in fields, x}
-	firstField := reFields.FindAllStringSubmatch(fieldsStr, -1)[0][1]
+	firstField := reFields.FindAllStringSubmatch(strings.Split(fieldsStr, varSep)[0], -1)[0][1]
 	if reIntegers.MatchString(firstField) {
 		fields = []int{}
 		fieldsStrs := strings.Split(fieldsStr, varSep)
