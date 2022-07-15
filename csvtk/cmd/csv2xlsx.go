@@ -24,6 +24,7 @@ import (
 	"fmt"
 	"path/filepath"
 	"runtime"
+	"strconv"
 
 	"github.com/spf13/cobra"
 	"github.com/xuri/excelize/v2"
@@ -66,6 +67,7 @@ Attention:
 
 		var sheet, cell, val string
 		var col, line int
+		var valFloat float64
 		for i, file := range files {
 			csvReader, err := newCSVReaderByConfig(config, file)
 			checkError(err)
@@ -92,7 +94,12 @@ Attention:
 				for _, record = range chunk.Data {
 					for col, val = range record {
 						cell = fmt.Sprintf("%s%d", ExcelColumnIndex(col), line)
-						xlsx.SetCellValue(sheet, cell, val)
+						valFloat, err = strconv.ParseFloat(val, 64)
+						if err != nil {
+							xlsx.SetCellValue(sheet, cell, val)
+						} else {
+							xlsx.SetCellFloat(sheet, cell, valFloat, -1, 64)
+						}
 					}
 					line++
 				}
