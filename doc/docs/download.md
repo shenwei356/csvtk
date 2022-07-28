@@ -68,6 +68,44 @@ And then:
 
     yaourt -S csvtk
 
+#### Method 5: Compiling from source (latest stable/dev version)
+
+    # ------------------- install golang -----------------
+
+    # download Go from https://go.dev/dl
+    wget https://go.dev/dl/go1.17.12.linux-amd64.tar.gz
+    
+    tar -zxf go1.17.12.linux-amd64.tar.gz -C $HOME/
+    
+    # or 
+    #   echo "export PATH=$PATH:$HOME/go/bin" >> ~/.bashrc
+    #   source ~/.bashrc
+    export PATH=$PATH:$HOME/go/bin
+    
+
+    # ------------- the latest stable version -------------
+
+    go get -v -u github.com/shenwei356/csvtk/csvtk
+
+    # The executable binary file is located in:
+    #   ~/go/bin/csvtk
+    # You can also move it to anywhere in the $PATH
+    mkdir -p $HOME/bin
+    cp ~/go/bin/csvtk $HOME/bin/
+
+    # --------------- the devlopment version --------------
+
+    git clone https://github.com/shenwei356/csvtk
+    cd csvtk/csvtk/
+    go build
+
+    # The executable binary file is located in:
+    #   ./csvtk
+    # You can also move it to anywhere in the $PATH
+    mkdir -p $HOME/bin
+    cp ./csvtk $HOME/bin/
+
+
 ## Shell-completion
 
 Bash:
