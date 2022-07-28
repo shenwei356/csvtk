@@ -350,25 +350,25 @@ Available operations:
  
   # numeric/statistical operations
   # provided by github.com/gonum/stat and github.com/gonum/floats
-  countn (count numeric values), min, max, sum,
+  countn (count numeric values), min, max, sum, argmin, argmax,
   mean, stdev, variance, median, q1, q2, q3,
-  entropy (Shannon entropy),
+  entropy (Shannon entropy), 
   prod (product of the elements)
 
   # textual/numeric operations
-  count, first, last, rand, unique, collapse, countunique
+  count, first, last, rand, unique/uniq, collapse, countunique
 
 Usage:
   csvtk summary [flags]
 
 Flags:
-  -n, --decimal-width int   limit floats to N decimal points (default 2)
-  -f, --fields strings      operations on these fields. e.g -f 1:count,1:sum or -f colA:mean. available operations: collapse, count, countn, countunique, entropy, first, last, max, mean, median, min, prod, q1, q2, q3, rand, stdev, sum, uniq, variance
-  -g, --groups string       group via fields. e.g -f 1,2 or -f columnA,columnB
-  -h, --help                help for summary
-  -i, --ignore-non-numbers   ignore non-digital values like "NA" or "N/A"
-  -S, --rand-seed int       rand seed for operation "rand" (default 11)
-  -s, --separater string    separater for collapsed data (default "; ")
+  -w, --decimal-width int    limit floats to N decimal points (default 2)
+  -f, --fields strings       operations on these fields. e.g -f 1:count,1:sum or -f colA:mean. available operations: argmax, argmin, collapse, count, countn, countuniq, countunique, entropy, first, last, max, mean, median, min, prod, q1, q2, q3, rand, stdev, sum, uniq, unique, variance
+  -g, --groups string        group via fields. e.g -f 1,2 or -f columnA,columnB
+  -h, --help                 help for summary
+  -i, --ignore-non-numbers   ignore non-numeric values like "NA" or "N/A"
+  -S, --rand-seed int        rand seed for operation "rand" (default 11)
+  -s, --separater string     separater for collapsed data (default "; ")
 
 ```
 

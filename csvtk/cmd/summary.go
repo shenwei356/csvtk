@@ -53,13 +53,13 @@ Available operations:
  
   # numeric/statistical operations
   # provided by github.com/gonum/stat and github.com/gonum/floats
-  countn (count numeric values), min, max, sum,
+  countn (count numeric values), min, max, sum, argmin, argmax,
   mean, stdev, variance, median, q1, q2, q3,
   entropy (Shannon entropy), 
   prod (product of the elements)
 
   # textual/numeric operations
-  count, first, last, rand, unique, collapse, countunique
+  count, first, last, rand, unique/uniq, collapse, countunique
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -481,6 +481,18 @@ func init() {
 		}
 		return floats.Min(s)
 	}
+	allStats["argmax"] = func(s []float64) float64 {
+		if len(s) == 0 {
+			return math.NaN()
+		}
+		return float64(floats.MaxIdx(s) + 1)
+	}
+	allStats["argmin"] = func(s []float64) float64 {
+		if len(s) == 0 {
+			return math.NaN()
+		}
+		return float64(floats.MinIdx(s) + 1)
+	}
 	allStats["prod"] = floats.Prod
 	allStats["countn"] = func(s []float64) float64 { return float64(len(s)) }
 	allStats["mean"] = func(s []float64) float64 { return stat.Mean(s, nil) }
@@ -530,6 +542,7 @@ func init() {
 		}
 		return strings.Join(vs, separater)
 	}
+	allStats2["unique"] = allStats2["uniq"]
 	allStats2["countunique"] = func(s []string) string {
 		m := make(map[string]struct{}, len(s))
 		for _, v := range s {
@@ -537,6 +550,7 @@ func init() {
 		}
 		return fmt.Sprintf("%d", len(m))
 	}
+	allStats2["countuniq"] = allStats2["countunique"]
 	allStats2["collapse"] = func(s []string) string { return strings.Join(s, separater) }
 
 	// ---------------
@@ -570,9 +584,12 @@ func median(sorted []float64) float64 {
 	return sorted[l/2]
 }
 
-/* This implementation follows R's summary () and quantile (type=7) functions.
-   See discussion here:
-   http://tolstoy.newcastle.edu.au/R/e17/help/att-1067/Quartiles_in_R.pdf */
+/*
+This implementation follows R's summary () and quantile (type=7) functions.
+
+	See discussion here:
+	http://tolstoy.newcastle.edu.au/R/e17/help/att-1067/Quartiles_in_R.pdf
+*/
 func percentileValue(sorted []float64, percentile float64) float64 {
 	l := len(sorted)
 	if l == 0 || percentile < 0 || percentile > 1 {

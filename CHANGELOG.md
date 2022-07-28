@@ -7,6 +7,7 @@
     - `csvtk sort`: fix checking non-existed fileds.
     - `csvtk plot box/hist/line`: new flag `--skip-na` for skipping missing data. [#188](https://github.com/shenwei356/csvtk/issues/188)
     - `csvtk csv2xlsx`: stores number as float. [#192](https://github.com/shenwei356/csvtk/issues/192)
+    - `csvtk summary`: new functions `argmin`  and `argmax`. [#181](https://github.com/shenwei356/csvtk/issues/181)
 - [csvtk v0.24.0](https://github.com/shenwei356/csvtk/releases/tag/v0.24.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.24.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.24.0)
     - **Incompatible changes**:
