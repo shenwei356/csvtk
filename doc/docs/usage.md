@@ -1781,7 +1781,7 @@ Variables formats:
 Supported operators and types:
 
   Modifiers: + - / * & | ^ ** % >> <<
-  Comparators: > >= < <= == != =~ !~
+  Comparators: > >= < <= == != =~ !~ in
   Logical ops: || &&
   Numeric constants, as 64-bit floating point (12345.678)
   String constants (single quotes: 'foobar')
@@ -1855,6 +1855,18 @@ Examples:
         4       5       6
         1       2       3
         7       8       0
+
+1. Array expressions using `in`
+
+        $ cat testdata/names.csv | csvtk filter2 -f '$first_name in ("Ken", "Rob")'
+        id,first_name,last_name,username\
+        11,Rob,Pike,rob
+        2,Ken,Thompson,ken
+
+        $ cat testdata/names.csv | csvtk filter2 -f '$id in (2, 4)'
+        id,first_name,last_name,username
+        2,Ken,Thompson,ken
+        4,Robert,Griesemer,gri
 
 
 
