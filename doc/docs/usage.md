@@ -1856,9 +1856,9 @@ Examples:
         1       2       3
         7       8       0
 
-1. Array expressions using `in`
+1. Array expressions using `in` numeric or string (**case sensitive**)
 
-        $ cat testdata/names.csv | csvtk filter2 -f '$first_name in ("Ken", "Rob")'
+        $ cat testdata/names.csv | csvtk filter2 -f '$first_name in ("Ken", "Rob", "robert")'
         id,first_name,last_name,username\
         11,Rob,Pike,rob
         2,Ken,Thompson,ken
