@@ -29,7 +29,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/bsipos/thist"
+	"github.com/botond-sipos/thist"
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
 )
