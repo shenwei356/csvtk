@@ -175,10 +175,7 @@ Notes:
 			}
 		}
 
-		p, err := plot.New()
-		if err != nil {
-			checkError(err)
-		}
+		p := plot.New()
 
 		var groupOrders []stringutil.StringCount
 		for g := range groupOrderMap {
