@@ -1,5 +1,8 @@
 - [csvtk v0.25.0](https://github.com/shenwei356/csvtk/releases/tag/v0.25.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.25.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.25.0)
+  - fix bug: `xlsx2csv` treats small number (padj < 1e-25) as 0. It's solved by updating the excelize package. [#261](https://github.com/shenwei356/csvtk/issues/201)
+- [csvtk v0.25.0](https://github.com/shenwei356/csvtk/releases/tag/v0.25.0)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.25.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.25.0)
     - `csvtk`: report empty files.
     - `csvtk join`: fix loading file with no records.
     - `csvtk filter2/muate2`:
