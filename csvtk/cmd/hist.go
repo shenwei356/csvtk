@@ -121,10 +121,7 @@ Notes:
 			plotConfig.xlab = fmt.Sprintf("%s\nP99=%.3f P95=%.3f\nMEAN=%.3f STDDEV=%.3f\n", plotConfig.xlab, getPercentile(0.99, v), getPercentile(0.95, v), getPercentile(0.5, v), stat.StdDev(v, nil))
 		}
 
-		p, err := plot.New()
-		if err != nil {
-			checkError(err)
-		}
+		p := plot.New()
 
 		h, err := plotter.NewHist(v, bins)
 		if err != nil {
