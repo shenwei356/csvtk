@@ -25,6 +25,7 @@ import (
 	"fmt"
 	"runtime"
 	"strings"
+	"path/filepath"
 
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
@@ -65,6 +66,7 @@ Attention:
 		}
 
 		ignoreCase := getFlagBool(cmd, "ignore-case")
+		filenameAsPrefix := getFlagBool(cmd, "prefix-filename")
 
 		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
 		leftJoin := getFlagBool(cmd, "left-join")
@@ -105,6 +107,8 @@ Attention:
 		}
 
 		var HeaderRow []string
+		var newColname string
+		var prefixedHeaderRow []string
 		var Data [][]string
 		var Fields []int
 		firstFile := true
@@ -153,6 +157,13 @@ Attention:
 			}
 			if firstFile {
 				HeaderRow, Data, Fields = headerRow, data, fields
+				if filenameAsPrefix {
+					var Colname string
+					for f, Colname = range headerRow {
+						newColname = fmt.Sprintf("%s-%s", filepath.Base(file), Colname)
+						prefixedHeaderRow = append(prefixedHeaderRow, newColname)
+					}
+				}
 				firstFile = false
 				if len(HeaderRow) > 0 {
 					withHeaderRow = true
@@ -235,6 +246,8 @@ Attention:
 				for f, colname = range headerRow {
 					if _, ok = fieldsMap[f+1]; !ok {
 						newHeaderRow = append(newHeaderRow, colname)
+						newColname = fmt.Sprintf("%s-%s", filepath.Base(file), colname)
+						prefixedHeaderRow = append(prefixedHeaderRow, newColname)
 					}
 				}
 				HeaderRow = newHeaderRow
@@ -276,10 +289,14 @@ Attention:
 				}
 			}
 			Data = Data2
-		}
+        }
 
 		if withHeaderRow {
-			checkError(writer.Write(HeaderRow))
+			if filenameAsPrefix {
+				checkError(writer.Write(prefixedHeaderRow))
+			} else {
+				checkError(writer.Write(HeaderRow))
+			}
 		}
 		for _, record := range Data {
 			checkError(writer.Write(record))
@@ -302,4 +319,5 @@ func init() {
 	joinCmd.Flags().BoolP("outer-join", "O", false, `outer join, exclusive with --left-join`)
 	joinCmd.Flags().StringP("na", "", "", "content for filling NA data")
 	joinCmd.Flags().BoolP("ignore-null", "n", false, "do not match NULL values")
+	joinCmd.Flags().BoolP("prefix-filename", "A", false, "add each filename as a prefix to header")
 }
