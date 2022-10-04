@@ -23,9 +23,9 @@ package cmd
 import (
 	"encoding/csv"
 	"fmt"
+	"path/filepath"
 	"runtime"
 	"strings"
-	"path/filepath"
 
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
@@ -109,6 +109,9 @@ Attention:
 		var HeaderRow []string
 		var newColname string
 		var prefixedHeaderRow []string
+		if filenameAsPrefix {
+			prefixedHeaderRow = make([]string, 0, 8)
+		}
 		var Data [][]string
 		var Fields []int
 		firstFile := true
@@ -158,8 +161,17 @@ Attention:
 			if firstFile {
 				HeaderRow, Data, Fields = headerRow, data, fields
 				if filenameAsPrefix {
+					fieldsMap1 := make(map[int]interface{}, len(fields))
+					for _, f = range fields {
+						fieldsMap1[f] = struct{}{}
+					}
+
 					var Colname string
 					for f, Colname = range headerRow {
+						if _, ok = fieldsMap1[f+1]; ok {
+							prefixedHeaderRow = append(prefixedHeaderRow, Colname)
+							continue
+						}
 						newColname = fmt.Sprintf("%s-%s", filepath.Base(file), Colname)
 						prefixedHeaderRow = append(prefixedHeaderRow, newColname)
 					}
@@ -246,6 +258,7 @@ Attention:
 				for f, colname = range headerRow {
 					if _, ok = fieldsMap[f+1]; !ok {
 						newHeaderRow = append(newHeaderRow, colname)
+
 						newColname = fmt.Sprintf("%s-%s", filepath.Base(file), colname)
 						prefixedHeaderRow = append(prefixedHeaderRow, newColname)
 					}
@@ -289,7 +302,7 @@ Attention:
 				}
 			}
 			Data = Data2
-        }
+		}
 
 		if withHeaderRow {
 			if filenameAsPrefix {

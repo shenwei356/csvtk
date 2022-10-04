@@ -1,6 +1,7 @@
-- [csvtk v0.25.0](https://github.com/shenwei356/csvtk/releases/tag/v0.25.0)
-[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.25.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.25.0)
+- [csvtk v0.25.1](https://github.com/shenwei356/csvtk/releases/tag/v0.25.1)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.25.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.25.1)
   - fix bug: `xlsx2csv` treats small number (padj < 1e-25) as 0. It's solved by updating the excelize package. [#261](https://github.com/shenwei356/csvtk/issues/201)
+  - `csvtk join`: new flag for adding filename as column name prefix. by @tetedange13 [#202](https://github.com/shenwei356/csvtk/issues/202)
 - [csvtk v0.25.0](https://github.com/shenwei356/csvtk/releases/tag/v0.25.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.25.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.25.0)
     - `csvtk`: report empty files.
