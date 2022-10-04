@@ -107,6 +107,7 @@ Attention:
 		}
 
 		var HeaderRow []string
+		var newColname string
 		var prefixedHeaderRow []string
 		var Data [][]string
 		var Fields []int
@@ -156,7 +157,13 @@ Attention:
 			}
 			if firstFile {
 				HeaderRow, Data, Fields = headerRow, data, fields
-				prefixedHeaderRow = headerRow
+				if filenameAsPrefix {
+					var Colname string
+					for f, Colname = range headerRow {
+						newColname = fmt.Sprintf("%s-%s", filepath.Base(file), Colname)
+						prefixedHeaderRow = append(prefixedHeaderRow, newColname)
+					}
+				}
 				firstFile = false
 				if len(HeaderRow) > 0 {
 					withHeaderRow = true
@@ -234,7 +241,6 @@ Attention:
 
 			Data2 := [][]string{}
 			var colname string
-			var newColname string
 			if withHeaderRow {
 				newHeaderRow := HeaderRow
 				for f, colname = range headerRow {
