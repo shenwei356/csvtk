@@ -1887,6 +1887,7 @@ Flags:
   -L, --left-join        left join, equals to -k/--keep-unmatched, exclusive with --outer-join
       --na string        content for filling NA data
   -O, --outer-join       outer join, exclusive with --left-join
+  -A, --prefix-filename  add each filename as a prefix to header
 
 ```
 
