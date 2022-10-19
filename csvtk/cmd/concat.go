@@ -59,7 +59,15 @@ so only columns match that of the first files kept.
 		var j int
 		var anyMatches bool
 		for i, file := range files {
-			colnames, colname2OldName, df := readDataFrame(config, file, ignoreCase)
+			colnames, colname2OldName, df, err := readDataFrame(config, file, ignoreCase)
+
+			if err != nil {
+				if err == xopen.ErrNoContent {
+					log.Warningf("csvtk concat: skipping empty input file: %s", file)
+					continue
+				}
+				checkError(err)
+			}
 
 			if len(df) == 0 {
 				log.Warningf("no data in file: %s", file)

@@ -53,7 +53,15 @@ var transposeCmd = &cobra.Command{
 		var numCols0, numCols, numRows uint64
 		for _, file := range files {
 			csvReader, err := newCSVReaderByConfig(config, file)
-			checkError(err)
+
+			if err != nil {
+				if err == xopen.ErrNoContent {
+					log.Warningf("csvtk transpose: skipping empty input file: %s", file)
+					continue
+				}
+				checkError(err)
+			}
+
 			csvReader.Run()
 
 			once := true

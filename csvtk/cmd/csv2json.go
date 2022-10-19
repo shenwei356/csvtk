@@ -129,7 +129,27 @@ var csv2jsonCmd = &cobra.Command{
 
 		file := files[0]
 		csvReader, err := newCSVReaderByConfig(config, file)
-		checkError(err)
+
+		if err != nil {
+			if err == xopen.ErrNoContent {
+				log.Warningf("csvtk csv2json: skipping empty input file: %s", file)
+				if keyed {
+					outfh.WriteString("{")
+				} else {
+					outfh.WriteString("[")
+				}
+				if keyed {
+					outfh.WriteString("}\n")
+				} else {
+					outfh.WriteString("]\n")
+				}
+
+				readerReport(&config, csvReader, file)
+				return
+			}
+			checkError(err)
+		}
+
 		csvReader.Run()
 
 		var colnames2fileds map[string]int // column name -> field

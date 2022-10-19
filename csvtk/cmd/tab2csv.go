@@ -50,7 +50,15 @@ var tab2csvCmd = &cobra.Command{
 
 		for _, file := range files {
 			csvReader, err := newCSVReaderByConfig(config, file)
-			checkError(err)
+
+			if err != nil {
+				if err == xopen.ErrNoContent {
+					log.Warningf("csvtk tab2csv: skipping empty input file: %s", file)
+					continue
+				}
+				checkError(err)
+			}
+
 			csvReader.Reader.Comma = '\t'
 			csvReader.Run()
 

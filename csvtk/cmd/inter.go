@@ -98,7 +98,15 @@ Attention:
 		var ok bool
 		for _, file := range files {
 			csvReader, err := newCSVReaderByConfig(config, file)
-			checkError(err)
+
+			if err != nil {
+				if err == xopen.ErrNoContent {
+					log.Warningf("csvtk inter: skipping empty input file: %s", file)
+					continue
+				}
+				checkError(err)
+			}
+
 			csvReader.Run()
 
 			parseHeaderRow := needParseHeaderRow // parsing header row

@@ -57,13 +57,24 @@ var prettyCmd = &cobra.Command{
 
 		file := files[0]
 		var colnames []string
-		headerRow, data, csvReader := readCSV(config, file)
+		headerRow, data, csvReader, err := readCSV(config, file)
+
+		if err != nil {
+			if err == xopen.ErrNoContent {
+				log.Warningf("csvtk pretty: skipping empty input file: %s", file)
+				return
+			}
+			checkError(err)
+		}
 
 		if len(headerRow) > 0 {
 			colnames = headerRow
 		} else {
 			if len(data) == 0 {
-				checkError(fmt.Errorf("no data found in file: %s", file))
+				// checkError(fmt.Errorf("no data found in file: %s", file))
+				log.Warningf("no data found in file: %s", file)
+				readerReport(&config, csvReader, file)
+				return
 			} else if len(data) > 0 {
 				colnames = make([]string, len(data[0]))
 				for i := 0; i < len(data[0]); i++ {

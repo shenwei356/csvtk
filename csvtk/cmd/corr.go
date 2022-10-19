@@ -29,6 +29,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
 	"gonum.org/v1/gonum/stat"
 )
@@ -105,7 +106,15 @@ var corrCmd = &cobra.Command{
 
 		for _, file := range files[:1] {
 			csvReader, err := newCSVReaderByConfig(config, file)
-			checkError(err)
+
+			if err != nil {
+				if err == xopen.ErrNoContent {
+					log.Warningf("csvtk xxx: skipping empty input file: %s", file)
+					return
+				}
+				checkError(err)
+			}
+
 			csvReader.Run()
 
 			isHeaderLine := !config.NoHeaderRow

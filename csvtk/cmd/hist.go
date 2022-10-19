@@ -73,7 +73,15 @@ Notes:
 		}
 
 		file := files[0]
-		headerRow, fields, data, _, _, _ := parseCSVfile(cmd, config, file, plotConfig.fieldStr, false)
+		headerRow, fields, data, _, _, _, err := parseCSVfile(cmd, config, file, plotConfig.fieldStr, false)
+
+		if err != nil {
+			// if err == xopen.ErrNoContent {
+			// 	log.Warningf("csvtk hist: skipping empty input file: %s", file)
+			// 	return
+			// }
+			checkError(err)
+		}
 
 		// =======================================
 
@@ -96,7 +104,6 @@ Notes:
 
 		v := make(plotter.Values, 0, len(data))
 		var f float64
-		var err error
 		var ok bool
 		for _, d := range data {
 			if skipNA {

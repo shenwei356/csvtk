@@ -116,6 +116,9 @@ var xlsx2csvCmd = &cobra.Command{
 				nColsMax = nCols
 			}
 		}
+		if nColsMax < 0 {
+			nColsMax = 0
+		}
 		emptyRow := make([]string, nColsMax)
 
 		var notBlank bool

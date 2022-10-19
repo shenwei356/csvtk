@@ -496,9 +496,13 @@ func fuzzyField2Regexp(field string) *regexp.Regexp {
 	return re
 }
 
-func readCSV(config Config, file string) ([]string, [][]string, *CSVReader) {
+func readCSV(config Config, file string) ([]string, [][]string, *CSVReader, error) {
 	csvReader, err := newCSVReaderByConfig(config, file)
-	checkError(err)
+
+	if err != nil {
+		return nil, nil, nil, xopen.ErrNoContent
+	}
+
 	csvReader.Run()
 
 	var headerRow []string
@@ -518,7 +522,7 @@ func readCSV(config Config, file string) ([]string, [][]string, *CSVReader) {
 			data = append(data, record)
 		}
 	}
-	return headerRow, data, csvReader
+	return headerRow, data, csvReader, nil
 }
 
 func readerReport(config *Config, csvReader *CSVReader, file string) {
@@ -533,10 +537,14 @@ func readerReport(config *Config, csvReader *CSVReader, file string) {
 	}
 }
 
-func readDataFrame(config Config, file string, ignoreCase bool) ([]string, map[string]string, map[string][]string) {
+func readDataFrame(config Config, file string, ignoreCase bool) ([]string, map[string]string, map[string][]string, error) {
 	df := make(map[string][]string)
 	var colnames []string
-	headerRow, data, csvReader := readCSV(config, file)
+	headerRow, data, csvReader, err := readCSV(config, file)
+
+	if err != nil {
+		return nil, nil, nil, err
+	}
 
 	// in case that col names are not unique in headerRow
 	colname2headerRow := make(map[string]string, len(headerRow))
@@ -581,7 +589,7 @@ func readDataFrame(config Config, file string, ignoreCase bool) ([]string, map[s
 		}
 	} else {
 		if len(data) == 0 {
-			return colnames, colname2headerRow, df
+			return colnames, colname2headerRow, df, nil
 		} else if len(data) > 0 {
 			colnames = make([]string, len(data[0]))
 			for i := 0; i < len(data[0]); i++ {
@@ -605,11 +613,11 @@ func readDataFrame(config Config, file string, ignoreCase bool) ([]string, map[s
 
 	readerReport(&config, csvReader, file)
 
-	return colnames, colname2headerRow, df
+	return colnames, colname2headerRow, df, nil
 }
 
 func parseCSVfile(cmd *cobra.Command, config Config, file string,
-	fieldStr string, fuzzyFields bool) ([]string, []int, [][]string, []string, [][]string, []byte) {
+	fieldStr string, fuzzyFields bool) ([]string, []int, [][]string, []string, [][]string, []byte, error) {
 	fields, colnames, negativeFields, needParseHeaderRow, _ := parseFields(cmd, fieldStr, ",", config.NoHeaderRow)
 	var fieldsMap map[int]struct{}
 	var fieldsOrder map[int]int      // for set the order of fields
@@ -642,7 +650,11 @@ func parseCSVfile(cmd *cobra.Command, config Config, file string,
 	}
 
 	csvReader, err := newCSVReaderByConfig(config, file)
-	checkError(err)
+
+	if err != nil {
+		return nil, nil, nil, nil, nil, nil, err
+	}
+
 	csvReader.Run()
 
 	parseHeaderRow := needParseHeaderRow // parsing header row
@@ -789,9 +801,9 @@ func parseCSVfile(cmd *cobra.Command, config Config, file string,
 	}
 
 	if fieldStr != "*" {
-		return HeaderRow, fields, Data, HeaderRowAll, DataAll, csvReader.MetaLine
+		return HeaderRow, fields, Data, HeaderRowAll, DataAll, csvReader.MetaLine, nil
 	}
-	return HeaderRow, fields, Data, HeaderRowAll, Data, csvReader.MetaLine
+	return HeaderRow, fields, Data, HeaderRowAll, Data, csvReader.MetaLine, nil
 }
 
 func removeComma(s string) string {

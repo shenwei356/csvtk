@@ -204,7 +204,19 @@ Available operations:
 
 		file := files[0]
 		csvReader, err := newCSVReaderByConfig(config, file)
-		checkError(err)
+
+		if err != nil {
+			if err == xopen.ErrNoContent {
+				log.Warningf("csvtk summary: skipping empty input file: %s", file)
+
+				writer.Flush()
+				checkError(writer.Error())
+				readerReport(&config, csvReader, file)
+				return
+			}
+			checkError(err)
+		}
+
 		csvReader.Run()
 
 		parseHeaderRow := needParseHeaderRow // parsing header row

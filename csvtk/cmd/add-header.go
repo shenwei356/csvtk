@@ -65,7 +65,14 @@ var addHeaderCmd = &cobra.Command{
 		printHeaderRow := true
 		for _, file := range files {
 			csvReader, err := newCSVReaderByConfig(config, file)
-			checkError(err)
+			if err != nil {
+				if err == xopen.ErrNoContent {
+					log.Warningf("csvtk add-header: skipping empty input file: %s", file)
+					continue
+				}
+				checkError(err)
+			}
+
 			csvReader.Run()
 			for chunk := range csvReader.Ch {
 				checkError(chunk.Err)
@@ -95,6 +102,11 @@ var addHeaderCmd = &cobra.Command{
 
 			readerReport(&config, csvReader, file)
 		}
+
+		if printHeaderRow { // did not print rowname
+			checkError(writer.Write(colnames))
+		}
+
 		writer.Flush()
 		checkError(writer.Error())
 	},

@@ -145,8 +145,17 @@ var sortCmd = &cobra.Command{
 		}
 
 		file := files[0]
-		colnames, fields, _, headerRow, data, metaLine := parseCSVfile(cmd, config,
+		colnames, fields, _, headerRow, data, metaLine, err := parseCSVfile(cmd, config,
 			file, fieldsStr, fuzzyFields)
+
+		if err != nil {
+			if err == xopen.ErrNoContent {
+				log.Warningf("csvtk sort: skipping empty input file: %s", file)
+				return
+			}
+			checkError(err)
+		}
+
 		if len(data) == 0 {
 			checkError(fmt.Errorf("no data to sort"))
 		}

@@ -26,6 +26,7 @@ import (
 	"runtime"
 	"strconv"
 
+	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
 	"github.com/xuri/excelize/v2"
 )
@@ -68,16 +69,25 @@ Attention:
 		var sheet, cell, val string
 		var col, line int
 		var valFloat float64
-		for i, file := range files {
+		var nSheets int
+		for _, file := range files {
 			csvReader, err := newCSVReaderByConfig(config, file)
-			checkError(err)
+			if err != nil {
+				if err == xopen.ErrNoContent {
+					log.Warningf("csvtk csv2xlsx: skipping empty input file: %s", file)
+					continue
+				}
+				checkError(err)
+			}
+			nSheets++
+
 			csvReader.Run()
 
 			if singleInput {
 				sheet = "Sheet1"
 			} else {
 				sheet, _ = filepathTrimExtension(filepath.Base(file))
-				if i == 0 {
+				if nSheets == 1 {
 					xlsx.SetSheetName("Sheet1", sheet)
 				} else {
 					xlsx.NewSheet(sheet)

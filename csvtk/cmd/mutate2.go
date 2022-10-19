@@ -172,7 +172,15 @@ Custom functions:
 			for _, file := range files {
 				var csvReader *CSVReader
 				csvReader, err = newCSVReaderByConfig(config, file)
-				checkError(err)
+
+				if err != nil {
+					if err == xopen.ErrNoContent {
+						log.Warningf("csvtk mutate2: skipping empty input file: %s", file)
+						continue
+					}
+					checkError(err)
+				}
+
 				csvReader.Run()
 
 				isHeaderLine := !config.NoHeaderRow
@@ -260,7 +268,15 @@ Custom functions:
 
 		for _, file := range files {
 			csvReader, err := newCSVReaderByConfig(config, file)
-			checkError(err)
+
+			if err != nil {
+				if err == xopen.ErrNoContent {
+					log.Warningf("csvtk mutate2: skipping empty input file: %s", file)
+					continue
+				}
+				checkError(err)
+			}
+
 			csvReader.Run()
 
 			parseHeaderRow := needParseHeaderRow // parsing header row

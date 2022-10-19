@@ -124,8 +124,16 @@ Attention:
 		if outerJoin {
 			keys = make(map[string]bool)
 			for i, file := range files {
-				_, fields, _, _, data, _ := parseCSVfile(cmd, config,
+				_, fields, _, _, data, _, err := parseCSVfile(cmd, config,
 					file, allFields[i], fuzzyFields)
+
+				if err != nil {
+					if err == xopen.ErrNoContent {
+						log.Warningf("csvtk join: skipping empty input file: %s", file)
+						continue
+					}
+					checkError(err)
+				}
 
 				var f int
 				var ok bool
@@ -152,8 +160,17 @@ Attention:
 		var f int
 		var ok bool
 		for i, file := range files {
-			_, fields, _, headerRow, data, _ := parseCSVfile(cmd, config,
+			_, fields, _, headerRow, data, _, err := parseCSVfile(cmd, config,
 				file, allFields[i], fuzzyFields)
+
+			if err != nil {
+				if err == xopen.ErrNoContent {
+					log.Warningf("csvtk join: skipping empty input file: %s", file)
+					continue
+				}
+				checkError(err)
+			}
+
 			if len(data) == 0 {
 				log.Warningf("no data found in file: %s", file)
 				continue

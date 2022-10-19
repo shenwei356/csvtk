@@ -74,7 +74,15 @@ Attention:
 		defer outfh.Close()
 
 		file := files[0]
-		headerRow, data, csvReader := readCSV(config, file)
+		headerRow, data, csvReader, err := readCSV(config, file)
+
+		if err != nil {
+			if err == xopen.ErrNoContent {
+				log.Warningf("csvtk csv2md: skipping empty input file: %s", file)
+				return
+			}
+			checkError(err)
+		}
 
 		var header []string
 		var datas [][]string
@@ -83,7 +91,9 @@ Attention:
 			datas = data
 		} else {
 			if len(data) == 0 {
-				checkError(fmt.Errorf("no data found in file: %s", file))
+				// checkError(fmt.Errorf("no data found in file: %s", file))
+				log.Warningf("no data found in file: %s", file)
+				return
 			} else if len(data) > 0 {
 				header = data[0]
 				datas = data[1:]

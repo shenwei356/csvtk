@@ -116,14 +116,21 @@ Notes:
 		}
 
 		file := files[0]
-		headerRow, fields, data, _, _, _ := parseCSVfile(cmd, config, file, plotConfig.fieldStr, false)
+		headerRow, fields, data, _, _, _, err := parseCSVfile(cmd, config, file, plotConfig.fieldStr, false)
+
+		if err != nil {
+			// if err == xopen.ErrNoContent {
+			// 	log.Warningf("csvtk box: skipping empty input file: %s", file)
+			// 	return
+			// }
+			checkError(err)
+		}
 
 		// =======================================
 
 		groups := make(map[string]plotter.XYs)
 		groupOrderMap := make(map[string]int)
 		var x, y float64
-		var err error
 		var ok bool
 		var order int
 		var groupName string

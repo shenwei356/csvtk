@@ -64,9 +64,10 @@ func NewCSVReader(file string, bufferSize int, chunkSize int) (*CSVReader, error
 
 	fh, err := xopen.Ropen(file)
 	if err != nil {
-		if err == xopen.ErrNoContent {
-			return nil, fmt.Errorf("empty file: %s", file)
-		}
+		// if err == xopen.ErrNoContent {
+		// 	return nil, fmt.Errorf("empty file: %s", file)
+		// }
+
 		return nil, err
 	}
 

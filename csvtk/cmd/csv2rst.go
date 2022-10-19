@@ -61,7 +61,15 @@ Attention:
 
 		file := files[0]
 		var colnames []string
-		headerRow, data, csvReader := readCSV(config, file)
+		headerRow, data, csvReader, err := readCSV(config, file)
+
+		if err != nil {
+			if err == xopen.ErrNoContent {
+				log.Warningf("csvtk csv2rst: skipping empty input file: %s", file)
+				return
+			}
+			checkError(err)
+		}
 
 		// compute maximum length of each column
 		var maxLens []int
@@ -80,7 +88,9 @@ Attention:
 			colnames = headerRow
 			ncolsP1 = len(colnames) - 1
 		} else if len(data) == 0 {
-			checkError(fmt.Errorf("no data found in file: %s", file))
+			// checkError(fmt.Errorf("no data found in file: %s", file))
+			log.Warningf("no data found in file: %s", file)
+			readerReport(&config, csvReader, file)
 			return
 		} else {
 			maxLens = make([]int, len(data[0]))
