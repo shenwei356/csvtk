@@ -93,6 +93,7 @@ Attention:
 			if len(data) == 0 {
 				// checkError(fmt.Errorf("no data found in file: %s", file))
 				log.Warningf("no data found in file: %s", file)
+				readerReport(&config, csvReader, file)
 				return
 			} else if len(data) > 0 {
 				header = data[0]

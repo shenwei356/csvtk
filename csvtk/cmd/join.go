@@ -67,6 +67,7 @@ Attention:
 
 		ignoreCase := getFlagBool(cmd, "ignore-case")
 		filenameAsPrefix := getFlagBool(cmd, "prefix-filename")
+		trimeExtention := getFlagBool(cmd, "prefix-trim-ext")
 
 		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
 		leftJoin := getFlagBool(cmd, "left-join")
@@ -183,14 +184,36 @@ Attention:
 						fieldsMap1[f] = struct{}{}
 					}
 
-					var Colname string
-					for f, Colname = range headerRow {
-						if _, ok = fieldsMap1[f+1]; ok {
-							prefixedHeaderRow = append(prefixedHeaderRow, Colname)
-							continue
+					if len(headerRow) == 0 { // no header row, we still create column names with the file name
+						if len(Data) > 0 {
+							iKey := 1
+							for f = range Data[0] {
+								if _, ok = fieldsMap1[f+1]; ok { //  the  field  of keys
+									prefixedHeaderRow = append(prefixedHeaderRow, fmt.Sprintf("key%d", iKey))
+									iKey++
+									continue
+								}
+								fbase := filepath.Base(file)
+								if trimeExtention {
+									fbase, _, _ = filepathTrimExtension2(fbase, nil)
+								}
+								prefixedHeaderRow = append(prefixedHeaderRow, fbase)
+							}
 						}
-						newColname = fmt.Sprintf("%s-%s", filepath.Base(file), Colname)
-						prefixedHeaderRow = append(prefixedHeaderRow, newColname)
+					} else {
+						var Colname string
+						for f, Colname = range headerRow {
+							if _, ok = fieldsMap1[f+1]; ok { //  the  field  of keys
+								prefixedHeaderRow = append(prefixedHeaderRow, Colname)
+								continue
+							}
+							fbase := filepath.Base(file)
+							if trimeExtention {
+								fbase, _, _ = filepathTrimExtension2(fbase, nil)
+							}
+							newColname = fmt.Sprintf("%s-%s", fbase, Colname)
+							prefixedHeaderRow = append(prefixedHeaderRow, newColname)
+						}
 					}
 				}
 				firstFile = false
@@ -276,12 +299,29 @@ Attention:
 					if _, ok = fieldsMap[f+1]; !ok {
 						newHeaderRow = append(newHeaderRow, colname)
 
-						newColname = fmt.Sprintf("%s-%s", filepath.Base(file), colname)
+						fbase := filepath.Base(file)
+						if trimeExtention {
+							fbase, _, _ = filepathTrimExtension2(fbase, nil)
+						}
+						newColname = fmt.Sprintf("%s-%s", fbase, colname)
 						prefixedHeaderRow = append(prefixedHeaderRow, newColname)
 					}
 				}
 				HeaderRow = newHeaderRow
+			} else if filenameAsPrefix {
+				if len(Data) > 0 {
+					for f, colname = range data[0] {
+						if _, ok = fieldsMap[f+1]; !ok {
+							fbase := filepath.Base(file)
+							if trimeExtention {
+								fbase, _, _ = filepathTrimExtension2(fbase, nil)
+							}
+							prefixedHeaderRow = append(prefixedHeaderRow, fbase)
+						}
+					}
+				}
 			}
+
 			items = make([]string, len(Fields))
 			var records [][]string
 			var record2 []string
@@ -327,6 +367,8 @@ Attention:
 			} else {
 				checkError(writer.Write(HeaderRow))
 			}
+		} else if filenameAsPrefix {
+			checkError(writer.Write(prefixedHeaderRow))
 		}
 		for _, record := range Data {
 			checkError(writer.Write(record))
@@ -349,5 +391,6 @@ func init() {
 	joinCmd.Flags().BoolP("outer-join", "O", false, `outer join, exclusive with --left-join`)
 	joinCmd.Flags().StringP("na", "", "", "content for filling NA data")
 	joinCmd.Flags().BoolP("ignore-null", "n", false, "do not match NULL values")
-	joinCmd.Flags().BoolP("prefix-filename", "A", false, "add each filename as a prefix to header")
+	joinCmd.Flags().BoolP("prefix-filename", "p", false, "add each filename as a prefix to each colname. if there's no header row, we'll add one")
+	joinCmd.Flags().BoolP("prefix-trim-ext", "e", false, "trim extension when adding filename as colname prefix")
 }

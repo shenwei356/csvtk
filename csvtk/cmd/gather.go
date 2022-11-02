@@ -131,7 +131,7 @@ var gatherCmd = &cobra.Command{
 		csvReader.Run()
 
 		parseHeaderRow := needParseHeaderRow // parsing header row
-		var colnames2fileds map[string]int   // column name -> field
+		var colnames2fileds map[string][]int // column name -> []field
 		var colnamesMap map[string]*regexp.Regexp
 		var colnames0 []string
 
@@ -152,9 +152,14 @@ var gatherCmd = &cobra.Command{
 
 			for _, record := range chunk.Data {
 				if parseHeaderRow { // parsing header row
-					colnames2fileds = make(map[string]int, len(record))
+					colnames2fileds = make(map[string][]int, len(record))
 					for i, col := range record {
-						colnames2fileds[col] = i + 1
+						if _, ok := colnames2fileds[col]; !ok {
+							colnames2fileds[col] = []int{i + 1}
+						} else {
+							checkError(fmt.Errorf("duplicate colnames not allowed: %s", col))
+							colnames2fileds[col] = append(colnames2fileds[col], i+1)
+						}
 					}
 					colnamesMap = make(map[string]*regexp.Regexp, len(colnames))
 					i := 0
@@ -194,8 +199,8 @@ var gatherCmd = &cobra.Command{
 								_, ok = colnamesMap[col]
 							}
 							if ok {
-								fields = append(fields, colnames2fileds[col])
-								fieldsOrder[colnames2fileds[col]] = colnamesOrder[col]
+								fields = append(fields, colnames2fileds[col]...)
+								fieldsOrder[colnames2fileds[col][0]] = colnamesOrder[col]
 							}
 						}
 

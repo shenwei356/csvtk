@@ -1887,7 +1887,8 @@ Flags:
   -L, --left-join        left join, equals to -k/--keep-unmatched, exclusive with --outer-join
       --na string        content for filling NA data
   -O, --outer-join       outer join, exclusive with --left-join
-  -A, --prefix-filename  add each filename as a prefix to header
+  -p, --prefix-filename   add each filename as a prefix to each colname. if there's no header row, we'll add one
+  -e, --prefix-trim-ext   trim extension when adding filename as colname prefix
 
 ```
 
@@ -1961,58 +1962,97 @@ Examples:
         ken        22222    nowhere
         shenwei    999999   another
         
+- Adding each filename as a prefix to each colname
 
-
-- Some special cases
-
-        $ cat testdata/1.csv
+        $ cat testdata/1.csv 
         name,attr
         foo,cool
         bar,handsome
         bob,beutiful
-
-        $ cat testdata/2.csv
+        
+        $ cat testdata/2.csv 
         name,major
         bar,bioinformatics
         bob,microbiology
         bob,computer science
 
-        $ cat testdata/3.csv
-        id,name,hobby
-        1,bar,baseball
-        2,bob,basketball
-        3,foo,football
-        4,wei,programming
+        $ csvtk join testdata/{1,2}.csv \
+            | csvtk pretty 
+        name   attr       major
+        ----   --------   -----------------
+        bar    handsome   bioinformatics
+        bob    beutiful   microbiology
+        bob    beutiful   computer science
 
-        # nothing special
-        $ csvtk join testdata/{1,2,3}.csv -f name --outer-join --na NA \
+        $ csvtk join testdata/{1,2}.csv --prefix-filename \
+            | csvtk pretty 
+        name   1.csv-attr   2.csv-major
+        ----   ----------   -----------------
+        bar    handsome     bioinformatics
+        bob    beutiful     microbiology
+        bob    beutiful     computer science
+
+        # trim the file extention
+        $ csvtk join testdata/{1,2}.csv --prefix-filename --prefix-trim-ext \
+             | csvtk pretty 
+        name   1-attr     2-major
+        ----   --------   -----------------
+        bar    handsome   bioinformatics
+        bob    beutiful   microbiology
+        bob    beutiful   computer science 
+
+- Adding each filename as a prefix to each colname for data without header row
+
+        $ cat testdata/A.f.csv 
+        a,x,1
+        b,y,2
+
+        $ cat testdata/B.f.csv 
+        a,x,3
+        b,y,4
+
+        $ cat testdata/C.f.csv 
+        a,x,5
+        b,y,6
+
+        $ csvtk join -H testdata/{A,B,C}.f.csv \
+            | csvtk pretty -H
+        a   x   1   x   3   x   5
+        b   y   2   y   4   y   6
+
+        $ csvtk join -H testdata/{A,B,C}.f.csv -p \
             | csvtk pretty
-        name   attr       major               id   hobby
-        foo    cool       NA                  3    football
-        bar    handsome   bioinformatics      1    baseball
-        bob    beutiful   microbiology        2    basketball
-        bob    beutiful   computer science    2    basketball
-        wei    NA         NA                  4    programming
-        
-        # just reorder files
-        $ csvtk join testdata/{3,2,1}.csv -f name --outer-join --na NA \
+        key1   A.f.csv   A.f.csv   B.f.csv   B.f.csv   C.f.csv   C.f.csv
+        ----   -------   -------   -------   -------   -------   -------
+        a      x         1         x         3         x         5
+        b      y         2         y         4         y         6
+
+
+        # trim file extention
+        $ csvtk join -H testdata/{A,B,C}.f.csv -p -e \
             | csvtk pretty
-        id   name   hobby         major               attr
-        1    bar    baseball      bioinformatics      handsome
-        2    bob    basketball    microbiology        beutiful
-        2    bob    basketball    computer science    beutiful
-        3    foo    football      NA                  cool
-        4    wei    programming   NA                  NA
-        
-        # special case: names in 3.csv contain all names in all files
-        $ csvtk join testdata/{3,2,1}.csv -f name --left-join --na NA \
+        key1   A.f   A.f   B.f   B.f   C.f   C.f
+        ----   ---   ---   ---   ---   ---   ---
+        a      x     1     x     3     x     5
+        b      y     2     y     4     y     6
+
+        # use column 1 and 2 as keys
+        $ csvtk join -H testdata/{A,B,C}.f.csv -p -e -f 1,2 \
             | csvtk pretty
-        id   name   hobby         major               attr
-        1    bar    baseball      bioinformatics      handsome
-        2    bob    basketball    microbiology        beutiful
-        2    bob    basketball    computer science    beutiful
-        3    foo    football      NA                  cool
-        4    wei    programming   NA                  NA
+        key1   key2   A.f   B.f   C.f
+        ----   ----   ---   ---   ---
+        a      x      1     3     5
+        b      y      2     4     6
+
+
+        # change column names furthor
+        $ csvtk join -H testdata/{A,B,C}.f.csv -p -e -f 1,2 \
+            | csvtk rename2 -F -f '*' -p '\.f$' \
+            | csvtk pretty
+        key1   key2   A   B   C
+        ----   ----   -   -   -
+        a      x      1   3   5
+        b      y      2   4   6
 
 
 ## split

@@ -280,7 +280,7 @@ Custom functions:
 			csvReader.Run()
 
 			parseHeaderRow := needParseHeaderRow // parsing header row
-			var colnames2fileds map[string]int   // column name -> field
+			var colnames2fileds map[string][]int // column name -> []field
 			var colnamesMap map[string]*regexp.Regexp
 
 			parameters := make(map[string]string, len(colnamesMap))
@@ -309,9 +309,14 @@ Custom functions:
 
 				for _, record := range chunk.Data {
 					if parseHeaderRow { // parsing header row
-						colnames2fileds = make(map[string]int, len(record))
+						colnames2fileds = make(map[string][]int, len(record))
 						for i, col := range record {
-							colnames2fileds[col] = i + 1
+							if _, ok := colnames2fileds[col]; !ok {
+								colnames2fileds[col] = []int{i + 1}
+							} else {
+								checkError(fmt.Errorf("duplicate colnames not allowed: %s", col))
+								colnames2fileds[col] = append(colnames2fileds[col], i+1)
+							}
 						}
 						colnamesMap = make(map[string]*regexp.Regexp, len(colnames))
 						for _, col := range colnames {
@@ -348,7 +353,7 @@ Custom functions:
 									_, ok = colnamesMap[col]
 								}
 								if ok {
-									fields = append(fields, colnames2fileds[col])
+									fields = append(fields, colnames2fileds[col]...)
 								}
 							}
 						}
@@ -439,7 +444,7 @@ Custom functions:
 						}
 					} else {
 						for col = range colnamesMap {
-							value = record[colnames2fileds[col]-1]
+							value = record[colnames2fileds[col][0]-1]
 
 							if reFiler2ColSymbolStartsWithDigits.MatchString(col) {
 								col = fmt.Sprintf("shenwei_%s", col)

@@ -134,7 +134,7 @@ Example:
 
 			parseHeaderRow := needParseHeaderRow // parsing header row
 			parseHeaderRow2 := needParseHeaderRow
-			var colnames2fileds map[string]int // column name -> field
+			var colnames2fileds map[string][]int // column name -> []field
 			var colnamesMap map[string]*regexp.Regexp
 
 			checkFields := true
@@ -153,9 +153,14 @@ Example:
 
 				for _, record := range chunk.Data {
 					if parseHeaderRow { // parsing header row
-						colnames2fileds = make(map[string]int, len(record))
+						colnames2fileds = make(map[string][]int, len(record))
 						for i, col := range record {
-							colnames2fileds[col] = i + 1
+							if _, ok := colnames2fileds[col]; !ok {
+								colnames2fileds[col] = []int{i + 1}
+							} else {
+								checkError(fmt.Errorf("duplicate colnames not allowed: %s", col))
+								colnames2fileds[col] = append(colnames2fileds[col], i+1)
+							}
 						}
 						colnamesMap = make(map[string]*regexp.Regexp, len(colnames))
 						for _, col := range colnames {
@@ -192,7 +197,7 @@ Example:
 									_, ok = colnamesMap[col]
 								}
 								if ok {
-									fields = append(fields, colnames2fileds[col])
+									fields = append(fields, colnames2fileds[col]...)
 								}
 							}
 

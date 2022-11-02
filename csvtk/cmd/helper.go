@@ -658,7 +658,7 @@ func parseCSVfile(cmd *cobra.Command, config Config, file string,
 	csvReader.Run()
 
 	parseHeaderRow := needParseHeaderRow // parsing header row
-	var colnames2fileds map[string]int   // column name -> field
+	var colnames2fileds map[string][]int // column name -> []field
 	var colnamesMap map[string]*regexp.Regexp
 
 	var HeaderRow []string
@@ -673,9 +673,14 @@ func parseCSVfile(cmd *cobra.Command, config Config, file string,
 
 		for _, record := range chunk.Data {
 			if parseHeaderRow { // parsing header row
-				colnames2fileds = make(map[string]int, len(record))
+				colnames2fileds = make(map[string][]int, len(record))
 				for i, col := range record {
-					colnames2fileds[col] = i + 1
+					if _, ok := colnames2fileds[col]; !ok {
+						colnames2fileds[col] = []int{i + 1}
+					} else {
+						checkError(fmt.Errorf("duplicate colnames not allowed: %s", col))
+						colnames2fileds[col] = append(colnames2fileds[col], i+1)
+					}
 				}
 				colnamesMap = make(map[string]*regexp.Regexp, len(colnames))
 				i := 0
@@ -715,8 +720,8 @@ func parseCSVfile(cmd *cobra.Command, config Config, file string,
 							_, ok = colnamesMap[col]
 						}
 						if ok {
-							fields = append(fields, colnames2fileds[col])
-							fieldsOrder[colnames2fileds[col]] = colnamesOrder[col]
+							fields = append(fields, colnames2fileds[col]...)
+							fieldsOrder[colnames2fileds[col][0]] = colnamesOrder[col]
 						}
 					}
 				}
@@ -879,4 +884,26 @@ func filepathTrimExtension(file string) (string, string) {
 		extension += ".gz"
 	}
 	return name, extension
+}
+
+func filepathTrimExtension2(file string, suffixes []string) (string, string, string) {
+	if suffixes == nil {
+		suffixes = []string{".gz", ".xz", ".zst"}
+	}
+
+	var e, e1, e2 string
+	f := strings.ToLower(file)
+	for _, s := range suffixes {
+		e = strings.ToLower(s)
+		if strings.HasSuffix(f, e) {
+			e2 = e
+			file = file[0 : len(file)-len(e)]
+			break
+		}
+	}
+
+	e1 = filepath.Ext(file)
+	name := file[0 : len(file)-len(e1)]
+
+	return name, e1, e2
 }
