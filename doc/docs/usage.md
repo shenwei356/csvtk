@@ -2001,7 +2001,7 @@ Examples:
         bob    beutiful   microbiology
         bob    beutiful   computer science 
 
-- Adding each filename as a prefix to each colname for data without header row
+- Adding each filename as a prefix to each colname **for data without header row**
 
         $ cat testdata/A.f.csv 
         a,x,1
