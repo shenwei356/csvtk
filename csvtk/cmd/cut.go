@@ -52,7 +52,6 @@ Examples:
      csvtk cut -f 2-,1        # move 1th col to the end
   4. Unselect
      csvtk cut -f -1,-3       # discard 1st and 3rd column
-     csvtk cut -f -1--3       # discard 1st to 3rd column
      csvtk cut -f -2-         # discard 2nd and all columns on the right.
      csvtu cut -f -colA,-colB # discard colA and colB
 `,
