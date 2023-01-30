@@ -975,6 +975,7 @@ Usage:
   csvtk csv2xlsx [flags]
 
 Flags:
+  -f, --format-numbers   save numbers in number format, instead of text
   -h, --help   help for csv2xlsx
 
 ```

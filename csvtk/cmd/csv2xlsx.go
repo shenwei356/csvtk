@@ -48,6 +48,8 @@ Attention:
 		config := getConfigs(cmd)
 		files := getFileListFromArgsAndFile(cmd, args, true, "infile-list", true)
 
+		formatNumbers := getFlagBool(cmd, "format-numbers")
+
 		runtime.GOMAXPROCS(config.NumCPUs)
 
 		singleInput := len(files) == 1
@@ -104,11 +106,15 @@ Attention:
 				for _, record = range chunk.Data {
 					for col, val = range record {
 						cell = fmt.Sprintf("%s%d", ExcelColumnIndex(col), line)
-						valFloat, err = strconv.ParseFloat(val, 64)
-						if err != nil {
-							xlsx.SetCellValue(sheet, cell, val)
+						if formatNumbers {
+							valFloat, err = strconv.ParseFloat(val, 64)
+							if err != nil {
+								xlsx.SetCellValue(sheet, cell, val)
+							} else {
+								xlsx.SetCellFloat(sheet, cell, valFloat, -1, 64)
+							}
 						} else {
-							xlsx.SetCellFloat(sheet, cell, valFloat, -1, 64)
+							xlsx.SetCellValue(sheet, cell, val)
 						}
 					}
 					line++
@@ -126,6 +132,8 @@ Attention:
 
 func init() {
 	RootCmd.AddCommand(csv2xlsxCmd)
+
+	csv2xlsxCmd.Flags().BoolP("format-numbers", "f", false, `save numbers in number format, instead of text`)
 
 }
 
