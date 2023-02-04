@@ -7,6 +7,8 @@
   - `csvtk csv2xlsx`: optionally stores numbers as float. [#217](https://github.com/shenwei356/csvtk/issues/217)
   - `csvtk xlsx2csv`: fix bug wheree `xlsx2csv` treats small number (padj < 1e-25) as 0. It's solved by updating the excelize package. [#261](https://github.com/shenwei356/csvtk/issues/201)
   - `csvtk join`: new flag for adding filename as column name prefix. by @tetedange13 [#202](https://github.com/shenwei356/csvtk/issues/202)
+  - `csvtk mutate2`: fix wrongly treating strings like `E10` as numbers in scientific notation. [#219](https://github.com/shenwei356/csvtk/issues/219)
+  - `csvtk sep`: fix the logic. [#218](https://github.com/shenwei356/csvtk/issues/218)
 - [csvtk v0.25.0](https://github.com/shenwei356/csvtk/releases/tag/v0.25.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.25.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.25.0)
     - `csvtk`: report empty files.

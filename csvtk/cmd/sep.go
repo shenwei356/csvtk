@@ -279,43 +279,38 @@ var sepCmd = &cobra.Command{
 								} else {
 									items = strings.Split(record[f], sep)
 								}
-								if checkNewNumCols {
-									if !config.NoHeaderRow {
-										if numCols > 0 {
-											if len(items) <= numCols {
-												nNewCols = numCols
-											} else if drop || merge {
-												nNewCols = numCols
-											} else {
-												checkError(fmt.Errorf("[line %d] number of new columns (%d) > -N (--num-cols) (%d), please increase -N (--num-cols)", line, len(items), numCols))
-											}
-										} else {
+
+								if numCols > 0 { // preset number of new created columns
+									if len(items) <= numCols {
+										nNewCols = numCols
+									} else if drop || merge {
+										nNewCols = numCols
+									} else {
+										checkError(fmt.Errorf("[line %d] number of new columns (%d) > -N (--num-cols) (%d), please increase -N (--num-cols), or switch on --drop or --merge", line, len(items), numCols))
+									}
+								} else {
+									if !config.NoHeaderRow { // decide the number of newly created columns according to the given colnames names
+										if checkNewNumCols {
 											if len(items) <= len(names) {
-												nNewCols = len(items)
+												nNewCols = len(names)
 											} else if drop || merge {
 												nNewCols = len(names)
 											} else {
 												checkError(fmt.Errorf("[line %d] number of new columns (%d) > number of new column names (%d), please reset -n (--names) ", line, len(items), len(names)))
+
 											}
+											checkNewNumCols = false
 										}
 									} else {
-										if numCols > 0 {
-											if len(items) < numCols {
-												nNewCols = numCols
-											} else {
-												nNewCols = len(items)
-											}
-										} else {
+										if nNewCols == 0 { // first line
 											nNewCols = len(items)
 										}
 									}
-
-									checkNewNumCols = false
 								}
 
 								if len(items) <= nNewCols { // fill
 									record2 = append(record2, items...)
-									for i := 0; i < numCols-len(items); i++ {
+									for i := 0; i < nNewCols-len(items); i++ {
 										record2 = append(record2, na)
 									}
 								} else if drop { // drop
@@ -329,9 +324,9 @@ var sepCmd = &cobra.Command{
 									record2 = append(record2, items...)
 								} else {
 									if numCols > 0 {
-										checkError(fmt.Errorf("[line %d] number of new columns (%d) > -N (--num-cols) (%d),  please increase -N (--num-cols) or drop extra data using --drop", line, len(items), numCols))
+										checkError(fmt.Errorf("[line %d] number of new columns (%d) > -N (--num-cols) (%d),  please increase -N (--num-cols) or drop extra data using --drop, or append remaining data to the last column using --merge", line, len(items), numCols))
 									} else {
-										checkError(fmt.Errorf("[line %d] number of new columns (%d) exceeds that of first row (%d), please increase -N (--num-cols) or drop extra data using --drop", line, len(items), nNewCols))
+										checkError(fmt.Errorf("[line %d] number of new columns (%d) exceeds that of first row (%d), please increase -N (--num-cols) or drop extra data using --drop, or append remaining data to the last column using --merge", line, len(items), nNewCols))
 									}
 								}
 							}
