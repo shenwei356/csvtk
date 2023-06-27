@@ -716,7 +716,7 @@ Examples:
         2       Quaerat Voluptatem   At vero eos et accusamus et iusto odio.
         3       Aliquam lorem        Curabitur ullamcorper ultricies nisi....
 
-1. Change output style
+1. Change the output style
 
         $ csvtk pretty testdata/long.csv -W 40 -S grid
         +----+--------------------+------------------------------------------+
