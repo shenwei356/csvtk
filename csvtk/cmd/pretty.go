@@ -33,8 +33,8 @@ import (
 // prettyCmd represents the pretty command
 var prettyCmd = &cobra.Command{
 	Use:   "pretty",
-	Short: "convert CSV to readable aligned table",
-	Long: `convert CSV to readable aligned table
+	Short: "convert CSV to a readable aligned table",
+	Long: `convert CSV to a readable aligned table
 
 How to:
   1. First -n/--buf-rows rows are read to check the minimum and maximum widths
@@ -46,7 +46,7 @@ How to:
          word is longer than the -W/--max-width, it will be force split.
      1b. Texts are aligned left (default), center (-m/--align-center)
          or right (-r/--align-right).
-  2. Remaining rows are read and immediately outputted, one by one till the end.
+  2. Remaining rows are read and immediately outputted, one by one, till the end.
 
 Styles:
 

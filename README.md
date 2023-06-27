@@ -78,7 +78,7 @@ It could save you lots of time in (not) writing Python/R scripts.
 
 **Format conversion**
 
-- [`pretty`](https://bioinf.shenwei.me/csvtk/usage/#pretty): converts CSV to readable aligned table
+- [`pretty`](https://bioinf.shenwei.me/csvtk/usage/#pretty): converts CSV to a readable aligned table
 - [`csv2tab`](https://bioinf.shenwei.me/csvtk/usage/#csv2tab): converts CSV to tabular format
 - [`tab2csv`](https://bioinf.shenwei.me/csvtk/usage/#tab2csv): converts tabular format to CSV
 - [`space2tab`](https://bioinf.shenwei.me/csvtk/usage/#space2tab): converts space delimited format to CSV

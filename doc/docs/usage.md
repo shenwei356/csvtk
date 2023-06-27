@@ -559,11 +559,11 @@ Examples
 Usage
 
 ```text
-convert CSV to readable aligned table
+convert CSV to a readable aligned table
 
 How to:
   1. First -n/--buf-rows rows are read to check the minimum and maximum widths
-     of each columns. You can also set the global thresholds -w/--min-width and
+     of each column. You can also set the global thresholds -w/--min-width and
      -W/--max-width.
      1a. Cells longer than the maximum width will be wrapped (default) or
          clipped (--clip).
