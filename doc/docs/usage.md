@@ -561,15 +561,100 @@ Usage
 ```text
 convert CSV to readable aligned table
 
+How to:
+  1. First -n/--buf-rows rows are read to check the minimum and maximum widths
+     of each columns. You can also set the global thresholds -w/--min-width and
+     -W/--max-width.
+     1a. Cells longer than the maximum width will be wrapped (default) or
+         clipped (--clip).
+         Usually, the text is wrapped in space (-x/--wrap-delimiter). But if one
+         word is longer than the -W/--max-width, it will be force split.
+     1b. Texts are aligned left (default), center (-m/--align-center)
+         or right (-r/--align-right).
+  2. Remaining rows are read and immediately outputted, one by one till the end.
+
+Styles:
+
+  Some preset styles are provided (-S/--style).
+
+    default:
+
+        id   size
+        --   ----
+        1    Huge
+        2    Tiny
+
+    plain:
+
+        id   size
+        1    Huge
+        2    Tiny
+
+    simple:
+
+        -----------
+        id   size
+        -----------
+        1    Huge
+        2    Tiny
+        -----------
+
+
+    grid:
+
+        +----+------+
+        | id | size |
+        +====+======+
+        | 1  | Huge |
+        +----+------+
+        | 2  | Tiny |
+        +----+------+
+
+    light:
+
+        ┌----┬------┐
+        | id | size |
+        ├====┼======┤
+        | 1  | Huge |
+        ├----┼------┤
+        | 2  | Tiny |
+        └----┴------┘
+
+    bold:
+
+        ┏━━━━┳━━━━━━┓
+        ┃ id ┃ size ┃
+        ┣━━━━╋━━━━━━┫
+        ┃ 1  ┃ Huge ┃
+        ┣━━━━╋━━━━━━┫
+        ┃ 2  ┃ Tiny ┃
+        ┗━━━━┻━━━━━━┛
+
+    double:
+
+        ╔════╦══════╗
+        ║ id ║ size ║
+        ╠════╬══════╣
+        ║ 1  ║ Huge ║
+        ╠════╬══════╣
+        ║ 2  ║ Tiny ║
+        ╚════╩══════╝
+
 Usage:
   csvtk pretty [flags]
 
 Flags:
-  -r, --align-right        align right
-  -h, --help               help for pretty
-  -W, --max-width int      max width
-  -w, --min-width int      min width
-  -s, --separator string   fields/columns separator (default "   ")
+  -m, --align-center            align center/middle
+  -r, --align-right             align right
+  -n, --buf-rows int            the number of rows to determine the min and max widths (default 128)
+      --clip                    clip longer cell instead of wrapping
+      --clip-mark string        clip mark (default "...")
+  -h, --help                    help for pretty
+  -W, --max-width int           max width
+  -w, --min-width int           min width
+  -s, --separator string        fields/columns separator (default "   ")
+  -S, --style string            output syle. available vaules: default, plain, simple, grid, light, bold, double. check https://github.com/shenwei356/stable
+  -x, --wrap-delimiter string   delimiter for wrapping cells (default " ")
 
 ```
 
@@ -608,6 +693,64 @@ Examples:
         4  | Robert     | Griesemer | gri
         1  | Robert     | Thompson  | abc
         NA | Robert     | Abel      | 123
+
+1. Set the minimum and maximum width.
+
+        $ csvtk pretty testdata/long.csv -w 5 -W 40
+        id      name                 message
+        -----   ------------------   ----------------------------------------
+        1       Donec Vitae          Quis autem vel eum iure reprehenderit
+                                     qui in ea voluptate velit esse.
+        2       Quaerat Voluptatem   At vero eos et accusamus et iusto odio.
+        3       Aliquam lorem        Curabitur ullamcorper ultricies nisi.
+                                     Nam eget dui. Etiam rhoncus. Maecenas
+                                     tempus, tellus eget condimentum
+                                     rhoncus, sem quam semper libero.
+
+1. Clipping cells instead of wrapping
+
+        $ csvtk pretty testdata/long.csv -w 5 -W 40 --clip
+        id      name                 message
+        -----   ------------------   ----------------------------------------
+        1       Donec Vitae          Quis autem vel eum iure reprehenderit...
+        2       Quaerat Voluptatem   At vero eos et accusamus et iusto odio.
+        3       Aliquam lorem        Curabitur ullamcorper ultricies nisi....
+
+1. Change output style
+
+        $ csvtk pretty testdata/long.csv -W 40 -S grid
+        +----+--------------------+------------------------------------------+
+        | id | name               | message                                  |
+        +====+====================+==========================================+
+        | 1  | Donec Vitae        | Quis autem vel eum iure reprehenderit    |
+        |    |                    | qui in ea voluptate velit esse.          |
+        +----+--------------------+------------------------------------------+
+        | 2  | Quaerat Voluptatem | At vero eos et accusamus et iusto odio.  |
+        +----+--------------------+------------------------------------------+
+        | 3  | Aliquam lorem      | Curabitur ullamcorper ultricies nisi.    |
+        |    |                    | Nam eget dui. Etiam rhoncus. Maecenas    |
+        |    |                    | tempus, tellus eget condimentum          |
+        |    |                    | rhoncus, sem quam semper libero.         |
+        +----+--------------------+------------------------------------------+
+
+1. Custom delimiter for wrapping
+
+        $ csvtk pretty testdata/lineages.csv -W 60 -x ';' -S light
+        ┌-------┬------------------┬--------------------------------------------------------------┐
+        | taxid | name             | complete lineage                                             |
+        ├=======┼==================┼==============================================================┤
+        | 9606  | Homo sapiens     | cellular organisms;Eukaryota;Opisthokonta;Metazoa;Eumetazoa; |
+        |       |                  | Bilateria;Deuterostomia;Chordata;Craniata;Vertebrata;        |
+        |       |                  | Gnathostomata;Teleostomi;Euteleostomi;Sarcopterygii;         |
+        |       |                  | Dipnotetrapodomorpha;Tetrapoda;Amniota;Mammalia;Theria;      |
+        |       |                  | Eutheria;Boreoeutheria;Euarchontoglires;Primates;            |
+        |       |                  | Haplorrhini;Simiiformes;Catarrhini;Hominoidea;Hominidae;     |
+        |       |                  | Homininae;Homo;Homo sapiens                                  |
+        ├-------┼------------------┼--------------------------------------------------------------┤
+        | 562   | Escherichia coli | cellular organisms;Bacteria;Pseudomonadota;                  |
+        |       |                  | Gammaproteobacteria;Enterobacterales;Enterobacteriaceae;     |
+        |       |                  | Escherichia;Escherichia coli                                 |
+        └-------┴------------------┴--------------------------------------------------------------┘
 
 ## transpose
 

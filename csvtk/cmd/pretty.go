@@ -21,14 +21,13 @@
 package cmd
 
 import (
-	"bytes"
 	"fmt"
 	"runtime"
 	"strings"
 
+	"github.com/shenwei356/stable"
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
-	"github.com/tatsushid/go-prettytable"
 )
 
 // prettyCmd represents the pretty command
@@ -36,6 +35,85 @@ var prettyCmd = &cobra.Command{
 	Use:   "pretty",
 	Short: "convert CSV to readable aligned table",
 	Long: `convert CSV to readable aligned table
+
+How to:
+  1. First -n/--buf-rows rows are read to check the minimum and maximum widths
+     of each columns. You can also set the global thresholds -w/--min-width and
+     -W/--max-width.
+     1a. Cells longer than the maximum width will be wrapped (default) or
+         clipped (--clip).
+         Usually, the text is wrapped in space (-x/--wrap-delimiter). But if one
+         word is longer than the -W/--max-width, it will be force split.
+     1b. Texts are aligned left (default), center (-m/--align-center)
+         or right (-r/--align-right).
+  2. Remaining rows are read and immediately outputted, one by one till the end.
+
+Styles:
+
+  Some preset styles are provided (-S/--style).
+
+    default:
+
+        id   size
+        --   ----
+        1    Huge
+        2    Tiny
+
+    plain:
+
+        id   size
+        1    Huge
+        2    Tiny
+
+    simple:
+
+        -----------
+        id   size
+        -----------
+        1    Huge
+        2    Tiny
+        -----------
+
+
+    grid:
+
+        +----+------+
+        | id | size |
+        +====+======+
+        | 1  | Huge |
+        +----+------+
+        | 2  | Tiny |
+        +----+------+
+
+    light:
+
+        ┌----┬------┐
+        | id | size |
+        ├====┼======┤
+        | 1  | Huge |
+        ├----┼------┤
+        | 2  | Tiny |
+        └----┴------┘
+
+    bold:
+
+        ┏━━━━┳━━━━━━┓
+        ┃ id ┃ size ┃
+        ┣━━━━╋━━━━━━┫
+        ┃ 1  ┃ Huge ┃
+        ┣━━━━╋━━━━━━┫
+        ┃ 2  ┃ Tiny ┃
+        ┗━━━━┻━━━━━━┛
+
+    double:
+
+        ╔════╦══════╗
+        ║ id ║ size ║
+        ╠════╬══════╣
+        ║ 1  ║ Huge ║
+        ╠════╬══════╣
+        ║ 2  ║ Tiny ║
+        ╚════╩══════╝
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -47,17 +125,27 @@ var prettyCmd = &cobra.Command{
 		runtime.GOMAXPROCS(config.NumCPUs)
 
 		alignRight := getFlagBool(cmd, "align-right")
+		alignCenter := getFlagBool(cmd, "align-center")
 		separator := getFlagString(cmd, "separator")
 		minWidth := getFlagNonNegativeInt(cmd, "min-width")
 		maxWidth := getFlagNonNegativeInt(cmd, "max-width")
+		bufRows := getFlagNonNegativeInt(cmd, "buf-rows")
+		style := getFlagString(cmd, "style")
+		clip := getFlagBool(cmd, "clip")
+		clipMark := getFlagString(cmd, "clip-mark")
+		wrapDelimiter := getFlagString(cmd, "wrap-delimiter")
+
+		if len(wrapDelimiter) != 1 {
+			checkError(fmt.Errorf("the value of flag -x/--wrap-delimiter should be a single character: %s", wrapDelimiter))
+		}
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
 		defer outfh.Close()
 
 		file := files[0]
-		var colnames []string
-		headerRow, data, csvReader, err := readCSV(config, file)
+
+		csvReader, err := newCSVReaderByConfig(config, file)
 
 		if err != nil {
 			if err == xopen.ErrNoContent {
@@ -67,93 +155,72 @@ var prettyCmd = &cobra.Command{
 			checkError(err)
 		}
 
-		if len(headerRow) > 0 {
-			colnames = headerRow
-		} else {
-			if len(data) == 0 {
-				// checkError(fmt.Errorf("no data found in file: %s", file))
-				log.Warningf("no data found in file: %s", file)
-				readerReport(&config, csvReader, file)
-				return
-			} else if len(data) > 0 {
-				colnames = make([]string, len(data[0]))
-				for i := 0; i < len(data[0]); i++ {
-					colnames[i] = fmt.Sprintf("%d", i+1)
-				}
-			}
+		csvReader.Run()
+
+		styles := map[string]*stable.TableStyle{
+			"default": &stable.TableStyle{
+				Name:            "simple",
+				LineBelowHeader: stable.LineStyle{"", "-", separator, ""},
+
+				HeaderRow: stable.RowStyle{"", separator, ""},
+				DataRow:   stable.RowStyle{"", separator, ""},
+				Padding:   "",
+			},
+			"plain":  stable.StylePlain,
+			"simple": stable.StyleSimple,
+			"grid":   stable.StyleGrid,
+			"light":  stable.StyleLight,
+			"bold":   stable.StyleBold,
+			"double": stable.StyleDouble,
 		}
 
-		columns := make([]prettytable.Column, len(colnames))
-		for i, c := range colnames {
-			columns[i] = prettytable.Column{Header: c, AlignRight: alignRight,
-				MinWidth: minWidth, MaxWidth: maxWidth}
+		if style == "" {
+			style = "default"
 		}
-		tbl, err := prettytable.NewTable(columns...)
-		tbl.Separator = separator
-		checkError(err)
-		var i int
-		var r string
+
+		tbl := stable.New().AlignLeft()
+
+		tbl.WrapDelimiter(rune(wrapDelimiter[0]))
+
+		if _style, ok := styles[strings.ToLower(style)]; ok {
+			tbl.Style(_style)
+		} else {
+			checkError(fmt.Errorf("style not available: %s. available vaules: default, plain, simple, grid, light, bold, double", style))
+		}
+
+		if minWidth > 0 {
+			tbl.MinWidth(minWidth)
+		}
+		if maxWidth > 0 {
+			tbl.MaxWidth(maxWidth)
+		}
+		if alignRight {
+			tbl.AlignRight()
+		}
+		if alignCenter {
+			tbl.AlignCenter()
+		}
+		if clip {
+			tbl.ClipCell(clipMark)
+		}
+
+		tbl.Writer(outfh, uint(bufRows))
+
+		parseHeaderRow := !config.NoHeaderRow
 		var record []string
-		var record2 []interface{}
-		if len(headerRow) > 0 {
-			record2 = make([]interface{}, len(headerRow))
-		} else if len(data) > 0 {
-			record2 = make([]interface{}, len(data[0]))
-		}
+		for chunk := range csvReader.Ch {
+			checkError(chunk.Err)
 
-		if !config.NoHeaderRow {
-			// header separator
-			maxLens := make([]int, len(headerRow))
-			var l int
-			for i, r = range headerRow {
-				if len(r) > 0 {
-					maxLens[i] = len(r)
-				} else {
-					maxLens[i] = 1
+			for _, record = range chunk.Data {
+				if parseHeaderRow { // parsing header row
+					tbl.Header(record)
+					parseHeaderRow = false
+					continue
 				}
+				tbl.AddRowStringSlice(record)
 			}
-			for _, record = range data {
-				for i, r = range record {
-					l = len(r)
-					if l > maxLens[i] {
-						maxLens[i] = l
-					}
-				}
-			}
-			if maxWidth > 0 {
-				for i = range headerRow {
-					if maxLens[i] > maxWidth {
-						maxLens[i] = maxWidth
-					}
-				}
-			}
-			if minWidth > 0 {
-				for i = range headerRow {
-					if maxLens[i] < minWidth {
-						maxLens[i] = minWidth
-					}
-				}
-			}
-			for i, l = range maxLens {
-				record2[i] = strings.Repeat("-", l)
-			}
-			tbl.AddRow(record2...)
 		}
-
-		for _, record = range data {
-			// have to do this stupid conversion
-			for i, r = range record {
-				record2[i] = r
-			}
-			tbl.AddRow(record2...)
-		}
-
-		if config.NoHeaderRow {
-			output := tbl.Bytes()
-			outfh.Write(output[bytes.IndexByte(output, '\n')+1:])
-		} else {
-			outfh.Write(tbl.Bytes())
-		}
+		tbl.Flush()
 
 		readerReport(&config, csvReader, file)
 	},
@@ -163,6 +230,13 @@ func init() {
 	RootCmd.AddCommand(prettyCmd)
 	prettyCmd.Flags().StringP("separator", "s", "   ", "fields/columns separator")
 	prettyCmd.Flags().BoolP("align-right", "r", false, "align right")
+	prettyCmd.Flags().BoolP("align-center", "m", false, "align center/middle")
 	prettyCmd.Flags().IntP("min-width", "w", 0, "min width")
 	prettyCmd.Flags().IntP("max-width", "W", 0, "max width")
+
+	prettyCmd.Flags().StringP("wrap-delimiter", "x", " ", "delimiter for wrapping cells")
+	prettyCmd.Flags().IntP("buf-rows", "n", 128, "the number of rows to determine the min and max widths")
+	prettyCmd.Flags().StringP("style", "S", "", "output syle. available vaules: default, plain, simple, grid, light, bold, double. check https://github.com/shenwei356/stable")
+	prettyCmd.Flags().BoolP("clip", "", false, "clip longer cell instead of wrapping")
+	prettyCmd.Flags().StringP("clip-mark", "", "...", "clip mark")
 }

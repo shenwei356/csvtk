@@ -103,7 +103,7 @@ And then:
     mkdir -p $HOME/bin
     cp ~/go/bin/csvtk $HOME/bin/
 
-    # --------------- the devlopment version --------------
+    # --------------- the development version --------------
 
     git clone https://github.com/shenwei356/csvtk
     cd csvtk/csvtk/
