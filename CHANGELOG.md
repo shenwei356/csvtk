@@ -3,12 +3,12 @@
   - `csvtk`: 
       - **near all commands skip empty files now**. [#204](https://github.com/shenwei356/csvtk/issues/204)
       - the global flag `--infile-list` accepts stdin "-". [#210](https://github.com/shenwei356/csvtk/issues/210)
-  - new command `csvtk fix`: fix CSV/TSV with different numbers of columns in rows. [#226](https://github.com/shenwei356/csvtk/issues/226)
+  - new command `csvtk fix`: **fix CSV/TSV with different numbers of columns in rows**. [#226](https://github.com/shenwei356/csvtk/issues/226)
   - `csvtk pretty`: **rewrite to support wrapping cells**. [#206](https://github.com/shenwei356/csvtk/issues/206) [#209](https://github.com/shenwei356/csvtk/issues/209)  [#228](https://github.com/shenwei356/csvtk/issues/228)
   - `csvtk cut/fmtdate/freq/grep/rename/rename2/replace/round`: allow duplicated column names.
   - `csvtk csv2xlsx`: optionally stores numbers as float. [#217](https://github.com/shenwei356/csvtk/issues/217)
-  - `csvtk xlsx2csv`: fix bug wheree `xlsx2csv` treats small number (padj < 1e-25) as 0. It's solved by updating the excelize package. [#261](https://github.com/shenwei356/csvtk/issues/201)
-  - `csvtk join`: new flag for adding filename as column name prefix. by @tetedange13 [#202](https://github.com/shenwei356/csvtk/issues/202)
+  - `csvtk xlsx2csv`: fix bug where `xlsx2csv` treats small number (padj < 1e-25) as 0. It's solved by updating the excelize package. [#261](https://github.com/shenwei356/csvtk/issues/201)
+  - `csvtk join`: a new flag for adding filename as column name prefix. by @tetedange13 [#202](https://github.com/shenwei356/csvtk/issues/202)
   - `csvtk mutate2`: fix wrongly treating strings like `E10` as numbers in scientific notation. [#219](https://github.com/shenwei356/csvtk/issues/219)
   - `csvtk sep`: fix the logic. [#218](https://github.com/shenwei356/csvtk/issues/218)
   - `csvtk space2tab`: fix "bufio.Scanner: token too long". [#231](https://github.com/shenwei356/csvtk/issues/231)

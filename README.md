@@ -262,11 +262,38 @@ Examples
 
         $ csvtk pretty names.csv
         id   first_name   last_name   username
+        --   ----------   ---------   --------
         11   Rob          Pike        rob
         2    Ken          Thompson    ken
         4    Robert       Griesemer   gri
         1    Robert       Thompson    abc
         NA   Robert       Abel        123
+
+        $ csvtk pretty names.csv -S simple
+        ----------------------------------------
+        id   first_name   last_name   username
+        ----------------------------------------
+        11   Rob          Pike        rob
+        2    Ken          Thompson    ken
+        4    Robert       Griesemer   gri
+        1    Robert       Thompson    abc
+        NA   Robert       Abel        123
+        ----------------------------------------
+
+        $ csvtk pretty names.csv -S bold
+        ┏━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┓
+        ┃ id ┃ first_name ┃ last_name ┃ username ┃
+        ┣━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
+        ┃ 11 ┃ Rob        ┃ Pike      ┃ rob      ┃
+        ┣━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
+        ┃ 2  ┃ Ken        ┃ Thompson  ┃ ken      ┃
+        ┣━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
+        ┃ 4  ┃ Robert     ┃ Griesemer ┃ gri      ┃
+        ┣━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
+        ┃ 1  ┃ Robert     ┃ Thompson  ┃ abc      ┃
+        ┣━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
+        ┃ NA ┃ Robert     ┃ Abel      ┃ 123      ┃
+        ┗━━━━┻━━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━┛
 
 1. Summary of selected numeric fields, supporting "group-by"
 
