@@ -33,6 +33,7 @@
 
 - [pretty](#pretty)
 - [transpose](#transpose)
+- [space2tab](#space2tab)
 - [csv2md](#csv2md)
 - [csv2json](#csv2json)
 - [csv2xlsx](#csv2xlsx)
@@ -938,6 +939,27 @@ Examples
             "status": ""
           }
         ]
+
+## space2tab
+
+Usage
+
+```text
+convert space delimited format to TSV
+
+Usage:
+  csvtk space2tab [flags]
+
+Flags:
+  -b, --buffer-size string   size of buffer, supported unit: K, M, G. You need increase the value when "bufio.Scanner: token too long" error reported (default "1G")
+  -h, --help                 help for space2tab
+
+```
+
+Exapmles
+
+    $ echo a b | csvtk space2tab
+    a       b
 
 ## csv2md
 

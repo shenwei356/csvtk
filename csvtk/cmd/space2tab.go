@@ -34,8 +34,8 @@ import (
 // space2tabCmd represents the space2tab command
 var space2tabCmd = &cobra.Command{
 	Use:   "space2tab",
-	Short: "convert space delimited format to CSV",
-	Long: `convert space delimited format to CSV
+	Short: "convert space delimited format to TSV",
+	Long: `convert space delimited format to TSV
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {

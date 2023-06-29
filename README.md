@@ -81,7 +81,7 @@ It could save you lots of time in (not) writing Python/R scripts.
 - [`pretty`](https://bioinf.shenwei.me/csvtk/usage/#pretty): converts CSV to a readable aligned table
 - [`csv2tab`](https://bioinf.shenwei.me/csvtk/usage/#csv2tab): converts CSV to tabular format
 - [`tab2csv`](https://bioinf.shenwei.me/csvtk/usage/#tab2csv): converts tabular format to CSV
-- [`space2tab`](https://bioinf.shenwei.me/csvtk/usage/#space2tab): converts space delimited format to CSV
+- [`space2tab`](https://bioinf.shenwei.me/csvtk/usage/#space2tab): converts space delimited format to TSVW
 - [`transpose`](https://bioinf.shenwei.me/csvtk/usage/#transpose): transposes CSV data
 - [`csv2md`](https://bioinf.shenwei.me/csvtk/usage/#csv2md): converts CSV to markdown format
 - [`csv2rst`](https://bioinf.shenwei.me/csvtk/usage/#csv2rst): convert CSV to reStructuredText format
