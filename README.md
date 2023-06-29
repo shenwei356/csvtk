@@ -64,7 +64,7 @@ It could save you lots of time in (not) writing Python/R scripts.
 
 ## Subcommands
 
-49 subcommands in total.
+50 subcommands in total.
 
 **Information**
 
@@ -84,9 +84,9 @@ It could save you lots of time in (not) writing Python/R scripts.
 - [`space2tab`](https://bioinf.shenwei.me/csvtk/usage/#space2tab): converts space delimited format to TSVW
 - [`transpose`](https://bioinf.shenwei.me/csvtk/usage/#transpose): transposes CSV data
 - [`csv2md`](https://bioinf.shenwei.me/csvtk/usage/#csv2md): converts CSV to markdown format
-- [`csv2rst`](https://bioinf.shenwei.me/csvtk/usage/#csv2rst): convert CSV to reStructuredText format
+- [`csv2rst`](https://bioinf.shenwei.me/csvtk/usage/#csv2rst): converts CSV to reStructuredText format
 - [`csv2json`](https://bioinf.shenwei.me/csvtk/usage/#csv2json): converts CSV to JSON format
-- [`csv2xlsx`](https://bioinf.shenwei.me/csvtk/usage/#csv2xlsx): convert CSV/TSV files to XLSX file
+- [`csv2xlsx`](https://bioinf.shenwei.me/csvtk/usage/#csv2xlsx): converts CSV/TSV files to XLSX file
 - [`xlsx2csv`](https://bioinf.shenwei.me/csvtk/usage/#xlsx2csv): converts XLSX to CSV format
 
 **Set operations**
@@ -108,6 +108,7 @@ It could save you lots of time in (not) writing Python/R scripts.
 
 **Edit**
 
+- [`fix`](https://bioinf.shenwei.me/csvtk/usage/#fix): fix CSV/TSV with different numbers of columns in rows
 - [`add-header`](https://bioinf.shenwei.me/csvtk/usage/#add-header): add column names
 - [`del-header`](https://bioinf.shenwei.me/csvtk/usage/#del-header): delete column names
 - [`rename`](https://bioinf.shenwei.me/csvtk/usage/#rename): renames column names with new names

@@ -59,6 +59,7 @@
 
 **Edit**
 
+- [fix](#fix)
 - [add-header](#add-header)
 - [del-header](#del-header)
 - [rename](#rename)
@@ -2494,7 +2495,67 @@ b,c,d
 a,b,c,d
 
 ```
-        
+
+## fix
+
+Usage
+
+```text
+fix CSV/TSV with different numbers of columns in rows
+
+How to:
+  1. First -n/--buf-rows rows are read to check the maximum number of columns.
+     The default value 0 means all rows will be read.
+  2. Buffered and remaining rows with fewer columns are appended with empty
+     cells before output.
+  3. An error will be reported if the number of columns of any remaining row
+     is larger than the maximum number of columns.
+
+Usage:
+  csvtk fix [flags]
+
+Flags:
+  -n, --buf-rows int   the number of rows to determine the maximum number of columns. 0 for all rows.
+  -h, --help           help for fix
+
+
+```
+
+Examples
+
+```
+$ cat testdata/unequal_ncols.csv
+id,first_name,last_name
+11,"Rob","Pike"
+2,Ken,Thompson
+4,"Robert","Griesemer","gri"
+1,"Robert","Thompson","abc"
+NA,"Robert"
+
+
+$ cat testdata/unequal_ncols.csv | csvtk pretty
+[ERRO] record on line 4: wrong number of fields
+
+
+
+$ cat testdata/unequal_ncols.csv | csvtk fix | csvtk pretty -S grid
+[INFO] the maximum number of columns in all 6 rows: 4
++----+------------+-----------+-----+
+| id | first_name | last_name |     |
++====+============+===========+=====+
+| 11 | Rob        | Pike      |     |
++----+------------+-----------+-----+
+| 2  | Ken        | Thompson  |     |
++----+------------+-----------+-----+
+| 4  | Robert     | Griesemer | gri |
++----+------------+-----------+-----+
+| 1  | Robert     | Thompson  | abc |
++----+------------+-----------+-----+
+| NA | Robert     |           |     |
++----+------------+-----------+-----+
+
+```
+
 ## add-header
 
 Usage
