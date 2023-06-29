@@ -913,3 +913,53 @@ func filepathTrimExtension2(file string, suffixes []string) (string, string, str
 
 	return name, e1, e2
 }
+
+// ParseByteSize parses byte size from string
+func ParseByteSize(val string) (int64, error) {
+	val = strings.Trim(val, " \t\r\n")
+	if val == "" {
+		return 0, nil
+	}
+	var u int64
+	var noUnit bool
+	switch val[len(val)-1] {
+	case 'B', 'b':
+		u = 1
+	case 'K', 'k':
+		u = 1 << 10
+	case 'M', 'm':
+		u = 1 << 20
+	case 'G', 'g':
+		u = 1 << 30
+	case 'T', 't':
+		u = 1 << 40
+	default:
+		noUnit = true
+		u = 1
+	}
+	var size float64
+	var err error
+	if noUnit {
+		size, err = strconv.ParseFloat(val, 10)
+		if err != nil {
+			return 0, fmt.Errorf("invalid byte size: %s", val)
+		}
+		if size < 0 {
+			size = 0
+		}
+		return int64(size), nil
+	}
+
+	if len(val) == 1 { // no value
+		return 0, nil
+	}
+
+	size, err = strconv.ParseFloat(strings.Trim(val[0:len(val)-1], " \t\r\n"), 10)
+	if err != nil {
+		return 0, fmt.Errorf("invalid byte size: %s", val)
+	}
+	if size < 0 {
+		size = 0
+	}
+	return int64(size * float64(u)), nil
+}

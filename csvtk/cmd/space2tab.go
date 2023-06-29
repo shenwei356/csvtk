@@ -22,6 +22,7 @@ package cmd
 
 import (
 	"bufio"
+	"fmt"
 	"runtime"
 	"strings"
 
@@ -42,16 +43,29 @@ var space2tabCmd = &cobra.Command{
 		files := getFileListFromArgsAndFile(cmd, args, true, "infile-list", true)
 		runtime.GOMAXPROCS(config.NumCPUs)
 
+		bufferSizeS := getFlagString(cmd, "buffer-size")
+		if bufferSizeS == "" {
+			checkError(fmt.Errorf("value of buffer size. supported unit: K, M, G"))
+		}
+		bufferSize, err := ParseByteSize(bufferSizeS)
+		if err != nil {
+			checkError(fmt.Errorf("invalid value of buffer size. supported unit: K, M, G"))
+		}
+
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
 		defer outfh.Close()
 
+		buf := make([]byte, bufferSize)
+
+		var scanner *bufio.Scanner
 		var line string
 		for _, file := range files {
 			fh, err := xopen.Ropen(file)
 			checkError(err)
 
-			scanner := bufio.NewScanner(fh)
+			scanner = bufio.NewScanner(fh)
+			scanner.Buffer(buf, int(bufferSize))
 			for scanner.Scan() {
 				line = strings.TrimRight(scanner.Text(), "\r\n")
 				if len(strings.TrimSpace(line)) == 0 || rune(line[0]) == config.CommentChar {
@@ -66,4 +80,6 @@ var space2tabCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(space2tabCmd)
+
+	space2tabCmd.Flags().StringP("buffer-size", "b", "1G", `size of buffer, supported unit: K, M, G. You need increase the value when "bufio.Scanner: token too long" error reported`)
 }

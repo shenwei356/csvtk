@@ -10,6 +10,7 @@
   - `csvtk join`: new flag for adding filename as column name prefix. by @tetedange13 [#202](https://github.com/shenwei356/csvtk/issues/202)
   - `csvtk mutate2`: fix wrongly treating strings like `E10` as numbers in scientific notation. [#219](https://github.com/shenwei356/csvtk/issues/219)
   - `csvtk sep`: fix the logic. [#218](https://github.com/shenwei356/csvtk/issues/218)
+  - `csvtk space2tab`: fix "bufio.Scanner: token too long". [#231](https://github.com/shenwei356/csvtk/issues/231)
 - [csvtk v0.25.0](https://github.com/shenwei356/csvtk/releases/tag/v0.25.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.25.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.25.0)
     - `csvtk`: report empty files.
