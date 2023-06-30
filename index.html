@@ -675,7 +675,7 @@ It could save you lots of time in (not) writing Python/R scripts.</p>
 <li><del>Seamlessly support for data with meta line (e.g., <code>sep=,</code>) of separator declaration used by MS Excel</del></li>
 </ul>
 <h2 id="subcommands">Subcommands</h2>
-<p>49 subcommands in total.</p>
+<p>50 subcommands in total.</p>
 <p><strong>Information</strong></p>
 <ul>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#headers"><code>headers</code></a>: prints headers</li>
@@ -688,15 +688,15 @@ It could save you lots of time in (not) writing Python/R scripts.</p>
 </ul>
 <p><strong>Format conversion</strong></p>
 <ul>
-<li><a href="https://bioinf.shenwei.me/csvtk/usage/#pretty"><code>pretty</code></a>: converts CSV to readable aligned table</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#pretty"><code>pretty</code></a>: converts CSV to a readable aligned table</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#csv2tab"><code>csv2tab</code></a>: converts CSV to tabular format</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#tab2csv"><code>tab2csv</code></a>: converts tabular format to CSV</li>
-<li><a href="https://bioinf.shenwei.me/csvtk/usage/#space2tab"><code>space2tab</code></a>: converts space delimited format to CSV</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#space2tab"><code>space2tab</code></a>: converts space delimited format to TSVW</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#transpose"><code>transpose</code></a>: transposes CSV data</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#csv2md"><code>csv2md</code></a>: converts CSV to markdown format</li>
-<li><a href="https://bioinf.shenwei.me/csvtk/usage/#csv2rst"><code>csv2rst</code></a>: convert CSV to reStructuredText format</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#csv2rst"><code>csv2rst</code></a>: converts CSV to reStructuredText format</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#csv2json"><code>csv2json</code></a>: converts CSV to JSON format</li>
-<li><a href="https://bioinf.shenwei.me/csvtk/usage/#csv2xlsx"><code>csv2xlsx</code></a>: convert CSV/TSV files to XLSX file</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#csv2xlsx"><code>csv2xlsx</code></a>: converts CSV/TSV files to XLSX file</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#xlsx2csv"><code>xlsx2csv</code></a>: converts XLSX to CSV format</li>
 </ul>
 <p><strong>Set operations</strong></p>
@@ -718,6 +718,7 @@ It could save you lots of time in (not) writing Python/R scripts.</p>
 </ul>
 <p><strong>Edit</strong></p>
 <ul>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#fix"><code>fix</code></a>: fix CSV/TSV with different numbers of columns in rows</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#add-header"><code>add-header</code></a>: add column names</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#del-header"><code>del-header</code></a>: delete column names</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#rename"><code>rename</code></a>: renames column names with new names</li>
@@ -947,11 +948,38 @@ name-indexed data such as CSV and tabular JSON http://johnkerl.org/miller</li>
 <p>Pretty result</p>
 <pre><code>$ csvtk pretty names.csv
 id   first_name   last_name   username
+--   ----------   ---------   --------
 11   Rob          Pike        rob
 2    Ken          Thompson    ken
 4    Robert       Griesemer   gri
 1    Robert       Thompson    abc
 NA   Robert       Abel        123
+
+$ csvtk pretty names.csv -S simple
+----------------------------------------
+id   first_name   last_name   username
+----------------------------------------
+11   Rob          Pike        rob
+2    Ken          Thompson    ken
+4    Robert       Griesemer   gri
+1    Robert       Thompson    abc
+NA   Robert       Abel        123
+----------------------------------------
+
+$ csvtk pretty names.csv -S bold
+┏━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┓
+┃ id ┃ first_name ┃ last_name ┃ username ┃
+┣━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
+┃ 11 ┃ Rob        ┃ Pike      ┃ rob      ┃
+┣━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
+┃ 2  ┃ Ken        ┃ Thompson  ┃ ken      ┃
+┣━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
+┃ 4  ┃ Robert     ┃ Griesemer ┃ gri      ┃
+┣━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
+┃ 1  ┃ Robert     ┃ Thompson  ┃ abc      ┃
+┣━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
+┃ NA ┃ Robert     ┃ Abel      ┃ 123      ┃
+┗━━━━┻━━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━┛
 </code></pre>
 </li>
 <li>
