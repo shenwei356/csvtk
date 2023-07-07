@@ -7,6 +7,7 @@
 1. The CSV parser requires all the lines have same number of fields/columns.
     Even lines with spaces will cause error. 
     Use '-I/--ignore-illegal-row' to skip these lines if neccessary.
+    You can also use 'csvtk fix' to fix files with different numbers of columns in rows.
 2. By default, csvtk thinks your files have header row, if not, switch flag "-H" on.
 3. Column names better be unique.
 4. By default, lines starting with "#" will be ignored, if the header row
@@ -98,7 +99,7 @@ Usage
 ```text
 csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.25.0
+Version: 0.26.0
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -108,8 +109,9 @@ Source code: https://github.com/shenwei356/csvtk
 Attention:
 
   1. The CSV parser requires all the lines have same number of fields/columns.
-     Even lines with spaces will cause error. 
+     Even lines with spaces will cause error.
      Use '-I/--ignore-illegal-row' to skip these lines if neccessary.
+     You can also use 'csvtk fix' to fix files with different numbers of columns in rows.
   2. By default, csvtk thinks your files have header row, if not, switch flag "-H" on.
   3. Column names better be unique.
   4. By default, lines starting with "#" will be ignored, if the header row
@@ -123,7 +125,7 @@ Environment variables for frequently used global flags:
   - "CSVTK_T" for flag "-t/--tabs"
   - "CSVTK_H" for flag "-H/--no-header-row"
 
-You can also create a soft link named "tsvtk" for "csvtk", 
+You can also create a soft link named "tsvtk" for "csvtk",
 which sets "-t/--tabs" by default.
 
 Usage:
@@ -145,6 +147,7 @@ Available Commands:
   dim             dimensions of CSV file
   filter          filter rows by values of selected fields with arithmetic expression
   filter2         filter rows by awk-like arithmetic/string expressions
+  fix             fix CSV/TSV with different numbers of columns in rows
   fmtdate         format date of selected fields
   fold            fold multiple values of a field into cells of groups
   freq            frequencies of selected fields
@@ -153,7 +156,6 @@ Available Commands:
   grep            grep data by selected fields with patterns/regular expressions
   head            print first N records
   headers         print headers
-  help            Help about any command
   inter           intersection of multiple files
   join            join files by selected fields (inner, left and outer join)
   mutate          create new column from selected fields by regular expression
@@ -161,7 +163,7 @@ Available Commands:
   ncol            print number of columns
   nrow            print number of records
   plot            plot common figures
-  pretty          convert CSV to readable aligned table
+  pretty          convert CSV to a readable aligned table
   rename          rename column names with new names
   rename2         rename column names by regular expression
   replace         replace data of selected fields by regular expression
@@ -169,7 +171,7 @@ Available Commands:
   sample          sampling by proportion
   sep             separate column into multiple columns
   sort            sort by selected fields
-  space2tab       convert space delimited format to CSV
+  space2tab       convert space delimited format to TSV
   split           split CSV/TSV into multiple files according to column values
   splitxlsx       split XLSX sheet into multiple sheets according to column values
   summary         summary statistics of selected numeric or text fields (groupby group fields)
@@ -183,16 +185,22 @@ Available Commands:
 
 Flags:
   -c, --chunk-size int         chunk size of CSV reader (default 50)
-  -C, --comment-char string    lines starting with commment-character will be ignored. if your header row starts with '#', please assign "-C" another rare symbol, e.g. '$' (default "#")
+  -C, --comment-char string    lines starting with commment-character will be ignored. if your header
+                               row starts with '#', please assign "-C" another rare symbol, e.g. '$'
+                               (default "#")
   -d, --delimiter string       delimiting character of the input CSV file (default ",")
   -h, --help                   help for csvtk
   -E, --ignore-empty-row       ignore empty rows
-  -I, --ignore-illegal-row     ignore illegal rows
-      --infile-list string     file of input files list (one file per line), if given, they are appended to files from cli arguments
-  -l, --lazy-quotes            if given, a quote may appear in an unquoted field and a non-doubled quote may appear in a quoted field
+  -I, --ignore-illegal-row     ignore illegal rows. You can also use 'csvtk fix' to fix files with
+                               different numbers of columns in rows
+      --infile-list string     file of input files list (one file per line), if given, they are appended
+                               to files from cli arguments
+  -l, --lazy-quotes            if given, a quote may appear in an unquoted field and a non-doubled quote
+                               may appear in a quoted field
   -H, --no-header-row          specifies that the input CSV file does not have header row
   -j, --num-cpus int           number of CPUs to use (default value depends on your computer) (default 16)
-  -D, --out-delimiter string   delimiting character of the output CSV file, e.g., -D $'\t' for tab (default ",")
+  -D, --out-delimiter string   delimiting character of the output CSV file, e.g., -D $'\t' for tab
+                               (default ",")
   -o, --out-file string        out file ("-" for stdout, suffix .gz for gzipped out) (default "-")
   -T, --out-tabs               specifies that the output is delimited with tabs. Overrides "-D"
   -t, --tabs                   specifies that the input CSV file is delimited with tabs. Overrides "-d"
@@ -349,12 +357,12 @@ Attention:
   1. Do not mix use field (column) numbers and names.
 
 Available operations:
- 
+
   # numeric/statistical operations
   # provided by github.com/gonum/stat and github.com/gonum/floats
   countn (count numeric values), min, max, sum, argmin, argmax,
   mean, stdev, variance, median, q1, q2, q3,
-  entropy (Shannon entropy), 
+  entropy (Shannon entropy),
   prod (product of the elements)
 
   # textual/numeric operations
@@ -365,7 +373,10 @@ Usage:
 
 Flags:
   -w, --decimal-width int    limit floats to N decimal points (default 2)
-  -f, --fields strings       operations on these fields. e.g -f 1:count,1:sum or -f colA:mean. available operations: argmax, argmin, collapse, count, countn, countuniq, countunique, entropy, first, last, max, mean, median, min, prod, q1, q2, q3, rand, stdev, sum, uniq, unique, variance
+  -f, --fields strings       operations on these fields. e.g -f 1:count,1:sum or -f colA:mean. available
+                             operations: argmax, argmin, collapse, count, countn, countuniq,
+                             countunique, entropy, first, last, max, mean, median, min, prod, q1, q2,
+                             q3, rand, stdev, sum, uniq, unique, variance
   -g, --groups string        group via fields. e.g -f 1,2 or -f columnA,columnB
   -h, --help                 help for summary
   -i, --ignore-non-numbers   ignore non-numeric values like "NA" or "N/A"
@@ -565,7 +576,7 @@ convert CSV to a readable aligned table
 
 How to:
   1. First -n/--buf-rows rows are read to check the minimum and maximum widths
-     of each column. You can also set the global thresholds -w/--min-width and
+     of each columns. You can also set the global thresholds -w/--min-width and
      -W/--max-width.
      1a. Cells longer than the maximum width will be wrapped (default) or
          clipped (--clip).
@@ -573,7 +584,7 @@ How to:
          word is longer than the -W/--max-width, it will be force split.
      1b. Texts are aligned left (default), center (-m/--align-center)
          or right (-r/--align-right).
-  2. Remaining rows are read and immediately outputted, one by one till the end.
+  2. Remaining rows are read and immediately outputted, one by one, till the end.
 
 Styles:
 
@@ -655,7 +666,8 @@ Flags:
   -W, --max-width int           max width
   -w, --min-width int           min width
   -s, --separator string        fields/columns separator (default "   ")
-  -S, --style string            output syle. available vaules: default, plain, simple, grid, light, bold, double. check https://github.com/shenwei356/stable
+  -S, --style string            output syle. available vaules: default, plain, simple, grid, light,
+                                bold, double. check https://github.com/shenwei356/stable
   -x, --wrap-delimiter string   delimiter for wrapping cells (default " ")
 
 ```
@@ -793,8 +805,10 @@ Flags:
   -b, --blanks              do not convert "", "na", "n/a", "none", "null", "." to null
   -h, --help                help for csv2json
   -i, --indent string       indent. if given blank, output json in one line. (default "  ")
-  -k, --key string          output json as an array of objects keyed by a given filed rather than as a list. e.g -k 1 or -k columnA
-  -n, --parse-num strings   parse numeric values for nth column(s), multiple values are supported and "a"/"all" for all columns
+  -k, --key string          output json as an array of objects keyed by a given filed rather than as a
+                            list. e.g -k 1 or -k columnA
+  -n, --parse-num strings   parse numeric values for nth column, multiple values are supported and
+                            "a"/"all" for all columns
 
 ```
 
@@ -952,7 +966,8 @@ Usage:
   csvtk space2tab [flags]
 
 Flags:
-  -b, --buffer-size string   size of buffer, supported unit: K, M, G. You need increase the value when "bufio.Scanner: token too long" error reported (default "1G")
+  -b, --buffer-size string   size of buffer, supported unit: K, M, G. You need increase the value when
+                             "bufio.Scanner: token too long" error reported (default "1G")
   -h, --help                 help for space2tab
 
 ```
@@ -1775,7 +1790,7 @@ Attentions:
   1. By default, we directly compare the column value with patterns,
      use "-r/--use-regexp" for partly matching.
   2. Multiple patterns can be given by setting '-p/--pattern' more than once,
-     or giving comma separated values (CSV formats). 
+     or giving comma separated values (CSV formats).
      Therefore, please use double quotation marks for patterns containing
      comma, e.g., -p '"A{2,}"'
 
@@ -1783,8 +1798,10 @@ Usage:
   csvtk grep [flags]
 
 Flags:
-      --delete-matched        delete a pattern right after being matched, this keeps the firstly matched data and speedups when using regular expressions
-  -f, --fields string         comma separated key fields, column name or index. e.g. -f 1-3 or -f id,id2 or -F -f "group*" (default "1")
+      --delete-matched        delete a pattern right after being matched, this keeps the firstly matched
+                              data and speedups when using regular expressions
+  -f, --fields string         comma separated key fields, column name or index. e.g. -f 1-3 or -f id,id2
+                              or -F -f "group*" (default "1")
   -F, --fuzzy-fields          using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
   -h, --help                  help for grep
   -i, --ignore-case           ignore case
@@ -1792,7 +1809,8 @@ Flags:
   -v, --invert                invert match
   -n, --line-number           print line number as the first column ("n")
   -N, --no-highlight          no highlight
-  -p, --pattern strings       query pattern (multiple values supported). Attention: use double quotation marks for patterns containing comma, e.g., -p '"A{2,}"'
+  -p, --pattern strings       query pattern (multiple values supported). Attention: use double quotation
+                              marks for patterns containing comma, e.g., -p '"A{2,}"'
   -P, --pattern-file string   pattern files (one pattern per line)
   -r, --use-regexp            patterns are regular expression
       --verbose               verbose output
@@ -1941,7 +1959,7 @@ The arithmetic/string expression is supported by:
 Variables formats:
   $1 or ${1}                        The first field/column
   $a or ${a}                        Column "a"
-  ${a,b} or ${a b} or ${a (b)}      Column name with special charactors, 
+  ${a,b} or ${a b} or ${a (b)}      Column name with special charactors,
                                     e.g., commas, spaces, and parentheses
 
 Supported operators and types:
@@ -1968,10 +1986,12 @@ Usage:
   csvtk filter2 [flags]
 
 Flags:
-  -f, --filter string       awk-like filter condition. e.g. '$age>12' or '$1 > $3' or '$name=="abc"' or '$1 % 2 == 0'
+  -f, --filter string       awk-like filter condition. e.g. '$age>12' or '$1 > $3' or '$name=="abc"' or
+                            '$1 % 2 == 0'
   -h, --help                help for filter2
   -n, --line-number         print line number as the first column ("n")
-  -s, --numeric-as-string   treat even numeric fields as strings to avoid converting big numbers into scientific notation
+  -s, --numeric-as-string   treat even numeric fields as strings to avoid converting big numbers into
+                            scientific notation
   
 ```
 
@@ -2034,7 +2054,7 @@ join files by selected fields (inner, left and outer join).
 Attention:
 
   1. Multiple keys supported
-  2. Default operation is inner join, use --left-join for left join 
+  2. Default operation is inner join, use --left-join for left join
      and --outer-join for outer join.
 
 Usage:
@@ -2044,16 +2064,19 @@ Aliases:
   join, merge
 
 Flags:
-  -f, --fields string    Semicolon separated key fields of all files, if given one, we think all the files have the same key columns. Fields of different files should be separated by ";", e.g -f "1;2" or -f "A,B;C,D" or -f id (default "1")
-  -F, --fuzzy-fields     using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
-  -h, --help             help for join
-  -i, --ignore-case      ignore case
-  -n, --ignore-null      do not match NULL values
-  -k, --keep-unmatched   keep unmatched data of the first file (left join)
-  -L, --left-join        left join, equals to -k/--keep-unmatched, exclusive with --outer-join
-      --na string        content for filling NA data
-  -O, --outer-join       outer join, exclusive with --left-join
-  -p, --prefix-filename   add each filename as a prefix to each colname. if there's no header row, we'll add one
+  -f, --fields string     Semicolon separated key fields of all files, if given one, we think all the
+                          files have the same key columns. Fields of different files should be separated
+                          by ";", e.g -f "1;2" or -f "A,B;C,D" or -f id (default "1")
+  -F, --fuzzy-fields      using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
+  -h, --help              help for join
+  -i, --ignore-case       ignore case
+  -n, --ignore-null       do not match NULL values
+  -k, --keep-unmatched    keep unmatched data of the first file (left join)
+  -L, --left-join         left join, equals to -k/--keep-unmatched, exclusive with --outer-join
+      --na string         content for filling NA data
+  -O, --outer-join        outer join, exclusive with --left-join
+  -p, --prefix-filename   add each filename as a prefix to each colname. if there's no header row, we'll
+                          add one
   -e, --prefix-trim-ext   trim extension when adding filename as colname prefix
 
 ```
@@ -2238,7 +2261,8 @@ Usage:
 Flags:
   -g, --buf-groups int   buffering N groups before writing to file (default 100)
   -b, --buf-rows int     buffering N rows for every group before writing to file (default 100000)
-  -f, --fields string    comma separated key fields, column name or index. e.g. -f 1-3 or -f id,id2 or -F -f "group*" (default "1")
+  -f, --fields string    comma separated key fields, column name or index. e.g. -f 1-3 or -f id,id2 or
+                         -F -f "group*" (default "1")
   -F, --fuzzy-fields     using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
   -h, --help             help for split
   -i, --ignore-case      ignore case
@@ -2339,13 +2363,15 @@ Usage:
   csvtk splitxlsx [flags]
 
 Flags:
-  -f, --fields string       comma separated key fields, column name or index. e.g. -f 1-3 or -f id,id2 or -F -f "group*" (default "1")
+  -f, --fields string       comma separated key fields, column name or index. e.g. -f 1-3 or -f id,id2
+                            or -F -f "group*" (default "1")
   -F, --fuzzy-fields        using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
   -h, --help                help for splitxlsx
   -i, --ignore-case         ignore case (cell value)
   -a, --list-sheets         list all sheets
   -N, --sheet-index int     Nth sheet to retrieve (default 1)
   -n, --sheet-name string   sheet to retrieve
+
 ```
 
 Examples
@@ -2415,8 +2441,10 @@ Flags:
   -h, --help          help for comb
   -i, --ignore-case   ignore-case
   -S, --nat-sort      sort items in natural order
-  -n, --number int    number of items in a combination, 0 for no limit, i.e., return all combinations (default 2)
+  -n, --number int    number of items in a combination, 0 for no limit, i.e., return all combinations
+                      (default 2)
   -s, --sort          sort items in a combination
+
 ```
 
 Examples:
@@ -2685,24 +2713,32 @@ rename column names by regular expression
 
 Special replacement symbols:
 
-    {nr}  ascending number, starting from 1
-    {kv}  Corresponding value of the key (captured variable $n) by key-value file,
-          n can be specified by flag --key-capt-idx (default: 1)
+  {nr}  ascending number, starting from --start-num
+  {kv}  Corresponding value of the key (captured variable $n) by key-value file,
+        n can be specified by flag --key-capt-idx (default: 1)
 
 Usage:
   csvtk rename2 [flags]
 
 Flags:
-  -f, --fields string          select only these fields. e.g -f 1,2 or -f columnA,columnB
-  -F, --fuzzy-fields           using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
-  -h, --help                   help for rename2
-  -i, --ignore-case            ignore case
-  -K, --keep-key               keep the key as value when no value found for the key
-      --key-capt-idx int       capture variable index of key (1-based) (default 1)
-      --key-miss-repl string   replacement for key with no corresponding value
-  -k, --kv-file string         tab-delimited key-value file for replacing key with value when using "{kv}" in -r (--replacement)
-  -p, --pattern string         search regular expression
-  -r, --replacement string     renamement. supporting capture variables.  e.g. $1 represents the text of the first submatch. ATTENTION: use SINGLE quote NOT double quotes in *nix OS or use the \ escape character. Ascending number is also supported by "{nr}".use ${1} instead of $1 when {kv} given!
+  -f, --fields string                       select only these fields. e.g -f 1,2 or -f columnA,columnB
+  -F, --fuzzy-fields                        using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
+  -h, --help                                help for rename2
+  -i, --ignore-case                         ignore case
+  -K, --keep-key                            keep the key as value when no value found for the key
+      --key-capt-idx int                    capture variable index of key (1-based) (default 1)
+      --key-miss-repl string                replacement for key with no corresponding value
+  -k, --kv-file string                      tab-delimited key-value file for replacing key with value
+                                            when using "{kv}" in -r (--replacement)
+  -A, --kv-file-all-left-columns-as-value   treat all columns except 1th one as value for kv-file with
+                                            more than 2 columns
+  -p, --pattern string                      search regular expression
+  -r, --replacement string                  renamement. supporting capture variables.  e.g. $1
+                                            represents the text of the first submatch. ATTENTION: use
+                                            SINGLE quote NOT double quotes in *nix OS or use the \
+                                            escape character. Ascending number is also supported by
+                                            "{nr}".use ${1} instead of $1 when {kv} given!
+  -n, --start-num int                       starting number when using {nr} in replacement (default 1)
 
 ```
 
@@ -2793,18 +2829,27 @@ Special replacement symbols:
 Usage:
   csvtk replace [flags]
 
-
 Flags:
-  -f, --fields string          select only these fields. e.g -f 1,2 or -f columnA,columnB (default "1")
-  -F, --fuzzy-fields           using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
-  -i, --ignore-case            ignore case
-  -K, --keep-key               keep the key as value when no value found for the key
-      --key-capt-idx int       capture variable index of key (1-based) (default 1)
-      --key-miss-repl string   replacement for key with no corresponding value
-  -k, --kv-file string         tab-delimited key-value file for replacing key with value when using "{kv}" in -r (--replacement)
-  -p, --pattern string         search regular expression
-  -r, --replacement string     replacement. supporting capture variables.  e.g. $1 represents the text of the first submatch. ATTENTION: for *nix OS, use SINGLE quote NOT double quotes or use the \ escape character. Record number is also supported by "{nr}".use ${1} instead of $1 when {kv} given!
-
+  -f, --fields string                       select only these fields. e.g -f 1,2 or -f columnA,columnB
+                                            (default "1")
+  -F, --fuzzy-fields                        using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
+  -h, --help                                help for replace
+  -i, --ignore-case                         ignore case
+  -K, --keep-key                            keep the key as value when no value found for the key
+      --key-capt-idx int                    capture variable index of key (1-based) (default 1)
+      --key-miss-repl string                replacement for key with no corresponding value
+  -k, --kv-file string                      tab-delimited key-value file for replacing key with value
+                                            when using "{kv}" in -r (--replacement)
+  -A, --kv-file-all-left-columns-as-value   treat all columns except 1th one as value for kv-file with
+                                            more than 2 columns
+      --nr-width int                        minimum width for {nr} in flag -r/--replacement. e.g.,
+                                            formating "1" to "001" by --nr-width 3 (default 1)
+  -p, --pattern string                      search regular expression
+  -r, --replacement string                  replacement. supporting capture variables.  e.g. $1
+                                            represents the text of the first submatch. ATTENTION: for
+                                            *nix OS, use SINGLE quote NOT double quotes or use the \
+                                            escape character. Record number is also supported by
+                                            "{nr}".use ${1} instead of $1 when {kv} given!
 ```
 
 Examples
@@ -2937,7 +2982,7 @@ The arithmetic/string expression is supported by:
 Variables formats:
   $1 or ${1}                        The first field/column
   $a or ${a}                        Column "a"
-  ${a,b} or ${a b} or ${a (b)}      Column name with special charactors, 
+  ${a,b} or ${a b} or ${a (b)}      Column name with special charactors,
                                     e.g., commas, spaces, and parentheses
 
 Supported operators and types:
@@ -2965,10 +3010,12 @@ Usage:
 
 Flags:
   -w, --decimal-width int   limit floats to N decimal points (default 2)
-  -e, --expression string   arithmetic/string expressions. e.g. "'string'", '"abc"', ' $a + "-" + $b ', '$1 + $2', '$a / $b', ' $1 > 100 ? "big" : "small" '
+  -e, --expression string   arithmetic/string expressions. e.g. "'string'", '"abc"', ' $a + "-" + $b ',
+                            '$1 + $2', '$a / $b', ' $1 > 100 ? "big" : "small" '
   -h, --help                help for mutate2
   -n, --name string         new column name
-  -s, --numeric-as-string   treat even numeric fields as strings to avoid converting big numbers into scientific notation
+  -s, --numeric-as-string   treat even numeric fields as strings to avoid converting big numbers into
+                            scientific notation
 
 ```
 
@@ -3310,7 +3357,7 @@ format date of selected fields
 Date parsing is supported by: https://github.com/araddon/dateparse
 Date formating is supported by: https://github.com/metakeule/fmtdate
 
-Time zones: 
+Time zones:
     format: Asia/Shanghai
     whole list: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 
@@ -3348,11 +3395,14 @@ Usage:
 
 Flags:
   -f, --fields string      select only these fields. e.g -f 1,2 or -f columnA,columnB (default "1")
-      --format string      output date format in MS Excel (TM) syntax, type "csvtk fmtdate -h" for details (default "YYYY-MM-DD hh:mm:ss")
+      --format string      output date format in MS Excel (TM) syntax, type "csvtk fmtdate -h" for
+                           details (default "YYYY-MM-DD hh:mm:ss")
   -F, --fuzzy-fields       using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
   -h, --help               help for fmtdate
   -k, --keep-unparsed      keep the key as value when no value found for the key
-  -z, --time-zone string   timezone aka "Asia/Shanghai" or "America/Los_Angeles" formatted time-zone, type "csvtk fmtdate -h" for details
+  -z, --time-zone string   timezone aka "Asia/Shanghai" or "America/Los_Angeles" formatted time-zone,
+                           type "csvtk fmtdate -h" for details
+
 ```
 
 Examples
@@ -3400,8 +3450,11 @@ Usage:
 Flags:
   -h, --help             help for sort
   -i, --ignore-case      ignore-case
-  -k, --keys strings     keys (multiple values supported). sort type supported, "N" for natural order, "n" for number, "u" for user-defined order and "r" for reverse. e.g., "-k 1" or "-k A:r" or ""-k 1:nr -k 2" (default [1])
-  -L, --levels strings   user-defined level file (one level per line, multiple values supported). format: <field>:<level-file>.  e.g., "-k name:u -L name:level.txt"
+  -k, --keys strings     keys (multiple values supported). sort type supported, "N" for natural order,
+                         "n" for number, "u" for user-defined order and "r" for reverse. e.g., "-k 1" or
+                         "-k A:r" or ""-k 1:nr -k 2" (default [1])
+  -L, --levels strings   user-defined level file (one level per line, multiple values supported).
+                         format: <field>:<level-file>.  e.g., "-k name:u -L name:level.txt
 ```
 
 Examples
@@ -3563,10 +3616,14 @@ Available Commands:
 Flags:
       --axis-width float     axis width (default 1.5)
   -f, --data-field string    column index or column name of data (default "1")
-      --format string        image format for stdout when flag -o/--out-file not given. available values: eps, jpg|jpeg, pdf, png, svg, and tif|tiff. (default "png")
+      --format string        image format for stdout when flag -o/--out-file not given. available
+                             values: eps, jpg|jpeg, pdf, png, svg, and tif|tiff. (default "png")
   -g, --group-field string   column index or column name of group
       --height float         Figure height (default 4.5)
+  -h, --help                 help for plot
       --label-size int       label font size (default 14)
+      --na-values strings    NA values, case ignored (default [,NA,N/A])
+      --skip-na              skip NA values in --na-values
       --tick-width float     axis tick width (default 1.5)
       --title string         Figure title
       --title-size int       title font size (default 16)

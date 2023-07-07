@@ -46,6 +46,7 @@ Attention:
   1. The CSV parser requires all the lines have same number of fields/columns.
      Even lines with spaces will cause error. 
      Use '-I/--ignore-illegal-row' to skip these lines if neccessary.
+     You can also use 'csvtk fix' to fix files with different numbers of columns in rows.
   2. By default, csvtk thinks your files have header row, if not, switch flag "-H" on.
   3. Column names better be unique.
   4. By default, lines starting with "#" will be ignored, if the header row
@@ -91,9 +92,37 @@ func init() {
 	RootCmd.PersistentFlags().StringP("out-file", "o", "-", `out file ("-" for stdout, suffix .gz for gzipped out)`)
 
 	RootCmd.PersistentFlags().BoolP("ignore-empty-row", "E", false, `ignore empty rows`)
-	RootCmd.PersistentFlags().BoolP("ignore-illegal-row", "I", false, `ignore illegal rows`)
+	RootCmd.PersistentFlags().BoolP("ignore-illegal-row", "I", false, `ignore illegal rows. You can also use 'csvtk fix' to fix files with different numbers of columns in rows`)
 	RootCmd.PersistentFlags().StringP("infile-list", "", "", "file of input files list (one file per line), if given, they are appended to files from cli arguments")
 
 	RootCmd.CompletionOptions.DisableDefaultCmd = true
 	RootCmd.SetHelpCommand(&cobra.Command{Hidden: true})
+	RootCmd.SetUsageTemplate(usageTemplate(""))
+}
+
+func usageTemplate(s string) string {
+	return fmt.Sprintf(`Usage:{{if .Runnable}}
+  {{.UseLine}}{{end}}{{if .HasAvailableSubCommands}}
+  {{.CommandPath}} [command]{{end}} %s{{if gt (len .Aliases) 0}}
+
+Aliases:
+  {{.NameAndAliases}}{{end}}{{if .HasExample}}
+
+Examples:
+{{.Example}}{{end}}{{if .HasAvailableSubCommands}}
+
+Available Commands:{{range .Commands}}{{if (or .IsAvailableCommand (eq .Name "help"))}}
+  {{rpad .Name .NamePadding }} {{.Short}}{{end}}{{end}}{{end}}{{if .HasAvailableLocalFlags}}
+
+Flags:
+{{.LocalFlags.FlagUsagesWrapped 110 | trimTrailingWhitespaces}}{{end}}{{if .HasAvailableInheritedFlags}}
+
+Global Flags:
+{{.InheritedFlags.FlagUsagesWrapped 110 | trimTrailingWhitespaces}}{{end}}{{if .HasHelpSubCommands}}
+
+Additional help topics:{{range .Commands}}{{if .IsAdditionalHelpTopicCommand}}
+  {{rpad .CommandPath .CommandPathPadding}} {{.Short}}{{end}}{{end}}{{end}}{{if .HasAvailableSubCommands}}
+
+Use "{{.CommandPath}} [command] --help" for more information about a command.{{end}}
+`, s)
 }
