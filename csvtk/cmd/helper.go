@@ -422,12 +422,29 @@ func parseFields(cmd *cobra.Command,
 				if start == 0 || end == 0 {
 					checkError(fmt.Errorf("no 0 allowed in field range: %s", s))
 				}
-				if start >= end {
-					checkError(fmt.Errorf("invalid field range: %s. start (%d) should be less than end (%d)", s, start, end))
-				}
-				for i := start; i <= end; i++ {
-					fields = append(fields, i)
-					j++
+
+				if start < 0 && end < 0 {
+					if start < end {
+						for i := start; i <= end; i++ {
+							fields = append(fields, i)
+							j++
+						}
+					} else {
+						for i := end; i <= start; i++ {
+							fields = append(fields, i)
+							j++
+						}
+					}
+				} else if start > 0 && end > 0 {
+					if start >= end {
+						checkError(fmt.Errorf("invalid field range: %s. start (%d) should be less than end (%d)", s, start, end))
+					}
+					for i := start; i <= end; i++ {
+						fields = append(fields, i)
+						j++
+					}
+				} else {
+					checkError(fmt.Errorf("invalid field range: %s. start (%d) and end (%d) should be both > 0 or < 0", s, start, end))
 				}
 			} else {
 				field, err := strconv.Atoi(s)

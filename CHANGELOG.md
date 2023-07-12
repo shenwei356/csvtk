@@ -1,3 +1,7 @@
+- [csvtk v0.26.1](https://github.com/shenwei356/csvtk/releases/tag/v0.26.1)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.26.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.26.1)
+  - `csvtk cut`:
+      - fix unselect range error. [#234](https://github.com/shenwei356/csvtk/issues/234)
 - [csvtk v0.26.0](https://github.com/shenwei356/csvtk/releases/tag/v0.26.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.26.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.26.0)
   - `csvtk`: 
