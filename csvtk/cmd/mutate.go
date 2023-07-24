@@ -150,7 +150,6 @@ var mutateCmd = &cobra.Command{
 							if _, ok := colnames2fileds[col]; !ok {
 								colnames2fileds[col] = []int{i + 1}
 							} else {
-								checkError(fmt.Errorf("duplicate colnames not allowed: %s", col))
 								colnames2fileds[col] = append(colnames2fileds[col], i+1)
 							}
 						}
@@ -160,10 +159,14 @@ var mutateCmd = &cobra.Command{
 								if negativeFields {
 									if _, ok := colnames2fileds[col[1:]]; !ok {
 										checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col[1:], file))
+									} else if len(colnames2fileds[col]) > 1 {
+										checkError(fmt.Errorf("the selected colname is duplicated in the input data: %s", col))
 									}
 								} else {
 									if _, ok := colnames2fileds[col]; !ok {
 										checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col, file))
+									} else if len(colnames2fileds[col]) > 1 {
+										checkError(fmt.Errorf("the selected colname is duplicated in the input data: %s", col))
 									}
 								}
 							}

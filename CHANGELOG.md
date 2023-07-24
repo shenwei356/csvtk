@@ -1,5 +1,7 @@
 - [csvtk v0.26.1](https://github.com/shenwei356/csvtk/releases/tag/v0.26.1)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.26.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.26.1)
+  - `csv2json/filter2/fold/freq/gater/grep/inter/join/mutate/mutate2/pretty/sep/sort/split/splitxlsx/summary/unfold/uniq`:
+      - only selected column names are not allowed to be duplicated in the input data. [#235](https://github.com/shenwei356/csvtk/issues/235)
   - `csvtk cut`:
       - fix unselect range error. [#234](https://github.com/shenwei356/csvtk/issues/234)
 - [csvtk v0.26.0](https://github.com/shenwei356/csvtk/releases/tag/v0.26.0)

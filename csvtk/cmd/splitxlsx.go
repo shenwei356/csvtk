@@ -145,7 +145,6 @@ Weakness : Complicated sheet structures are not well supported, e.g.,
 				for i, col := range record {
 					if _, ok := colnames2fileds[col]; !ok {
 						colnames2fileds[col] = []int{i + 1}
-						checkError(fmt.Errorf("duplicate colnames not allowed: %s", col))
 					} else {
 						colnames2fileds[col] = append(colnames2fileds[col], i+1)
 					}
@@ -156,10 +155,14 @@ Weakness : Complicated sheet structures are not well supported, e.g.,
 						if negativeFields {
 							if _, ok = colnames2fileds[col[1:]]; !ok {
 								checkError(fmt.Errorf(`column "%s" not existed in sheet: %s`, col[1:], sheetName))
+							} else if len(colnames2fileds[col]) > 1 {
+								checkError(fmt.Errorf("the selected colname is duplicated in the input data: %s", col))
 							}
 						} else {
 							if _, ok = colnames2fileds[col]; !ok {
 								checkError(fmt.Errorf(`column "%s" not existed in sheet: %s`, col, sheetName))
+							} else if len(colnames2fileds[col]) > 1 {
+								checkError(fmt.Errorf("the selected colname is duplicated in the input data: %s", col))
 							}
 						}
 					}
