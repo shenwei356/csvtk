@@ -38,8 +38,8 @@ import (
 // mutate2Cmd represents the mutate command
 var mutate2Cmd = &cobra.Command{
 	Use:   "mutate2",
-	Short: "create new column from selected fields by awk-like arithmetic/string expressions",
-	Long: `create new column from selected fields by awk-like arithmetic/string expressions
+	Short: "create a new column from selected fields by awk-like arithmetic/string expressions",
+	Long: `create a new column from selected fields by awk-like arithmetic/string expressions
 
 The arithmetic/string expression is supported by:
 
@@ -74,6 +74,24 @@ Custom functions:
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
+		at := getFlagNonNegativeInt(cmd, "at")
+		after := getFlagString(cmd, "after")
+		before := getFlagString(cmd, "before")
+		if config.NoHeaderRow {
+			if after != "" {
+				checkError(fmt.Errorf("the flag --after is not allowed with -H/--no-header-row"))
+			}
+			if before != "" {
+				checkError(fmt.Errorf("the flag --before is not allowed with -H/--no-header-row"))
+			}
+		}
+		if after != "" && before != "" {
+			checkError(fmt.Errorf("the flag --after and --before are incompatible"))
+		}
+		if at > 0 && !(after == "" && before == "") {
+			checkError(fmt.Errorf("the flag --at is incompatible with --after and --before"))
+		}
+
 		files := getFileListFromArgsAndFile(cmd, args, true, "infile-list", true)
 		if len(files) > 1 {
 			checkError(fmt.Errorf("no more than one file should be given"))
@@ -291,10 +309,13 @@ Custom functions:
 			checkFields := true
 			var col string
 			var fieldTmp int
+			var _fields []int
+			var ok bool
 			var value string
 			var valueFloat float64
 			var result interface{}
 
+			var record []string
 			var record2 []string // for output
 			keys := make([]string, 0, 8)
 
@@ -307,7 +328,7 @@ Custom functions:
 					printMetaLine = false
 				}
 
-				for _, record := range chunk.Data {
+				for _, record = range chunk.Data {
 					if parseHeaderRow { // parsing header row
 						colnames2fileds = make(map[string][]int, len(record))
 						for i, col := range record {
@@ -404,6 +425,27 @@ Custom functions:
 					// print header row
 					if handleHeaderRow {
 						record2 = append(record2, name)
+						if after != "" {
+							if _fields, ok = colnames2fileds[after]; ok {
+								at = _fields[len(_fields)-1] + 1
+							} else {
+								checkError(fmt.Errorf(`column "%s" not existed in file: %s`, after, file))
+							}
+							copy(record2[at:], record2[at-1:len(record2)-1])
+							record2[at-1] = name
+						} else if before != "" {
+							if _fields, ok = colnames2fileds[before]; ok {
+								at = _fields[len(_fields)-1]
+							} else {
+								checkError(fmt.Errorf(`column "%s" not existed in file: %s`, before, file))
+							}
+							copy(record2[at:], record2[at-1:len(record2)-1])
+							record2[at-1] = name
+						} else if at > 0 && at <= len(record2) {
+							copy(record2[at:], record2[at-1:len(record2)-1])
+							record2[at-1] = name
+						}
+
 						handleHeaderRow = false
 
 						checkError(writer.Write(record2))
@@ -518,14 +560,37 @@ Custom functions:
 					}
 					switch result.(type) {
 					case bool:
-						record2 = append(record2, fmt.Sprintf("%v", result))
+						value = fmt.Sprintf("%v", result)
 					case float32, float64:
-						record2 = append(record2, fmt.Sprintf(decimalFormat, result))
+						value = fmt.Sprintf(decimalFormat, result)
 					case int, int32, int64:
-						record2 = append(record2, fmt.Sprintf("%d", result))
+						value = fmt.Sprintf("%d", result)
 					default:
-						record2 = append(record2, fmt.Sprintf("%s", result))
+						value = fmt.Sprintf("%s", result)
 					}
+
+					record2 = append(record2, value)
+					if after != "" {
+						if _fields, ok = colnames2fileds[after]; ok {
+							at = _fields[len(_fields)-1] + 1
+						} else {
+							checkError(fmt.Errorf(`column "%s" not existed in file: %s`, after, file))
+						}
+						copy(record2[at:], record2[at-1:len(record2)-1])
+						record2[at-1] = value
+					} else if before != "" {
+						if _fields, ok = colnames2fileds[before]; ok {
+							at = _fields[len(_fields)-1]
+						} else {
+							checkError(fmt.Errorf(`column "%s" not existed in file: %s`, before, file))
+						}
+						copy(record2[at:], record2[at-1:len(record2)-1])
+						record2[at-1] = value
+					} else if at > 0 && at <= len(record2) {
+						copy(record2[at:], record2[at-1:len(record2)-1])
+						record2[at-1] = value
+					}
+
 					checkError(writer.Write(record2))
 				}
 			}
@@ -541,6 +606,9 @@ func init() {
 	mutate2Cmd.Flags().StringP("name", "n", "", `new column name`)
 	mutate2Cmd.Flags().BoolP("numeric-as-string", "s", false, `treat even numeric fields as strings to avoid converting big numbers into scientific notation`)
 	mutate2Cmd.Flags().IntP("decimal-width", "w", 2, "limit floats to N decimal points")
+	mutate2Cmd.Flags().IntP("at", "", 0, "where the new column should appear, 1 for the 1st column, 0 for the last column")
+	mutate2Cmd.Flags().StringP("after", "", "", "insert the new column right after the given column name")
+	mutate2Cmd.Flags().StringP("before", "", "", "insert the new column right before the given column name")
 }
 
 var reNullCoalescence = regexp.MustCompile(`\?\?`)

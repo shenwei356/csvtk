@@ -99,7 +99,7 @@ Usage
 ```text
 csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.26.0
+Version: 0.27.0
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -158,8 +158,8 @@ Available Commands:
   headers         print headers
   inter           intersection of multiple files
   join            join files by selected fields (inner, left and outer join)
-  mutate          create new column from selected fields by regular expression
-  mutate2         create new column from selected fields by awk-like arithmetic/string expressions
+  mutate          create a new column from selected fields by regular expression
+  mutate2         create a new column from selected fields by awk-like arithmetic/string expressions
   ncol            print number of columns
   nrow            print number of records
   plot            plot common figures
@@ -2930,12 +2930,15 @@ Examples:
 Usage
 
 ```text
-create new column from selected fields by regular expression
+create a new column from selected fields by regular expression
 
 Usage:
   csvtk mutate [flags]
 
 Flags:
+      --after string     insert the new column right after the given column name
+      --at int           where the new column should appear, 1 for the 1st column, 0 for the last column
+      --before string    insert the new column right before the given column name
   -f, --fields string    select only these fields. e.g -f 1,2 or -f columnA,columnB (default "1")
   -i, --ignore-case      ignore case
       --na               for unmatched data, use blank instead of original data
@@ -2961,7 +2964,7 @@ Examples
         ken,22222
         shenwei,999999
 
-        $ cat testdata/phones.csv \ 
+        $ cat testdata/phones.csv \
             | csvtk mutate -f username -p "^(\w)" -n first_letter
         username,phone,first_letter
         gri,11111,g
@@ -2969,12 +2972,30 @@ Examples
         ken,22222,k
         shenwei,999999,s
 
+- specify the position of the new column (see similar examples of `csvtk mutate2`)
+
+        $ cat testdata/phones.csv \
+            | csvtk mutate -f username -p "^(\w)" -n first_letter  --at 2
+        username,first_letter,phone
+        gri,g,11111
+        rob,r,12345
+        ken,k,22222
+        shenwei,s,999999
+
+        $ cat testdata/phones.csv \
+            | csvtk mutate -f username -p "^(\w)" -n first_letter  --after username
+        username,first_letter,phone
+        gri,g,11111
+        rob,r,12345
+        ken,k,22222
+        shenwei,s,999999
+
 ## mutate2
 
 Usage
 
 ```text
-create new column from selected fields by awk-like arithmetic/string expressions
+create a new column from selected fields by awk-like arithmetic/string expressions
 
 The arithmetic/string expression is supported by:
 
@@ -3010,6 +3031,9 @@ Usage:
   csvtk mutate2 [flags]
 
 Flags:
+      --after string        insert the new column right after the given column name
+      --at int              where the new column should appear, 1 for the 1st column, 0 for the last column
+      --before string       insert the new column right before the given column name
   -w, --decimal-width int   limit floats to N decimal points (default 2)
   -e, --expression string   arithmetic/string expressions. e.g. "'string'", '"abc"', ' $a + "-" + $b ',
                             '$1 + $2', '$a / $b', ' $1 > 100 ? "big" : "small" '
@@ -3092,6 +3116,39 @@ Example
         a1    a2    a1
               b2    b2
         a2          a2
+
+1. Specify the position of the new column
+
+        $ echo -ne "a,b,c\n1,2,3\n"
+        a,b,c
+        1,2,3
+
+        # in the end (default)
+        $ echo -ne "a,b,c\n1,2,3\n" | csvtk mutate2 -e '$a+$c' -n x -w 0
+        a,b,c,x
+        1,2,3,4
+
+        # in the beginning
+        $ echo -ne "a,b,c\n1,2,3\n" | csvtk mutate2 -e '$a+$c' -n x -w 0 --at 1
+        x,a,b,c
+        4,1,2,3
+
+        # at another position
+        $ echo -ne "a,b,c\n1,2,3\n" | csvtk mutate2 -e '$a+$c' -n x -w 0 --at 3
+        a,b,x,c
+        1,2,4,3
+
+
+        # right after the given column name
+        $ echo -ne "a,b,c\n1,2,3\n" | csvtk mutate2 -e '$a+$c' -n x -w 0 --after a
+        a,x,b,c
+        1,4,2,3
+
+        # right before the given column name
+        $ echo -ne "a,b,c\n1,2,3\n" | csvtk mutate2 -e '$a+$c' -n x -w 0 --before c
+        a,b,x,c
+        1,2,4,3
+
 
 ## sep
 

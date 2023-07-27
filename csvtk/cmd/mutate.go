@@ -39,6 +39,24 @@ var mutateCmd = &cobra.Command{
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
+		at := getFlagNonNegativeInt(cmd, "at")
+		after := getFlagString(cmd, "after")
+		before := getFlagString(cmd, "before")
+		if config.NoHeaderRow {
+			if after != "" {
+				checkError(fmt.Errorf("the flag --after is not allowed with -H/--no-header-row"))
+			}
+			if before != "" {
+				checkError(fmt.Errorf("the flag --before is not allowed with -H/--no-header-row"))
+			}
+		}
+		if after != "" && before != "" {
+			checkError(fmt.Errorf("the flag --after and --before are incompatible"))
+		}
+		if at > 0 && !(after == "" && before == "") {
+			checkError(fmt.Errorf("the flag --at is incompatible with --after and --before"))
+		}
+
 		files := getFileListFromArgsAndFile(cmd, args, true, "infile-list", true)
 		if len(files) > 1 {
 			checkError(fmt.Errorf("no more than one file should be given"))
@@ -131,8 +149,12 @@ var mutateCmd = &cobra.Command{
 			handleHeaderRow := needParseHeaderRow
 			checkFields := true
 
+			var record []string
 			var record2 []string // for output
+			var _fields []int
 			var ok bool
+			var f int
+			var value string
 
 			printMetaLine := true
 			for chunk := range csvReader.Ch {
@@ -143,7 +165,7 @@ var mutateCmd = &cobra.Command{
 					printMetaLine = false
 				}
 
-				for _, record := range chunk.Data {
+				for _, record = range chunk.Data {
 					if parseHeaderRow { // parsing header row
 						colnames2fileds = make(map[string][]int, len(record))
 						for i, col := range record {
@@ -248,12 +270,33 @@ var mutateCmd = &cobra.Command{
 
 					if handleHeaderRow {
 						record2 = append(record2, name)
+						if after != "" {
+							if _fields, ok = colnames2fileds[after]; ok {
+								at = _fields[len(_fields)-1] + 1
+							} else {
+								checkError(fmt.Errorf(`column "%s" not existed in file: %s`, after, file))
+							}
+							copy(record2[at:], record2[at-1:len(record2)-1])
+							record2[at-1] = name
+						} else if before != "" {
+							if _fields, ok = colnames2fileds[before]; ok {
+								at = _fields[len(_fields)-1]
+							} else {
+								checkError(fmt.Errorf(`column "%s" not existed in file: %s`, before, file))
+							}
+							copy(record2[at:], record2[at-1:len(record2)-1])
+							record2[at-1] = name
+						} else if at > 0 && at <= len(record2) {
+							copy(record2[at:], record2[at-1:len(record2)-1])
+							record2[at-1] = name
+						}
+
 						handleHeaderRow = false
 						checkError(writer.Write(record2))
 						continue
 					}
 
-					for f := range record {
+					for f = range record {
 						// record2[f] = record[f]
 						_, ok = fieldsMap[f+1]
 						if !ok {
@@ -262,14 +305,36 @@ var mutateCmd = &cobra.Command{
 
 						if patternRegexp.MatchString(record[f]) {
 							found := patternRegexp.FindAllStringSubmatch(record[f], -1)
-							record2 = append(record2, found[0][1])
+							value = found[0][1]
 						} else {
 							if naUnmatched {
-								record2 = append(record2, "")
+								value = ""
 							} else {
-								record2 = append(record2, record[f])
+								value = record[f]
 							}
 						}
+						record2 = append(record2, value)
+						if after != "" {
+							if _fields, ok = colnames2fileds[after]; ok {
+								at = _fields[len(_fields)-1] + 1
+							} else {
+								checkError(fmt.Errorf(`column "%s" not existed in file: %s`, after, file))
+							}
+							copy(record2[at:], record2[at-1:len(record2)-1])
+							record2[at-1] = value
+						} else if before != "" {
+							if _fields, ok = colnames2fileds[before]; ok {
+								at = _fields[len(_fields)-1]
+							} else {
+								checkError(fmt.Errorf(`column "%s" not existed in file: %s`, before, file))
+							}
+							copy(record2[at:], record2[at-1:len(record2)-1])
+							record2[at-1] = value
+						} else if at > 0 && at <= len(record2) {
+							copy(record2[at:], record2[at-1:len(record2)-1])
+							record2[at-1] = value
+						}
+
 						break
 					}
 					checkError(writer.Write(record2))
@@ -291,4 +356,8 @@ func init() {
 	mutateCmd.Flags().BoolP("ignore-case", "i", false, "ignore case")
 	mutateCmd.Flags().BoolP("na", "", false, "for unmatched data, use blank instead of original data")
 	mutateCmd.Flags().BoolP("remove", "R", false, `remove input column`)
+	mutateCmd.Flags().IntP("at", "", 0, "where the new column should appear, 1 for the 1st column, 0 for the last column")
+	mutateCmd.Flags().StringP("after", "", "", "insert the new column right after the given column name")
+	mutateCmd.Flags().StringP("before", "", "", "insert the new column right before the given column name")
+
 }
