@@ -33,7 +33,8 @@ import (
 
 // Record is a CSV/TSV record
 type Record struct {
-	Line int
+	Line int // line number, if the original file contains blank lines, the number would be inaccurate.
+	Row  int // the row number, header row skipped
 	Err  error
 
 	All      []string
@@ -139,7 +140,7 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 
 		var notBlank bool
 		var data string
-		var lineNum int
+		var lineNum, row int
 		ignoreIllegalRow := csvReader.IgnoreIllegalRow
 		ignoreEmptyRow := csvReader.IgnoreEmptyRow
 
@@ -344,6 +345,8 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 
 				checkFields = false
 				parseHeaderRow = false
+			} else {
+				row++
 			}
 
 			if checkFields {
@@ -437,6 +440,7 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 
 				csvReader.Ch <- Record{
 					Line:     lineNum,
+					Row:      row,
 					All:      record, // copied values
 					Fields:   fields, // the first variable
 					Selected: items,  // copied values
@@ -455,6 +459,7 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 
 			csvReader.Ch <- Record{
 				Line:     lineNum,
+				Row:      row,
 				All:      record, // copied values
 				Fields:   fields, // the first variable
 				Selected: items,  // copied values

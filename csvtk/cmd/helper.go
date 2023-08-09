@@ -228,10 +228,19 @@ func getFlagStringSlice(cmd *cobra.Command, flag string) []string {
 	return value
 }
 
+func unshift(list *[]string, val string) {
+	if len(*list) == 0 {
+		list = &[]string{val}
+		return
+	}
+	*list = append(*list, "")
+	copy((*list)[1:], (*list)[0:len(*list)-1])
+	(*list)[0] = val
+}
+
 // Config is the struct containing all global flags
 type Config struct {
-	ChunkSize int
-	NumCPUs   int
+	NumCPUs int
 
 	Delimiter    rune
 	OutDelimiter rune
@@ -242,6 +251,8 @@ type Config struct {
 	Tabs        bool
 	OutTabs     bool
 	NoHeaderRow bool
+
+	ShowRowNumber bool
 
 	OutFile string
 
@@ -282,8 +293,7 @@ func getConfigs(cmd *cobra.Command) Config {
 	}
 
 	return Config{
-		ChunkSize: getFlagPositiveInt(cmd, "chunk-size"),
-		NumCPUs:   threads,
+		NumCPUs: threads,
 
 		Delimiter:    getFlagRune(cmd, "delimiter"),
 		OutDelimiter: getFlagRune(cmd, "out-delimiter"),
@@ -294,6 +304,8 @@ func getConfigs(cmd *cobra.Command) Config {
 		Tabs:        tabs,
 		OutTabs:     getFlagBool(cmd, "out-tabs"),
 		NoHeaderRow: noHeaderRow,
+
+		ShowRowNumber: getFlagBool(cmd, "show-row-number"),
 
 		OutFile: getFlagString(cmd, "out-file"),
 

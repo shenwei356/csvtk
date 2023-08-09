@@ -76,7 +76,6 @@ func Execute() {
 }
 
 func init() {
-	RootCmd.PersistentFlags().IntP("chunk-size", "c", 50, `chunk size of CSV reader`)
 	RootCmd.PersistentFlags().IntP("num-cpus", "j", runtime.NumCPU(), `number of CPUs to use (default value depends on your computer)`)
 
 	RootCmd.PersistentFlags().StringP("delimiter", "d", ",", `delimiting character of the input CSV file`)
@@ -90,6 +89,8 @@ func init() {
 	RootCmd.PersistentFlags().BoolP("out-tabs", "T", false, `specifies that the output is delimited with tabs. Overrides "-D"`)
 	RootCmd.PersistentFlags().BoolP("no-header-row", "H", false, `specifies that the input CSV file does not have header row`)
 	RootCmd.PersistentFlags().StringP("out-file", "o", "-", `out file ("-" for stdout, suffix .gz for gzipped out)`)
+
+	RootCmd.PersistentFlags().BoolP("show-row-number", "Z", false, `show row number as the first column, with header row skipped`)
 
 	RootCmd.PersistentFlags().BoolP("ignore-empty-row", "E", false, `ignore empty rows`)
 	RootCmd.PersistentFlags().BoolP("ignore-illegal-row", "I", false, `ignore illegal rows. You can also use 'csvtk fix' to fix files with different numbers of columns in rows`)
