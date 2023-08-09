@@ -1,4 +1,4 @@
-// Copyright © 2016-2021 Wei Shen <shenwei356@gmail.com>
+// Copyright © 2016-2023 Wei Shen <shenwei356@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,6 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
-	"sort"
 	"strconv"
 	"strings"
 
@@ -304,7 +303,7 @@ func getConfigs(cmd *cobra.Command) Config {
 }
 
 func newCSVReaderByConfig(config Config, file string) (*CSVReader, error) {
-	reader, err := NewCSVReader(file, config.NumCPUs, config.ChunkSize)
+	reader, err := NewCSVReader(file)
 	if err != nil {
 		return nil, err
 	}
@@ -317,6 +316,8 @@ func newCSVReaderByConfig(config Config, file string) (*CSVReader, error) {
 	reader.Reader.LazyQuotes = config.LazyQuotes
 	reader.IgnoreEmptyRow = config.IgnoreEmptyRow
 	reader.IgnoreIllegalRow = config.IgnoreIllegalRow
+
+	reader.NoHeaderRow = config.NoHeaderRow
 
 	return reader, nil
 }
@@ -383,181 +384,34 @@ func nth(i int) string {
 	}
 }
 
-func parseFields(cmd *cobra.Command,
-	fieldsStr string,
-	varSep string,
-	noHeaderRow bool) ([]int, []string, bool, bool, map[int]int) {
-
-	var fields []int
-	var colnames []string
-	var parseHeaderRow bool
-	var negativeFields bool
-	var x2ends map[int]int // [2]int{index of x in fields, x}
-	firstField := reFields.FindAllStringSubmatch(strings.Split(fieldsStr, varSep)[0], -1)[0][1]
-	if reIntegers.MatchString(firstField) {
-		fields = []int{}
-		fieldsStrs := strings.Split(fieldsStr, varSep)
-		var j int
-		for _, s := range fieldsStrs {
-			found := reIntegerRange.FindAllStringSubmatch(s, -1)
-			if len(found) > 0 { // field range
-				start, err := strconv.Atoi(found[0][1])
-				if err != nil {
-					checkError(fmt.Errorf("fail to parse field range: %s. it should be an integer", found[0][1]))
-				}
-
-				if found[0][2] == "" {
-					fields = append(fields, start)
-					if x2ends == nil {
-						x2ends = make(map[int]int, 8)
-					}
-					x2ends[j] = start
-					continue
-				}
-
-				end, err := strconv.Atoi(found[0][2])
-				if err != nil {
-					checkError(fmt.Errorf("fail to parse field range: %s. it should be an integer", found[0][2]))
-				}
-				if start == 0 || end == 0 {
-					checkError(fmt.Errorf("no 0 allowed in field range: %s", s))
-				}
-
-				if start < 0 && end < 0 {
-					if start < end {
-						for i := start; i <= end; i++ {
-							fields = append(fields, i)
-							j++
-						}
-					} else {
-						for i := end; i <= start; i++ {
-							fields = append(fields, i)
-							j++
-						}
-					}
-				} else if start > 0 && end > 0 {
-					if start >= end {
-						checkError(fmt.Errorf("invalid field range: %s. start (%d) should be less than end (%d)", s, start, end))
-					}
-					for i := start; i <= end; i++ {
-						fields = append(fields, i)
-						j++
-					}
-				} else {
-					checkError(fmt.Errorf("invalid field range: %s. start (%d) and end (%d) should be both > 0 or < 0", s, start, end))
-				}
-			} else {
-				field, err := strconv.Atoi(s)
-				if err != nil {
-					checkError(fmt.Errorf("failed to parse %s as a field number, you may mix the use of field numbers and column names", s))
-				}
-				fields = append(fields, field)
-				j++
-			}
-		}
-
-		for _, f := range fields {
-			if f == 0 {
-				checkError(fmt.Errorf(`field should not be 0`))
-			} else if f < 0 {
-				negativeFields = true
-			} else {
-				if negativeFields {
-					checkError(fmt.Errorf(`fields should not be mixed with positive and negative fields`))
-				}
-			}
-		}
-		// 2 pass check
-		if negativeFields {
-			for _, f := range fields {
-				if f > 0 {
-					checkError(fmt.Errorf(`fields should not be mixed with positive and negative fields`))
-				}
-			}
-		}
-
-		if !noHeaderRow {
-			parseHeaderRow = true
-		}
-	} else {
-		colnames = strings.Split(fieldsStr, varSep)
-		for i, f := range colnames {
-			if f == "" {
-				checkError(fmt.Errorf(`%s filed should not be empty: %s`, nth(i+1), fieldsStr))
-			} else if f[0] == '-' {
-				negativeFields = true
-			} else {
-				if negativeFields {
-					checkError(fmt.Errorf(`filed should not fixed with positive and negative fields`))
-				}
-			}
-		}
-		// 2 pass check
-		if negativeFields {
-			for _, f := range colnames {
-				if f[0] != '-' {
-					checkError(fmt.Errorf(`filed should not fixed with positive and negative fields`))
-				}
-			}
-		}
-		if getFlagBool(cmd, "no-header-row") {
-			log.Warningf("colnames detected, flag -H (--no-header-row) ignored")
-		}
-		parseHeaderRow = true
-	}
-	return fields, colnames, negativeFields, parseHeaderRow, x2ends
-}
-
-func fuzzyField2Regexp(field string) *regexp.Regexp {
-	if strings.ContainsAny(field, "*") {
-		field = strings.Replace(field, "*", ".*?", -1)
-	}
-
-	field = "^" + field + "$"
-	re, err := regexp.Compile(field)
-	checkError(err)
-	return re
-}
-
 func readCSV(config Config, file string) ([]string, [][]string, *CSVReader, error) {
 	csvReader, err := newCSVReaderByConfig(config, file)
-
 	if err != nil {
 		return nil, nil, nil, xopen.ErrNoContent
 	}
 
-	csvReader.Run()
+	csvReader.Read(ReadOption{
+		FieldStr: "1-",
+	})
 
 	var headerRow []string
-	data := make([][]string, 0, 1000)
+	data := make([][]string, 0, 1024)
 
 	parseHeaderRow := !config.NoHeaderRow
 
-	for chunk := range csvReader.Ch {
-		checkError(chunk.Err)
-
-		for _, record := range chunk.Data {
-			if parseHeaderRow {
-				headerRow = record
-				parseHeaderRow = false
-				continue
-			}
-			data = append(data, record)
+	for record := range csvReader.Ch {
+		if record.Err != nil {
+			checkError(record.Err)
 		}
+
+		if parseHeaderRow {
+			headerRow = record.All
+			parseHeaderRow = false
+			continue
+		}
+		data = append(data, record.All)
 	}
 	return headerRow, data, csvReader, nil
-}
-
-func readerReport(config *Config, csvReader *CSVReader, file string) {
-	if csvReader == nil {
-		return
-	}
-	if config.IgnoreEmptyRow && len(csvReader.NumEmptyRows) > 0 {
-		log.Warningf("file '%s': %d empty rows ignored: %d", file, len(csvReader.NumEmptyRows), csvReader.NumEmptyRows)
-	}
-	if config.IgnoreIllegalRow && len(csvReader.NumIllegalRows) > 0 {
-		log.Warningf("file '%s': %d illegal rows ignored: %d", file, len(csvReader.NumIllegalRows), csvReader.NumIllegalRows)
-	}
 }
 
 func readDataFrame(config Config, file string, ignoreCase bool) ([]string, map[string]string, map[string][]string, error) {
@@ -641,187 +495,41 @@ func readDataFrame(config Config, file string, ignoreCase bool) ([]string, map[s
 
 func parseCSVfile(cmd *cobra.Command, config Config, file string,
 	fieldStr string, fuzzyFields bool) ([]string, []int, [][]string, []string, [][]string, error) {
-	fields, colnames, negativeFields, needParseHeaderRow, _ := parseFields(cmd, fieldStr, ",", config.NoHeaderRow)
-	var fieldsMap map[int]struct{}
-	var fieldsOrder map[int]int      // for set the order of fields
-	var colnamesOrder map[string]int // for set the order of fields
-	if len(fields) > 0 {
-		fields2 := make([]int, len(fields))
-		fieldsMap = make(map[int]struct{}, len(fields))
-		for i, f := range fields {
-			if negativeFields {
-				fieldsMap[f*-1] = struct{}{}
-				fields2[i] = f * -1
-			} else {
-				fieldsMap[f] = struct{}{}
-				fields2[i] = f
-			}
-		}
-		fields = fields2
-
-		if !negativeFields {
-			fieldsOrder = make(map[int]int, len(fields))
-			i := 0
-			for _, f := range fields {
-				fieldsOrder[f] = i
-				i++
-			}
-		}
-	} else {
-		fieldsOrder = make(map[int]int, len(colnames))
-		colnamesOrder = make(map[string]int, len(colnames))
-	}
 
 	csvReader, err := newCSVReaderByConfig(config, file)
-
 	if err != nil {
 		return nil, nil, nil, nil, nil, err
 	}
 
-	csvReader.Run()
+	csvReader.Read(ReadOption{
+		FieldStr: "1-",
+	})
 
-	parseHeaderRow := needParseHeaderRow // parsing header row
-	var colnames2fileds map[string][]int // column name -> []field
-	var colnamesMap map[string]*regexp.Regexp
-
+	var fields []int
 	var HeaderRow []string
 	var HeaderRowAll []string
 	var Data [][]string
 	var DataAll [][]string
 
-	checkFields := true
-
-	for chunk := range csvReader.Ch {
-		checkError(chunk.Err)
-
-		for _, record := range chunk.Data {
-			if parseHeaderRow { // parsing header row
-				colnames2fileds = make(map[string][]int, len(record))
-				for i, col := range record {
-					if _, ok := colnames2fileds[col]; !ok {
-						colnames2fileds[col] = []int{i + 1}
-					} else {
-						colnames2fileds[col] = append(colnames2fileds[col], i+1)
-					}
-				}
-				colnamesMap = make(map[string]*regexp.Regexp, len(colnames))
-				i := 0
-				for _, col := range colnames {
-					if !fuzzyFields {
-						if negativeFields {
-							if _, ok := colnames2fileds[col[1:]]; !ok {
-								checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col[1:], file))
-							} else if len(colnames2fileds[col]) > 1 {
-								checkError(fmt.Errorf("the selected colname is duplicated in the input data: %s", col))
-							}
-						} else {
-							if _, ok := colnames2fileds[col]; !ok {
-								checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col, file))
-							} else if len(colnames2fileds[col]) > 1 {
-								checkError(fmt.Errorf("the selected colname is duplicated in the input data: %s", col))
-							}
-						}
-					}
-					if negativeFields {
-						colnamesMap[col[1:]] = fuzzyField2Regexp(col[1:])
-					} else {
-						colnamesMap[col] = fuzzyField2Regexp(col)
-						colnamesOrder[col] = i
-						i++
-					}
-				}
-
-				if len(fields) == 0 { // user gives the colnames
-					fields = []int{}
-					for _, col := range record {
-						var ok bool
-						if fuzzyFields {
-							for _, re := range colnamesMap {
-								if re.MatchString(col) {
-									ok = true
-									break
-								}
-							}
-						} else {
-							_, ok = colnamesMap[col]
-						}
-						if ok {
-							fields = append(fields, colnames2fileds[col]...)
-							fieldsOrder[colnames2fileds[col][0]] = colnamesOrder[col]
-						}
-					}
-				}
-
-				fieldsMap = make(map[int]struct{}, len(fields))
-				for _, f := range fields {
-					fieldsMap[f] = struct{}{}
-				}
-
-				parseHeaderRow = false
-
-				orderedFieldss := make([]orderedField, len(fields))
-				for i, f := range fields {
-					orderedFieldss[i] = orderedField{field: f, order: fieldsOrder[f]}
-				}
-				sort.Sort(orderedFields(orderedFieldss))
-				for i, of := range orderedFieldss {
-					fields[i] = of.field
-				}
-
-				items := make([]string, len(fields))
-				for i, f := range fields {
-					if f > len(record) {
-						continue
-					}
-					items[i] = record[f-1]
-				}
-				HeaderRow = items
-				HeaderRowAll = record
-				continue
-			}
-
-			if checkFields {
-				fields2 := []int{}
-				for f := range record {
-					_, ok := fieldsMap[f+1]
-					if negativeFields {
-						if !ok {
-							fields2 = append(fields2, f+1)
-						}
-					} else {
-						if ok {
-							fields2 = append(fields2, f+1)
-						}
-					}
-				}
-				fields = fields2
-
-				if len(fields) == 0 {
-					checkError(fmt.Errorf("no fields matched in file: %s", file))
-				}
-
-				// sort fields
-				orderedFieldss := make([]orderedField, len(fields))
-				for i, f := range fields {
-					orderedFieldss[i] = orderedField{field: f, order: fieldsOrder[f]}
-				}
-				sort.Sort(orderedFields(orderedFieldss))
-				for i, of := range orderedFieldss {
-					fields[i] = of.field
-				}
-
-				checkFields = false
-			}
-
-			items := make([]string, len(fields))
-			for i, f := range fields {
-				items[i] = record[f-1]
-			}
-			Data = append(Data, items)
-			if fieldStr != "*" {
-				DataAll = append(DataAll, record)
-			}
+	parseHeaderRow := !config.NoHeaderRow
+	once := true
+	for record := range csvReader.Ch {
+		if record.Err != nil {
+			checkError(record.Err)
 		}
+
+		if parseHeaderRow {
+			HeaderRowAll, HeaderRow = record.All, record.Selected
+			parseHeaderRow = false
+			continue
+		}
+		if once {
+			fields = record.Fields
+			once = true
+		}
+
+		DataAll = append(DataAll, record.All)
+		Data = append(Data, record.Selected)
 	}
 
 	if config.IgnoreEmptyRow {
