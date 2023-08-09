@@ -128,16 +128,10 @@ Examples:
 		var items []string
 		var noRecord bool
 
-		var ignoreFields []bool
+		var ignoreFields []bool // only used for allowMissingColumn
 
-		printMetaLine := true
 		for chunk := range csvReader.Ch {
 			checkError(chunk.Err)
-
-			if printMetaLine && len(csvReader.MetaLine) > 0 {
-				outfh.WriteString(fmt.Sprintf("sep=%s\n", string(writer.Comma)))
-				printMetaLine = false
-			}
 
 			for _, record := range chunk.Data {
 				if parseHeaderRow { // parsing header row
@@ -154,7 +148,6 @@ Examples:
 
 						// colnames from user
 						colnamesMap = make(map[string]*regexp.Regexp, len(colnames))
-						i := 0
 						for _, col := range colnames {
 							if ignoreCase {
 								col = strings.ToLower(col)
@@ -178,7 +171,6 @@ Examples:
 								colnamesMap[col[1:]] = fuzzyField2Regexp(col[1:])
 							} else {
 								colnamesMap[col] = fuzzyField2Regexp(col)
-								i++
 							}
 						}
 
@@ -186,6 +178,10 @@ Examples:
 						var ok bool
 						if negativeFields {
 							for _, col := range record {
+								if ignoreCase {
+									col = strings.ToLower(col)
+								}
+
 								ok = false
 								if fuzzyFields {
 									for _, re := range colnamesMap {
@@ -210,7 +206,15 @@ Examples:
 								}
 								var i int
 								for _, col := range colnames {
+									if ignoreCase {
+										col = strings.ToLower(col)
+									}
+
 									for _, col2 := range record {
+										if ignoreCase {
+											col2 = strings.ToLower(col2)
+										}
+
 										if colnamesMap[col].MatchString(col2) {
 											for _, i = range colnames2fileds[col2] {
 												if uniqColumn {
@@ -227,6 +231,9 @@ Examples:
 								}
 							} else {
 								for _, col := range colnames {
+									if ignoreCase {
+										col = strings.ToLower(col)
+									}
 									fields = append(fields, colnames2fileds[col]...)
 								}
 							}

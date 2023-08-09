@@ -32,9 +32,12 @@ import (
 
 // gatherCmd represents the gather command
 var gatherCmd = &cobra.Command{
-	Use:   "gather",
-	Short: "gather columns into key-value pairs",
-	Long: `gather columns into key-value pairs
+	Use: "longer",
+
+	Aliases: []string{"gather"},
+
+	Short: "gather columns into key-value pairs, like tidyr::gather/pivot_longer",
+	Long: `gather columns into key-value pairs, like tidyr::gather/pivot_longer
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -141,14 +144,8 @@ var gatherCmd = &cobra.Command{
 		var isRowLine bool
 		var nFieldsLeft int
 
-		printMetaLine := true
 		for chunk := range csvReader.Ch {
 			checkError(chunk.Err)
-
-			if printMetaLine && len(csvReader.MetaLine) > 0 {
-				outfh.WriteString(fmt.Sprintf("sep=%s\n", string(writer.Comma)))
-				printMetaLine = false
-			}
 
 			for _, record := range chunk.Data {
 				if parseHeaderRow { // parsing header row

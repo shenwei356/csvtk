@@ -158,14 +158,8 @@ var sepCmd = &cobra.Command{
 			var record2 []string // for output
 			var line int
 
-			printMetaLine := true
 			for chunk := range csvReader.Ch {
 				checkError(chunk.Err)
-
-				if printMetaLine && len(csvReader.MetaLine) > 0 {
-					outfh.WriteString(fmt.Sprintf("sep=%s\n", string(writer.Comma)))
-					printMetaLine = false
-				}
 
 				for _, record := range chunk.Data {
 					line++

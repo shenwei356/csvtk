@@ -61,7 +61,6 @@ var addHeaderCmd = &cobra.Command{
 			writer.Comma = config.OutDelimiter
 		}
 
-		printMetaLine := true
 		printHeaderRow := true
 		for _, file := range files {
 			csvReader, err := newCSVReaderByConfig(config, file)
@@ -76,11 +75,6 @@ var addHeaderCmd = &cobra.Command{
 			csvReader.Run()
 			for chunk := range csvReader.Ch {
 				checkError(chunk.Err)
-
-				if printMetaLine && len(csvReader.MetaLine) > 0 {
-					outfh.WriteString(fmt.Sprintf("sep=%s\n", string(writer.Comma)))
-					printMetaLine = false
-				}
 
 				for _, record := range chunk.Data {
 					if printHeaderRow {

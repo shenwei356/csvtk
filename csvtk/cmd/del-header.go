@@ -22,7 +22,6 @@ package cmd
 
 import (
 	"encoding/csv"
-	"fmt"
 	"runtime"
 
 	"github.com/shenwei356/xopen"
@@ -56,7 +55,6 @@ var delHeaderCmd = &cobra.Command{
 			writer.Comma = config.OutDelimiter
 		}
 
-		printMetaLine := true
 		once := true
 		for _, file := range files {
 			csvReader, err := newCSVReaderByConfig(config, file)
@@ -72,11 +70,6 @@ var delHeaderCmd = &cobra.Command{
 			csvReader.Run()
 			for chunk := range csvReader.Ch {
 				checkError(chunk.Err)
-
-				if printMetaLine && len(csvReader.MetaLine) > 0 {
-					outfh.WriteString(fmt.Sprintf("sep=%s\n", string(writer.Comma)))
-					printMetaLine = false
-				}
 
 				for _, record := range chunk.Data {
 					if once && !config.NoHeaderRow {

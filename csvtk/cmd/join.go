@@ -125,7 +125,7 @@ Attention:
 		if outerJoin {
 			keys = make(map[string]bool)
 			for i, file := range files {
-				_, fields, _, _, data, _, err := parseCSVfile(cmd, config,
+				_, fields, _, _, data, err := parseCSVfile(cmd, config,
 					file, allFields[i], fuzzyFields)
 
 				if err != nil {
@@ -161,7 +161,7 @@ Attention:
 		var f int
 		var ok bool
 		for i, file := range files {
-			_, fields, _, headerRow, data, _, err := parseCSVfile(cmd, config,
+			_, fields, _, headerRow, data, err := parseCSVfile(cmd, config,
 				file, allFields[i], fuzzyFields)
 
 			if err != nil {

@@ -22,7 +22,6 @@ package cmd
 
 import (
 	"encoding/csv"
-	"fmt"
 	"runtime"
 
 	"github.com/shenwei356/xopen"
@@ -73,15 +72,9 @@ var headCmd = &cobra.Command{
 
 			isHeaderLine := !config.NoHeaderRow
 			i := 0
-			printMetaLine := true
 		LOOP:
 			for chunk := range csvReader.Ch {
 				checkError(chunk.Err)
-
-				if printMetaLine && len(csvReader.MetaLine) > 0 {
-					outfh.WriteString(fmt.Sprintf("sep=%s\n", string(writer.Comma)))
-					printMetaLine = false
-				}
 
 				for _, record := range chunk.Data {
 					checkError(writer.Write(record))

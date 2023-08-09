@@ -115,14 +115,8 @@ var roundCmd = &cobra.Command{
 			var founds [][]string
 			var fvalue float64
 
-			printMetaLine := true
 			for chunk := range csvReader.Ch {
 				checkError(chunk.Err)
-
-				if printMetaLine && len(csvReader.MetaLine) > 0 {
-					outfh.WriteString(fmt.Sprintf("sep=%s\n", string(writer.Comma)))
-					printMetaLine = false
-				}
 
 				for _, record := range chunk.Data {
 					if parseHeaderRow { // parsing header row

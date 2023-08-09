@@ -640,7 +640,7 @@ func readDataFrame(config Config, file string, ignoreCase bool) ([]string, map[s
 }
 
 func parseCSVfile(cmd *cobra.Command, config Config, file string,
-	fieldStr string, fuzzyFields bool) ([]string, []int, [][]string, []string, [][]string, []byte, error) {
+	fieldStr string, fuzzyFields bool) ([]string, []int, [][]string, []string, [][]string, error) {
 	fields, colnames, negativeFields, needParseHeaderRow, _ := parseFields(cmd, fieldStr, ",", config.NoHeaderRow)
 	var fieldsMap map[int]struct{}
 	var fieldsOrder map[int]int      // for set the order of fields
@@ -675,7 +675,7 @@ func parseCSVfile(cmd *cobra.Command, config Config, file string,
 	csvReader, err := newCSVReaderByConfig(config, file)
 
 	if err != nil {
-		return nil, nil, nil, nil, nil, nil, err
+		return nil, nil, nil, nil, nil, err
 	}
 
 	csvReader.Run()
@@ -832,9 +832,9 @@ func parseCSVfile(cmd *cobra.Command, config Config, file string,
 	}
 
 	if fieldStr != "*" {
-		return HeaderRow, fields, Data, HeaderRowAll, DataAll, csvReader.MetaLine, nil
+		return HeaderRow, fields, Data, HeaderRowAll, DataAll, nil
 	}
-	return HeaderRow, fields, Data, HeaderRowAll, Data, csvReader.MetaLine, nil
+	return HeaderRow, fields, Data, HeaderRowAll, Data, nil
 }
 
 func removeComma(s string) string {

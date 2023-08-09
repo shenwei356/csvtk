@@ -42,7 +42,6 @@ type CSVReader struct {
 	bufferSize int
 	chunkSize  int
 	Ch         chan CSVRecordsChunk
-	MetaLine   []byte // meta line of separator declaration used by MS Excel
 
 	IgnoreEmptyRow   bool
 	IgnoreIllegalRow bool
@@ -71,21 +70,6 @@ func NewCSVReader(file string, bufferSize int, chunkSize int) (*CSVReader, error
 		return nil, err
 	}
 
-	var metaLine []byte
-
-	// var line []byte
-	// line, _, err = fh.ReadLine()
-	// if err != nil {
-	// 	return nil, err
-	// }
-	//
-	// if len(line) >= 5 && bytes.Equal(line[0:4], []byte("sep=")) {
-	// 	metaLine = line
-	// } else {
-	// 	// put it back.
-	// 	// but how?
-	// }
-
 	reader := csv.NewReader(fh)
 
 	ch := make(chan CSVRecordsChunk, bufferSize)
@@ -96,7 +80,6 @@ func NewCSVReader(file string, bufferSize int, chunkSize int) (*CSVReader, error
 		chunkSize:      chunkSize,
 		Ch:             ch,
 		fh:             fh,
-		MetaLine:       metaLine,
 		NumEmptyRows:   make([]int, 0, 100),
 		NumIllegalRows: make([]int, 0, 100),
 	}

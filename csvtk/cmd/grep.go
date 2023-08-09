@@ -215,18 +215,8 @@ Attentions:
 			var k string
 			var re *regexp.Regexp
 			var ok bool
-			printMetaLine := true
 			for chunk := range csvReader.Ch {
 				checkError(chunk.Err)
-
-				if printMetaLine && len(csvReader.MetaLine) > 0 {
-					if isstdin {
-						outfhStd.Write([]byte(fmt.Sprintf("sep=%s\n", string(writer.Comma))))
-					} else {
-						outfhFile.WriteString(fmt.Sprintf("sep=%s\n", string(writer.Comma)))
-					}
-					printMetaLine = false
-				}
 
 				for _, record := range chunk.Data {
 					if parseHeaderRow { // parsing header row

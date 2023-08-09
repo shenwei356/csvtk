@@ -22,7 +22,6 @@ package cmd
 
 import (
 	"encoding/csv"
-	"fmt"
 	"runtime"
 
 	"github.com/shenwei356/xopen"
@@ -62,14 +61,8 @@ var tab2csvCmd = &cobra.Command{
 			csvReader.Reader.Comma = '\t'
 			csvReader.Run()
 
-			printMetaLine := true
 			for chunk := range csvReader.Ch {
 				checkError(chunk.Err)
-
-				if printMetaLine && len(csvReader.MetaLine) > 0 {
-					outfh.WriteString(fmt.Sprintf("sep=%s\n", string(writer.Comma)))
-					printMetaLine = false
-				}
 
 				for _, record := range chunk.Data {
 					checkError(writer.Write(record))
