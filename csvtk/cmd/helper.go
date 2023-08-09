@@ -410,7 +410,6 @@ func readCSV(config Config, file string) ([]string, [][]string, *CSVReader, erro
 	data := make([][]string, 0, 1024)
 
 	parseHeaderRow := !config.NoHeaderRow
-
 	for record := range csvReader.Ch {
 		if record.Err != nil {
 			checkError(record.Err)
