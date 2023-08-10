@@ -24,8 +24,6 @@ import (
 	"encoding/csv"
 	"fmt"
 	"runtime"
-	"sort"
-	"strconv"
 	"strings"
 
 	"github.com/shenwei356/util/stringutil"
@@ -33,11 +31,43 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// freqCmd represents the freq command
-var freqCmd = &cobra.Command{
-	Use:   "freq",
-	Short: "frequencies of selected fields",
-	Long: `frequencies of selected fields
+// collapseCmd represents the colapse command
+var collapseCmd = &cobra.Command{
+	Use:     "fold",
+	Aliases: []string{"collapse"},
+	Short:   "fold multiple values of a field into cells of groups",
+	Long: `fold multiple values of a field into cells of groups
+
+Attention:
+
+    Only grouping fields and value filed are outputted.
+
+Example:
+
+    $ echo -ne "id,value,meta\n1,a,12\n1,b,34\n2,c,56\n2,d,78\n" \
+        | csvtk pretty
+    id   value   meta
+    1    a       12
+    1    b       34
+    2    c       56
+    2    d       78
+    
+    $ echo -ne "id,value,meta\n1,a,12\n1,b,34\n2,c,56\n2,d,78\n" \
+        | csvtk fold -f id -v value -s ";" \
+        | csvtk pretty
+    id   value
+    1    a;b
+    2    c;d
+    
+    $ echo -ne "id,value,meta\n1,a,12\n1,b,34\n2,c,56\n2,d,78\n" \
+        | csvtk fold -f id -v value -s ";" \
+        | csvtk unfold -f value -s ";" \
+        | csvtk pretty
+    id   value
+    1    a
+    1    b
+    2    c
+    2    d
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -48,14 +78,26 @@ var freqCmd = &cobra.Command{
 		}
 		runtime.GOMAXPROCS(config.NumCPUs)
 
-		sortByFreq := getFlagBool(cmd, "sort-by-freq")
-		sortByKey := getFlagBool(cmd, "sort-by-key")
-		reverse := getFlagBool(cmd, "reverse")
-
 		fieldStr := getFlagString(cmd, "fields")
 		if fieldStr == "" {
 			checkError(fmt.Errorf("flag -f (--fields) needed"))
 		}
+
+		vfieldStr := getFlagString(cmd, "vfield")
+		if vfieldStr == "" {
+			checkError(fmt.Errorf("flag -v (--vfield) needed"))
+		}
+
+		if fieldStr == vfieldStr {
+			checkError(fmt.Errorf("values of -v (--vfield) and -f (--fields) should be different"))
+		}
+
+		separater := getFlagString(cmd, "separater")
+		if separater == "" {
+			checkError(fmt.Errorf("flag -s (--separater) needed"))
+		}
+
+		fieldStr = fmt.Sprintf("%s,%s", fieldStr, vfieldStr)
 
 		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
 
@@ -74,7 +116,7 @@ var freqCmd = &cobra.Command{
 			writer.Comma = config.OutDelimiter
 		}
 
-		counter := make(map[string]int, 10000)
+		key2data := make(map[string][]string, 10000)
 		orders := make(map[string]int, 10000)
 
 		file := files[0]
@@ -82,7 +124,7 @@ var freqCmd = &cobra.Command{
 
 		if err != nil {
 			if err == xopen.ErrNoContent {
-				log.Warningf("csvtk freq: skipping empty input file: %s", file)
+				log.Warningf("csvtk fold: skipping empty input file: %s", file)
 
 				writer.Flush()
 				checkError(writer.Error())
@@ -99,8 +141,10 @@ var freqCmd = &cobra.Command{
 			DoNotAllowDuplicatedColumnName: true,
 		})
 
+		var items []string
 		var key string
 		var N int
+		var ok bool
 
 		checkFirstLine := true
 		for record := range csvReader.Ch {
@@ -110,62 +154,30 @@ var freqCmd = &cobra.Command{
 
 			if checkFirstLine {
 				checkFirstLine = false
-				if !config.NoHeaderRow || record.IsHeaderRow {
-					checkError(writer.Write(append(record.Selected, "frequency")))
+
+				if !config.NoHeaderRow || record.IsHeaderRow { // do not replace head line
+					checkError(writer.Write(record.Selected))
 					continue
 				}
 			}
 
 			N++
 
-			key = strings.Join(record.Selected, "_shenwei356_")
-			counter[key]++
+			items = record.Selected
+
+			key = strings.Join(items[0:len(items)-1], "_shenwei356_")
+			if _, ok = key2data[key]; !ok {
+				key2data[key] = make([]string, 0, 1)
+			}
+			key2data[key] = append(key2data[key], items[len(items)-1])
 			orders[key] = N
 		}
 
-		var items []string
-		if sortByFreq {
-			counts := make([]stringutil.StringCount, len(counter))
-			i := 0
-			for key, count := range counter {
-				counts[i] = stringutil.StringCount{Key: key, Count: count}
-				i++
-			}
-			if reverse {
-				sort.Sort(stringutil.ReversedStringCountList{counts})
-			} else {
-				sort.Sort(stringutil.StringCountList(counts))
-			}
-			for _, count := range counts {
-				items = strings.Split(count.Key, "_shenwei356_")
-				items = append(items, strconv.Itoa(counter[count.Key]))
-				checkError(writer.Write(items))
-			}
-		} else if sortByKey {
-			keys := make([]string, len(counter))
-			i := 0
-			for key := range counter {
-				keys[i] = key
-				i++
-			}
-
-			sort.Strings(keys)
-			if reverse {
-				stringutil.ReverseStringSliceInplace(keys)
-			}
-
-			for _, key := range keys {
-				items = strings.Split(key, "_shenwei356_")
-				items = append(items, strconv.Itoa(counter[key]))
-				checkError(writer.Write(items))
-			}
-		} else {
-			orderedKey := stringutil.SortCountOfString(orders, false)
-			for _, o := range orderedKey {
-				items = strings.Split(o.Key, "_shenwei356_")
-				items = append(items, strconv.Itoa(counter[o.Key]))
-				checkError(writer.Write(items))
-			}
+		orderedKey := stringutil.SortCountOfString(orders, false)
+		for _, o := range orderedKey {
+			items = strings.Split(o.Key, "_shenwei356_")
+			items = append(items, strings.Join(key2data[o.Key], separater))
+			checkError(writer.Write(items))
 		}
 
 		writer.Flush()
@@ -176,11 +188,10 @@ var freqCmd = &cobra.Command{
 }
 
 func init() {
-	RootCmd.AddCommand(freqCmd)
-	freqCmd.Flags().StringP("fields", "f", "1", `select these fields as the key. e.g -f 1,2 or -f columnA,columnB`)
-	freqCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
-	freqCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
-	freqCmd.Flags().BoolP("sort-by-freq", "n", false, `sort by frequency`)
-	freqCmd.Flags().BoolP("sort-by-key", "k", false, `sort by key`)
-	freqCmd.Flags().BoolP("reverse", "r", false, `reverse order while sorting`)
+	RootCmd.AddCommand(collapseCmd)
+	collapseCmd.Flags().StringP("fields", "f", "1", `key fields for grouping. e.g -f 1,2 or -f columnA,columnB`)
+	collapseCmd.Flags().StringP("vfield", "v", "", `value field for folding`)
+	collapseCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
+	collapseCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields (only for key fields), e.g., -F -f "*name" or -F -f "id123*"`)
+	collapseCmd.Flags().StringP("separater", "s", "; ", "separater for folded values")
 }

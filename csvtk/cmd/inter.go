@@ -1,4 +1,4 @@
-// Copyright © 2016-2023 Wei Shen <shenwei356@gmail.com>
+// Copyright © 2016-2021 Wei Shen <shenwei356@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,35 +24,35 @@ import (
 	"encoding/csv"
 	"fmt"
 	"runtime"
+	"strings"
 
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
 )
 
-// renameCmd represents the rename command
-var renameCmd = &cobra.Command{
-	Use:   "rename",
-	Short: "rename column names with new names",
-	Long: `rename column names with new names
+// interCmd represents the inter command
+var interCmd = &cobra.Command{
+	Use:   "inter",
+	Short: "intersection of multiple files",
+	Long: `intersection of multiple files
+
+Attention:
+
+  1. fields in all files should be the same, 
+     if not, extracting to another file using "csvtk cut".
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
 		files := getFileListFromArgsAndFile(cmd, args, true, "infile-list", true)
-		if len(files) > 1 {
-			checkError(fmt.Errorf("no more than one file should be given"))
-		}
 		runtime.GOMAXPROCS(config.NumCPUs)
-
-		if getFlagBool(cmd, "no-header-row") {
-			checkError(fmt.Errorf("flag --H (--no-header-row) is not allowed for this command"))
-		}
 
 		fieldStr := getFlagString(cmd, "fields")
 		if fieldStr == "" {
 			checkError(fmt.Errorf("flag -f (--fields) needed"))
 		}
-		names := getFlagCommaSeparatedStrings(cmd, "names")
+
+		ignoreCase := getFlagBool(cmd, "ignore-case")
 
 		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
 
@@ -71,12 +71,21 @@ var renameCmd = &cobra.Command{
 			writer.Comma = config.OutDelimiter
 		}
 
+		keysMaps := make(map[string]bool, 10000)
+		valuesMaps := make(map[string][]string) // store selected columns of first file
+		var selectedColnames []string
+		var hasHeaderLine bool
+
+		var firstFile = true
+		var hasInter = true
+		var ok bool
+
 		for _, file := range files {
 			csvReader, err := newCSVReaderByConfig(config, file)
 
 			if err != nil {
 				if err == xopen.ErrNoContent {
-					log.Warningf("csvtk rename: skipping empty input file: %s", file)
+					log.Warningf("csvtk inter: skipping empty input file: %s", file)
 					continue
 				}
 				checkError(err)
@@ -89,6 +98,8 @@ var renameCmd = &cobra.Command{
 				DoNotAllowDuplicatedColumnName: true,
 			})
 
+			var key string
+
 			checkFirstLine := true
 			for record := range csvReader.Ch {
 				if record.Err != nil {
@@ -98,32 +109,75 @@ var renameCmd = &cobra.Command{
 				if checkFirstLine {
 					checkFirstLine = false
 
-					if !config.NoHeaderRow || record.IsHeaderRow {
-						if len(record.Fields) != len(names) {
-							checkError(fmt.Errorf("number of selected fields (%d) is not equal to number of names (%d)", len(record.Fields), len(names)))
-						}
-						for i, f := range record.Fields {
-							record.All[f-1] = names[i]
-						}
+					if !config.NoHeaderRow || record.IsHeaderRow { // do not replace head line
+						selectedColnames = record.Selected
+						hasHeaderLine = true
 
-						checkError(writer.Write(record.All))
 						continue
 					}
 				}
 
-				checkError(writer.Write(record.All))
+				key = strings.Join(record.Selected, "_shenwei356_")
+				if ignoreCase {
+					key = strings.ToLower(key)
+				}
+
+				if firstFile {
+					keysMaps[key] = false
+
+					valuesMaps[key] = record.Selected
+					continue
+				}
+
+				if _, ok = keysMaps[key]; ok {
+					keysMaps[key] = true
+				}
+
 			}
 
 			readerReport(&config, csvReader, file)
+
+			if firstFile {
+				firstFile = false
+				continue
+			}
+
+			// remove unseen kmers
+			for key = range keysMaps {
+				if keysMaps[key] {
+					keysMaps[key] = false
+				} else {
+					delete(keysMaps, key)
+				}
+			}
+
+			if len(keysMaps) == 0 {
+				hasInter = false
+				break
+			}
 		}
+
+		if !hasInter {
+			writer.Flush()
+			checkError(writer.Error())
+			return
+		}
+
+		if hasHeaderLine {
+			checkError(writer.Write(selectedColnames))
+		}
+		for key := range keysMaps {
+			checkError(writer.Write(valuesMaps[key]))
+		}
+
 		writer.Flush()
 		checkError(writer.Error())
 	},
 }
 
 func init() {
-	RootCmd.AddCommand(renameCmd)
-	renameCmd.Flags().StringP("fields", "f", "", `select only these fields. e.g -f 1,2 or -f columnA,columnB`)
-	renameCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
-	renameCmd.Flags().StringP("names", "n", "", "comma separated new names")
+	RootCmd.AddCommand(interCmd)
+	interCmd.Flags().StringP("fields", "f", "1", `select these fields as the key. e.g -f 1,2 or -f columnA,columnB`)
+	interCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
+	interCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
 }

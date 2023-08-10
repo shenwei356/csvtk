@@ -131,19 +131,24 @@ var csv2jsonCmd = &cobra.Command{
 		var col string
 		first := true
 		var ok bool
-		checkFirstLine := true
 		var HeaderRow []string
+
+		checkFirstLine := true
+		var hasHeaderLine bool
 		for record := range csvReader.Ch {
 			if record.Err != nil {
 				checkError(record.Err)
 			}
 
 			if checkFirstLine {
+				checkFirstLine = false
+
 				if !config.NoHeaderRow || record.IsHeaderRow {
 					HeaderRow = record.All
+					hasHeaderLine = true
+
+					continue
 				}
-				checkFirstLine = false
-				continue
 			}
 
 			if keyed {
@@ -161,7 +166,7 @@ var csv2jsonCmd = &cobra.Command{
 				outfh.WriteString("," + LF)
 			}
 
-			if !config.NoHeaderRow {
+			if hasHeaderLine {
 				if keyed {
 					outfh.WriteString(indent + `"` + key + `":` + SEP + `{` + LF)
 				} else {

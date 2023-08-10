@@ -95,11 +95,12 @@ var sampleCmd = &cobra.Command{
 				}
 
 				if checkFirstLine {
+					checkFirstLine = false
+
 					if !config.NoHeaderRow || record.IsHeaderRow { // do not replace head line
 						checkError(writer.Write(record.Selected))
+						continue
 					}
-					checkFirstLine = false
-					continue
 				}
 
 				if outAll || rand.Float64() <= proportion {

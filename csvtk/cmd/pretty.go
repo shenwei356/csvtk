@@ -216,12 +216,14 @@ Styles:
 			}
 
 			if checkFirstLine {
+				checkFirstLine = false
+
 				if !config.NoHeaderRow || record.IsHeaderRow {
 					tbl.Header(record.Selected)
+					continue
 				}
-				checkFirstLine = false
-				continue
 			}
+
 			tbl.AddRowStringSlice(record.Selected)
 		}
 		tbl.Flush()

@@ -165,6 +165,8 @@ Special replacement symbols:
 				}
 
 				if checkFirstLine {
+					checkFirstLine = false
+
 					if !config.NoHeaderRow || record.IsHeaderRow {
 						for _, f := range record.Fields {
 							nr = startNum
@@ -204,9 +206,8 @@ Special replacement symbols:
 						}
 
 						checkError(writer.Write(record.All))
+						continue
 					}
-					checkFirstLine = false
-					continue
 				}
 
 				checkError(writer.Write(record.All))

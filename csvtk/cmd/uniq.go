@@ -107,9 +107,9 @@ var uniqCmd = &cobra.Command{
 			if checkFirstLine {
 				if !config.NoHeaderRow || record.IsHeaderRow { // do not replace head line
 					checkError(writer.Write(record.All))
+					continue
 				}
 				checkFirstLine = false
-				continue
 			}
 
 			key = strings.Join(record.Selected, "_shenwei356_")

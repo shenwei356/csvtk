@@ -142,6 +142,8 @@ var sepCmd = &cobra.Command{
 				}
 
 				if checkFirstLine {
+					checkFirstLine = false
+
 					fieldsMap = make(map[int]interface{}, len(record.Selected))
 					for _, f = range record.Fields {
 						fieldsMap[f-1] = struct{}{}
@@ -149,7 +151,6 @@ var sepCmd = &cobra.Command{
 					if !config.NoHeaderRow || record.IsHeaderRow {
 						handleHeaderRow = true
 					}
-					checkFirstLine = false
 				}
 
 				line = record.Line

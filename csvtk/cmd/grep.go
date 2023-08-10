@@ -198,14 +198,15 @@ Attentions:
 				}
 
 				if checkFirstLine {
+					checkFirstLine = false
+
 					if !config.NoHeaderRow || record.IsHeaderRow {
 						if printLineNumber {
 							unshift(&record.All, "row")
 						}
 						checkError(writer.Write(record.All))
+						continue
 					}
-					checkFirstLine = false
-					continue
 				}
 
 				if verbose && record.Row&8191 == 0 {

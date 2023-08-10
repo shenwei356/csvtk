@@ -178,11 +178,12 @@ Special replacement symbols:
 				}
 
 				if checkFirstLine {
+					checkFirstLine = false
+
 					if !config.NoHeaderRow || record.IsHeaderRow { // do not replace head line
 						checkError(writer.Write(record.All))
+						continue
 					}
-					checkFirstLine = false
-					continue
 				}
 
 				nr++

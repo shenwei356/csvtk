@@ -103,11 +103,12 @@ var roundCmd = &cobra.Command{
 				}
 
 				if checkFirstLine {
+					checkFirstLine = false
+
 					if !config.NoHeaderRow || record.IsHeaderRow { // do not replace head line
 						checkError(writer.Write(record.All))
+						continue
 					}
-					checkFirstLine = false
-					continue
 				}
 
 				for _, f := range record.Fields {
