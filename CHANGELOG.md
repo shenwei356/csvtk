@@ -1,6 +1,8 @@
 - [csvtk v0.27.0](https://github.com/shenwei356/csvtk/releases/tag/v0.27.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.27.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.27.0)
-  - add a new global flag `-Z/--show-row-number`, supported commands: cut, pretty, csv2tab, csv2xlsx, tab2csv
+  - `csvtk`:
+      - code refactor.
+      - add a new global flag `-Z/--show-row-number`, supported commands: cut, pretty, csv2tab, csv2xlsx, tab2csv
   - `csvtk csv2json/uniq/sep/freq/replace/rename/split`:
       - only selected column names are not allowed to be duplicated in the input data. [#235](https://github.com/shenwei356/csvtk/issues/235)
   - `csvtk mutate/mutate2`:
@@ -9,7 +11,10 @@
       - fix unselect range error. [#234](https://github.com/shenwei356/csvtk/issues/234)
       - fix `-i/--ignore-case`.
   - `csvtk round`:
-    - `csvtk round`: fix bug of failing to round scientific notation with value small than one, e.g., `7.1E-1`.
+      - fix bug of failing to round scientific notation with value small than one, e.g., `7.1E-1`.
+  - `csvtk summary`:
+      - fix duplicated columns.
+      - fix result error when multiple stats applied to the same column.
 - [csvtk v0.26.0](https://github.com/shenwei356/csvtk/releases/tag/v0.26.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.26.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.26.0)
   - `csvtk`: 

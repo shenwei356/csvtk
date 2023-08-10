@@ -105,11 +105,12 @@ var uniqCmd = &cobra.Command{
 			}
 
 			if checkFirstLine {
+				checkFirstLine = false
+
 				if !config.NoHeaderRow || record.IsHeaderRow { // do not replace head line
 					checkError(writer.Write(record.All))
 					continue
 				}
-				checkFirstLine = false
 			}
 
 			key = strings.Join(record.Selected, "_shenwei356_")

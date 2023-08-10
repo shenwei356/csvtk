@@ -445,6 +445,7 @@ Examples
             | csvtk summary -i -f f4:sum,f5:sum -g f1,f2 \
             | csvtk pretty
         f1    f2     f4:sum   f5:sum
+        ---   ----   ------   ------
         bar   xyz    7.00     106.00
         bar   xyz2   4.00     4.00
         foo   bar    6.00     3.00
@@ -454,7 +455,7 @@ Examples
 
         $ cat testdata/digitals2.csv | sed 1d \
             | csvtk summary -H -i -f 4:sum,5:sum -g 1,2 \
-            | csvtk pretty
+            | csvtk pretty -H
         bar   xyz    7.00   106.00
         bar   xyz2   4.00   4.00
         foo   bar    6.00   3.00
