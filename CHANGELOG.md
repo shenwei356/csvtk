@@ -8,6 +8,8 @@
   - `csvtk cut`:
       - fix unselect range error. [#234](https://github.com/shenwei356/csvtk/issues/234)
       - fix `-i/--ignore-case`.
+  - `csvtk round`:
+    - `csvtk round`: fix bug of failing to round scientific notation with value small than one, e.g., `7.1E-1`.
 - [csvtk v0.26.0](https://github.com/shenwei356/csvtk/releases/tag/v0.26.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.26.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.26.0)
   - `csvtk`: 

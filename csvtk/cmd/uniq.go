@@ -98,9 +98,18 @@ var uniqCmd = &cobra.Command{
 		var n int
 		var ok bool
 
+		checkFirstLine := true
 		for record := range csvReader.Ch {
 			if record.Err != nil {
 				checkError(record.Err)
+			}
+
+			if checkFirstLine {
+				if !config.NoHeaderRow || record.IsHeaderRow { // do not replace head line
+					checkError(writer.Write(record.All))
+				}
+				checkFirstLine = false
+				continue
 			}
 
 			key = strings.Join(record.Selected, "_shenwei356_")

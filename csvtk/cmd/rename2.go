@@ -149,8 +149,6 @@ Special replacement symbols:
 			csvReader.Read(ReadOption{
 				FieldStr:    fieldStr,
 				FuzzyFields: fuzzyFields,
-
-				// DoNotAllowDuplicatedColumnName: true,
 			})
 
 			var r string
