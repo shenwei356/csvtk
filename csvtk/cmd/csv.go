@@ -88,20 +88,24 @@ func NewCSVReader(file string) (*CSVReader, error) {
 }
 
 type ReadOption struct {
-	FieldStr           string
-	FieldStrSep        string
-	FuzzyFields        bool
-	IgnoreFieldCase    bool
-	UniqColumn         bool // deduplicate columns matched by multiple fuzzy column names
-	AllowMissingColumn bool // allow missing column
-	BlankMissingColumn bool
-	ShowRowNumber      bool
+	FieldStr                       string
+	FieldStrSep                    string
+	FuzzyFields                    bool
+	IgnoreFieldCase                bool
+	DoNotAllowDuplicatedColumnName bool
+	UniqColumn                     bool // deduplicate columns matched by multiple fuzzy column names
+	AllowMissingColumn             bool // allow missing column
+	BlankMissingColumn             bool
+	ShowRowNumber                  bool
 }
 
 // Run begins to read
 func (csvReader *CSVReader) Read(opt ReadOption) {
 	go func() {
 		fieldStr := opt.FieldStr
+		if fieldStr == "" {
+			fieldStr = "1-"
+		}
 		fieldStrSep := opt.FieldStrSep
 		if fieldStrSep == "" {
 			fieldStrSep = ","
@@ -112,6 +116,7 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 		allowMissingColumn := opt.AllowMissingColumn
 		blankMissingColumn := opt.BlankMissingColumn
 		showRowNumber := opt.ShowRowNumber
+		doNotAllowDuplicatedColumnName := opt.DoNotAllowDuplicatedColumnName
 
 		defer func() {
 			csvReader.fh.Close()
@@ -213,12 +218,16 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 									if !allowMissingColumn {
 										checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col[1:], csvReader.file))
 									}
+								} else if doNotAllowDuplicatedColumnName && len(colnames2fileds[col]) > 1 {
+									checkError(fmt.Errorf("the selected colname is duplicated in the input data: %s", col))
 								}
 							} else {
 								if _, ok = colnames2fileds[col]; !ok {
 									if !allowMissingColumn {
 										checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col, csvReader.file))
 									}
+								} else if doNotAllowDuplicatedColumnName && len(colnames2fileds[col]) > 1 {
+									checkError(fmt.Errorf("the selected colname is duplicated in the input data: %s", col))
 								}
 							}
 						}
