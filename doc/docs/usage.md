@@ -3187,6 +3187,7 @@ $ cat players.csv | csvtk collapse -f 1 -v 3 -s ';' \
     | csvtk sep -f 2 -s ';' -n p1,p2,p3,p4 -N 4 --na NA \
     | csvtk pretty
 gender   name      p1   p2   p3   p4
+------   -------   --   --   --   --
 male     A;B;C     A    B    C    NA
 female   a;b;c;d   a    b    c    d
     
@@ -3195,6 +3196,7 @@ $ cat players.csv | csvtk collapse -f 1 -v 3 -s ';' \
     | csvtk sep -f 2 -s ';' -n p1,p2,p3  --drop \
     | csvtk pretty
 gender   name      p1   p2   p3
+------   -------   --   --   --
 male     A;B;C     A    B    C
 female   a;b;c;d   a    b    c
 
@@ -3203,8 +3205,9 @@ $ cat players.csv | csvtk collapse -f 1 -v 3 -s ';' \
     | csvtk sep -f 2 -s ';' -n p1,p2,p3  --merge \
     | csvtk pretty
 gender   name      p1   p2   p3
+------   -------   --   --   ---
 male     A;B;C     A    B    C
-female   a;b;c;d   a    b    c;d
+female   a;b;c;d   a    b    c;
 
 #
 $ echo -ne "taxid\tlineage\n9606\tEukaryota;Chordata;Mammalia;Primates;Hominidae;Homo;Homo sapiens\n"
@@ -3215,6 +3218,7 @@ $ echo -ne "taxid\tlineage\n9606\tEukaryota;Chordata;Mammalia;Primates;Hominidae
     | csvtk sep -t -f 2 -s ';' -n kindom,phylum,class,order,family,genus,species --remove \
     | csvtk pretty -t
 taxid   kindom      phylum     class      order      family      genus   species
+-----   ---------   --------   --------   --------   ---------   -----   ------------
 9606    Eukaryota   Chordata   Mammalia   Primates   Hominidae   Homo    Homo sapiens
 ```
 
