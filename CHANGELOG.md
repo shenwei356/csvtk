@@ -3,7 +3,7 @@
   - `csvtk`:
       - code refactor.
       - add a new global flag `-Z/--show-row-number`, supported commands: cut, pretty, csv2tab, csv2xlsx, tab2csv
-  - `csvtk csv2json/uniq/sep/freq/replace/rename/split`:
+  - `csvtk csv2json/uniq/sep/freq/replace/rename/split/mutate/filter/summary/fold/unfold/inter/mutate/gather`:
       - only selected column names are not allowed to be duplicated in the input data. [#235](https://github.com/shenwei356/csvtk/issues/235)
   - `csvtk mutate/mutate2`:
       - **new flags `--at`, `--before`, `--after` for specifying the position of the new column**. [#193](https://github.com/shenwei356/csvtk/issues/193)
