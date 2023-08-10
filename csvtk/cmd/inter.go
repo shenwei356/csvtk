@@ -70,6 +70,10 @@ Attention:
 		} else {
 			writer.Comma = config.OutDelimiter
 		}
+		defer func() {
+			writer.Flush()
+			checkError(writer.Error())
+		}()
 
 		keysMaps := make(map[string]bool, 10000)
 		valuesMaps := make(map[string][]string) // store selected columns of first file
@@ -170,8 +174,6 @@ Attention:
 			checkError(writer.Write(valuesMaps[key]))
 		}
 
-		writer.Flush()
-		checkError(writer.Error())
 	},
 }
 

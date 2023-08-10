@@ -60,6 +60,10 @@ var addHeaderCmd = &cobra.Command{
 		} else {
 			writer.Comma = config.OutDelimiter
 		}
+		defer func() {
+			writer.Flush()
+			checkError(writer.Error())
+		}()
 
 		printHeaderRow := true
 		for _, file := range files {
@@ -104,8 +108,6 @@ var addHeaderCmd = &cobra.Command{
 			checkError(writer.Write(colnames))
 		}
 
-		writer.Flush()
-		checkError(writer.Error())
 	},
 }
 

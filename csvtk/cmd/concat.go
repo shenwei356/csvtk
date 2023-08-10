@@ -112,6 +112,10 @@ so only columns match that of the first files kept.
 		} else {
 			writer.Comma = config.OutDelimiter
 		}
+		defer func() {
+			writer.Flush()
+			checkError(writer.Error())
+		}()
 
 		if !config.NoHeaderRow {
 			colnames := make([]string, len(COLNAMES))
@@ -130,8 +134,6 @@ so only columns match that of the first files kept.
 			checkError(writer.Write(row))
 		}
 
-		writer.Flush()
-		checkError(writer.Error())
 	},
 }
 

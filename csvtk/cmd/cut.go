@@ -90,6 +90,10 @@ Examples:
 		} else {
 			writer.Comma = config.OutDelimiter
 		}
+		defer func() {
+			writer.Flush()
+			checkError(writer.Error())
+		}()
 
 		file := files[0]
 		csvReader, err := newCSVReaderByConfig(config, file)
@@ -123,9 +127,6 @@ Examples:
 
 			writer.Write(record.Selected)
 		}
-
-		writer.Flush()
-		checkError(writer.Error())
 
 		readerReport(&config, csvReader, file)
 	},

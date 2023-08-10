@@ -143,6 +143,10 @@ var sortCmd = &cobra.Command{
 		} else {
 			writer.Comma = config.OutDelimiter
 		}
+		defer func() {
+			writer.Flush()
+			checkError(writer.Error())
+		}()
 
 		file := files[0]
 		colnames, fields, _, headerRow, data, err := parseCSVfile(cmd, config,
@@ -220,8 +224,6 @@ var sortCmd = &cobra.Command{
 			checkError(writer.Write(s.Value))
 		}
 
-		writer.Flush()
-		checkError(writer.Error())
 	},
 }
 

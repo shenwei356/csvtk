@@ -69,6 +69,10 @@ var uniqCmd = &cobra.Command{
 		} else {
 			writer.Comma = config.OutDelimiter
 		}
+		defer func() {
+			writer.Flush()
+			checkError(writer.Error())
+		}()
 
 		keysMaps := make(map[string]int, 10000)
 
@@ -127,9 +131,6 @@ var uniqCmd = &cobra.Command{
 			}
 			checkError(writer.Write(record.All))
 		}
-
-		writer.Flush()
-		checkError(writer.Error())
 
 		readerReport(&config, csvReader, file)
 	},

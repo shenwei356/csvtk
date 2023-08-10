@@ -83,6 +83,10 @@ var gatherCmd = &cobra.Command{
 		} else {
 			writer.Comma = config.OutDelimiter
 		}
+		defer func() {
+			writer.Flush()
+			checkError(writer.Error())
+		}()
 
 		file := files[0]
 		csvReader, err := newCSVReaderByConfig(config, file)
@@ -167,9 +171,6 @@ var gatherCmd = &cobra.Command{
 				}
 			}
 		}
-
-		writer.Flush()
-		checkError(writer.Error())
 
 		readerReport(&config, csvReader, file)
 	},

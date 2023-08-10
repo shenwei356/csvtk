@@ -165,6 +165,10 @@ Available operations:
 		} else {
 			writer.Comma = config.OutDelimiter
 		}
+		defer func() {
+			writer.Flush()
+			checkError(writer.Error())
+		}()
 
 		file := files[0]
 		csvReader, err := newCSVReaderByConfig(config, file)
@@ -345,8 +349,6 @@ Available operations:
 			writer.Write(record)
 		}
 
-		writer.Flush()
-		checkError(writer.Error())
 	},
 }
 

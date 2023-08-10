@@ -246,6 +246,10 @@ func appendRows(config Config,
 	} else {
 		writer.Comma = config.OutDelimiter
 	}
+	defer func() {
+		writer.Flush()
+		checkError(writer.Error())
+	}()
 
 	if !written && headerRow != nil {
 		checkError(writer.Write(headerRow))
@@ -255,6 +259,4 @@ func appendRows(config Config,
 		checkError(writer.Write(row))
 	}
 
-	writer.Flush()
-	checkError(writer.Error())
 }

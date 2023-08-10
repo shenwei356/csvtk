@@ -66,6 +66,10 @@ var combCmd = &cobra.Command{
 		} else {
 			writer.Comma = config.OutDelimiter
 		}
+		defer func() {
+			writer.Flush()
+			checkError(writer.Error())
+		}()
 
 		var fh *xopen.Reader
 		var text string
@@ -142,8 +146,6 @@ var combCmd = &cobra.Command{
 				log.Warning("no input? or only one row? you may need switch on '-H' for single-line input")
 			}
 		}
-		writer.Flush()
-		checkError(writer.Error())
 	},
 }
 

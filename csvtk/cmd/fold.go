@@ -115,6 +115,10 @@ Example:
 		} else {
 			writer.Comma = config.OutDelimiter
 		}
+		defer func() {
+			writer.Flush()
+			checkError(writer.Error())
+		}()
 
 		key2data := make(map[string][]string, 10000)
 		orders := make(map[string]int, 10000)
@@ -179,9 +183,6 @@ Example:
 			items = append(items, strings.Join(key2data[o.Key], separater))
 			checkError(writer.Write(items))
 		}
-
-		writer.Flush()
-		checkError(writer.Error())
 
 		readerReport(&config, csvReader, file)
 	},

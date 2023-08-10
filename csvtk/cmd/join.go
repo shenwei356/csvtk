@@ -106,6 +106,10 @@ Attention:
 		} else {
 			writer.Comma = config.OutDelimiter
 		}
+		defer func() {
+			writer.Flush()
+			checkError(writer.Error())
+		}()
 
 		var HeaderRow []string
 		var newColname string
@@ -374,8 +378,6 @@ Attention:
 			checkError(writer.Write(record))
 		}
 
-		writer.Flush()
-		checkError(writer.Error())
 	},
 }
 

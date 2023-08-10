@@ -101,6 +101,11 @@ var transposeCmd = &cobra.Command{
 		} else {
 			writer.Comma = config.OutDelimiter
 		}
+		defer func() {
+			writer.Flush()
+			checkError(writer.Error())
+		}()
+
 		for j := uint64(0); j < numCols0; j++ {
 			rowNew := make([]string, numRows)
 			for i, rowOld := range data {
@@ -108,8 +113,6 @@ var transposeCmd = &cobra.Command{
 			}
 			checkError(writer.Write(rowNew))
 		}
-		writer.Flush()
-		checkError(writer.Error())
 	},
 }
 

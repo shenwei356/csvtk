@@ -73,6 +73,10 @@ var freqCmd = &cobra.Command{
 		} else {
 			writer.Comma = config.OutDelimiter
 		}
+		defer func() {
+			writer.Flush()
+			checkError(writer.Error())
+		}()
 
 		counter := make(map[string]int, 10000)
 		orders := make(map[string]int, 10000)
@@ -167,9 +171,6 @@ var freqCmd = &cobra.Command{
 				checkError(writer.Write(items))
 			}
 		}
-
-		writer.Flush()
-		checkError(writer.Error())
 
 		readerReport(&config, csvReader, file)
 	},
