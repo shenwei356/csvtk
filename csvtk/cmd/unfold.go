@@ -30,21 +30,40 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// interCmd represents the inter command
-var interCmd = &cobra.Command{
-	Use:   "inter",
-	Short: "intersection of multiple files",
-	Long: `intersection of multiple files
+// unfoldCmd represents the unfold command
+var unfoldCmd = &cobra.Command{
+	Use:   "unfold",
+	Short: "unfold multiple values in cells of a field",
+	Long: `unfold multiple values in cells of a field
 
-Attention:
+Example:
 
-  1. fields in all files should be the same, 
-     if not, extracting to another file using "csvtk cut".
+    $ echo -ne "id,values,meta\n1,a;b,12\n2,c,23\n3,d;e;f,34\n" \
+        | csvtk pretty
+    id   values   meta
+    1    a;b      12
+    2    c        23
+    3    d;e;f    34
+
+
+    $ echo -ne "id,values,meta\n1,a;b,12\n2,c,23\n3,d;e;f,34\n" \
+        | csvtk unfold -f values -s ";" \
+        | csvtk pretty
+    id   values   meta
+    1    a        12
+    1    b        12
+    2    c        23
+    3    d        34
+    3    e        34
+    3    f        34
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
 		files := getFileListFromArgsAndFile(cmd, args, true, "infile-list", true)
+		if len(files) > 1 {
+			checkError(fmt.Errorf("no more than one file should be given"))
+		}
 		runtime.GOMAXPROCS(config.NumCPUs)
 
 		fieldStr := getFlagString(cmd, "fields")
@@ -52,9 +71,10 @@ Attention:
 			checkError(fmt.Errorf("flag -f (--fields) needed"))
 		}
 
-		ignoreCase := getFlagBool(cmd, "ignore-case")
-
-		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
+		separater := getFlagString(cmd, "separater")
+		if separater == "" {
+			checkError(fmt.Errorf("flag -s (--separater) needed"))
+		}
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
@@ -71,34 +91,22 @@ Attention:
 			writer.Comma = config.OutDelimiter
 		}
 
-		keysMaps := make(map[string]bool, 10000)
-		valuesMaps := make(map[string][]string) // store selected columns of first file
-		var selectedColnames []string
-		var hasHeaderLine bool
-
-		var firstFile = true
-		var hasInter = true
-		var ok bool
-
 		for _, file := range files {
 			csvReader, err := newCSVReaderByConfig(config, file)
 
 			if err != nil {
 				if err == xopen.ErrNoContent {
-					log.Warningf("csvtk inter: skipping empty input file: %s", file)
+					log.Warningf("csvtk unfold: skipping empty input file: %s", file)
 					continue
 				}
 				checkError(err)
 			}
 
 			csvReader.Read(ReadOption{
-				FieldStr:    fieldStr,
-				FuzzyFields: fuzzyFields,
+				FieldStr: fieldStr,
 
 				DoNotAllowDuplicatedColumnName: true,
 			})
-
-			var key string
 
 			checkFirstLine := true
 			for record := range csvReader.Ch {
@@ -108,76 +116,32 @@ Attention:
 
 				if checkFirstLine {
 					checkFirstLine = false
+					if len(record.Fields) > 1 {
+						checkError(fmt.Errorf("should no choosing more than one field"))
+					}
 
 					if !config.NoHeaderRow || record.IsHeaderRow { // do not replace head line
-						selectedColnames = record.Selected
-						hasHeaderLine = true
-
+						checkError(writer.Write(record.All))
 						continue
 					}
 				}
 
-				key = strings.Join(record.Selected, "_shenwei356_")
-				if ignoreCase {
-					key = strings.ToLower(key)
+				for _, v := range strings.Split(record.Selected[0], separater) {
+					record.All[record.Fields[0]-1] = v
+					checkError(writer.Write(record.All))
 				}
-
-				if firstFile {
-					keysMaps[key] = false
-
-					valuesMaps[key] = record.Selected
-					continue
-				}
-
-				if _, ok = keysMaps[key]; ok {
-					keysMaps[key] = true
-				}
-
 			}
 
 			readerReport(&config, csvReader, file)
-
-			if firstFile {
-				firstFile = false
-				continue
-			}
-
-			// remove unseen kmers
-			for key = range keysMaps {
-				if keysMaps[key] {
-					keysMaps[key] = false
-				} else {
-					delete(keysMaps, key)
-				}
-			}
-
-			if len(keysMaps) == 0 {
-				hasInter = false
-				break
-			}
 		}
-
-		if !hasInter {
-			writer.Flush()
-			checkError(writer.Error())
-			return
-		}
-
-		if hasHeaderLine {
-			checkError(writer.Write(selectedColnames))
-		}
-		for key := range keysMaps {
-			checkError(writer.Write(valuesMaps[key]))
-		}
-
 		writer.Flush()
 		checkError(writer.Error())
 	},
 }
 
 func init() {
-	RootCmd.AddCommand(interCmd)
-	interCmd.Flags().StringP("fields", "f", "1", `select these fields as the key. e.g -f 1,2 or -f columnA,columnB`)
-	interCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
-	interCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
+	RootCmd.AddCommand(unfoldCmd)
+
+	unfoldCmd.Flags().StringP("fields", "f", "", `field to expand, only one field is allowed. type "csvtk unfold -h" for examples`)
+	unfoldCmd.Flags().StringP("separater", "s", "; ", "separater for folded values")
 }
