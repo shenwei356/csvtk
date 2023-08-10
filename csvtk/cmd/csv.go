@@ -37,6 +37,8 @@ type Record struct {
 	Row  int // the row number, header row skipped
 	Err  error
 
+	IsHeaderRow bool
+
 	All      []string
 	Fields   []int    // selected fields
 	Selected []string // selected columns
@@ -155,6 +157,7 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 
 		var record []string
 		var err error
+		var isHeaderRow bool
 
 		for {
 			record, err = csvReader.Reader.Read()
@@ -194,7 +197,11 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 
 			// ------------------------------------------------------------------
 
+			isHeaderRow = false
+
 			if parseHeaderRow { // parsing header row
+				isHeaderRow = true
+
 				if len(fields) == 0 { // user gives the colnames
 					// colnames
 					colnames2fileds = make(map[string][]int, len(record))
@@ -466,6 +473,8 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 					All:      record, // copied values
 					Fields:   fields, // the first variable
 					Selected: items,  // copied values
+
+					IsHeaderRow: isHeaderRow,
 				}
 
 				continue
@@ -485,6 +494,8 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 				All:      record, // copied values
 				Fields:   fields, // the first variable
 				Selected: items,  // copied values
+
+				IsHeaderRow: isHeaderRow,
 			}
 		}
 

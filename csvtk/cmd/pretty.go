@@ -209,15 +209,17 @@ Styles:
 
 		tbl.Writer(outfh, uint(bufRows))
 
-		parseHeaderRow := !config.NoHeaderRow
+		checkFirstLine := true
 		for record := range csvReader.Ch {
 			if record.Err != nil {
 				checkError(record.Err)
 			}
 
-			if parseHeaderRow { // parsing header row
-				tbl.Header(record.Selected)
-				parseHeaderRow = false
+			if checkFirstLine {
+				if !config.NoHeaderRow || record.IsHeaderRow {
+					tbl.Header(record.Selected)
+				}
+				checkFirstLine = false
 				continue
 			}
 			tbl.AddRowStringSlice(record.Selected)

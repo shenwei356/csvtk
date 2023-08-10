@@ -27,6 +27,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"strconv"
 	"strings"
 
@@ -290,6 +291,8 @@ func getConfigs(cmd *cobra.Command) Config {
 	threads := getFlagPositiveInt(cmd, "num-cpus")
 	if threads >= 1000 {
 		checkError(fmt.Errorf("are your seriously? %d threads? It will exhaust your RAM", threads))
+	} else if threads < 1 {
+		threads = runtime.NumCPU()
 	}
 
 	return Config{

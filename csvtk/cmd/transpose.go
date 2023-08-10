@@ -23,43 +23,73 @@ package cmd
 import (
 	"encoding/csv"
 	"fmt"
-	"math/rand"
 	"runtime"
 
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
 )
 
-// sampleCmd represents the seq command
-var sampleCmd = &cobra.Command{
-	Use:   "sample",
-	Short: "sampling by proportion",
-	Long: `sampling by proportion
+// transposeCmd represents the transpose command
+var transposeCmd = &cobra.Command{
+	Use:   "transpose",
+	Short: "transpose CSV data",
+	Long: `transpose CSV data
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
 		files := getFileListFromArgsAndFile(cmd, args, true, "infile-list", true)
+		if len(files) > 1 {
+			checkError(fmt.Errorf("no more than one file should be given"))
+		}
 		runtime.GOMAXPROCS(config.NumCPUs)
-
-		proportion := getFlagFloat64(cmd, "proportion")
-		printLineNumber := getFlagBool(cmd, "line-number")
-
-		if proportion == 0 {
-			checkError(fmt.Errorf("flag -p (--proportion) needed"))
-		}
-		if proportion <= 0 || proportion > 1 {
-			checkError(fmt.Errorf("value of -p (--proportion) (%f) should be in range of (0, 1]", proportion))
-		}
-
-		outAll := proportion == 1
-
-		seed := getFlagInt64(cmd, "rand-seed")
-		rand.Seed(seed)
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
 		defer outfh.Close()
+
+		data := [][]string{}
+
+		var numCols0, numCols, numRows uint64
+		for _, file := range files {
+			csvReader, err := newCSVReaderByConfig(config, file)
+
+			if err != nil {
+				if err == xopen.ErrNoContent {
+					log.Warningf("csvtk transpose: skipping empty input file: %s", file)
+					continue
+				}
+				checkError(err)
+			}
+
+			csvReader.Read(ReadOption{
+				FieldStr: "1-",
+			})
+
+			once := true
+
+			for record := range csvReader.Ch {
+				if record.Err != nil {
+					checkError(record.Err)
+				}
+
+				numRows++
+
+				data = append(data, record.All)
+
+				if once {
+					numCols = uint64(len(record.All))
+					if numCols0 == 0 {
+						numCols0 = numCols
+					} else if numCols0 != numCols {
+						checkError(fmt.Errorf("unmatched number of columns between files"))
+					}
+					once = false
+				}
+			}
+
+			readerReport(&config, csvReader, file)
+		}
 
 		writer := csv.NewWriter(outfh)
 		if config.OutTabs || config.Tabs {
@@ -71,43 +101,12 @@ var sampleCmd = &cobra.Command{
 		} else {
 			writer.Comma = config.OutDelimiter
 		}
-
-		for _, file := range files {
-			csvReader, err := newCSVReaderByConfig(config, file)
-
-			if err != nil {
-				if err == xopen.ErrNoContent {
-					log.Warningf("csvtk sample: skipping empty input file: %s", file)
-					continue
-				}
-				checkError(err)
+		for j := uint64(0); j < numCols0; j++ {
+			rowNew := make([]string, numRows)
+			for i, rowOld := range data {
+				rowNew[i] = rowOld[j]
 			}
-
-			csvReader.Read(ReadOption{
-				FieldStr:      "1-",
-				ShowRowNumber: printLineNumber || config.ShowRowNumber,
-			})
-
-			checkFirstLine := true
-			for record := range csvReader.Ch {
-				if record.Err != nil {
-					checkError(record.Err)
-				}
-
-				if checkFirstLine {
-					if !config.NoHeaderRow || record.IsHeaderRow { // do not replace head line
-						checkError(writer.Write(record.Selected))
-					}
-					checkFirstLine = false
-					continue
-				}
-
-				if outAll || rand.Float64() <= proportion {
-					checkError(writer.Write(record.Selected))
-				}
-			}
-
-			readerReport(&config, csvReader, file)
+			checkError(writer.Write(rowNew))
 		}
 		writer.Flush()
 		checkError(writer.Error())
@@ -115,9 +114,5 @@ var sampleCmd = &cobra.Command{
 }
 
 func init() {
-	RootCmd.AddCommand(sampleCmd)
-
-	sampleCmd.Flags().Int64P("rand-seed", "s", 11, "rand seed")
-	sampleCmd.Flags().Float64P("proportion", "p", 0, "sample by proportion")
-	sampleCmd.Flags().BoolP("line-number", "n", false, `print line number as the first column ("row")`)
+	RootCmd.AddCommand(transposeCmd)
 }

@@ -131,16 +131,18 @@ var csv2jsonCmd = &cobra.Command{
 		var col string
 		first := true
 		var ok bool
-		parseHeaderRow := !config.NoHeaderRow
+		checkFirstLine := true
 		var HeaderRow []string
 		for record := range csvReader.Ch {
 			if record.Err != nil {
 				checkError(record.Err)
 			}
 
-			if parseHeaderRow {
-				HeaderRow = record.All
-				parseHeaderRow = false
+			if checkFirstLine {
+				if !config.NoHeaderRow || record.IsHeaderRow {
+					HeaderRow = record.All
+				}
+				checkFirstLine = false
 				continue
 			}
 

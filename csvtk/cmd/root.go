@@ -76,7 +76,11 @@ func Execute() {
 }
 
 func init() {
-	RootCmd.PersistentFlags().IntP("num-cpus", "j", runtime.NumCPU(), `number of CPUs to use (default value depends on your computer)`)
+	defaultThreads := runtime.NumCPU()
+	if defaultThreads > 4 {
+		defaultThreads = 4
+	}
+	RootCmd.PersistentFlags().IntP("num-cpus", "j", defaultThreads, `number of CPUs to use`)
 
 	RootCmd.PersistentFlags().StringP("delimiter", "d", ",", `delimiting character of the input CSV file`)
 	RootCmd.PersistentFlags().StringP("out-delimiter", "D", ",", `delimiting character of the output CSV file, e.g., -D $'\t' for tab`)
