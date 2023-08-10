@@ -47,7 +47,8 @@ type CSVReader struct {
 	file string
 	fh   *xopen.Reader
 
-	NoHeaderRow bool
+	NoHeaderRow   bool
+	ShowRowNumber bool
 
 	Reader *csv.Reader
 
@@ -94,6 +95,7 @@ type ReadOption struct {
 	UniqColumn         bool // deduplicate columns matched by multiple fuzzy column names
 	AllowMissingColumn bool // allow missing column
 	BlankMissingColumn bool
+	ShowRowNumber      bool
 }
 
 // Run begins to read
@@ -109,6 +111,7 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 		uniqColumn := opt.UniqColumn
 		allowMissingColumn := opt.AllowMissingColumn
 		blankMissingColumn := opt.BlankMissingColumn
+		showRowNumber := opt.ShowRowNumber
 
 		defer func() {
 			csvReader.fh.Close()
@@ -124,7 +127,8 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 			}
 		}
 
-		parseHeaderRow := needParseHeaderRow // parsing header row
+		parseHeaderRow := needParseHeaderRow  // parsing header row
+		parseHeaderRow2 := needParseHeaderRow // parsing header row
 		handleHeaderRow := len(colnames) > 0
 		var colnames2fileds map[string][]int // column name -> []field
 		var colnamesMap map[string]*regexp.Regexp
@@ -408,6 +412,15 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 			}
 
 			items = make([]string, 0, len(fields))
+
+			if showRowNumber {
+				if parseHeaderRow2 {
+					items = append(items, "row")
+					parseHeaderRow2 = false
+				} else {
+					items = append(items, strconv.Itoa(row))
+				}
+			}
 
 			if allowMissingColumn {
 				for i, f = range fields {

@@ -24,7 +24,6 @@ import (
 	"encoding/csv"
 	"fmt"
 	"runtime"
-	"strconv"
 
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
@@ -114,21 +113,12 @@ Examples:
 			UniqColumn:         uniqColumn,
 			AllowMissingColumn: allowMissingColumn,
 			BlankMissingColumn: blankMissingColumn,
+			ShowRowNumber:      config.ShowRowNumber,
 		})
 
-		parseHeaderRow := !config.NoHeaderRow
 		for record := range csvReader.Ch {
 			if record.Err != nil {
 				checkError(record.Err)
-			}
-
-			if config.ShowRowNumber {
-				if parseHeaderRow {
-					unshift(&record.Selected, "row")
-					parseHeaderRow = false
-				} else {
-					unshift(&record.Selected, strconv.Itoa(record.Row))
-				}
 			}
 
 			writer.Write(record.Selected)
