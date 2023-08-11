@@ -1,4 +1,4 @@
-// Copyright © 2016-2021 Wei Shen <shenwei356@gmail.com>
+// Copyright © 2016-2023 Wei Shen <shenwei356@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,9 +23,7 @@ package cmd
 import (
 	"encoding/csv"
 	"fmt"
-	"regexp"
 	"runtime"
-	"sort"
 	"strings"
 
 	"github.com/shenwei356/util/stringutil"
@@ -101,37 +99,6 @@ Example:
 
 		fieldStr = fmt.Sprintf("%s,%s", fieldStr, vfieldStr)
 
-		fields, colnames, negativeFields, needParseHeaderRow, _ := parseFields(cmd, fieldStr, ",", config.NoHeaderRow)
-		var fieldsMap map[int]struct{}
-		var fieldsOrder map[int]int      // for set the order of fields
-		var colnamesOrder map[string]int // for set the order of fields
-		if len(fields) > 0 {
-			fields2 := make([]int, len(fields))
-			fieldsMap = make(map[int]struct{}, len(fields))
-			for i, f := range fields {
-				if negativeFields {
-					fieldsMap[f*-1] = struct{}{}
-					fields2[i] = f * -1
-				} else {
-					fieldsMap[f] = struct{}{}
-					fields2[i] = f
-				}
-			}
-			fields = fields2
-
-			if !negativeFields {
-				fieldsOrder = make(map[int]int, len(fields))
-				i := 0
-				for _, f := range fields {
-					fieldsOrder[f] = i
-					i++
-				}
-			}
-		} else {
-			fieldsOrder = make(map[int]int, len(colnames))
-			colnamesOrder = make(map[string]int, len(colnames))
-		}
-
 		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
 
 		outfh, err := xopen.Wopen(config.OutFile)
@@ -148,6 +115,10 @@ Example:
 		} else {
 			writer.Comma = config.OutDelimiter
 		}
+		defer func() {
+			writer.Flush()
+			checkError(writer.Error())
+		}()
 
 		key2data := make(map[string][]string, 10000)
 		orders := make(map[string]int, 10000)
@@ -167,148 +138,43 @@ Example:
 			checkError(err)
 		}
 
-		csvReader.Run()
+		csvReader.Read(ReadOption{
+			FieldStr:    fieldStr,
+			FuzzyFields: fuzzyFields,
 
-		parseHeaderRow := needParseHeaderRow // parsing header row
-		printHeaderRow := needParseHeaderRow
-		var colnames2fileds map[string][]int // column name -> []field
-		var colnamesMap map[string]*regexp.Regexp
+			DoNotAllowDuplicatedColumnName: true,
+		})
 
-		checkFields := true
 		var items []string
 		var key string
 		var N int
 		var ok bool
 
-		for chunk := range csvReader.Ch {
-			checkError(chunk.Err)
+		checkFirstLine := true
+		for record := range csvReader.Ch {
+			if record.Err != nil {
+				checkError(record.Err)
+			}
 
-			for _, record := range chunk.Data {
-				N++
-				if parseHeaderRow { // parsing header row
-					colnames2fileds = make(map[string][]int, len(record))
-					for i, col := range record {
-						if _, ok := colnames2fileds[col]; !ok {
-							colnames2fileds[col] = []int{i + 1}
-						} else {
-							colnames2fileds[col] = append(colnames2fileds[col], i+1)
-						}
-					}
-					colnamesMap = make(map[string]*regexp.Regexp, len(colnames))
-					i := 0
-					for _, col := range colnames {
-						if !fuzzyFields {
-							if negativeFields {
-								if _, ok := colnames2fileds[col[1:]]; !ok {
-									checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col[1:], file))
-								} else if len(colnames2fileds[col]) > 1 {
-									checkError(fmt.Errorf("the selected colname is duplicated in the input data: %s", col))
-								}
-							} else {
-								if _, ok := colnames2fileds[col]; !ok {
-									checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col, file))
-								} else if len(colnames2fileds[col]) > 1 {
-									checkError(fmt.Errorf("the selected colname is duplicated in the input data: %s", col))
-								}
-							}
-						}
-						if negativeFields {
-							colnamesMap[col[1:]] = fuzzyField2Regexp(col[1:])
-						} else {
-							colnamesMap[col] = fuzzyField2Regexp(col)
-							colnamesOrder[col] = i
-							i++
-						}
-					}
+			if checkFirstLine {
+				checkFirstLine = false
 
-					if len(fields) == 0 { // user gives the colnames
-						fields = []int{}
-						for _, col := range record {
-							var ok bool
-							if fuzzyFields {
-								for _, re := range colnamesMap {
-									if re.MatchString(col) {
-										ok = true
-										break
-									}
-								}
-							} else {
-								_, ok = colnamesMap[col]
-							}
-							if ok {
-								fields = append(fields, colnames2fileds[col]...)
-								fieldsOrder[colnames2fileds[col][0]] = colnamesOrder[col]
-							}
-						}
-					}
-
-					fieldsMap = make(map[int]struct{}, len(fields))
-					for _, f := range fields {
-						fieldsMap[f] = struct{}{}
-					}
-
-					parseHeaderRow = false
-				}
-				if checkFields {
-					for field := range fieldsMap {
-						if field > len(record) {
-							checkError(fmt.Errorf(`field (%d) out of range (%d) in file: %s`, field, len(record), file))
-						}
-					}
-					fields2 := []int{}
-					for f := range record {
-						_, ok := fieldsMap[f+1]
-						if negativeFields {
-							if !ok {
-								fields2 = append(fields2, f+1)
-							}
-						} else {
-							if ok {
-								fields2 = append(fields2, f+1)
-							}
-						}
-					}
-					fields = fields2
-					if len(fields) == 0 {
-						checkError(fmt.Errorf("no fields matched in file: %s", file))
-					}
-					if len(fields) == 1 {
-						checkError(fmt.Errorf("key field and value field refer to a same field?"))
-
-					}
-
-					// sort fields
-					orderedFieldss := make([]orderedField, len(fields))
-					for i, f := range fields {
-						orderedFieldss[i] = orderedField{field: f, order: fieldsOrder[f]}
-					}
-					sort.Sort(orderedFields(orderedFieldss))
-					for i, of := range orderedFieldss {
-						fields[i] = of.field
-					}
-
-					items = make([]string, len(fields))
-
-					checkFields = false
-				}
-
-				for i, f := range fields {
-					items[i] = record[f-1]
-				}
-
-				if printHeaderRow {
-					checkError(writer.Write(items))
-					printHeaderRow = false
+				if !config.NoHeaderRow || record.IsHeaderRow { // do not replace head line
+					checkError(writer.Write(record.Selected))
 					continue
 				}
-
-				key = strings.Join(items[0:len(items)-1], "_shenwei356_")
-				if _, ok = key2data[key]; !ok {
-					key2data[key] = make([]string, 0, 1)
-				}
-				key2data[key] = append(key2data[key], items[len(items)-1])
-				orders[key] = N
 			}
+
+			N++
+
+			items = record.Selected
+
+			key = strings.Join(items[0:len(items)-1], "_shenwei356_")
+			if _, ok = key2data[key]; !ok {
+				key2data[key] = make([]string, 0, 1)
+			}
+			key2data[key] = append(key2data[key], items[len(items)-1])
+			orders[key] = N
 		}
 
 		orderedKey := stringutil.SortCountOfString(orders, false)
@@ -317,9 +183,6 @@ Example:
 			items = append(items, strings.Join(key2data[o.Key], separater))
 			checkError(writer.Write(items))
 		}
-
-		writer.Flush()
-		checkError(writer.Error())
 
 		readerReport(&config, csvReader, file)
 	},

@@ -1,4 +1,4 @@
-// Copyright © 2016-2021 Wei Shen <shenwei356@gmail.com>
+// Copyright © 2016-2023 Wei Shen <shenwei356@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -106,6 +106,10 @@ Attention:
 		} else {
 			writer.Comma = config.OutDelimiter
 		}
+		defer func() {
+			writer.Flush()
+			checkError(writer.Error())
+		}()
 
 		var HeaderRow []string
 		var newColname string
@@ -126,7 +130,7 @@ Attention:
 			keys = make(map[string]bool)
 			for i, file := range files {
 				_, fields, _, _, data, err := parseCSVfile(cmd, config,
-					file, allFields[i], fuzzyFields)
+					file, allFields[i], fuzzyFields, true)
 
 				if err != nil {
 					if err == xopen.ErrNoContent {
@@ -162,7 +166,7 @@ Attention:
 		var ok bool
 		for i, file := range files {
 			_, fields, _, headerRow, data, err := parseCSVfile(cmd, config,
-				file, allFields[i], fuzzyFields)
+				file, allFields[i], fuzzyFields, true)
 
 			if err != nil {
 				if err == xopen.ErrNoContent {
@@ -216,6 +220,7 @@ Attention:
 						}
 					}
 				}
+
 				firstFile = false
 				if len(HeaderRow) > 0 {
 					withHeaderRow = true
@@ -374,8 +379,6 @@ Attention:
 			checkError(writer.Write(record))
 		}
 
-		writer.Flush()
-		checkError(writer.Error())
 	},
 }
 

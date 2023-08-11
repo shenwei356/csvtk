@@ -1,4 +1,4 @@
-// Copyright © 2016-2021 Wei Shen <shenwei356@gmail.com>
+// Copyright © 2016-2023 Wei Shen <shenwei356@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -48,7 +48,7 @@ var nrowCmd = &cobra.Command{
 		defer outfh.Close()
 
 		for _, file := range files {
-			var numRows uint64
+			var numRows int
 
 			csvReader, err := newCSVReaderByConfig(config, file)
 			if err != nil {
@@ -66,17 +66,15 @@ var nrowCmd = &cobra.Command{
 				}
 			}
 
-			csvReader.Run()
+			csvReader.Read(ReadOption{
+				FieldStr: "1-",
+			})
+			for record := range csvReader.Ch {
+				if record.Err != nil {
+					checkError(record.Err)
+				}
 
-			for chunk := range csvReader.Ch {
-				checkError(chunk.Err)
-
-				numRows += uint64(len(chunk.Data))
-
-			}
-
-			if !config.NoHeaderRow {
-				numRows--
+				numRows = record.Row
 			}
 
 			if printFileName {

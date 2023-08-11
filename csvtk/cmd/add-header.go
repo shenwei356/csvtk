@@ -1,4 +1,4 @@
-// Copyright © 2016-2021 Wei Shen <shenwei356@gmail.com>
+// Copyright © 2016-2023 Wei Shen <shenwei356@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -60,6 +60,10 @@ var addHeaderCmd = &cobra.Command{
 		} else {
 			writer.Comma = config.OutDelimiter
 		}
+		defer func() {
+			writer.Flush()
+			checkError(writer.Error())
+		}()
 
 		printHeaderRow := true
 		for _, file := range files {
@@ -72,26 +76,29 @@ var addHeaderCmd = &cobra.Command{
 				checkError(err)
 			}
 
-			csvReader.Run()
-			for chunk := range csvReader.Ch {
-				checkError(chunk.Err)
+			csvReader.Read(ReadOption{
+				FieldStr: "1-",
+			})
 
-				for _, record := range chunk.Data {
-					if printHeaderRow {
-						if len(colnames) == 0 {
-							colnames = make([]string, len(record))
-							for i := 0; i < len(record); i++ {
-								colnames[i] = fmt.Sprintf("c%d", i+1)
-							}
-						} else if len(colnames) != len(record) {
-							checkError(fmt.Errorf("number of fields (%d) and new colnames (%d) do not match", len(record), len(colnames)))
-						}
-						checkError(writer.Write(colnames))
-						printHeaderRow = false
-					}
-
-					checkError(writer.Write(record))
+			for record := range csvReader.Ch {
+				if record.Err != nil {
+					checkError(record.Err)
 				}
+
+				if printHeaderRow {
+					if len(colnames) == 0 {
+						colnames = make([]string, len(record.All))
+						for i := 0; i < len(record.All); i++ {
+							colnames[i] = fmt.Sprintf("c%d", i+1)
+						}
+					} else if len(colnames) != len(record.All) {
+						checkError(fmt.Errorf("number of fields (%d) and new colnames (%d) do not match", len(record.All), len(colnames)))
+					}
+					checkError(writer.Write(colnames))
+					printHeaderRow = false
+				}
+
+				checkError(writer.Write(record.All))
 			}
 
 			readerReport(&config, csvReader, file)
@@ -101,8 +108,6 @@ var addHeaderCmd = &cobra.Command{
 			checkError(writer.Write(colnames))
 		}
 
-		writer.Flush()
-		checkError(writer.Error())
 	},
 }
 

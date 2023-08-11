@@ -21,13 +21,12 @@
 package cmd
 
 import (
-	"bufio"
+	"encoding/csv"
 	"fmt"
 	"math"
 	"os"
 	"runtime"
 	"strconv"
-	"strings"
 
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
@@ -47,25 +46,27 @@ var corrCmd = &cobra.Command{
 
 		printField := getFlagString(cmd, "fields")
 		printIgnore := getFlagBool(cmd, "ignore_nan")
-		_ = printIgnore
 		printPass := getFlagBool(cmd, "pass")
 		printLog := getFlagBool(cmd, "log")
-		outFile := config.OutFile
 
-		if config.Tabs {
-			config.OutDelimiter = rune('\t')
+		outfh, err := xopen.Wopen(config.OutFile)
+		checkError(err)
+		defer outfh.Close()
+
+		writer := csv.NewWriter(outfh)
+		if config.OutTabs || config.Tabs {
+			if config.OutDelimiter == ',' {
+				writer.Comma = '\t'
+			} else {
+				writer.Comma = config.OutDelimiter
+			}
+		} else {
+			writer.Comma = config.OutDelimiter
 		}
-
-		outw := os.Stdout
-		if outFile != "-" {
-			tw, err := os.Create(outFile)
-			checkError(err)
-			outw = tw
-		}
-		outfh := bufio.NewWriter(outw)
-
-		defer outfh.Flush()
-		defer outw.Close()
+		defer func() {
+			writer.Flush()
+			checkError(writer.Error())
+		}()
 
 		transform := func(x float64) float64 { return x }
 		if printLog {
@@ -74,145 +75,95 @@ var corrCmd = &cobra.Command{
 			}
 		}
 
-		field2col := make(map[string]int)
-		Data := make(map[int][]float64)
+		file := files[0]
 
-		targetCols := make(map[int]string)
+		csvReader, err := newCSVReaderByConfig(config, file)
 
-		for x, tok := range strings.Split(printField, ",") {
-			tok = strings.TrimSpace(tok)
-			var col int
-			if config.NoHeaderRow {
-				if len(tok) == 0 {
+		if err != nil {
+			if err == xopen.ErrNoContent {
+				log.Warningf("csvtk corr: skipping empty input file: %s", file)
+				return
+			}
+			checkError(err)
+		}
+
+		csvReader.Read(ReadOption{
+			FieldStr: printField,
+
+			DoNotAllowDuplicatedColumnName: true,
+		})
+
+		var data [][]float64
+		var i, f int
+		var val float64
+		var fields []int
+
+		var hasHeaderRow bool
+		var HeaderRow []string
+		checkFirstLine := true
+		for record := range csvReader.Ch {
+			if record.Err != nil {
+				checkError(record.Err)
+			}
+
+			if checkFirstLine {
+				checkFirstLine = false
+
+				data = make([][]float64, len(record.Fields))
+				for i = range record.Fields {
+					data[i] = make([]float64, 0, 1024)
+				}
+				fields = record.Fields
+
+				if !config.NoHeaderRow || record.IsHeaderRow { // do not replace head line
+					hasHeaderRow = true
+					HeaderRow = record.All
+
+					if printPass {
+						checkError(writer.Write(record.All))
+					}
 					continue
 				}
-				pcol, err := strconv.Atoi(tok)
-				if err != nil {
-					fmt.Fprintf(os.Stderr, "Illegal field number: %s\n", tok)
-					os.Exit(1)
-				}
-				col = pcol - 1
-				if col < 0 {
-					fmt.Fprintf(os.Stderr, "Illegal field number: %d!\n", pcol)
-					os.Exit(1)
-				}
-				targetCols[col] = tok
 			}
-			if len(tok) != 0 {
-				targetCols[-(x + 1)] = tok
+
+			for i, f = range record.Fields {
+				val, err = strconv.ParseFloat(removeComma(record.All[f-1]), 64)
+				if err == nil {
+					data[i] = append(data[i], transform(val))
+				} else {
+					data[i] = append(data[i], math.NaN())
+				}
+			}
+
+			if printPass {
+				checkError(writer.Write(record.All))
 			}
 
 		}
 
-		for _, file := range files[:1] {
-			csvReader, err := newCSVReaderByConfig(config, file)
+		readerReport(&config, csvReader, file)
 
-			if err != nil {
-				if err == xopen.ErrNoContent {
-					log.Warningf("csvtk xxx: skipping empty input file: %s", file)
-					return
-				}
-				checkError(err)
-			}
-
-			csvReader.Run()
-
-			isHeaderLine := !config.NoHeaderRow
-			missingHeader := config.NoHeaderRow
-			for chunk := range csvReader.Ch {
-				checkError(chunk.Err)
-
-				for _, record := range chunk.Data {
-					if isHeaderLine {
-						for i, column := range record {
-							field2col[column] = i
-							if printField == "" {
-								targetCols[i] = column
-							}
-						}
-
-						isHeaderLine = false
-						if printPass {
-							outfh.Write([]byte(strings.Join(record, string(config.OutDelimiter)) + "\n"))
-						}
-						continue
-					} else {
-						if missingHeader {
-							for i := range record {
-								fStr := fmt.Sprintf("%d", i+1)
-								field2col[fStr] = i + 1
-								if printField == "" {
-									targetCols[i] = fStr
-								}
-							}
-						}
-						if len(targetCols) == 0 {
-							for i := range record {
-								targetCols[i] = strconv.Itoa(i + 1)
-							}
-						}
-					}
-
-					for col, field := range targetCols {
-						i := col
-						if !config.NoHeaderRow && i < 0 {
-							var ok bool
-							i, ok = field2col[field]
-							if !ok {
-								fmt.Fprintf(os.Stderr, "Invalid field specified: %s\n", field)
-								os.Exit(1)
-							}
-						}
-						if printPass {
-							outfh.Write([]byte(strings.Join(record, string(config.OutDelimiter)) + "\n"))
-						}
-						p, err := strconv.ParseFloat(record[i], 64)
-						if err == nil {
-							Data[i] = append(Data[i], transform(p))
-						} else {
-							Data[i] = append(Data[i], math.NaN())
-						}
-					} // field
-
-				} // record
-			} //chunk
-
-		} //file
-
-		// Calculate and print correlations:
-		seen := make(map[int]map[int]bool)
-		for col1, field1 := range targetCols {
-			if col1 < 0 {
-				col1 = field2col[field1]
-			}
-			if seen[col1] == nil {
-				seen[col1] = make(map[int]bool)
-			}
-			for col2, field2 := range targetCols {
-				if col2 < 0 {
-					col2 = field2col[field2]
-				}
-				if col1 == col2 {
+		for col1, field1 := range fields {
+			for col2, field2 := range fields {
+				if col1 >= col2 {
 					continue
 				}
-				if seen[col1][col2] {
-					continue
-				}
-				d1, d2 := Data[col1], Data[col2]
+
+				d1, d2 := data[col1], data[col2]
 				if printIgnore {
 					d1, d2 = removeNaNs(d1, d2)
 				}
 
 				pearsonr := stat.Correlation(d1, d2, nil)
-				fmt.Fprintf(os.Stderr, "%s%s%s%s%.4f\n", field1, string(config.OutDelimiter), field2, string(config.OutDelimiter), pearsonr)
 
-				seen[col1][col2] = true
-				if seen[col2] == nil {
-					seen[col2] = make(map[int]bool)
+				if hasHeaderRow {
+					fmt.Fprintf(os.Stderr, "%s\t%s\t%.4f\n", HeaderRow[field1-1], HeaderRow[field2-1], pearsonr)
+				} else {
+					fmt.Fprintf(os.Stderr, "%d\t%d\t%.4f\n", field1, field2, pearsonr)
 				}
-				seen[col2][col1] = true
-			} // col2
-		} // col1
+
+			}
+		}
 	},
 }
 

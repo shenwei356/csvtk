@@ -1,4 +1,4 @@
-// Copyright © 2016-2021 Wei Shen <shenwei356@gmail.com>
+// Copyright © 2016-2023 Wei Shen <shenwei356@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -104,6 +104,10 @@ var xlsx2csvCmd = &cobra.Command{
 		} else {
 			writer.Comma = config.OutDelimiter
 		}
+		defer func() {
+			writer.Flush()
+			checkError(writer.Error())
+		}()
 
 		rows, err := xlsx.GetRows(sheetName)
 		checkError(err)
@@ -143,9 +147,6 @@ var xlsx2csvCmd = &cobra.Command{
 			}
 			checkError(writer.Write(row))
 		}
-
-		writer.Flush()
-		checkError(writer.Error())
 
 		if config.IgnoreEmptyRow {
 			log.Warningf("file '%s': %d empty rows ignored", files[0], numEmptyRows)

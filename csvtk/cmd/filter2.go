@@ -1,4 +1,4 @@
-// Copyright © 2016-2021 Wei Shen <shenwei356@gmail.com>
+// Copyright © 2016-2023 Wei Shen <shenwei356@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -169,26 +169,6 @@ Custom functions:
 		var expression *govaluate.EvaluableExpression
 		var err error
 
-		usingColname := true
-
-		fields, colnames, negativeFields, needParseHeaderRow, _ := parseFields(cmd, fieldStr, varSep, config.NoHeaderRow)
-		var fieldsMap map[int]struct{}
-		if len(fields) > 0 {
-			usingColname = false
-			fields2 := make([]int, len(fields))
-			fieldsMap = make(map[int]struct{}, len(fields))
-			for i, f := range fields {
-				if negativeFields {
-					fieldsMap[f*-1] = struct{}{}
-					fields2[i] = f * -1
-				} else {
-					fieldsMap[f] = struct{}{}
-					fields2[i] = f
-				}
-			}
-			fields = fields2
-		}
-
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
 		defer outfh.Close()
@@ -203,6 +183,10 @@ Custom functions:
 		} else {
 			writer.Comma = config.OutDelimiter
 		}
+		defer func() {
+			writer.Flush()
+			checkError(writer.Error())
+		}()
 
 		for _, file := range files {
 			csvReader, err := newCSVReaderByConfig(config, file)
@@ -215,268 +199,207 @@ Custom functions:
 				checkError(err)
 			}
 
-			csvReader.Run()
+			csvReader.Read(ReadOption{
+				FieldStr:      fieldStr,
+				FieldStrSep:   varSep,
+				FuzzyFields:   fuzzyFields,
+				ShowRowNumber: printLineNumber || config.ShowRowNumber,
 
-			parseHeaderRow := needParseHeaderRow // parsing header row
-			var colnames2fileds map[string][]int // column name -> []field
-			var colnamesMap map[string]*regexp.Regexp
+				DoNotAllowDuplicatedColumnName: true,
+			})
 
-			parameters := make(map[string]string, len(colnamesMap))
-			parameters2 := make(map[string]interface{}, len(colnamesMap))
-			parameters2["shenweiNULL"] = nil
+			var parameters map[string]string
+			var parameters2 map[string]interface{}
 
-			checkFields := true
 			var flag bool
 			var col string
 			var fieldTmp int
 			var value string
 			var result interface{}
 			var N int64
-			var recordWithN []string
+			var i int
+			var ok bool
 			var valueFloat float64
+			var colnames2fileds map[string][]int // column name -> []field
+			var colnamesMap map[string]*regexp.Regexp
+			var fieldsUniq []int
+
+			var hasHeaderRow bool
 
 			keys := make([]string, 0, 8)
 
-			for chunk := range csvReader.Ch {
-				checkError(chunk.Err)
+			checkFirstLine := true
+			for record := range csvReader.Ch {
+				if record.Err != nil {
+					checkError(record.Err)
+				}
 
-				for _, record := range chunk.Data {
-					if parseHeaderRow { // parsing header row
-						colnames2fileds = make(map[string][]int, len(record))
-						for i, col := range record {
-							if _, ok := colnames2fileds[col]; !ok {
+				if checkFirstLine {
+					checkFirstLine = false
+
+					parameters = make(map[string]string, len(record.All))
+					parameters2 = make(map[string]interface{}, len(record.All))
+					parameters2["shenweiNULL"] = nil
+
+					fieldsUniq = UniqInts(record.Fields)
+
+					if !config.NoHeaderRow || record.IsHeaderRow { // do not replace head line
+						hasHeaderRow = true
+
+						colnames2fileds = make(map[string][]int, len(record.All))
+
+						colnamesMap = make(map[string]*regexp.Regexp, len(record.All))
+						for i, col = range record.All {
+							if _, ok = colnames2fileds[col]; !ok {
 								colnames2fileds[col] = []int{i + 1}
 							} else {
 								colnames2fileds[col] = append(colnames2fileds[col], i+1)
 							}
-						}
-						colnamesMap = make(map[string]*regexp.Regexp, len(colnames))
-						for _, col := range colnames {
-							if !fuzzyFields {
-								if negativeFields {
-									if _, ok := colnames2fileds[col[1:]]; !ok {
-										checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col[1:], file))
-									} else if len(colnames2fileds[col]) > 1 {
-										checkError(fmt.Errorf("the selected colname is duplicated in the input data: %s", col))
-									}
-								} else {
-									if _, ok := colnames2fileds[col]; !ok {
-										checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col, file))
-									} else if len(colnames2fileds[col]) > 1 {
-										checkError(fmt.Errorf("the selected colname is duplicated in the input data: %s", col))
-									}
-								}
-							}
-							if negativeFields {
-								colnamesMap[col[1:]] = fuzzyField2Regexp(col[1:])
-							} else {
-								colnamesMap[col] = fuzzyField2Regexp(col)
-							}
-						}
 
-						if len(fields) == 0 { // user gives the colnames
-							fields = []int{}
-							for _, col := range record {
-								var ok bool
-								if fuzzyFields {
-									for _, re := range colnamesMap {
-										if re.MatchString(col) {
-											ok = true
-											break
-										}
-									}
-								} else {
-									_, ok = colnamesMap[col]
-								}
-								if ok {
-									fields = append(fields, colnames2fileds[col]...)
-								}
-							}
-						}
-
-						fieldsMap = make(map[int]struct{}, len(fields))
-						for _, f := range fields {
-							fieldsMap[f] = struct{}{}
+							colnamesMap[col] = fuzzyField2Regexp(col)
 						}
 
 						if printLineNumber {
-							recordWithN = []string{"n"}
-							recordWithN = append(recordWithN, record...)
-							record = recordWithN
+							unshift(&record.All, "row")
 						}
-						checkError(writer.Write(record))
-						parseHeaderRow = false
+						checkError(writer.Write(record.All))
 						continue
 					}
-					N++
-
-					if checkFields {
-						for field := range fieldsMap {
-							if field > len(record) {
-								checkError(fmt.Errorf(`field (%d) out of range (%d) in file: %s`, field, len(record), file))
-							}
-						}
-						fields2 := []int{}
-						for f := range record {
-							_, ok := fieldsMap[f+1]
-							if negativeFields {
-								if !ok {
-									fields2 = append(fields2, f+1)
-								}
-							} else {
-								if ok {
-									fields2 = append(fields2, f+1)
-								}
-							}
-						}
-						fields = fields2
-						if len(fields) == 0 {
-							checkError(fmt.Errorf("no fields matched in file: %s", file))
-						}
-						fieldsMap = make(map[int]struct{}, len(fields))
-						for _, f := range fields {
-							fieldsMap[f] = struct{}{}
-						}
-
-						checkFields = false
-					}
-
-					// prepaire parameters
-					if !usingColname {
-						for _, fieldTmp = range fields {
-							value = record[fieldTmp-1]
-							col = strconv.Itoa(fieldTmp)
-							if varType[col] == 1 {
-								col = "${" + col + "}"
-							} else {
-								col = fmt.Sprintf("shenwei%d", fieldTmp)
-							}
-
-							quote = `'`
-
-							if reDigitals.MatchString(value) {
-								if digitsAsString || containCustomFuncs {
-									parameters[col] = quote + value + quote
-								} else {
-									valueFloat, _ = strconv.ParseFloat(removeComma(value), 64)
-									parameters[col] = fmt.Sprintf("%.16f", valueFloat)
-								}
-							} else {
-								if value == "" && hasNullCoalescence {
-									parameters[col] = "shenweiNULL"
-								} else {
-									if strings.Contains(value, `'`) {
-										value = strings.ReplaceAll(value, `'`, `\'`)
-									}
-									if strings.Contains(value, `"`) {
-										value = strings.ReplaceAll(value, `"`, `\"`)
-									}
-
-									parameters[col] = quote + value + quote
-								}
-							}
-						}
-					} else {
-						for col = range colnamesMap {
-							value = record[colnames2fileds[col][0]-1]
-
-							if reFiler2ColSymbolStartsWithDigits.MatchString(col) {
-								col = fmt.Sprintf("shenwei_%s", col)
-							} else if varType[col] == 1 {
-								col = "${" + col + "}"
-							} else {
-								col = "$" + col
-							}
-
-							quote = `'`
-
-							if reDigitals.MatchString(value) {
-								if digitsAsString || containCustomFuncs {
-									parameters[col] = quote + value + quote
-								} else {
-									valueFloat, _ = strconv.ParseFloat(removeComma(value), 64)
-									parameters[col] = fmt.Sprintf("%.16f", valueFloat)
-								}
-							} else {
-								if value == "" && hasNullCoalescence {
-									parameters[col] = "shenweiNULL"
-								} else {
-									if strings.Contains(value, `'`) {
-										value = strings.ReplaceAll(value, `'`, `\'`)
-									}
-									if strings.Contains(value, `"`) {
-										value = strings.ReplaceAll(value, `"`, `\"`)
-									}
-
-									parameters[col] = quote + value + quote
-								}
-							}
-						}
-					}
-
-					// sort variable names by length, so we can replace variables in the right order.
-					// e.g., for -e '$reads_mapped/$reads', we should firstly replace $reads_mapped then $reads.
-					keys = keys[:0]
-					for col = range parameters {
-						keys = append(keys, col)
-					}
-					sort.Slice(keys, func(i, j int) bool {
-						return len(keys[i]) > len(keys[j])
-					})
-
-					// replace variable with column data
-					filterStr1 = filterStr
-					for _, col = range keys {
-						filterStr1 = strings.ReplaceAll(filterStr1, col, parameters[col])
-					}
-
-					// evaluate
-					if containCustomFuncs {
-						expression, err = govaluate.NewEvaluableExpressionWithFunctions(filterStr1, functions)
-					} else {
-						expression, err = govaluate.NewEvaluableExpression(filterStr1)
-					}
-					checkError(err)
-
-					// check result
-					flag = false
-
-					if hasNullCoalescence {
-						result, err = expression.Evaluate(parameters2)
-					} else {
-						result, err = expression.Evaluate(emptyParams)
-					}
-					if err != nil {
-						flag = false
-						log.Warningf("row %d: %s", N, err)
-						continue
-					}
-					switch result.(type) {
-					case bool:
-						if result.(bool) {
-							flag = true
-						}
-					default:
-						checkError(fmt.Errorf("filter is not boolean expression: %s", filterStr0))
-					}
-
-					if !flag {
-						continue
-					}
-
-					if printLineNumber {
-						recordWithN = []string{fmt.Sprintf("%d", N)}
-						recordWithN = append(recordWithN, record...)
-						record = recordWithN
-					}
-					checkError(writer.Write(record))
 				}
+
+				N++
+
+				// prepaire parameters
+				if !hasHeaderRow {
+					for _, fieldTmp = range fieldsUniq {
+						value = record.All[fieldTmp-1]
+						col = strconv.Itoa(fieldTmp)
+						if varType[col] == 1 {
+							col = "${" + col + "}"
+						} else {
+							col = fmt.Sprintf("shenwei%d", fieldTmp)
+						}
+
+						quote = `'`
+
+						if reDigitals.MatchString(value) {
+							if digitsAsString || containCustomFuncs {
+								parameters[col] = quote + value + quote
+							} else {
+								valueFloat, _ = strconv.ParseFloat(removeComma(value), 64)
+								parameters[col] = fmt.Sprintf("%.16f", valueFloat)
+							}
+						} else {
+							if value == "" && hasNullCoalescence {
+								parameters[col] = "shenweiNULL"
+							} else {
+								if strings.Contains(value, `'`) {
+									value = strings.ReplaceAll(value, `'`, `\'`)
+								}
+								if strings.Contains(value, `"`) {
+									value = strings.ReplaceAll(value, `"`, `\"`)
+								}
+
+								parameters[col] = quote + value + quote
+							}
+						}
+					}
+				} else {
+					for col = range colnamesMap {
+						value = record.All[colnames2fileds[col][0]-1]
+
+						if reFiler2ColSymbolStartsWithDigits.MatchString(col) {
+							col = fmt.Sprintf("shenwei_%s", col)
+						} else if varType[col] == 1 {
+							col = "${" + col + "}"
+						} else {
+							col = "$" + col
+						}
+
+						quote = `'`
+
+						if reDigitals.MatchString(value) {
+							if digitsAsString || containCustomFuncs {
+								parameters[col] = quote + value + quote
+							} else {
+								valueFloat, _ = strconv.ParseFloat(removeComma(value), 64)
+								parameters[col] = fmt.Sprintf("%.16f", valueFloat)
+							}
+						} else {
+							if value == "" && hasNullCoalescence {
+								parameters[col] = "shenweiNULL"
+							} else {
+								if strings.Contains(value, `'`) {
+									value = strings.ReplaceAll(value, `'`, `\'`)
+								}
+								if strings.Contains(value, `"`) {
+									value = strings.ReplaceAll(value, `"`, `\"`)
+								}
+
+								parameters[col] = quote + value + quote
+							}
+						}
+					}
+				}
+
+				// sort variable names by length, so we can replace variables in the right order.
+				// e.g., for -e '$reads_mapped/$reads', we should firstly replace $reads_mapped then $reads.
+				keys = keys[:0]
+				for col = range parameters {
+					keys = append(keys, col)
+				}
+				sort.Slice(keys, func(i, j int) bool {
+					return len(keys[i]) > len(keys[j])
+				})
+
+				// replace variable with column data
+				filterStr1 = filterStr
+				for _, col = range keys {
+					filterStr1 = strings.ReplaceAll(filterStr1, col, parameters[col])
+				}
+
+				// evaluate
+				if containCustomFuncs {
+					expression, err = govaluate.NewEvaluableExpressionWithFunctions(filterStr1, functions)
+				} else {
+					expression, err = govaluate.NewEvaluableExpression(filterStr1)
+				}
+				checkError(err)
+
+				// check result
+				flag = false
+
+				if hasNullCoalescence {
+					result, err = expression.Evaluate(parameters2)
+				} else {
+					result, err = expression.Evaluate(emptyParams)
+				}
+				if err != nil {
+					flag = false
+					log.Warningf("row %d: %s", N, err)
+					continue
+				}
+				switch result.(type) {
+				case bool:
+					if result.(bool) {
+						flag = true
+					}
+				default:
+					checkError(fmt.Errorf("filter is not boolean expression: %s", filterStr0))
+				}
+
+				if !flag {
+					continue
+				}
+
+				if printLineNumber {
+					unshift(&record.All, "row")
+				}
+				checkError(writer.Write(record.All))
 			}
 
 			readerReport(&config, csvReader, file)
 		}
-		writer.Flush()
-		checkError(writer.Error())
 	},
 }
 

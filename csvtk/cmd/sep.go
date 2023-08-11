@@ -1,4 +1,4 @@
-// Copyright © 2016-2021 Wei Shen <shenwei356@gmail.com>
+// Copyright © 2016-2023 Wei Shen <shenwei356@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -90,31 +90,6 @@ var sepCmd = &cobra.Command{
 		if fieldStr == "" {
 			checkError(fmt.Errorf("flag -f (--fields) needed"))
 		}
-		fields, colnames, negativeFields, needParseHeaderRow, _ := parseFields(cmd, fieldStr, ",", config.NoHeaderRow)
-		if !(len(fields) == 1 || len(colnames) == 1) {
-			checkError(fmt.Errorf("only single field allowed"))
-		}
-		if negativeFields {
-			checkError(fmt.Errorf("unselect not allowed"))
-		}
-
-		var fieldsMap map[int]struct{}
-		if len(fields) > 0 {
-			fields2 := make([]int, len(fields))
-			fieldsMap = make(map[int]struct{}, len(fields))
-			for i, f := range fields {
-				if negativeFields {
-					fieldsMap[f*-1] = struct{}{}
-					fields2[i] = f * -1
-				} else {
-					fieldsMap[f] = struct{}{}
-					fields2[i] = f
-				}
-			}
-			fields = fields2
-		}
-
-		fuzzyFields := false
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
@@ -130,6 +105,10 @@ var sepCmd = &cobra.Command{
 		} else {
 			writer.Comma = config.OutDelimiter
 		}
+		defer func() {
+			writer.Flush()
+			checkError(writer.Error())
+		}()
 
 		for _, file := range files {
 			csvReader, err := newCSVReaderByConfig(config, file)
@@ -142,202 +121,125 @@ var sepCmd = &cobra.Command{
 				checkError(err)
 			}
 
-			csvReader.Run()
+			csvReader.Read(ReadOption{
+				FieldStr:    fieldStr,
+				FuzzyFields: false,
 
-			parseHeaderRow := needParseHeaderRow // parsing header row
-			var colnames2fileds map[string][]int // column name -> []field
-			var colnamesMap map[string]*regexp.Regexp
-
-			handleHeaderRow := needParseHeaderRow
-			checkFields := true
+				DoNotAllowDuplicatedColumnName: true,
+			})
 
 			checkNewNumCols := true
 			var nNewCols int
 
 			var items []string
+			var fieldsMap map[int]interface{}
 			var record2 []string // for output
 			var line int
+			var f int
+			var handleHeaderRow bool
+			var ok bool
 
-			for chunk := range csvReader.Ch {
-				checkError(chunk.Err)
-
-				for _, record := range chunk.Data {
-					line++
-
-					if parseHeaderRow { // parsing header row
-						colnames2fileds = make(map[string][]int, len(record))
-						for i, col := range record {
-							if _, ok := colnames2fileds[col]; !ok {
-								colnames2fileds[col] = []int{i + 1}
-							} else {
-								colnames2fileds[col] = append(colnames2fileds[col], i+1)
-							}
-						}
-						colnamesMap = make(map[string]*regexp.Regexp, len(colnames))
-						for _, col := range colnames {
-							if !fuzzyFields {
-								if negativeFields {
-									if _, ok := colnames2fileds[col[1:]]; !ok {
-										checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col[1:], file))
-									} else if len(colnames2fileds[col]) > 1 {
-										checkError(fmt.Errorf("the selected colname is duplicated in the input data: %s", col))
-									}
-								} else {
-									if _, ok := colnames2fileds[col]; !ok {
-										checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col, file))
-									} else if len(colnames2fileds[col]) > 1 {
-										checkError(fmt.Errorf("the selected colname is duplicated in the input data: %s", col))
-									}
-								}
-							}
-							if negativeFields {
-								colnamesMap[col[1:]] = fuzzyField2Regexp(col[1:])
-							} else {
-								colnamesMap[col] = fuzzyField2Regexp(col)
-							}
-						}
-
-						if len(fields) == 0 { // user gives the colnames
-							fields = []int{}
-							for _, col := range record {
-								var ok bool
-								if fuzzyFields {
-									for _, re := range colnamesMap {
-										if re.MatchString(col) {
-											ok = true
-											break
-										}
-									}
-								} else {
-									_, ok = colnamesMap[col]
-								}
-								if ok {
-									fields = append(fields, colnames2fileds[col]...)
-								}
-							}
-						}
-
-						fieldsMap = make(map[int]struct{}, len(fields))
-						for _, f := range fields {
-							fieldsMap[f] = struct{}{}
-						}
-
-						parseHeaderRow = false
-					}
-					if checkFields {
-						for field := range fieldsMap {
-							if field > len(record) {
-								checkError(fmt.Errorf(`field (%d) out of range (%d) in file: %s`, field, len(record), file))
-							}
-						}
-						fields2 := []int{}
-						for f := range record {
-							_, ok := fieldsMap[f+1]
-							if negativeFields {
-								if !ok {
-									fields2 = append(fields2, f+1)
-								}
-							} else {
-								if ok {
-									fields2 = append(fields2, f+1)
-								}
-							}
-						}
-						fields = fields2
-						if len(fields) == 0 {
-							checkError(fmt.Errorf("no fields matched in file: %s", file))
-						}
-						fieldsMap = make(map[int]struct{}, len(fields))
-						for _, f := range fields {
-							fieldsMap[f] = struct{}{}
-						}
-
-						checkFields = false
-					}
-
-					if remove {
-						record2 = make([]string, 0, len(record))
-						for f := range record {
-							if _, ok := fieldsMap[f+1]; !ok {
-								record2 = append(record2, record[f])
-							}
-						}
-					} else {
-						record2 = record
-					}
-					for f := range record {
-						if _, ok := fieldsMap[f+1]; ok {
-							if handleHeaderRow {
-								record2 = append(record2, names...)
-								handleHeaderRow = false
-							} else {
-								if useRegexp {
-									items = sepRe.Split(record[f], -1)
-								} else {
-									items = strings.Split(record[f], sep)
-								}
-
-								if numCols > 0 { // preset number of new created columns
-									if len(items) <= numCols {
-										nNewCols = numCols
-									} else if drop || merge {
-										nNewCols = numCols
-									} else {
-										checkError(fmt.Errorf("[line %d] number of new columns (%d) > -N (--num-cols) (%d), please increase -N (--num-cols), or switch on --drop or --merge", line, len(items), numCols))
-									}
-								} else {
-									if !config.NoHeaderRow { // decide the number of newly created columns according to the given colnames names
-										if checkNewNumCols {
-											if len(items) <= len(names) {
-												nNewCols = len(names)
-											} else if drop || merge {
-												nNewCols = len(names)
-											} else {
-												checkError(fmt.Errorf("[line %d] number of new columns (%d) > number of new column names (%d), please reset -n (--names) ", line, len(items), len(names)))
-
-											}
-											checkNewNumCols = false
-										}
-									} else {
-										if nNewCols == 0 { // first line
-											nNewCols = len(items)
-										}
-									}
-								}
-
-								if len(items) <= nNewCols { // fill
-									record2 = append(record2, items...)
-									for i := 0; i < nNewCols-len(items); i++ {
-										record2 = append(record2, na)
-									}
-								} else if drop { // drop
-									record2 = append(record2, items[0:nNewCols]...)
-								} else if merge {
-									if useRegexp {
-										items = sepRe.Split(record[f], nNewCols)
-									} else {
-										items = strings.SplitN(record[f], sep, nNewCols)
-									}
-									record2 = append(record2, items...)
-								} else {
-									if numCols > 0 {
-										checkError(fmt.Errorf("[line %d] number of new columns (%d) > -N (--num-cols) (%d),  please increase -N (--num-cols) or drop extra data using --drop, or append remaining data to the last column using --merge", line, len(items), numCols))
-									} else {
-										checkError(fmt.Errorf("[line %d] number of new columns (%d) exceeds that of first row (%d), please increase -N (--num-cols) or drop extra data using --drop, or append remaining data to the last column using --merge", line, len(items), nNewCols))
-									}
-								}
-							}
-							break
-						}
-					}
-					checkError(writer.Write(record2))
+			checkFirstLine := true
+			for record := range csvReader.Ch {
+				if record.Err != nil {
+					checkError(record.Err)
 				}
+
+				if checkFirstLine {
+					checkFirstLine = false
+
+					fieldsMap = make(map[int]interface{}, len(record.Selected))
+					for _, f = range record.Fields {
+						fieldsMap[f-1] = struct{}{}
+					}
+					if !config.NoHeaderRow || record.IsHeaderRow {
+						handleHeaderRow = true
+					}
+				}
+
+				line = record.Line
+
+				if remove {
+					record2 = make([]string, 0, len(record.All))
+					for f = range record.All {
+						if _, ok := fieldsMap[f]; !ok {
+							record2 = append(record2, record.All[f])
+						}
+					}
+				} else {
+					record2 = record.All
+				}
+
+				for f = range record.All {
+					if _, ok = fieldsMap[f]; ok {
+						if handleHeaderRow {
+							record2 = append(record2, names...)
+							handleHeaderRow = false
+						} else {
+							if useRegexp {
+								items = sepRe.Split(record.All[f], -1)
+							} else {
+								items = strings.Split(record.All[f], sep)
+							}
+
+							if numCols > 0 { // preset number of new created columns
+								if len(items) <= numCols {
+									nNewCols = numCols
+								} else if drop || merge {
+									nNewCols = numCols
+								} else {
+									checkError(fmt.Errorf("[line %d] number of new columns (%d) > -N (--num-cols) (%d), please increase -N (--num-cols), or switch on --drop or --merge", line, len(items), numCols))
+								}
+							} else {
+								if !config.NoHeaderRow { // decide the number of newly created columns according to the given colnames names
+									if checkNewNumCols {
+										if len(items) <= len(names) {
+											nNewCols = len(names)
+										} else if drop || merge {
+											nNewCols = len(names)
+										} else {
+											checkError(fmt.Errorf("[line %d] number of new columns (%d) > number of new column names (%d), please reset -n (--names) ", line, len(items), len(names)))
+
+										}
+										checkNewNumCols = false
+									}
+								} else {
+									if nNewCols == 0 { // first line
+										nNewCols = len(items)
+									}
+								}
+							}
+
+							if len(items) <= nNewCols { // fill
+								record2 = append(record2, items...)
+								for i := 0; i < nNewCols-len(items); i++ {
+									record2 = append(record2, na)
+								}
+							} else if drop { // drop
+								record2 = append(record2, items[0:nNewCols]...)
+							} else if merge {
+								if useRegexp {
+									items = sepRe.Split(record.All[f], nNewCols)
+								} else {
+									items = strings.SplitN(record.All[f], sep, nNewCols)
+								}
+								record2 = append(record2, items...)
+							} else {
+								if numCols > 0 {
+									checkError(fmt.Errorf("[line %d] number of new columns (%d) > -N (--num-cols) (%d),  please increase -N (--num-cols) or drop extra data using --drop, or append remaining data to the last column using --merge", line, len(items), numCols))
+								} else {
+									checkError(fmt.Errorf("[line %d] number of new columns (%d) exceeds that of first row (%d), please increase -N (--num-cols) or drop extra data using --drop, or append remaining data to the last column using --merge", line, len(items), nNewCols))
+								}
+							}
+						}
+						break
+					}
+				}
+				checkError(writer.Write(record2))
 			}
 
 			readerReport(&config, csvReader, file)
 		}
-		writer.Flush()
-		checkError(writer.Error())
 	},
 }
 

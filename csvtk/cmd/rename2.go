@@ -1,4 +1,4 @@
-// Copyright © 2016-2021 Wei Shen <shenwei356@gmail.com>
+// Copyright © 2016-2023 Wei Shen <shenwei356@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -117,22 +117,6 @@ Special replacement symbols:
 		if fieldStr == "" {
 			checkError(fmt.Errorf("flag -f (--fields) needed"))
 		}
-		fields, colnames, negativeFields, needParseHeaderRow, _ := parseFields(cmd, fieldStr, ",", config.NoHeaderRow)
-		var fieldsMap map[int]struct{}
-		if len(fields) > 0 {
-			fields2 := make([]int, len(fields))
-			fieldsMap = make(map[int]struct{}, len(fields))
-			for i, f := range fields {
-				if negativeFields {
-					fieldsMap[f*-1] = struct{}{}
-					fields2[i] = f * -1
-				} else {
-					fieldsMap[f] = struct{}{}
-					fields2[i] = f
-				}
-			}
-			fields = fields2
-		}
 
 		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
 
@@ -150,6 +134,10 @@ Special replacement symbols:
 		} else {
 			writer.Comma = config.OutDelimiter
 		}
+		defer func() {
+			writer.Flush()
+			checkError(writer.Error())
+		}()
 
 		for _, file := range files {
 			csvReader, err := newCSVReaderByConfig(config, file)
@@ -162,164 +150,75 @@ Special replacement symbols:
 				checkError(err)
 			}
 
-			csvReader.Run()
+			csvReader.Read(ReadOption{
+				FieldStr:    fieldStr,
+				FuzzyFields: fuzzyFields,
+			})
 
-			parseHeaderRow := needParseHeaderRow // parsing header row
-			var colnames2fileds map[string][]int // column name -> []field
-			var colnamesMap map[string]*regexp.Regexp
-
-			checkFields := true
-
-			var record2 []string // for output
 			var r string
 			var found []string
 			var founds [][]string
 			var k string
+			var nr int
+			var ok bool
 
-			for chunk := range csvReader.Ch {
-				checkError(chunk.Err)
+			checkFirstLine := true
+			for record := range csvReader.Ch {
+				if record.Err != nil {
+					checkError(record.Err)
+				}
 
-				for _, record := range chunk.Data {
-					if parseHeaderRow { // parsing header row
-						colnames2fileds = make(map[string][]int, len(record))
-						for i, col := range record {
-							if _, ok := colnames2fileds[col]; !ok {
-								colnames2fileds[col] = []int{i + 1}
-							} else {
-								colnames2fileds[col] = append(colnames2fileds[col], i+1)
+				if checkFirstLine {
+					checkFirstLine = false
+
+					if !config.NoHeaderRow || record.IsHeaderRow {
+						for _, f := range record.Fields {
+							nr = startNum
+							r = replacement
+
+							if replaceWithNR {
+								r = reNR.ReplaceAllString(r, strconv.Itoa(nr))
 							}
-						}
-						colnamesMap = make(map[string]*regexp.Regexp, len(colnames))
-						for _, col := range colnames {
-							if !fuzzyFields {
-								if negativeFields {
-									if _, ok := colnames2fileds[col[1:]]; !ok {
-										checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col[1:], file))
+
+							if replaceWithKV {
+								founds = patternRegexp.FindAllStringSubmatch(record.All[f-1], -1)
+								if len(founds) > 1 {
+									checkError(fmt.Errorf(`pattern "%s" matches multiple targets in "%s", this will cause chaos`, p, record.All[f-1]))
+								}
+								if len(founds) > 0 {
+									found = founds[0]
+									if keyCaptIdx > len(found)-1 {
+										checkError(fmt.Errorf("value of flag -I (--key-capt-idx) overflows"))
 									}
-								} else {
-									if _, ok := colnames2fileds[col]; !ok {
-										checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col, file))
+									k = string(found[keyCaptIdx])
+									if ignoreCase {
+										k = strings.ToLower(k)
 									}
-								}
-							}
-							if negativeFields {
-								colnamesMap[col[1:]] = fuzzyField2Regexp(col[1:])
-							} else {
-								colnamesMap[col] = fuzzyField2Regexp(col)
-							}
-						}
-
-						if len(fields) == 0 { // user gives the colnames
-							fields = []int{}
-							for _, col := range record {
-								var ok bool
-								if fuzzyFields {
-									for _, re := range colnamesMap {
-										if re.MatchString(col) {
-											ok = true
-											break
-										}
-									}
-								} else {
-									_, ok = colnamesMap[col]
-								}
-								if ok {
-									fields = append(fields, colnames2fileds[col]...)
-								}
-							}
-						}
-
-						fieldsMap = make(map[int]struct{}, len(fields))
-						for _, f := range fields {
-							fieldsMap[f] = struct{}{}
-						}
-
-						parseHeaderRow = false
-					}
-					if checkFields {
-						for field := range fieldsMap {
-							if field > len(record) {
-								checkError(fmt.Errorf(`field (%d) out of range (%d) in file: %s`, field, len(record), file))
-							}
-						}
-						fields2 := []int{}
-						for f := range record {
-							_, ok := fieldsMap[f+1]
-							if negativeFields {
-								if !ok {
-									fields2 = append(fields2, f+1)
-								}
-							} else {
-								if ok {
-									fields2 = append(fields2, f+1)
-								}
-							}
-						}
-						fields = fields2
-						if len(fields) == 0 {
-							checkError(fmt.Errorf("no fields matched in file: %s", file))
-						}
-						fieldsMap = make(map[int]struct{}, len(fields))
-						for _, f := range fields {
-							fieldsMap[f] = struct{}{}
-						}
-
-						record2 = make([]string, len(record))
-
-						nr := startNum
-						for f := range record {
-							record2[f] = record[f]
-							if _, ok := fieldsMap[f+1]; ok {
-								r = replacement
-
-								if replaceWithNR {
-									r = reNR.ReplaceAllString(r, strconv.Itoa(nr))
-								}
-
-								if replaceWithKV {
-									founds = patternRegexp.FindAllStringSubmatch(record2[f], -1)
-									if len(founds) > 1 {
-										checkError(fmt.Errorf(`pattern "%s" matches multiple targets in "%s", this will cause chaos`, p, record2[f]))
-									}
-									if len(founds) > 0 {
-										found = founds[0]
-										if keyCaptIdx > len(found)-1 {
-											checkError(fmt.Errorf("value of flag -I (--key-capt-idx) overflows"))
-										}
-										k = string(found[keyCaptIdx])
-										if ignoreCase {
-											k = strings.ToLower(k)
-										}
-										if _, ok = kvs[k]; ok {
-											r = reKV.ReplaceAllString(r, kvs[k])
-										} else if keepKey {
-											r = reKV.ReplaceAllString(r, found[keyCaptIdx])
-										} else {
-											r = reKV.ReplaceAllString(r, keyMissRepl)
-										}
+									if _, ok = kvs[k]; ok {
+										r = reKV.ReplaceAllString(r, kvs[k])
+									} else if keepKey {
+										r = reKV.ReplaceAllString(r, found[keyCaptIdx])
+									} else {
+										r = reKV.ReplaceAllString(r, keyMissRepl)
 									}
 								}
-
-								record2[f] = patternRegexp.ReplaceAllString(record2[f], r)
-
-								nr++
 							}
+
+							record.All[f-1] = patternRegexp.ReplaceAllString(record.All[f-1], r)
+
+							nr++
 						}
-						checkError(writer.Write(record2))
 
-						checkFields = false
-
+						checkError(writer.Write(record.All))
 						continue
 					}
-
-					checkError(writer.Write(record))
 				}
+
+				checkError(writer.Write(record.All))
 			}
 
 			readerReport(&config, csvReader, file)
 		}
-		writer.Flush()
-		checkError(writer.Error())
 	},
 }
 

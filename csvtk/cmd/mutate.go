@@ -1,4 +1,4 @@
-// Copyright © 2016-2021 Wei Shen <shenwei356@gmail.com>
+// Copyright © 2016-2023 Wei Shen <shenwei356@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -88,31 +88,6 @@ var mutateCmd = &cobra.Command{
 		if fieldStr == "" {
 			checkError(fmt.Errorf("flag -f (--fields) needed"))
 		}
-		fields, colnames, negativeFields, needParseHeaderRow, _ := parseFields(cmd, fieldStr, ",", config.NoHeaderRow)
-		if !(len(fields) == 1 || len(colnames) == 1) {
-			checkError(fmt.Errorf("only single field allowed"))
-		}
-		if negativeFields {
-			checkError(fmt.Errorf("unselect not allowed"))
-		}
-		var fieldsMap map[int]struct{}
-		if len(fields) > 0 {
-			fields2 := make([]int, len(fields))
-			fieldsMap = make(map[int]struct{}, len(fields))
-			for i, f := range fields {
-				if negativeFields {
-					fieldsMap[f*-1] = struct{}{}
-					fields2[i] = f * -1
-				} else {
-					fieldsMap[f] = struct{}{}
-					fields2[i] = f
-				}
-			}
-			fields = fields2
-		}
-
-		// fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
-		fuzzyFields := false
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
@@ -128,6 +103,10 @@ var mutateCmd = &cobra.Command{
 		} else {
 			writer.Comma = config.OutDelimiter
 		}
+		defer func() {
+			writer.Flush()
+			checkError(writer.Error())
+		}()
 
 		for _, file := range files {
 			csvReader, err := newCSVReaderByConfig(config, file)
@@ -140,205 +119,130 @@ var mutateCmd = &cobra.Command{
 				checkError(err)
 			}
 
-			csvReader.Run()
+			csvReader.Read(ReadOption{
+				FieldStr: fieldStr,
 
-			parseHeaderRow := needParseHeaderRow // parsing header row
-			var colnames2fileds map[string][]int // column name -> []field
-			var colnamesMap map[string]*regexp.Regexp
+				DoNotAllowDuplicatedColumnName: true,
+			})
 
-			handleHeaderRow := needParseHeaderRow
-			checkFields := true
-
-			var record []string
 			var record2 []string // for output
 			var _fields []int
+			var fieldsMap map[int]interface{}
+			var colnames2fileds map[string][]int // column name -> []field
 			var ok bool
 			var f int
 			var value string
+			var handleHeaderRow bool
+			checkFirstLine := true
+			for record := range csvReader.Ch {
+				if record.Err != nil {
+					checkError(record.Err)
+				}
 
-			for chunk := range csvReader.Ch {
-				checkError(chunk.Err)
+				if checkFirstLine {
+					checkFirstLine = false
 
-				for _, record = range chunk.Data {
-					if parseHeaderRow { // parsing header row
-						colnames2fileds = make(map[string][]int, len(record))
-						for i, col := range record {
+					if len(record.Fields) > 1 {
+						checkError(fmt.Errorf("only a single field allowed"))
+					}
+
+					fieldsMap = make(map[int]interface{}, len(record.Selected))
+					for _, f = range record.Fields {
+						fieldsMap[f-1] = struct{}{}
+					}
+
+					if !config.NoHeaderRow || record.IsHeaderRow {
+						handleHeaderRow = true
+
+						colnames2fileds = make(map[string][]int, len(record.All))
+						for i, col := range record.All {
 							if _, ok := colnames2fileds[col]; !ok {
 								colnames2fileds[col] = []int{i + 1}
 							} else {
 								colnames2fileds[col] = append(colnames2fileds[col], i+1)
 							}
 						}
-						colnamesMap = make(map[string]*regexp.Regexp, len(colnames))
-						for _, col := range colnames {
-							if !fuzzyFields {
-								if negativeFields {
-									if _, ok := colnames2fileds[col[1:]]; !ok {
-										checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col[1:], file))
-									} else if len(colnames2fileds[col]) > 1 {
-										checkError(fmt.Errorf("the selected colname is duplicated in the input data: %s", col))
-									}
-								} else {
-									if _, ok := colnames2fileds[col]; !ok {
-										checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col, file))
-									} else if len(colnames2fileds[col]) > 1 {
-										checkError(fmt.Errorf("the selected colname is duplicated in the input data: %s", col))
-									}
-								}
-							}
-							if negativeFields {
-								colnamesMap[col[1:]] = fuzzyField2Regexp(col[1:])
-							} else {
-								colnamesMap[col] = fuzzyField2Regexp(col)
-							}
-						}
-
-						if len(fields) == 0 { // user gives the colnames
-							fields = []int{}
-							for _, col := range record {
-								var ok bool
-								if fuzzyFields {
-									for _, re := range colnamesMap {
-										if re.MatchString(col) {
-											ok = true
-											break
-										}
-									}
-								} else {
-									_, ok = colnamesMap[col]
-								}
-								if ok {
-									fields = append(fields, colnames2fileds[col]...)
-								}
-							}
-						}
-
-						fieldsMap = make(map[int]struct{}, len(fields))
-						for _, f := range fields {
-							fieldsMap[f] = struct{}{}
-						}
-
-						parseHeaderRow = false
 					}
-					if checkFields {
-						for field := range fieldsMap {
-							if field > len(record) {
-								checkError(fmt.Errorf(`field (%d) out of range (%d) in file: %s`, field, len(record), file))
-							}
-						}
-						fields2 := []int{}
-						for f := range record {
-							_, ok := fieldsMap[f+1]
-							if negativeFields {
-								if !ok {
-									fields2 = append(fields2, f+1)
-								}
-							} else {
-								if ok {
-									fields2 = append(fields2, f+1)
-								}
-							}
-						}
-						fields = fields2
-						if len(fields) == 0 {
-							checkError(fmt.Errorf("no fields matched in file: %s", file))
-						}
-						fieldsMap = make(map[int]struct{}, len(fields))
-						for _, f := range fields {
-							fieldsMap[f] = struct{}{}
-						}
-
-						checkFields = false
-					}
-
-					if remove {
-						record2 = make([]string, 0, len(record))
-						for f := range record {
-							if _, ok := fieldsMap[f+1]; !ok {
-								record2 = append(record2, record[f])
-							}
-						}
-					} else {
-						record2 = record
-					}
-
-					if handleHeaderRow {
-						record2 = append(record2, name)
-						if after != "" {
-							if _fields, ok = colnames2fileds[after]; ok {
-								at = _fields[len(_fields)-1] + 1
-							} else {
-								checkError(fmt.Errorf(`column "%s" not existed in file: %s`, after, file))
-							}
-							copy(record2[at:], record2[at-1:len(record2)-1])
-							record2[at-1] = name
-						} else if before != "" {
-							if _fields, ok = colnames2fileds[before]; ok {
-								at = _fields[len(_fields)-1]
-							} else {
-								checkError(fmt.Errorf(`column "%s" not existed in file: %s`, before, file))
-							}
-							copy(record2[at:], record2[at-1:len(record2)-1])
-							record2[at-1] = name
-						} else if at > 0 && at <= len(record2) {
-							copy(record2[at:], record2[at-1:len(record2)-1])
-							record2[at-1] = name
-						}
-
-						handleHeaderRow = false
-						checkError(writer.Write(record2))
-						continue
-					}
-
-					for f = range record {
-						// record2[f] = record[f]
-						_, ok = fieldsMap[f+1]
-						if !ok {
-							continue
-						}
-
-						if patternRegexp.MatchString(record[f]) {
-							found := patternRegexp.FindAllStringSubmatch(record[f], -1)
-							value = found[0][1]
-						} else {
-							if naUnmatched {
-								value = ""
-							} else {
-								value = record[f]
-							}
-						}
-						record2 = append(record2, value)
-						if after != "" {
-							if _fields, ok = colnames2fileds[after]; ok {
-								at = _fields[len(_fields)-1] + 1
-							} else {
-								checkError(fmt.Errorf(`column "%s" not existed in file: %s`, after, file))
-							}
-							copy(record2[at:], record2[at-1:len(record2)-1])
-							record2[at-1] = value
-						} else if before != "" {
-							if _fields, ok = colnames2fileds[before]; ok {
-								at = _fields[len(_fields)-1]
-							} else {
-								checkError(fmt.Errorf(`column "%s" not existed in file: %s`, before, file))
-							}
-							copy(record2[at:], record2[at-1:len(record2)-1])
-							record2[at-1] = value
-						} else if at > 0 && at <= len(record2) {
-							copy(record2[at:], record2[at-1:len(record2)-1])
-							record2[at-1] = value
-						}
-
-						break
-					}
-					checkError(writer.Write(record2))
 				}
+
+				if remove {
+					record2 = make([]string, 0, len(record.All))
+					for f = range record.All {
+						if _, ok = fieldsMap[f]; !ok {
+							record2 = append(record2, record.All[f])
+						}
+					}
+				} else {
+					record2 = record.All
+				}
+
+				if handleHeaderRow {
+					record2 = append(record2, name)
+					if after != "" {
+						if _fields, ok = colnames2fileds[after]; ok {
+							at = _fields[len(_fields)-1] + 1
+						} else {
+							checkError(fmt.Errorf(`column "%s" not existed in file: %s`, after, file))
+						}
+						copy(record2[at:], record2[at-1:len(record2)-1])
+						record2[at-1] = name
+					} else if before != "" {
+						if _fields, ok = colnames2fileds[before]; ok {
+							at = _fields[len(_fields)-1]
+						} else {
+							checkError(fmt.Errorf(`column "%s" not existed in file: %s`, before, file))
+						}
+						copy(record2[at:], record2[at-1:len(record2)-1])
+						record2[at-1] = name
+					} else if at > 0 && at <= len(record2) {
+						copy(record2[at:], record2[at-1:len(record2)-1])
+						record2[at-1] = name
+					}
+
+					handleHeaderRow = false
+					checkError(writer.Write(record2))
+					continue
+				}
+
+				f = record.Fields[0] - 1
+
+				if patternRegexp.MatchString(record.All[f]) {
+					found := patternRegexp.FindAllStringSubmatch(record.All[f], -1)
+					value = found[0][1]
+				} else {
+					if naUnmatched {
+						value = ""
+					} else {
+						value = record.All[f]
+					}
+				}
+				record2 = append(record2, value)
+				if after != "" {
+					if _fields, ok = colnames2fileds[after]; ok {
+						at = _fields[len(_fields)-1] + 1
+					} else {
+						checkError(fmt.Errorf(`column "%s" not existed in file: %s`, after, file))
+					}
+					copy(record2[at:], record2[at-1:len(record2)-1])
+					record2[at-1] = value
+				} else if before != "" {
+					if _fields, ok = colnames2fileds[before]; ok {
+						at = _fields[len(_fields)-1]
+					} else {
+						checkError(fmt.Errorf(`column "%s" not existed in file: %s`, before, file))
+					}
+					copy(record2[at:], record2[at-1:len(record2)-1])
+					record2[at-1] = value
+				} else if at > 0 && at <= len(record2) {
+					copy(record2[at:], record2[at-1:len(record2)-1])
+					record2[at-1] = value
+				}
+
+				checkError(writer.Write(record2))
 			}
 
 			readerReport(&config, csvReader, file)
 		}
-		writer.Flush()
-		checkError(writer.Error())
 	},
 }
 

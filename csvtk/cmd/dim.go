@@ -1,4 +1,4 @@
-// Copyright © 2016-2021 Wei Shen <shenwei356@gmail.com>
+// Copyright © 2016-2023 Wei Shen <shenwei356@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,11 +24,9 @@ import (
 	"fmt"
 	"runtime"
 
+	"github.com/shenwei356/stable"
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
-
-	"github.com/dustin/go-humanize"
-	"github.com/tatsushid/go-prettytable"
 )
 
 // dimCmd represents the stat command
@@ -53,21 +51,29 @@ var dimCmd = &cobra.Command{
 		checkError(err)
 		defer outfh.Close()
 
-		var tbl *prettytable.Table
+		var tbl *stable.Table
+		style := &stable.TableStyle{
+			Name: "plain",
+
+			HeaderRow: stable.RowStyle{Begin: "", Sep: "  ", End: ""},
+			DataRow:   stable.RowStyle{Begin: "", Sep: "  ", End: ""},
+			Padding:   "",
+		}
 		if rows || cols {
 		} else if tabular {
 			outfh.WriteString("file\tnum_cols\tnum_rows\n")
 		} else {
-			tbl, err = prettytable.NewTable([]prettytable.Column{
+			tbl = stable.New()
+			tbl.HeaderWithFormat([]stable.Column{
 				{Header: "file"},
-				{Header: "num_cols", AlignRight: true},
-				{Header: "num_rows", AlignRight: true}}...)
+				{Header: "num_cols", Align: stable.AlignRight, HumanizeNumbers: true},
+				{Header: "num_rows", Align: stable.AlignRight, HumanizeNumbers: true},
+			})
 			checkError(err)
-			tbl.Separator = "   "
 		}
 
 		for _, file := range files {
-			var numCols, numRows uint64
+			var numCols, numRows int
 
 			csvReader, err := newCSVReaderByConfig(config, file)
 			if err != nil {
@@ -85,10 +91,11 @@ var dimCmd = &cobra.Command{
 							outfh.WriteString(fmt.Sprintf("%s\t%d\t%d\n", file, numCols, numRows))
 						}
 					} else {
-						tbl.AddRow(
+						tbl.AddRow([]interface{}{
 							file,
-							humanize.Comma(int64(numCols)),
-							humanize.Comma(int64(numRows)))
+							numCols,
+							numRows,
+						})
 					}
 
 					continue
@@ -97,35 +104,33 @@ var dimCmd = &cobra.Command{
 				}
 			}
 
-			csvReader.Run()
+			csvReader.Read(ReadOption{
+				FieldStr: "1-",
+			})
 
 			once := true
-		HERE:
-			for chunk := range csvReader.Ch {
-				checkError(chunk.Err)
+			for record := range csvReader.Ch {
+				if record.Err != nil {
+					checkError(record.Err)
+				}
 
-				numRows += uint64(len(chunk.Data))
+				numRows = record.Row
+
 				if once {
-					for _, record := range chunk.Data {
-						numCols = uint64(len(record))
-						break
-					}
+					numCols = len(record.All)
 					if cols {
 						if noFiles {
 							outfh.WriteString(fmt.Sprintf("%d\n", numCols))
 						} else {
 							outfh.WriteString(fmt.Sprintf("%s\t%d\n", file, numCols))
 						}
-						break HERE
+						break
 					}
 					once = false
 				}
 			}
 			if cols {
 				continue
-			}
-			if numRows > 0 && !config.NoHeaderRow {
-				numRows--
 			}
 
 			if rows {
@@ -141,17 +146,18 @@ var dimCmd = &cobra.Command{
 					outfh.WriteString(fmt.Sprintf("%s\t%d\t%d\n", file, numCols, numRows))
 				}
 			} else {
-				tbl.AddRow(
+				tbl.AddRow([]interface{}{
 					file,
-					humanize.Comma(int64(numCols)),
-					humanize.Comma(int64(numRows)))
+					numCols,
+					numRows,
+				})
+			}
+
+			if !(rows || cols) && !tabular {
+				outfh.Write(tbl.Render(style))
 			}
 
 			readerReport(&config, csvReader, file)
-
-		}
-		if !(rows || cols) && !tabular {
-			outfh.Write(tbl.Bytes())
 		}
 	},
 }

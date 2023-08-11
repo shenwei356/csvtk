@@ -1,4 +1,4 @@
-// Copyright © 2016-2021 Wei Shen <shenwei356@gmail.com>
+// Copyright © 2016-2023 Wei Shen <shenwei356@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -112,6 +112,10 @@ so only columns match that of the first files kept.
 		} else {
 			writer.Comma = config.OutDelimiter
 		}
+		defer func() {
+			writer.Flush()
+			checkError(writer.Error())
+		}()
 
 		if !config.NoHeaderRow {
 			colnames := make([]string, len(COLNAMES))
@@ -130,8 +134,6 @@ so only columns match that of the first files kept.
 			checkError(writer.Write(row))
 		}
 
-		writer.Flush()
-		checkError(writer.Error())
 	},
 }
 

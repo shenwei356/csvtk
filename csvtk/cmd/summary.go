@@ -1,4 +1,4 @@
-// Copyright © 2016-2021 Wei Shen <shenwei356@gmail.com>
+// Copyright © 2016-2023 Wei Shen <shenwei356@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,6 @@ import (
 	"fmt"
 	"math"
 	"math/rand"
-	"regexp"
 	"runtime"
 	"sort"
 	"strconv"
@@ -86,20 +85,24 @@ Available operations:
 			checkError(fmt.Errorf("flag -f (--fields) needed"))
 		}
 
-		stats := make(map[string][]string)
-		statsI := make(map[int][]string)
+		stats := make(map[string][]string)         //  colname -> [stats]
+		statsList := make([][]string, 0, len(ops)) // [ [stats] ]
+		statsI := make(map[int][]string)           //  field -> [stats]
 
 		var fieldsStrsG []string
 		var fieldsStrsGMap map[string]struct{}
+		// var numFieldsG int
 		if groupsStr != "" {
 			fieldsStrsG = strings.Split(groupsStr, ",")
 			fieldsStrsGMap = make(map[string]struct{}, len(fieldsStrsG))
 			for _, k := range fieldsStrsG {
 				fieldsStrsGMap[k] = struct{}{}
 			}
+			// numFieldsG = len(fieldsStrsG)
 		}
 
 		fieldsStrsD := []string{}
+		var numFieldsD int
 		for _, key := range ops {
 			items := strings.Split(key, ":")
 			if _, ok := fieldsStrsGMap[items[0]]; ok {
@@ -111,14 +114,15 @@ Available operations:
 					stats[items[0]] = make([]string, 0, 1)
 				}
 				stats[items[0]] = append(stats[items[0]], "count")
+				statsList = append(statsList, []string{items[0], "count"})
 			} else if len(items) == 2 {
 				if items[0] == "" {
 					checkError(fmt.Errorf(`invalid field: %s`, key))
 				}
 				fieldsStrsD = append(fieldsStrsD, items[0])
 
-				_, ok1 := allStats[items[1]]
-				_, ok2 := allStats2[items[1]]
+				_, ok1 := allStats[items[1]]  // for numbers
+				_, ok2 := allStats2[items[1]] // for strings
 				if !(ok1 || ok2) {
 					checkError(fmt.Errorf(`invalid operation: %s. run "csvtk summary --help" for help`, items[1]))
 				}
@@ -126,10 +130,13 @@ Available operations:
 					stats[items[0]] = make([]string, 0, 1)
 				}
 				stats[items[0]] = append(stats[items[0]], items[1])
+				statsList = append(statsList, []string{items[0], items[1]})
 			} else {
 				checkError(fmt.Errorf(`invalid value of flag --fields: %s`, key))
 			}
+			numFieldsD = len(fieldsStrsD)
 		}
+
 		fieldsStrsDMap := make(map[string]struct{}, len(fieldsStrsD))
 		for _, k := range fieldsStrsD {
 			fieldsStrsDMap[k] = struct{}{}
@@ -143,49 +150,6 @@ Available operations:
 		}
 
 		fieldsStr := strings.Join(tmp, ",")
-
-		fuzzyFields := false
-		fields, colnames, negativeFields, needParseHeaderRow, _ := parseFields(cmd, fieldsStr, ",", config.NoHeaderRow)
-		if negativeFields {
-			checkError(fmt.Errorf(`negative field not supported by this command`))
-		}
-		var fieldsMap map[int]struct{}
-		var fieldsMapG map[int]struct{}
-		var fieldsMapD map[int]struct{}
-		if len(fields) > 0 {
-			fields2 := make([]int, len(fields))
-			fieldsMap = make(map[int]struct{}, len(fields))
-			for i, f := range fields {
-				if negativeFields {
-					fieldsMap[f*-1] = struct{}{}
-					fields2[i] = f * -1
-				} else {
-					fieldsMap[f] = struct{}{}
-					fields2[i] = f
-				}
-			}
-			fields = fields2
-
-			fieldsMapG = make(map[int]struct{}, len(fields))
-			if groupsStr != "" {
-				for _, k := range fieldsStrsG {
-					i, e := strconv.Atoi(k)
-					if e != nil {
-						checkError(fmt.Errorf("fail to convert group field to integer: %s", k))
-					}
-					fieldsMapG[i] = struct{}{}
-				}
-			}
-			fieldsMapD = make(map[int]struct{}, len(fields))
-			for _, k := range fieldsStrsD {
-				i, e := strconv.Atoi(k)
-				if e != nil {
-					checkError(fmt.Errorf("fail to convert data field to integer: %s", k))
-				}
-				fieldsMapD[i] = struct{}{}
-				statsI[i] = stats[k]
-			}
-		}
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
@@ -201,6 +165,10 @@ Available operations:
 		} else {
 			writer.Comma = config.OutDelimiter
 		}
+		defer func() {
+			writer.Flush()
+			checkError(writer.Error())
+		}()
 
 		file := files[0]
 		csvReader, err := newCSVReaderByConfig(config, file)
@@ -217,200 +185,104 @@ Available operations:
 			checkError(err)
 		}
 
-		csvReader.Run()
+		csvReader.Read(ReadOption{
+			FieldStr: fieldsStr,
 
-		parseHeaderRow := needParseHeaderRow // parsing header row
-		var colnames2fileds map[string][]int // column name -> []field
-		var colnamesMap map[string]*regexp.Regexp
+			DoNotAllowDuplicatedColumnName: true,
+		})
+
 		var HeaderRow []string
-		var isHeaderRow bool
-
-		checkFields := true
 
 		// group -> field -> data
-		data := make(map[string]map[int][]float64)
-		data2 := make(map[string]map[int][]string)
+		data := make(map[string]map[int][]float64) // for numbers
+		data2 := make(map[string]map[int][]string) // for strings
 
 		fieldsG := []int{}
 		fieldsD := []int{}
-		var i, f int
+		fieldsDUniq := []int{}
+		var f int
 		var v float64
 		var e error
 		var ok bool
-		var items []string
 		var group string
 		var needParseDigits bool
-		for chunk := range csvReader.Ch {
-			checkError(chunk.Err)
 
-			for _, record := range chunk.Data {
-				if parseHeaderRow { // parsing header row
-					colnames2fileds = make(map[string][]int, len(record))
-					for i, col := range record {
-						if _, ok := colnames2fileds[col]; !ok {
-							colnames2fileds[col] = []int{i + 1}
-						} else {
-							colnames2fileds[col] = append(colnames2fileds[col], i+1)
-						}
-					}
-					colnamesMap = make(map[string]*regexp.Regexp, len(colnames))
-					for _, col := range colnames {
-						if !fuzzyFields {
-							if negativeFields {
-								if _, ok := colnames2fileds[col[1:]]; !ok {
-									checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col[1:], file))
-								} else if len(colnames2fileds[col]) > 1 {
-									checkError(fmt.Errorf("the selected colname is duplicated in the input data: %s", col))
-								}
-							} else {
-								if _, ok := colnames2fileds[col]; !ok {
-									checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col, file))
-								} else if len(colnames2fileds[col]) > 1 {
-									checkError(fmt.Errorf("the selected colname is duplicated in the input data: %s", col))
-								}
-							}
-						}
-						if negativeFields {
-							colnamesMap[col[1:]] = fuzzyField2Regexp(col[1:])
-						} else {
-							colnamesMap[col] = fuzzyField2Regexp(col)
-						}
-					}
+		var hasHeaderLine bool
+		checkFirstLine := true
 
-					if len(fields) == 0 { // user gives the colnames
-						fields = []int{}
-						for _, col := range record {
-							var ok bool
-							if fuzzyFields {
-								for _, re := range colnamesMap {
-									if re.MatchString(col) {
-										ok = true
-										break
-									}
-								}
-							} else {
-								_, ok = colnamesMap[col]
-							}
-							if (negativeFields && !ok) || (!negativeFields && ok) {
-								if _, ok = fieldsStrsDMap[col]; ok {
-									fieldsD = append(fieldsD, colnames2fileds[col][0])
-									statsI[colnames2fileds[col][0]] = stats[col]
-								}
-								if _, ok = fieldsStrsGMap[col]; ok {
-									fieldsG = append(fieldsG, colnames2fileds[col][0])
-								}
-								fields = append(fields, colnames2fileds[col][0])
-							}
-						}
-					}
+		for record := range csvReader.Ch {
+			if record.Err != nil {
+				checkError(record.Err)
+			}
 
-					fieldsMap = make(map[int]struct{}, len(fields))
-					for _, f := range fields {
-						fieldsMap[f] = struct{}{}
-					}
+			if checkFirstLine {
+				checkFirstLine = false
 
-					HeaderRow = record
-					parseHeaderRow = false
-					isHeaderRow = true
-				}
-				if checkFields {
-					for field := range fieldsMap {
-						if field > len(record) {
-							checkError(fmt.Errorf(`field (%d) out of range (%d) in file: %s`, field, len(record), file))
-						}
-					}
-					fields2 := []int{}
-					for f := range record {
-						_, ok := fieldsMap[f+1]
-						if negativeFields {
-							if !ok {
-								fields2 = append(fields2, f+1)
-							}
-						} else {
-							if ok {
-								fields2 = append(fields2, f+1)
-							}
-						}
-						if _, ok = fieldsMapG[f+1]; ok {
-							fieldsG = append(fieldsG, f+1)
-						}
-						if _, ok = fieldsMapD[f+1]; ok {
-							fieldsD = append(fieldsD, f+1)
-							if needParseHeaderRow {
-								stats[HeaderRow[f]] = statsI[f+1]
-							}
-						}
-					}
-					fields = fields2
-					if len(fields) == 0 {
-						checkError(fmt.Errorf("no fields matched in file: %s", file))
-					}
-					if len(fieldsMapG) > 0 && len(fieldsG) == 0 {
-						checkError(fmt.Errorf("no group fields matched in file: %s", file))
-					}
-					if len(fieldsD) == 0 {
-						checkError(fmt.Errorf("no data fields matched in file: %s", file))
-					}
+				fieldsD = record.Fields[:numFieldsD]
+				fieldsG = record.Fields[numFieldsD:]
 
-					items = make([]string, len(fieldsG))
-					checkFields = false
+				fieldsDUniq = UniqInts(fieldsD)
+
+				for i, f := range fieldsD {
+					if _, ok = statsI[f]; !ok {
+						statsI[f] = []string{statsList[i][1]}
+					} else {
+						statsI[f] = append(statsI[f], statsList[i][1])
+					}
 				}
 
-				if isHeaderRow {
-					isHeaderRow = false
+				if !config.NoHeaderRow || record.IsHeaderRow {
+					HeaderRow = record.All
+					hasHeaderLine = true
 					continue
 				}
+			}
 
-				// fmt.Println(fields, fieldsG, fieldsD)
+			group = strings.Join(record.Selected[numFieldsD:], "_shenwei356_")
+			if _, ok = data[group]; !ok {
+				data[group] = make(map[int][]float64, 1024)
+			}
+			if _, ok = data2[group]; !ok {
+				data2[group] = make(map[int][]string, 1024)
+			}
 
-				for i, f = range fieldsG {
-					items[i] = record[f-1]
+			for _, f = range fieldsDUniq {
+				if _, ok = data2[group][f]; !ok {
+					data2[group][f] = []string{}
 				}
-				group = strings.Join(items, "_shenwei356_")
-				if _, ok = data[group]; !ok {
-					data[group] = make(map[int][]float64, 1000)
-				}
-				if _, ok = data2[group]; !ok {
-					data2[group] = make(map[int][]string, 1000)
-				}
+				data2[group][f] = append(data2[group][f], record.All[f-1])
 
-				for _, f = range fieldsD {
-					if _, ok = data2[group][f]; !ok {
-						data2[group][f] = []string{}
+				needParseDigits = false
+				for _, op := range statsI[f] {
+					if _, ok = allStats[op]; ok {
+						needParseDigits = true
+						break
 					}
-					data2[group][f] = append(data2[group][f], record[f-1])
+				}
 
-					needParseDigits = false
-					for _, op := range statsI[f] {
-						if _, ok = allStats[op]; ok {
-							needParseDigits = true
-							break
-						}
-					}
-
-					if !needParseDigits {
+				if !needParseDigits {
+					continue
+				}
+				if !reDigitals.MatchString(record.All[f-1]) {
+					if ignore {
 						continue
 					}
-					if !reDigitals.MatchString(record[f-1]) {
-						if ignore {
-							continue
-						}
-						checkError(fmt.Errorf("column %d has non-numeric data: %s, you can use flag -i/--ignore-non-numbers to skip these data", f, record[f-1]))
-					}
-					v, e = strconv.ParseFloat(removeComma(record[f-1]), 64)
-					checkError(e)
-					if _, ok = data[group][f]; !ok {
-						data[group][f] = []float64{}
-					}
-					data[group][f] = append(data[group][f], v)
+					checkError(fmt.Errorf("column %d has non-numeric data: %s, you can use flag -i/--ignore-non-numbers to skip these data", f, record.All[f-1]))
 				}
+				v, e = strconv.ParseFloat(removeComma(record.All[f-1]), 64)
+				checkError(e)
+				if _, ok = data[group][f]; !ok {
+					data[group][f] = []float64{}
+				}
+				data[group][f] = append(data[group][f], v)
 			}
+
 		}
 
 		readerReport(&config, csvReader, file)
 
 		colsOut := len(fieldsG) + len(fieldsD)
-		if needParseHeaderRow {
+		if hasHeaderLine {
 			record := make([]string, 0, colsOut)
 			if len(fieldsG) > 0 {
 				for _, i := range fieldsG {
@@ -418,11 +290,10 @@ Available operations:
 				}
 			}
 
-			for _, f := range fieldsD {
-				for _, s := range statsI[f] {
-					record = append(record, HeaderRow[f-1]+":"+s)
-				}
+			for i, ss := range statsList {
+				record = append(record, HeaderRow[fieldsD[i]-1]+":"+ss[1])
 			}
+
 			writer.Write(record)
 		}
 
@@ -440,40 +311,38 @@ Available operations:
 				record = append(record, strings.Split(group, "_shenwei356_")...)
 			}
 
-			for _, f := range fieldsD {
+			for i, ss := range statsList {
+				s := ss[1]
+				f := fieldsD[i]
+
 				sorted := false
+				if _, ok = allStats[s]; !ok {
+					fu2 = allStats2[s]
+					record = append(record, fu2(data2[group][f]))
+				} else {
+					needSort := false
+					for _, s := range statsI[f] {
+						if s == "q1" || s == "q2" || s == "q3" || s == "median" {
+							needSort = true
+							break
+						}
+					}
+					if needSort && !sorted {
+						sort.Float64s(data[group][f])
+						sorted = true
+					}
 
-				for _, s := range statsI[f] {
-					if _, ok = allStats[s]; !ok {
-						fu2 = allStats2[s]
-						record = append(record, fu2(data2[group][f]))
+					fu = allStats[s]
+					if s == "countn" {
+						record = append(record, fmt.Sprintf("%.0f", fu(data[group][f])))
 					} else {
-						needSort := false
-						for _, s := range statsI[f] {
-							if s == "q1" || s == "q2" || s == "q3" || s == "median" {
-								needSort = true
-								break
-							}
-						}
-						if needSort && !sorted {
-							sort.Float64s(data[group][f])
-							sorted = true
-						}
-
-						fu = allStats[s]
-						if s == "countn" {
-							record = append(record, fmt.Sprintf("%.0f", fu(data[group][f])))
-						} else {
-							record = append(record, fmt.Sprintf(decimalFormat, fu(data[group][f])))
-						}
+						record = append(record, fmt.Sprintf(decimalFormat, fu(data[group][f])))
 					}
 				}
 			}
 			writer.Write(record)
 		}
 
-		writer.Flush()
-		checkError(writer.Error())
 	},
 }
 

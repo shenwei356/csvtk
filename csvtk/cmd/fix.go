@@ -1,4 +1,4 @@
-// Copyright © 2016-2021 Wei Shen <shenwei356@gmail.com>
+// Copyright © 2016-2023 Wei Shen <shenwei356@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -77,6 +77,10 @@ How to:
 		} else {
 			writer.Comma = config.OutDelimiter
 		}
+		defer func() {
+			writer.Flush()
+			checkError(writer.Error())
+		}()
 
 		file := files[0]
 
@@ -95,54 +99,55 @@ How to:
 		// records may have a variable number of fields.
 		csvReader.Reader.FieldsPerRecord = -1
 
-		csvReader.Run()
+		csvReader.Read(ReadOption{
+			FieldStr: "1-",
+		})
 
-		var record []string
 		var n int // number of loaded rows
 		var maxN int
 		var checkedMaxNcols bool
 		var row []string
 		var ncol int
 		var empty []string
-		for chunk := range csvReader.Ch {
-			checkError(chunk.Err)
-
-			for _, record = range chunk.Data {
-				n++
-
-				if readAll {
-					buf = append(buf, record)
-					continue
-				}
-
-				buf = append(buf, record)
-				if !checkedMaxNcols {
-					if n == bufRows {
-						maxN = maxNcols(buf)
-						log.Infof("the maximum number of columns in first %d rows: %d", bufRows, maxN)
-						checkedMaxNcols = true
-						empty = make([]string, maxN)
-
-						for _, row = range buf {
-							ncol = len(row)
-							if ncol < maxN {
-								row = append(row, empty[0:maxN-ncol]...)
-							}
-							writer.Write(row)
-						}
-					}
-
-					continue
-				}
-
-				ncol = len(record)
-				if ncol > maxN {
-					checkError(fmt.Errorf("line %d: the number of columns is larger than %d, please increase the value of -n/--buf-rows (%d)", n, maxN, bufRows))
-				} else if ncol < maxN {
-					record = append(record, empty[0:maxN-ncol]...)
-				}
-				writer.Write(record)
+		for record := range csvReader.Ch {
+			if record.Err != nil {
+				checkError(record.Err)
 			}
+
+			n++
+
+			if readAll {
+				buf = append(buf, record.All)
+				continue
+			}
+
+			buf = append(buf, record.All)
+			if !checkedMaxNcols {
+				if n == bufRows {
+					maxN = maxNcols(buf)
+					log.Infof("the maximum number of columns in first %d rows: %d", bufRows, maxN)
+					checkedMaxNcols = true
+					empty = make([]string, maxN)
+
+					for _, row = range buf {
+						ncol = len(row)
+						if ncol < maxN {
+							row = append(row, empty[0:maxN-ncol]...)
+						}
+						writer.Write(row)
+					}
+				}
+
+				continue
+			}
+
+			ncol = len(record.All)
+			if ncol > maxN {
+				checkError(fmt.Errorf("line %d: the number of columns is larger than %d, please increase the value of -n/--buf-rows (%d)", n, maxN, bufRows))
+			} else if ncol < maxN {
+				record.All = append(record.All, empty[0:maxN-ncol]...)
+			}
+			writer.Write(record.All)
 		}
 
 		if readAll || !checkedMaxNcols {
@@ -158,9 +163,6 @@ How to:
 				writer.Write(row)
 			}
 		}
-
-		writer.Flush()
-		checkError(writer.Error())
 
 		readerReport(&config, csvReader, file)
 	},

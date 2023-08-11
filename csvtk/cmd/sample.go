@@ -1,4 +1,4 @@
-// Copyright © 2016-2021 Wei Shen <shenwei356@gmail.com>
+// Copyright © 2016-2023 Wei Shen <shenwei356@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -71,6 +71,10 @@ var sampleCmd = &cobra.Command{
 		} else {
 			writer.Comma = config.OutDelimiter
 		}
+		defer func() {
+			writer.Flush()
+			checkError(writer.Error())
+		}()
 
 		for _, file := range files {
 			csvReader, err := newCSVReaderByConfig(config, file)
@@ -83,46 +87,33 @@ var sampleCmd = &cobra.Command{
 				checkError(err)
 			}
 
-			csvReader.Run()
+			csvReader.Read(ReadOption{
+				FieldStr:      "1-",
+				ShowRowNumber: printLineNumber || config.ShowRowNumber,
+			})
 
-			var N int64
-			var recordWithN []string
+			checkFirstLine := true
+			for record := range csvReader.Ch {
+				if record.Err != nil {
+					checkError(record.Err)
+				}
 
-			isHeaderLine := !config.NoHeaderRow
-			for chunk := range csvReader.Ch {
-				checkError(chunk.Err)
+				if checkFirstLine {
+					checkFirstLine = false
 
-				for _, record := range chunk.Data {
-					if isHeaderLine {
-						if printLineNumber {
-							recordWithN = []string{"n"}
-							recordWithN = append(recordWithN, record...)
-							record = recordWithN
-						}
-
-						checkError(writer.Write(record))
-						isHeaderLine = false
+					if !config.NoHeaderRow || record.IsHeaderRow { // do not replace head line
+						checkError(writer.Write(record.Selected))
 						continue
 					}
+				}
 
-					N++
-
-					if outAll || rand.Float64() <= proportion {
-						if printLineNumber {
-							recordWithN = []string{fmt.Sprintf("%d", N)}
-							recordWithN = append(recordWithN, record...)
-							record = recordWithN
-						}
-
-						checkError(writer.Write(record))
-					}
+				if outAll || rand.Float64() <= proportion {
+					checkError(writer.Write(record.Selected))
 				}
 			}
 
 			readerReport(&config, csvReader, file)
 		}
-		writer.Flush()
-		checkError(writer.Error())
 	},
 }
 
@@ -131,5 +122,5 @@ func init() {
 
 	sampleCmd.Flags().Int64P("rand-seed", "s", 11, "rand seed")
 	sampleCmd.Flags().Float64P("proportion", "p", 0, "sample by proportion")
-	sampleCmd.Flags().BoolP("line-number", "n", false, `print line number as the first column ("n")`)
+	sampleCmd.Flags().BoolP("line-number", "n", false, `print line number as the first column ("row")`)
 }

@@ -1,4 +1,4 @@
-// Copyright © 2016-2021 Wei Shen <shenwei356@gmail.com>
+// Copyright © 2016-2023 Wei Shen <shenwei356@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -65,9 +65,6 @@ Attention:
 
 		xlsx := excelize.NewFile()
 
-		var chunk CSVRecordsChunk
-		var record []string
-
 		var sheet, cell, val string
 		var col, line int
 		var valFloat float64
@@ -83,7 +80,10 @@ Attention:
 			}
 			nSheets++
 
-			csvReader.Run()
+			csvReader.Read(ReadOption{
+				FieldStr:      "1-",
+				ShowRowNumber: config.ShowRowNumber,
+			})
 
 			if singleInput {
 				sheet = "Sheet1"
@@ -100,29 +100,27 @@ Attention:
 			}
 
 			line = 1
-			for chunk = range csvReader.Ch {
-				checkError(chunk.Err)
-
-				for _, record = range chunk.Data {
-					for col, val = range record {
-						cell = fmt.Sprintf("%s%d", ExcelColumnIndex(col), line)
-						if formatNumbers {
-							valFloat, err = strconv.ParseFloat(val, 64)
-							if err != nil {
-								xlsx.SetCellValue(sheet, cell, val)
-							} else {
-								xlsx.SetCellFloat(sheet, cell, valFloat, -1, 64)
-							}
-						} else {
-							xlsx.SetCellValue(sheet, cell, val)
-						}
-					}
-					line++
+			for record := range csvReader.Ch {
+				if record.Err != nil {
+					checkError(record.Err)
 				}
+				for col, val = range record.Selected {
+					cell = fmt.Sprintf("%s%d", ExcelColumnIndex(col), line)
+					if formatNumbers {
+						valFloat, err = strconv.ParseFloat(val, 64)
+						if err != nil {
+							xlsx.SetCellValue(sheet, cell, val)
+						} else {
+							xlsx.SetCellFloat(sheet, cell, valFloat, -1, 64)
+						}
+					} else {
+						xlsx.SetCellValue(sheet, cell, val)
+					}
+				}
+				line++
 			}
 
 			readerReport(&config, csvReader, file)
-
 		}
 
 		xlsx.SetActiveSheet(1)

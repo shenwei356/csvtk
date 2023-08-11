@@ -1,4 +1,4 @@
-// Copyright © 2016-2021 Wei Shen <shenwei356@gmail.com>
+// Copyright © 2016-2023 Wei Shen <shenwei356@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +23,6 @@ package cmd
 import (
 	"encoding/csv"
 	"fmt"
-	"regexp"
 	"runtime"
 	"sort"
 	"strconv"
@@ -57,36 +56,6 @@ var freqCmd = &cobra.Command{
 		if fieldStr == "" {
 			checkError(fmt.Errorf("flag -f (--fields) needed"))
 		}
-		fields, colnames, negativeFields, needParseHeaderRow, _ := parseFields(cmd, fieldStr, ",", config.NoHeaderRow)
-		var fieldsMap map[int]struct{}
-		var fieldsOrder map[int]int      // for set the order of fields
-		var colnamesOrder map[string]int // for set the order of fields
-		if len(fields) > 0 {
-			fields2 := make([]int, len(fields))
-			fieldsMap = make(map[int]struct{}, len(fields))
-			for i, f := range fields {
-				if negativeFields {
-					fieldsMap[f*-1] = struct{}{}
-					fields2[i] = f * -1
-				} else {
-					fieldsMap[f] = struct{}{}
-					fields2[i] = f
-				}
-			}
-			fields = fields2
-
-			if !negativeFields {
-				fieldsOrder = make(map[int]int, len(fields))
-				i := 0
-				for _, f := range fields {
-					fieldsOrder[f] = i
-					i++
-				}
-			}
-		} else {
-			fieldsOrder = make(map[int]int, len(colnames))
-			colnamesOrder = make(map[string]int, len(colnames))
-		}
 
 		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
 
@@ -104,6 +73,10 @@ var freqCmd = &cobra.Command{
 		} else {
 			writer.Comma = config.OutDelimiter
 		}
+		defer func() {
+			writer.Flush()
+			checkError(writer.Error())
+		}()
 
 		counter := make(map[string]int, 10000)
 		orders := make(map[string]int, 10000)
@@ -123,141 +96,38 @@ var freqCmd = &cobra.Command{
 			checkError(err)
 		}
 
-		csvReader.Run()
+		csvReader.Read(ReadOption{
+			FieldStr:    fieldStr,
+			FuzzyFields: fuzzyFields,
 
-		parseHeaderRow := needParseHeaderRow // parsing header row
-		printHeaderRow := needParseHeaderRow
-		var colnames2fileds map[string][]int // column name -> []field
-		var colnamesMap map[string]*regexp.Regexp
+			DoNotAllowDuplicatedColumnName: true,
+		})
 
-		checkFields := true
-		var items []string
 		var key string
 		var N int
 
-		for chunk := range csvReader.Ch {
-			checkError(chunk.Err)
+		checkFirstLine := true
+		for record := range csvReader.Ch {
+			if record.Err != nil {
+				checkError(record.Err)
+			}
 
-			for _, record := range chunk.Data {
-				N++
-				if parseHeaderRow { // parsing header row
-					colnames2fileds = make(map[string][]int, len(record))
-					for i, col := range record {
-						if _, ok := colnames2fileds[col]; !ok {
-							colnames2fileds[col] = []int{i + 1}
-						} else {
-							colnames2fileds[col] = append(colnames2fileds[col], i+1)
-						}
-					}
-					colnamesMap = make(map[string]*regexp.Regexp, len(colnames))
-					i := 0
-					for _, col := range colnames {
-						if !fuzzyFields {
-							if negativeFields {
-								if _, ok := colnames2fileds[col[1:]]; !ok {
-									checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col[1:], file))
-								} else if len(colnames2fileds[col]) > 1 {
-									checkError(fmt.Errorf("the selected colname is duplicated in the input data: %s", col))
-								}
-							} else {
-								if _, ok := colnames2fileds[col]; !ok {
-									checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col, file))
-								} else if len(colnames2fileds[col]) > 1 {
-									checkError(fmt.Errorf("the selected colname is duplicated in the input data: %s", col))
-								}
-							}
-						}
-						if negativeFields {
-							colnamesMap[col[1:]] = fuzzyField2Regexp(col[1:])
-						} else {
-							colnamesMap[col] = fuzzyField2Regexp(col)
-							colnamesOrder[col] = i
-							i++
-						}
-					}
-
-					if len(fields) == 0 { // user gives the colnames
-						fields = []int{}
-						for _, col := range record {
-							var ok bool
-							if fuzzyFields {
-								for _, re := range colnamesMap {
-									if re.MatchString(col) {
-										ok = true
-										break
-									}
-								}
-							} else {
-								_, ok = colnamesMap[col]
-							}
-							if ok {
-								fields = append(fields, colnames2fileds[col]...)
-							}
-						}
-					}
-
-					fieldsMap = make(map[int]struct{}, len(fields))
-					for _, f := range fields {
-						fieldsMap[f] = struct{}{}
-					}
-
-					parseHeaderRow = false
-				}
-				if checkFields {
-					for field := range fieldsMap {
-						if field > len(record) {
-							checkError(fmt.Errorf(`field (%d) out of range (%d) in file: %s`, field, len(record), file))
-						}
-					}
-					fields2 := []int{}
-					for f := range record {
-						_, ok := fieldsMap[f+1]
-						if negativeFields {
-							if !ok {
-								fields2 = append(fields2, f+1)
-							}
-						} else {
-							if ok {
-								fields2 = append(fields2, f+1)
-							}
-						}
-					}
-					fields = fields2
-					if len(fields) == 0 {
-						checkError(fmt.Errorf("no fields matched in file: %s", file))
-					}
-
-					// sort fields
-					orderedFieldss := make([]orderedField, len(fields))
-					for i, f := range fields {
-						orderedFieldss[i] = orderedField{field: f, order: fieldsOrder[f]}
-					}
-					sort.Sort(orderedFields(orderedFieldss))
-					for i, of := range orderedFieldss {
-						fields[i] = of.field
-					}
-
-					items = make([]string, len(fields))
-
-					checkFields = false
-				}
-
-				for i, f := range fields {
-					items[i] = record[f-1]
-				}
-
-				if printHeaderRow {
-					checkError(writer.Write(append(items, "frequency")))
-					printHeaderRow = false
+			if checkFirstLine {
+				checkFirstLine = false
+				if !config.NoHeaderRow || record.IsHeaderRow {
+					checkError(writer.Write(append(record.Selected, "frequency")))
 					continue
 				}
-
-				key = strings.Join(items, "_shenwei356_")
-				counter[key]++
-				orders[key] = N
 			}
+
+			N++
+
+			key = strings.Join(record.Selected, "_shenwei356_")
+			counter[key]++
+			orders[key] = N
 		}
 
+		var items []string
 		if sortByFreq {
 			counts := make([]stringutil.StringCount, len(counter))
 			i := 0
@@ -301,9 +171,6 @@ var freqCmd = &cobra.Command{
 				checkError(writer.Write(items))
 			}
 		}
-
-		writer.Flush()
-		checkError(writer.Error())
 
 		readerReport(&config, csvReader, file)
 	},

@@ -1,4 +1,4 @@
-// Copyright © 2016-2021 Wei Shen <shenwei356@gmail.com>
+// Copyright © 2016-2023 Wei Shen <shenwei356@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -107,7 +107,7 @@ Weakness : Complicated sheet structures are not well supported, e.g.,
 			sheetName2Index[sheet] = i
 		}
 
-		fields, colnames, negativeFields, needParseHeaderRow, _ := parseFields(cmd, fieldStr, ",", config.NoHeaderRow)
+		fields, colnames, negativeFields, needParseHeaderRow, _ := parseFields(fieldStr, ",", config.NoHeaderRow)
 		var fieldsMap map[int]struct{}
 		if len(fields) > 0 {
 			fields2 := make([]int, len(fields))

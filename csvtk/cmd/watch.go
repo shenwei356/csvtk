@@ -46,6 +46,9 @@ var watchCmd = &cobra.Command{
 		runtime.GOMAXPROCS(config.NumCPUs)
 
 		printField := getFlagString(cmd, "field")
+		if printField == "" {
+			checkError(fmt.Errorf("flag -f (--field) needed"))
+		}
 		printPdf := getFlagString(cmd, "image")
 		printFreq := getFlagInt(cmd, "print-freq")
 		printDump := getFlagBool(cmd, "dump")
@@ -58,10 +61,6 @@ var watchCmd = &cobra.Command{
 		}
 		printBins := getFlagInt(cmd, "bins")
 		printPass := getFlagBool(cmd, "pass")
-
-		if printFreq > 0 {
-			config.ChunkSize = printFreq
-		}
 
 		if config.Tabs {
 			config.OutDelimiter = rune('\t')
@@ -81,6 +80,10 @@ var watchCmd = &cobra.Command{
 		} else {
 			writer.Comma = config.OutDelimiter
 		}
+		defer func() {
+			writer.Flush()
+			checkError(writer.Error())
+		}()
 
 		binMode := "termfit"
 		if printBins > 0 {
@@ -95,27 +98,7 @@ var watchCmd = &cobra.Command{
 			}
 		}
 
-		field2col := make(map[string]int)
-		var col int
-		if config.NoHeaderRow {
-			if len(printField) == 0 {
-				checkError(fmt.Errorf("flag -f (--field) needed"))
-			}
-			pcol, err := strconv.Atoi(printField)
-			if err != nil {
-				checkError(fmt.Errorf("illegal field number: %s", printField))
-			}
-			col = pcol - 1
-			if col < 0 {
-				checkError(fmt.Errorf("illegal field number: %d", pcol))
-			}
-		}
-		if printField == "" {
-			checkError(fmt.Errorf("flag -f (--field) needed"))
-		}
-
 		var count int
-		var i int
 		var p float64
 
 		for _, file := range files {
@@ -129,73 +112,65 @@ var watchCmd = &cobra.Command{
 				checkError(err)
 			}
 
-			csvReader.Run()
+			csvReader.Read(ReadOption{
+				FieldStr: printField,
 
-			isHeaderLine := !config.NoHeaderRow
-			checkField := true
-			for chunk := range csvReader.Ch {
-				checkError(chunk.Err)
+				DoNotAllowDuplicatedColumnName: true,
+			})
 
-				for _, record := range chunk.Data {
-					if isHeaderLine {
-						for i, column := range record {
-							field2col[column] = i
-						}
+			checkFirstLine := true
+			for record := range csvReader.Ch {
+				if record.Err != nil {
+					checkError(record.Err)
+				}
 
-						isHeaderLine = false
-						if printPass {
-							checkError(writer.Write(record))
-						}
-						continue
-					} // header
+				if checkFirstLine {
+					checkFirstLine = false
 
-					i = col
-					if !config.NoHeaderRow {
-						var ok bool
-						i, ok = field2col[printField]
-						if !ok {
-							checkError(fmt.Errorf("invalid field specified: %s", printField))
-						}
-					} else if checkField {
-						if i > len(record) {
-							checkError(fmt.Errorf(`field (%d) out of range (%d) in file: %s`, i+1, len(record), file))
-						}
-						checkField = false
+					if len(record.Fields) > 1 {
+						checkError(fmt.Errorf("only a single field allowed"))
 					}
 
-					p, err = strconv.ParseFloat(record[i], 64)
-					if err == nil {
-						count++
-						h.Update(transform(p))
+					if !config.NoHeaderRow || record.IsHeaderRow {
 						if printPass {
-							checkError(writer.Write(record))
+							checkError(writer.Write(record.All))
 						}
+						continue
+					}
+				}
+
+				p, err = strconv.ParseFloat(record.Selected[0], 64)
+				if err != nil {
+					continue
+				}
+
+				count++
+				h.Update(transform(p))
+				if printPass {
+					checkError(writer.Write(record.All))
+				}
+
+				if printFreq > 0 && count%printFreq == 0 {
+					if printDump {
+						os.Stderr.Write([]byte(h.Dump()))
 					} else {
-						continue
-					}
-					if printFreq > 0 && count%printFreq == 0 {
-						if printDump {
-							os.Stderr.Write([]byte(h.Dump()))
-						} else {
-							if !printQuiet {
-								os.Stderr.Write([]byte(thist.ClearScreenString()))
-								os.Stderr.Write([]byte(h.Draw()))
-							}
-							if printPdf != "" {
-								h.SaveImage(printPdf)
-							}
+						if !printQuiet {
+							os.Stderr.Write([]byte(thist.ClearScreenString()))
+							os.Stderr.Write([]byte(h.Draw()))
 						}
-						outfh.Flush()
-						if printReset {
-							h = thist.NewHist([]float64{}, printField, binMode, printBins, true)
+						if printPdf != "" {
+							h.SaveImage(printPdf)
 						}
-						time.Sleep(time.Duration(printDelay) * time.Second)
 					}
+					outfh.Flush()
+					if printReset {
+						h = thist.NewHist([]float64{}, printField, binMode, printBins, true)
+					}
+					time.Sleep(time.Duration(printDelay) * time.Second)
+				}
+			}
+		}
 
-				} // record
-			} //chunk
-
-		} //file
 		if printFreq < 0 || count%printFreq != 0 {
 			if printDump {
 				os.Stderr.Write([]byte(h.Dump()))

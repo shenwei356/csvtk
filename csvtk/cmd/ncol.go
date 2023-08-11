@@ -1,4 +1,4 @@
-// Copyright © 2016-2021 Wei Shen <shenwei356@gmail.com>
+// Copyright © 2016-2023 Wei Shen <shenwei356@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -48,7 +48,7 @@ var ncolCmd = &cobra.Command{
 		defer outfh.Close()
 
 		for _, file := range files {
-			var numCols uint64
+			var numCols int
 
 			csvReader, err := newCSVReaderByConfig(config, file)
 			if err != nil {
@@ -65,25 +65,25 @@ var ncolCmd = &cobra.Command{
 					checkError(err)
 				}
 			}
-			csvReader.Run()
+			csvReader.Read(ReadOption{
+				FieldStr: "1-",
+			})
 
-			for chunk := range csvReader.Ch {
-				checkError(chunk.Err)
-
-				for _, record := range chunk.Data {
-					numCols = uint64(len(record))
-					break
+			for record := range csvReader.Ch {
+				if record.Err != nil {
+					checkError(record.Err)
 				}
 
-				if printFileName {
-					outfh.WriteString(fmt.Sprintf("%d\t%s\n", numCols, file))
-				} else {
-					outfh.WriteString(fmt.Sprintf("%d\n", numCols))
-				}
-				outfh.Flush()
-
+				numCols = len(record.All)
 				break
 			}
+
+			if printFileName {
+				outfh.WriteString(fmt.Sprintf("%d\t%s\n", numCols, file))
+			} else {
+				outfh.WriteString(fmt.Sprintf("%d\n", numCols))
+			}
+			outfh.Flush()
 
 			readerReport(&config, csvReader, file)
 

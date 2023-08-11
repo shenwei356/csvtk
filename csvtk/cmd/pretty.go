@@ -1,4 +1,4 @@
-// Copyright © 2016-2021 Wei Shen <shenwei356@gmail.com>
+// Copyright © 2016-2023 Wei Shen <shenwei356@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -155,7 +155,10 @@ Styles:
 			checkError(err)
 		}
 
-		csvReader.Run()
+		csvReader.Read(ReadOption{
+			FieldStr:      "1-",
+			ShowRowNumber: config.ShowRowNumber,
+		})
 
 		styles := map[string]*stable.TableStyle{
 			"default": &stable.TableStyle{
@@ -206,19 +209,22 @@ Styles:
 
 		tbl.Writer(outfh, uint(bufRows))
 
-		parseHeaderRow := !config.NoHeaderRow
-		var record []string
-		for chunk := range csvReader.Ch {
-			checkError(chunk.Err)
+		checkFirstLine := true
+		for record := range csvReader.Ch {
+			if record.Err != nil {
+				checkError(record.Err)
+			}
 
-			for _, record = range chunk.Data {
-				if parseHeaderRow { // parsing header row
-					tbl.Header(record)
-					parseHeaderRow = false
+			if checkFirstLine {
+				checkFirstLine = false
+
+				if !config.NoHeaderRow || record.IsHeaderRow {
+					tbl.Header(record.Selected)
 					continue
 				}
-				tbl.AddRowStringSlice(record)
 			}
+
+			tbl.AddRowStringSlice(record.Selected)
 		}
 		tbl.Flush()
 

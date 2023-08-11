@@ -1,4 +1,4 @@
-// Copyright © 2016-2021 Wei Shen <shenwei356@gmail.com>
+// Copyright © 2016-2023 Wei Shen <shenwei356@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -27,6 +27,7 @@ import (
 	"io"
 	"regexp"
 	"runtime"
+	"strconv"
 	"strings"
 
 	"github.com/fatih/color"
@@ -64,28 +65,6 @@ Attentions:
 		if fieldStr == "" {
 			checkError(fmt.Errorf("flag -f (--fields) needed"))
 		}
-		fields, colnames, negativeFields, needParseHeaderRow, _ := parseFields(cmd, fieldStr, ",", config.NoHeaderRow)
-		// if !(len(fields) == 1 || len(colnames) == 1) {
-		// 	checkError(fmt.Errorf("single fields needed"))
-		// }
-		// if negativeFields {
-		// 	checkError(fmt.Errorf("unselect not allowed"))
-		// }
-		var fieldsMap map[int]struct{}
-		if len(fields) > 0 {
-			fields2 := make([]int, len(fields))
-			fieldsMap = make(map[int]struct{}, len(fields))
-			for i, f := range fields {
-				if negativeFields {
-					fieldsMap[f*-1] = struct{}{}
-					fields2[i] = f * -1
-				} else {
-					fieldsMap[f] = struct{}{}
-					fields2[i] = f
-				}
-			}
-			fields = fields2
-		}
 
 		patterns := getFlagStringSlice(cmd, "pattern")
 		patternFile := getFlagString(cmd, "pattern-file")
@@ -98,19 +77,15 @@ Attentions:
 		invert := getFlagBool(cmd, "invert")
 		verbose := getFlagBool(cmd, "verbose")
 		noHighlight := getFlagBool(cmd, "no-highlight")
-		printLineNumber := getFlagBool(cmd, "line-number")
+		printLineNumber := getFlagBool(cmd, "line-number") || config.ShowRowNumber
 		deleteMatched := getFlagBool(cmd, "delete-matched")
 
 		immediateOutput := getFlagBool(cmd, "immediate-output")
 
 		patternsMap := make(map[string]*regexp.Regexp)
-		var outAll bool
 		for _, pattern := range patterns {
 			if useRegexp {
 				p := pattern
-				if !outAll && (p == "." || p == ".*") {
-					outAll = true
-				}
 				if ignoreCase {
 					p = "(?i)" + p
 				}
@@ -135,7 +110,7 @@ Attentions:
 				}
 				return line, true, nil
 			}
-			reader, err := breader.NewBufferedReader(patternFile, config.NumCPUs, config.ChunkSize, fn)
+			reader, err := breader.NewBufferedReader(patternFile, config.NumCPUs, 1000, fn)
 			checkError(err)
 			for chunk := range reader.Ch {
 				checkError(chunk.Err)
@@ -143,9 +118,6 @@ Attentions:
 					pattern := data.(string)
 					if useRegexp {
 						p := pattern
-						if !outAll && (p == "." || p == ".*") {
-							outAll = true
-						}
 						if ignoreCase {
 							p = "(?i)" + p
 						}
@@ -164,7 +136,7 @@ Attentions:
 		}
 
 		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
-		// fuzzyFields := false
+
 		var writer *csv.Writer
 		var outfhStd io.Writer
 		var outfhFile *xopen.Writer
@@ -190,6 +162,10 @@ Attentions:
 		} else {
 			writer.Comma = config.OutDelimiter
 		}
+		defer func() {
+			writer.Flush()
+			checkError(writer.Error())
+		}()
 
 		for _, file := range files {
 			csvReader, err := newCSVReaderByConfig(config, file)
@@ -202,225 +178,122 @@ Attentions:
 				checkError(err)
 			}
 
-			csvReader.Run()
-
-			parseHeaderRow := needParseHeaderRow // parsing header row
-			var colnames2fileds map[string][]int // column name -> []field
-			var colnamesMap map[string]*regexp.Regexp
-
-			checkFields := true
-			var N int64
-			var recordWithN []string
+			csvReader.Read(ReadOption{
+				FieldStr:    fieldStr,
+				FuzzyFields: fuzzyFields,
+			})
 
 			var k string
 			var re *regexp.Regexp
 			var ok bool
-			for chunk := range csvReader.Ch {
-				checkError(chunk.Err)
 
-				for _, record := range chunk.Data {
-					if parseHeaderRow { // parsing header row
-						colnames2fileds = make(map[string][]int, len(record))
-						for i, col := range record {
-							if _, ok := colnames2fileds[col]; !ok {
-								colnames2fileds[col] = []int{i + 1}
-							} else {
-								colnames2fileds[col] = append(colnames2fileds[col], i+1)
-							}
-						}
-						colnamesMap = make(map[string]*regexp.Regexp, len(colnames))
-						for _, col := range colnames {
-							if !fuzzyFields {
-								if negativeFields {
-									if _, ok := colnames2fileds[col[1:]]; !ok {
-										checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col[1:], file))
-									} else if len(colnames2fileds[col]) > 1 {
-										checkError(fmt.Errorf("the selected colname is duplicated in the input data: %s", col))
-									}
-								} else {
-									if _, ok := colnames2fileds[col]; !ok {
-										checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col, file))
-									} else if len(colnames2fileds[col]) > 1 {
-										checkError(fmt.Errorf("the selected colname is duplicated in the input data: %s", col))
-									}
-								}
-							}
-							if negativeFields {
-								colnamesMap[col[1:]] = fuzzyField2Regexp(col[1:])
-							} else {
-								colnamesMap[col] = fuzzyField2Regexp(col)
-							}
-						}
+			var target string
+			var hitOne, hit bool
+			var reHit *regexp.Regexp
+			var i, j int
+			var c string
+			var buf bytes.Buffer
+			var found []int
 
-						if len(fields) == 0 { // user gives the colnames
-							fields = []int{}
-							for _, col := range record {
-								var ok bool
-								if fuzzyFields {
-									for _, re = range colnamesMap {
-										if re.MatchString(col) {
-											ok = true
-											break
-										}
-									}
-								} else {
-									_, ok = colnamesMap[col]
-								}
-								if ok {
-									fields = append(fields, colnames2fileds[col]...)
-								}
-							}
-						}
+			checkFirstLine := true
+			for record := range csvReader.Ch {
+				if record.Err != nil {
+					checkError(record.Err)
+				}
 
-						fieldsMap = make(map[int]struct{}, len(fields))
-						for _, f := range fields {
-							fieldsMap[f] = struct{}{}
-						}
+				if checkFirstLine {
+					checkFirstLine = false
 
+					if !config.NoHeaderRow || record.IsHeaderRow {
 						if printLineNumber {
-							recordWithN = []string{"n"}
-							recordWithN = append(recordWithN, record...)
-							record = recordWithN
+							unshift(&record.All, "row")
 						}
-						checkError(writer.Write(record))
-						parseHeaderRow = false
+						checkError(writer.Write(record.All))
 						continue
 					}
-					N++
+				}
 
-					if checkFields {
-						for field := range fieldsMap {
-							if field > len(record) {
-								checkError(fmt.Errorf(`field (%d) out of range (%d) in file: %s`, field, len(record), file))
-							}
-						}
-						fields2 := []int{}
-						for f := range record {
-							_, ok := fieldsMap[f+1]
-							if negativeFields {
-								if !ok {
-									fields2 = append(fields2, f+1)
-								}
-							} else {
-								if ok {
-									fields2 = append(fields2, f+1)
-								}
-							}
-						}
-						fields = fields2
-						if len(fields) == 0 {
-							checkError(fmt.Errorf("no fields matched in file: %s", file))
-						}
+				if verbose && record.Row&8191 == 0 {
+					log.Infof("processed records: %d", record.Row)
+				}
 
-						checkFields = false
-					}
-
-					if verbose && N%1000000 == 0 {
-						log.Infof("processed records: %d", N)
-					}
-
-					var target string
-					var hitOne, hit bool
-					var reHit *regexp.Regexp
-					for _, f := range fields {
-						target = record[f-1]
-						hitOne = false
-						if useRegexp {
-							if outAll {
-								if target != "" {
-									hitOne = true
-								}
-							} else {
-								for k, re = range patternsMap {
-									if re.MatchString(target) {
-										hitOne = true
-										reHit = re
-										if deleteMatched && !invert {
-											delete(patternsMap, k)
-										}
-										break
-									}
-								}
-							}
-						} else {
-							k = target
-							if ignoreCase {
-								k = strings.ToLower(k)
-							}
-							if _, ok = patternsMap[k]; ok {
+				hit = false
+				for _, target = range record.Selected {
+					hitOne = false
+					if useRegexp {
+						for k, re = range patternsMap {
+							if re.MatchString(target) {
 								hitOne = true
+								reHit = re
 								if deleteMatched && !invert {
 									delete(patternsMap, k)
 								}
+								break
 							}
-						}
-
-						if hitOne {
-							hit = true
-							break
-						}
-					}
-
-					if invert {
-						if hit {
-							continue
 						}
 					} else {
-						if !hit {
-							continue
+						k = target
+						if ignoreCase {
+							k = strings.ToLower(k)
 						}
-					}
-					if !noHighlight && hitOne {
-						var j int
-						var buf bytes.Buffer
-						record2 := make([]string, len(record)) //with color
-						for i, c := range record {
-							if len(c) == 0 {
-								record2[i] = c
-								continue
-							}
-							if _, ok := fieldsMap[i+1]; (!negativeFields && ok) || (negativeFields && !ok) {
-								if useRegexp {
-									j = 0
-									if outAll {
-										record2[i] = redText(c)
-									} else {
-										buf.Reset()
-										for _, f := range reHit.FindAllStringIndex(c, -1) {
-											buf.WriteString(c[j:f[0]])
-											buf.WriteString(redText(c[f[0]:f[1]]))
-											j = f[1]
-										}
-										buf.WriteString(c[j:])
-										record2[i] = buf.String()
-									}
-								} else {
-									record2[i] = redText(c)
-								}
-							} else {
-								record2[i] = c
+						if _, ok = patternsMap[k]; ok {
+							hitOne = true
+							if deleteMatched && !invert {
+								delete(patternsMap, k)
 							}
 						}
-						record = record2
 					}
 
-					if printLineNumber {
-						recordWithN = []string{fmt.Sprintf("%d", N)}
-						recordWithN = append(recordWithN, record...)
-						record = recordWithN
+					if hitOne {
+						hit = true
+						break
 					}
-					checkError(writer.Write(record))
+				}
 
-					if immediateOutput {
-						writer.Flush()
+				if invert {
+					if hit {
+						continue
 					}
+				} else {
+					if !hit {
+						continue
+					}
+				}
+
+				if !noHighlight && hitOne {
+					for _, i = range record.Fields {
+						i--
+						c = record.All[i]
+
+						if useRegexp {
+							j = 0
+							buf.Reset()
+
+							for _, found = range reHit.FindAllStringIndex(c, -1) {
+								buf.WriteString(c[j:found[0]])
+								buf.WriteString(redText(c[found[0]:found[1]]))
+								j = found[1]
+							}
+							buf.WriteString(c[j:])
+							record.All[i] = buf.String()
+						} else {
+							record.All[i] = redText(c)
+						}
+					}
+				}
+
+				if printLineNumber {
+					unshift(&record.All, strconv.Itoa(record.Row))
+				}
+				checkError(writer.Write(record.All))
+
+				if immediateOutput {
+					writer.Flush()
 				}
 			}
 
 			readerReport(&config, csvReader, file)
 		}
-		writer.Flush()
-		checkError(writer.Error())
 	},
 }
 

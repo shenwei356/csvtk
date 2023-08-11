@@ -1,4 +1,4 @@
-// Copyright © 2016-2021 Wei Shen <shenwei356@gmail.com>
+// Copyright © 2016-2023 Wei Shen <shenwei356@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -66,6 +66,10 @@ var combCmd = &cobra.Command{
 		} else {
 			writer.Comma = config.OutDelimiter
 		}
+		defer func() {
+			writer.Flush()
+			checkError(writer.Error())
+		}()
 
 		var fh *xopen.Reader
 		var text string
@@ -142,8 +146,6 @@ var combCmd = &cobra.Command{
 				log.Warning("no input? or only one row? you may need switch on '-H' for single-line input")
 			}
 		}
-		writer.Flush()
-		checkError(writer.Error())
 	},
 }
 

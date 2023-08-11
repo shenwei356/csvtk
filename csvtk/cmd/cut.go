@@ -1,4 +1,4 @@
-// Copyright © 2016-2021 Wei Shen <shenwei356@gmail.com>
+// Copyright © 2016-2023 Wei Shen <shenwei356@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,9 +23,7 @@ package cmd
 import (
 	"encoding/csv"
 	"fmt"
-	"regexp"
 	"runtime"
-	"strings"
 
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
@@ -73,20 +71,11 @@ Examples:
 		uniqColumn := getFlagBool(cmd, "uniq-column")
 
 		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
-		fields, colnames, negativeFields, needParseHeaderRow, x2ends := parseFields(cmd, fieldStr, ",", config.NoHeaderRow)
-		var fieldsMap map[int]struct{}
-
 		ignoreCase := getFlagBool(cmd, "ignore-case")
 
 		allowMissingColumn := getFlagBool(cmd, "allow-missing-col")
 		blankMissingColumn := getFlagBool(cmd, "blank-missing-col")
 
-		if len(fields) > 0 && negativeFields {
-			fieldsMap = make(map[int]struct{}, len(fields))
-			for _, f := range fields {
-				fieldsMap[f*-1] = struct{}{}
-			}
-		}
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
 		defer outfh.Close()
@@ -101,6 +90,10 @@ Examples:
 		} else {
 			writer.Comma = config.OutDelimiter
 		}
+		defer func() {
+			writer.Flush()
+			checkError(writer.Error())
+		}()
 
 		file := files[0]
 		csvReader, err := newCSVReaderByConfig(config, file)
@@ -117,296 +110,23 @@ Examples:
 			checkError(err)
 		}
 
-		csvReader.Run()
+		csvReader.Read(ReadOption{
+			FieldStr:           fieldStr,
+			FuzzyFields:        fuzzyFields,
+			IgnoreFieldCase:    ignoreCase,
+			UniqColumn:         uniqColumn,
+			AllowMissingColumn: allowMissingColumn,
+			BlankMissingColumn: blankMissingColumn,
+			ShowRowNumber:      config.ShowRowNumber,
+		})
 
-		parseHeaderRow := needParseHeaderRow // parsing header row
-		handleHeaderRow := len(colnames) > 0
-		var colnames2fileds map[string][]int // column name -> []field
-		var colnamesMap map[string]*regexp.Regexp
-
-		checkFields := true
-		var items []string
-		var noRecord bool
-
-		var ignoreFields []bool // only used for allowMissingColumn
-
-		for chunk := range csvReader.Ch {
-			checkError(chunk.Err)
-
-			for _, record := range chunk.Data {
-				if parseHeaderRow { // parsing header row
-					if len(fields) == 0 { // user gives the colnames
-						// colnames
-						colnames2fileds = make(map[string][]int, len(record))
-						for i, col := range record {
-							if _, ok := colnames2fileds[col]; !ok {
-								colnames2fileds[col] = []int{i + 1}
-							} else {
-								colnames2fileds[col] = append(colnames2fileds[col], i+1)
-							}
-						}
-
-						// colnames from user
-						colnamesMap = make(map[string]*regexp.Regexp, len(colnames))
-						for _, col := range colnames {
-							if ignoreCase {
-								col = strings.ToLower(col)
-							}
-							if !fuzzyFields {
-								if negativeFields {
-									if _, ok := colnames2fileds[col[1:]]; !ok {
-										if !allowMissingColumn {
-											checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col[1:], file))
-										}
-									}
-								} else {
-									if _, ok := colnames2fileds[col]; !ok {
-										if !allowMissingColumn {
-											checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col, file))
-										}
-									}
-								}
-							}
-							if negativeFields {
-								colnamesMap[col[1:]] = fuzzyField2Regexp(col[1:])
-							} else {
-								colnamesMap[col] = fuzzyField2Regexp(col)
-							}
-						}
-
-						// matching colnames
-						var ok bool
-						if negativeFields {
-							for _, col := range record {
-								if ignoreCase {
-									col = strings.ToLower(col)
-								}
-
-								ok = false
-								if fuzzyFields {
-									for _, re := range colnamesMap {
-										if re.MatchString(col) {
-											ok = true
-											break
-										}
-									}
-								} else {
-									_, ok = colnamesMap[col]
-								}
-
-								if !ok {
-									fields = append(fields, colnames2fileds[col]...)
-								}
-							}
-						} else {
-							if fuzzyFields {
-								var flags map[int]interface{}
-								if uniqColumn {
-									flags = make(map[int]interface{}, len(record))
-								}
-								var i int
-								for _, col := range colnames {
-									if ignoreCase {
-										col = strings.ToLower(col)
-									}
-
-									for _, col2 := range record {
-										if ignoreCase {
-											col2 = strings.ToLower(col2)
-										}
-
-										if colnamesMap[col].MatchString(col2) {
-											for _, i = range colnames2fileds[col2] {
-												if uniqColumn {
-													if _, ok = flags[i]; !ok {
-														fields = append(fields, i)
-														flags[i] = struct{}{}
-													}
-												} else {
-													fields = append(fields, i)
-												}
-											}
-										}
-									}
-								}
-							} else {
-								for _, col := range colnames {
-									if ignoreCase {
-										col = strings.ToLower(col)
-									}
-									fields = append(fields, colnames2fileds[col]...)
-								}
-							}
-						}
-
-					} else {
-						if len(x2ends) > 0 { // user use 1-.
-							fields1 := make([]int, 0, len(record))
-
-							for i, f := range fields {
-								if v, ok := x2ends[i]; ok && v == f {
-									if negativeFields {
-										for i = -f; i <= len(record); i++ {
-											fields1 = append(fields1, i*-1)
-										}
-									} else {
-										for i = f; i <= len(record); i++ {
-											fields1 = append(fields1, i)
-										}
-									}
-								} else {
-									fields1 = append(fields1, f)
-								}
-							}
-							fields = fields1
-						}
-
-						if ignoreFields == nil {
-							ignoreFields = make([]bool, len(fields))
-						}
-						for i, f := range fields {
-							if f > len(record) {
-								if !allowMissingColumn {
-									checkError(fmt.Errorf(`field (%d) out of range (%d) in file: %s`, f, len(record), file))
-								} else {
-									ignoreFields[i] = true
-								}
-							}
-						}
-
-						if negativeFields {
-							for _, f := range fields { // update fieldsMap
-								fieldsMap[f*-1] = struct{}{}
-							}
-
-							fields2 := make([]int, 0, len(fields))
-							var ok bool
-							for i := range record {
-								if _, ok = fieldsMap[i+1]; !ok {
-									fields2 = append(fields2, i+1)
-								}
-							}
-							fields = fields2
-						}
-					}
-
-					if len(fields) == 0 {
-						noRecord = true
-						break
-					}
-
-					items = make([]string, len(fields))
-
-					checkFields = false
-					parseHeaderRow = false
-				}
-
-				if checkFields {
-					if len(x2ends) > 0 { // user use 1-.
-						fields1 := make([]int, 0, len(record))
-
-						for i, f := range fields {
-							if v, ok := x2ends[i]; ok && v == f {
-								if negativeFields {
-									for i = -f; i <= len(record); i++ {
-										fields1 = append(fields1, i*-1)
-									}
-								} else {
-									for i = f; i <= len(record); i++ {
-										fields1 = append(fields1, i)
-									}
-								}
-							} else {
-								fields1 = append(fields1, f)
-							}
-						}
-						fields = fields1
-					}
-
-					if ignoreFields == nil {
-						ignoreFields = make([]bool, len(fields))
-					}
-					for i, f := range fields {
-						if f > len(record) {
-							if !allowMissingColumn {
-								checkError(fmt.Errorf(`field (%d) out of range (%d) in file: %s`, f, len(record), file))
-							} else {
-								ignoreFields[i] = true
-							}
-						}
-					}
-
-					if negativeFields {
-						for _, f := range fields { // update fieldsMap
-							fieldsMap[f*-1] = struct{}{}
-						}
-
-						fields2 := make([]int, 0, len(fields))
-						var ok bool
-						for i := range record {
-							if _, ok = fieldsMap[i+1]; !ok {
-								fields2 = append(fields2, i+1)
-							}
-						}
-						fields = fields2
-					}
-
-					if len(fields) == 0 {
-						noRecord = true
-						break
-					}
-
-					items = make([]string, len(fields))
-
-					checkFields = false
-				}
-
-				if allowMissingColumn {
-					items = items[:0]
-					for i, f := range fields {
-						if needParseHeaderRow { // using column
-							if f == 0 || f > len(record) {
-								if blankMissingColumn {
-									if handleHeaderRow {
-										items = append(items, colnames[i])
-									} else {
-										items = append(items, "")
-									}
-
-								}
-								continue
-							}
-						} else {
-							if ignoreFields[i] {
-								if blankMissingColumn {
-									items = append(items, "")
-								}
-								continue
-							}
-						}
-						items = append(items, record[f-1])
-					}
-
-					if handleHeaderRow {
-						handleHeaderRow = false
-					}
-					checkError(writer.Write(items))
-					continue
-				}
-
-				for i, f := range fields {
-					items[i] = record[f-1]
-				}
-				checkError(writer.Write(items))
+		for record := range csvReader.Ch {
+			if record.Err != nil {
+				checkError(record.Err)
 			}
 
-			if noRecord {
-				break
-			}
+			writer.Write(record.Selected)
 		}
-
-		writer.Flush()
-		checkError(writer.Error())
 
 		readerReport(&config, csvReader, file)
 	},
@@ -419,5 +139,5 @@ func init() {
 	cutCmd.Flags().BoolP("ignore-case", "i", false, `ignore case (column name)`)
 	cutCmd.Flags().BoolP("uniq-column", "u", false, `deduplicate columns matched by multiple fuzzy column names`)
 	cutCmd.Flags().BoolP("allow-missing-col", "m", false, `allow missing column`)
-	cutCmd.Flags().BoolP("blank-missing-col", "b", false, `blank missing column`)
+	cutCmd.Flags().BoolP("blank-missing-col", "b", false, `blank missing column, only for using column fields`)
 }

@@ -1,4 +1,4 @@
-// Copyright © 2016-2021 Wei Shen <shenwei356@gmail.com>
+// Copyright © 2016-2023 Wei Shen <shenwei356@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -143,10 +143,14 @@ var sortCmd = &cobra.Command{
 		} else {
 			writer.Comma = config.OutDelimiter
 		}
+		defer func() {
+			writer.Flush()
+			checkError(writer.Error())
+		}()
 
 		file := files[0]
 		colnames, fields, _, headerRow, data, err := parseCSVfile(cmd, config,
-			file, fieldsStr, fuzzyFields)
+			file, fieldsStr, fuzzyFields, true)
 
 		if err != nil {
 			if err == xopen.ErrNoContent {
@@ -220,8 +224,6 @@ var sortCmd = &cobra.Command{
 			checkError(writer.Write(s.Value))
 		}
 
-		writer.Flush()
-		checkError(writer.Error())
 	},
 }
 

@@ -1,4 +1,4 @@
-// Copyright © 2016-2021 Wei Shen <shenwei356@gmail.com>
+// Copyright © 2016-2023 Wei Shen <shenwei356@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,6 @@ package cmd
 
 import (
 	"fmt"
-	"regexp"
 	"runtime"
 	"strconv"
 	"strings"
@@ -82,46 +81,8 @@ var csv2jsonCmd = &cobra.Command{
 		}
 
 		fieldStr := getFlagString(cmd, "key")
-		var fields []int
-		var colnames []string
-		var negativeFields, needParseHeaderRow bool
-		var fieldsMap map[int]struct{}
 
 		keyed := fieldStr != ""
-		var parseHeaderRow bool
-		if keyed {
-			fields, colnames, negativeFields, needParseHeaderRow, _ = parseFields(cmd, fieldStr, ",", config.NoHeaderRow)
-
-			if len(fields) > 0 {
-				if len(fields) > 1 {
-					checkError(fmt.Errorf("invalid value of flag -k/--key: only ONE field allowed"))
-				}
-				fields2 := make([]int, len(fields))
-				fieldsMap = make(map[int]struct{}, len(fields))
-				for i, f := range fields {
-					if negativeFields {
-						fieldsMap[f*-1] = struct{}{}
-						fields2[i] = f * -1
-					} else {
-						fieldsMap[f] = struct{}{}
-						fields2[i] = f
-					}
-				}
-				fields = fields2
-			} else {
-				if len(colnames) > 1 {
-					checkError(fmt.Errorf("invalid value of flag -k/--key: only ONE field allowed"))
-				}
-			}
-			if negativeFields {
-				checkError(fmt.Errorf("invalid value of flag -k/--key: negative field not allowed"))
-			}
-			parseHeaderRow = needParseHeaderRow // parsing header row
-		} else if !config.NoHeaderRow {
-			parseHeaderRow = true
-		}
-
-		fuzzyFields := false
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
@@ -150,17 +111,12 @@ var csv2jsonCmd = &cobra.Command{
 			checkError(err)
 		}
 
-		csvReader.Run()
+		csvReader.Read(ReadOption{
+			FieldStr: fieldStr,
 
-		var colnames2fileds map[string][]int // column name -> []field
-		var colnamesMap map[string]*regexp.Regexp
-		var HeaderRow []string
+			DoNotAllowDuplicatedColumnName: keyed,
+		})
 
-		var checkFields bool
-		if keyed {
-			checkFields = true
-		}
-		var items []string
 		var key string
 
 		if keyed {
@@ -170,176 +126,95 @@ var csv2jsonCmd = &cobra.Command{
 		}
 		outfh.WriteString(LF)
 
-		keysMaps := make(map[string]struct{}, 1000)
-		var i, f int
+		keysMaps := make(map[string]struct{}, 1024)
+		var i int
 		var col string
 		first := true
-		line := 0
 		var ok bool
-		for chunk := range csvReader.Ch {
-			checkError(chunk.Err)
+		var HeaderRow []string
 
-			for _, record := range chunk.Data {
-				line++
-				if parseHeaderRow { // parsing header row
-					colnames2fileds = make(map[string][]int, len(record))
-					for i, col := range record {
-						if _, ok := colnames2fileds[col]; !ok {
-							colnames2fileds[col] = []int{i + 1}
-						} else {
-							colnames2fileds[col] = append(colnames2fileds[col], i+1)
-						}
-					}
-					colnamesMap = make(map[string]*regexp.Regexp, len(colnames))
-					for _, col := range colnames {
-						if !fuzzyFields {
-							if negativeFields {
-								if _, ok := colnames2fileds[col[1:]]; !ok {
-									checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col[1:], file))
-								} else if len(colnames2fileds[col]) > 1 {
-									checkError(fmt.Errorf("the selected colname is duplicated in the input data: %s", col))
-								}
-							} else {
-								if _, ok := colnames2fileds[col]; !ok {
-									checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col, file))
-								} else if len(colnames2fileds[col]) > 1 {
-									checkError(fmt.Errorf("the selected colname is duplicated in the input data: %s", col))
-								}
-							}
-						}
-						if negativeFields {
-							colnamesMap[col[1:]] = fuzzyField2Regexp(col[1:])
-						} else {
-							colnamesMap[col] = fuzzyField2Regexp(col)
-						}
-					}
+		checkFirstLine := true
+		var hasHeaderLine bool
+		for record := range csvReader.Ch {
+			if record.Err != nil {
+				checkError(record.Err)
+			}
 
-					if len(fields) == 0 { // user gives the colnames
-						fields = []int{}
-						for _, col := range record {
-							var ok bool
-							if fuzzyFields {
-								for _, re := range colnamesMap {
-									if re.MatchString(col) {
-										ok = true
-										break
-									}
-								}
-							} else {
-								_, ok = colnamesMap[col]
-							}
-							if ok {
-								fields = append(fields, colnames2fileds[col]...)
-							}
-						}
-					}
+			if checkFirstLine {
+				checkFirstLine = false
 
-					fieldsMap = make(map[int]struct{}, len(fields))
-					for _, f := range fields {
-						fieldsMap[f] = struct{}{}
-					}
+				if !config.NoHeaderRow || record.IsHeaderRow {
+					HeaderRow = record.All
+					hasHeaderLine = true
 
-					parseHeaderRow = false
-					HeaderRow = record
 					continue
 				}
-				if checkFields {
-					for field := range fieldsMap {
-						if field > len(record) {
-							checkError(fmt.Errorf(`field (%d) out of range (%d) in file: %s`, field, len(record), file))
-						}
-					}
-					fields2 := []int{}
-					for f := range record {
-						_, ok := fieldsMap[f+1]
-						if negativeFields {
-							if !ok {
-								fields2 = append(fields2, f+1)
-							}
-						} else {
-							if ok {
-								fields2 = append(fields2, f+1)
-							}
-						}
-					}
-					fields = fields2
-					if len(fields) == 0 {
-						checkError(fmt.Errorf("no fields matched in file: %s", file))
-					}
-					items = make([]string, len(fields))
+			}
 
-					checkFields = false
+			if keyed {
+				key = record.Selected[0]
+				if _, ok = keysMaps[key]; ok {
+					log.Warningf("ignore record with duplicated key (%s) at line %d", key, record.Line)
+					continue
 				}
+				keysMaps[key] = struct{}{}
+			}
 
-				for i, f = range fields {
-					items[i] = record[f-1]
-				}
+			if first {
+				first = false
+			} else {
+				outfh.WriteString("," + LF)
+			}
 
+			if hasHeaderLine {
 				if keyed {
-					key = items[0]
-					if _, ok := keysMaps[key]; ok {
-						log.Warningf("ignore record with duplicated key (%s) at line %d", key, line)
-						continue
-					}
-					keysMaps[key] = struct{}{}
-				}
-
-				if first {
-					first = false
+					outfh.WriteString(indent + `"` + key + `":` + SEP + `{` + LF)
 				} else {
-					outfh.WriteString("," + LF)
+					outfh.WriteString(indent + `{` + LF)
 				}
-
-				if !config.NoHeaderRow {
-					if keyed {
-						outfh.WriteString(indent + `"` + key + `":` + SEP + `{` + LF)
-					} else {
-						outfh.WriteString(indent + `{` + LF)
-					}
-					for i, col = range HeaderRow {
-						if parseNumAll {
+				for i, col = range HeaderRow {
+					if parseNumAll {
+						parseNum = true
+					} else if parseNum0 {
+						if _, ok = parseNumCols[i+1]; ok {
 							parseNum = true
-						} else if parseNum0 {
-							if _, ok = parseNumCols[i+1]; ok {
-								parseNum = true
-							}
 						}
-
-						if i < len(record)-1 {
-							outfh.WriteString(indent + indent + `"` + unescapeJSONField(col) + `":` + SEP + processJSONValue(record[i], blanks, parseNum) + "," + LF)
-						} else {
-							outfh.WriteString(indent + indent + `"` + unescapeJSONField(col) + `":` + SEP + processJSONValue(record[i], blanks, parseNum) + LF)
-						}
-
-						parseNum = false
 					}
-					outfh.WriteString(indent + "}")
+
+					if i < len(record.All)-1 {
+						outfh.WriteString(indent + indent + `"` + unescapeJSONField(col) + `":` + SEP + processJSONValue(record.All[i], blanks, parseNum) + "," + LF)
+					} else {
+						outfh.WriteString(indent + indent + `"` + unescapeJSONField(col) + `":` + SEP + processJSONValue(record.All[i], blanks, parseNum) + LF)
+					}
+
+					parseNum = false
+				}
+				outfh.WriteString(indent + "}")
+			} else {
+				if keyed {
+					outfh.WriteString(indent + `"` + key + `":` + SEP + `[` + LF)
 				} else {
-					if keyed {
-						outfh.WriteString(indent + `"` + key + `":` + SEP + `[` + LF)
-					} else {
-						outfh.WriteString(indent + `[` + LF)
-					}
-
-					for i, col = range record {
-						if parseNumAll {
-							parseNum = true
-						} else if parseNum0 {
-							if _, ok = parseNumCols[i+1]; ok {
-								parseNum = true
-							}
-						}
-
-						if i < len(record)-1 {
-							outfh.WriteString(indent + indent + `"` + unescapeJSONField(col) + `"` + "," + LF)
-						} else {
-							outfh.WriteString(indent + indent + `"` + unescapeJSONField(col) + `"` + LF)
-						}
-
-						parseNum = false
-					}
-					outfh.WriteString(indent + "]")
+					outfh.WriteString(indent + `[` + LF)
 				}
+
+				for i, col = range record.All {
+					if parseNumAll {
+						parseNum = true
+					} else if parseNum0 {
+						if _, ok = parseNumCols[i+1]; ok {
+							parseNum = true
+						}
+					}
+
+					if i < len(record.All)-1 {
+						outfh.WriteString(indent + indent + `"` + unescapeJSONField(col) + `"` + "," + LF)
+					} else {
+						outfh.WriteString(indent + indent + `"` + unescapeJSONField(col) + `"` + LF)
+					}
+
+					parseNum = false
+				}
+				outfh.WriteString(indent + "]")
 			}
 		}
 
@@ -357,7 +232,7 @@ var csv2jsonCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(csv2jsonCmd)
 	csv2jsonCmd.Flags().StringP("indent", "i", "  ", `indent. if given blank, output json in one line.`)
-	csv2jsonCmd.Flags().StringP("key", "k", "", "output json as an array of objects keyed by a given filed rather than as a list. e.g -k 1 or -k columnA")
+	csv2jsonCmd.Flags().StringP("key", "k", "", "output json as an array of objects keyed by a given field rather than as a list. e.g -k 1 or -k columnA")
 	csv2jsonCmd.Flags().BoolP("blanks", "b", false, `do not convert "", "na", "n/a", "none", "null", "." to null`)
 	csv2jsonCmd.Flags().StringSliceP("parse-num", "n", []string{}, `parse numeric values for nth column, multiple values are supported and "a"/"all" for all columns`)
 }

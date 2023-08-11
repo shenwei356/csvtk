@@ -1,4 +1,4 @@
-// Copyright © 2016-2021 Wei Shen <shenwei356@gmail.com>
+// Copyright © 2016-2023 Wei Shen <shenwei356@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -56,6 +56,10 @@ var headCmd = &cobra.Command{
 		} else {
 			writer.Comma = config.OutDelimiter
 		}
+		defer func() {
+			writer.Flush()
+			checkError(writer.Error())
+		}()
 
 		for _, file := range files {
 			csvReader, err := newCSVReaderByConfig(config, file)
@@ -68,33 +72,32 @@ var headCmd = &cobra.Command{
 				checkError(err)
 			}
 
-			csvReader.Run()
+			csvReader.Read(ReadOption{
+				FieldStr: "1-",
+			})
 
 			isHeaderLine := !config.NoHeaderRow
 			i := 0
-		LOOP:
-			for chunk := range csvReader.Ch {
-				checkError(chunk.Err)
+			for record := range csvReader.Ch {
+				if record.Err != nil {
+					checkError(record.Err)
+				}
 
-				for _, record := range chunk.Data {
-					checkError(writer.Write(record))
+				checkError(writer.Write(record.All))
 
-					if isHeaderLine {
-						isHeaderLine = false
-					} else {
-						i++
-					}
+				if isHeaderLine {
+					isHeaderLine = false
+				} else {
+					i++
+				}
 
-					if number == i {
-						break LOOP
-					}
+				if number == i {
+					break
 				}
 			}
 
 			readerReport(&config, csvReader, file)
 		}
-		writer.Flush()
-		checkError(writer.Error())
 	},
 }
 
