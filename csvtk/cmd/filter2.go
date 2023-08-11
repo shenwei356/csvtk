@@ -393,7 +393,7 @@ Custom functions:
 				}
 
 				if printLineNumber {
-					unshift(&record.All, "row")
+					unshift(&record.All, strconv.Itoa(record.Row))
 				}
 				checkError(writer.Write(record.All))
 			}
