@@ -23,6 +23,7 @@ package cmd
 import (
 	"fmt"
 	"runtime"
+	"strconv"
 	"strings"
 
 	"github.com/shenwei356/stable"
@@ -124,8 +125,8 @@ Styles:
 		}
 		runtime.GOMAXPROCS(config.NumCPUs)
 
-		alignRight := getFlagBool(cmd, "align-right")
-		alignCenter := getFlagBool(cmd, "align-center")
+		alignRights := getFlagStringSlice(cmd, "align-right")
+		alignCenters := getFlagStringSlice(cmd, "align-center")
 		separator := getFlagString(cmd, "separator")
 		minWidth := getFlagNonNegativeInt(cmd, "min-width")
 		maxWidth := getFlagNonNegativeInt(cmd, "max-width")
@@ -181,7 +182,7 @@ Styles:
 			style = "default"
 		}
 
-		tbl := stable.New().AlignLeft()
+		tbl := stable.New()
 
 		tbl.WrapDelimiter(rune(wrapDelimiter[0]))
 
@@ -197,12 +198,7 @@ Styles:
 		if maxWidth > 0 {
 			tbl.MaxWidth(maxWidth)
 		}
-		if alignRight {
-			tbl.AlignRight()
-		}
-		if alignCenter {
-			tbl.AlignCenter()
-		}
+
 		if clip {
 			tbl.ClipCell(clipMark)
 		}
@@ -210,6 +206,7 @@ Styles:
 		tbl.Writer(outfh, uint(bufRows))
 
 		checkFirstLine := true
+		var header []stable.Column
 		for record := range csvReader.Ch {
 			if record.Err != nil {
 				checkError(record.Err)
@@ -218,10 +215,62 @@ Styles:
 			if checkFirstLine {
 				checkFirstLine = false
 
-				if !config.NoHeaderRow || record.IsHeaderRow {
-					tbl.Header(record.Selected)
-					continue
+				ncols := len(record.All)
+				if config.ShowRowNumber {
+					ncols++
 				}
+				header = make([]stable.Column, ncols)
+
+				colnames2fileds := make(map[string][]int, ncols)
+
+				var i int
+				var col string
+				var ok bool
+				if !config.NoHeaderRow || record.IsHeaderRow {
+					for i, col = range record.All {
+						if config.ShowRowNumber {
+							i++
+						}
+						if _, ok = colnames2fileds[col]; !ok {
+							colnames2fileds[col] = []int{i}
+						} else {
+							colnames2fileds[col] = append(colnames2fileds[col], i)
+						}
+					}
+
+					for i, col = range record.Selected {
+						header[i].Header = col
+					}
+				}
+
+				for i = range record.All {
+					col = strconv.Itoa(i + 1)
+					if _, ok = colnames2fileds[col]; !ok {
+						colnames2fileds[col] = []int{i}
+					} else {
+						colnames2fileds[col] = append(colnames2fileds[col], i)
+					}
+				}
+
+				for _, col = range alignCenters {
+					for _, i = range colnames2fileds[col] {
+						if config.ShowRowNumber {
+							i++
+						}
+						header[i].Align = stable.AlignCenter
+					}
+				}
+				for _, col = range alignRights {
+					for _, i = range colnames2fileds[col] {
+						if config.ShowRowNumber {
+							i++
+						}
+						header[i].Align = stable.AlignRight
+					}
+				}
+
+				tbl.HeaderWithFormat(header)
+				continue
 			}
 
 			tbl.AddRowStringSlice(record.Selected)
@@ -235,8 +284,8 @@ Styles:
 func init() {
 	RootCmd.AddCommand(prettyCmd)
 	prettyCmd.Flags().StringP("separator", "s", "   ", "fields/columns separator")
-	prettyCmd.Flags().BoolP("align-right", "r", false, "align right")
-	prettyCmd.Flags().BoolP("align-center", "m", false, "align center/middle")
+	prettyCmd.Flags().StringSliceP("align-right", "r", []string{}, "align right for selected columns (field index or column name)")
+	prettyCmd.Flags().StringSliceP("align-center", "m", []string{}, "align center/middle for selected columns (field index or column name)")
 	prettyCmd.Flags().IntP("min-width", "w", 0, "min width")
 	prettyCmd.Flags().IntP("max-width", "W", 0, "max width")
 

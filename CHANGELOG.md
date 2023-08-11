@@ -18,6 +18,8 @@
       - fix result error when multiple stats applied to the same column.
   - `csvtk corr/watch`:
       - rewrite and fix bug, support choosing fields with column names.
+  - `csvtk pretty`:
+      - align-center and align-right for specific columns. [#240](https://github.com/shenwei356/csvtk/issues/240)
 - [csvtk v0.26.0](https://github.com/shenwei356/csvtk/releases/tag/v0.26.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.26.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.26.0)
   - `csvtk`: 

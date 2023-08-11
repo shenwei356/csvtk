@@ -663,8 +663,8 @@ Usage:
   csvtk pretty [flags]
 
 Flags:
-  -m, --align-center            align center/middle
-  -r, --align-right             align right
+  -m, --align-center strings    align center/middle for selected columns (field index or column name)
+  -r, --align-right strings     align right for selected columns (field index or column name)
   -n, --buf-rows int            the number of rows to determine the min and max widths (default 128)
       --clip                    clip longer cell instead of wrapping
       --clip-mark string        clip mark (default "...")
@@ -674,7 +674,7 @@ Flags:
   -s, --separator string        fields/columns separator (default "   ")
   -S, --style string            output syle. available vaules: default, plain, simple, grid, light,
                                 bold, double. check https://github.com/shenwei356/stable
-  -x, --wrap-delimiter string   delimiter for wrapping cells (default " ")
+  -x, --wrap-delimiter string   delimiter for wrapping cells (default "
 
 ```
 
@@ -691,17 +691,22 @@ Examples:
         1    Robert       Thompson    abc
         NA   Robert       Abel        123
 
-2. align right
+2. align right/center for some columns
 
-        $ csvtk pretty testdata/names.csv -r
-        id   first_name   last_name   username
-        --   ----------   ---------   --------
-        11          Rob        Pike        rob
-         2          Ken    Thompson        ken
-         4       Robert   Griesemer        gri
-         1       Robert    Thompson        abc
-        NA       Robert        Abel        123
-
+        $ csvtk pretty testdata/names.csv -r 1,username -m first_name
+        ┏━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┓
+        ┃ id ┃ first_name ┃ last_name ┃ username ┃
+        ┣━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
+        ┃ 11 ┃    Rob     ┃ Pike      ┃      rob ┃
+        ┣━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
+        ┃  2 ┃    Ken     ┃ Thompson  ┃      ken ┃
+        ┣━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
+        ┃  4 ┃   Robert   ┃ Griesemer ┃      gri ┃
+        ┣━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
+        ┃  1 ┃   Robert   ┃ Thompson  ┃      abc ┃
+        ┣━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
+        ┃ NA ┃   Robert   ┃ Abel      ┃      123 ┃
+        ┗━━━━┻━━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━┛
 
 3. custom separator
 
