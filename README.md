@@ -118,7 +118,7 @@ It could save you lots of time in (not) writing Python/R scripts.
 - [`mutate`](https://bioinf.shenwei.me/csvtk/usage/#mutate): creates new columns from selected fields by regular expression
 - [`mutate2`](https://bioinf.shenwei.me/csvtk/usage/#mutate2): creates a new column from selected fields by awk-like arithmetic/string expressions
 - [`sep`](https://bioinf.shenwei.me/csvtk/usage/#sep): separate column into multiple columns
-- [`gather`](https://bioinf.shenwei.me/csvtk/usage/#gather): gathers columns into key-value pairs
+- [`gather`](https://bioinf.shenwei.me/csvtk/usage/#gather): gather columns into key-value pairs, like tidyr::gather/pivot_longer
 - [`unfold`](https://bioinf.shenwei.me/csvtk/usage/#unfold): unfold multiple values in cells of a field
 - [`fold`](https://bioinf.shenwei.me/csvtk/usage/#fold): fold multiple values of a field into cells of groups
 - [`fmtdate`](https://bioinf.shenwei.me/csvtk/usage/#fmtdate): format date of selected fields

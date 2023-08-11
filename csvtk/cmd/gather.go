@@ -31,9 +31,9 @@ import (
 
 // gatherCmd represents the gather command
 var gatherCmd = &cobra.Command{
-	Use: "longer",
+	Use: "gather",
 
-	Aliases: []string{"gather"},
+	Aliases: []string{"longer"},
 
 	Short: "gather columns into key-value pairs, like tidyr::gather/pivot_longer",
 	Long: `gather columns into key-value pairs, like tidyr::gather/pivot_longer

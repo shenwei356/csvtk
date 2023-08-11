@@ -157,7 +157,7 @@ Available Commands:
   headers         print headers
   inter           intersection of multiple files
   join            join files by selected fields (inner, left and outer join)
-  longer          gather columns into key-value pairs, like tidyr::gather/pivot_longer
+  gather          gather columns into key-value pairs, like tidyr::gather/pivot_longer
   mutate          create new column from selected fields by regular expression
   mutate2         create a new column from selected fields by awk-like arithmetic/string expressions
   ncol            print number of columns
@@ -3271,16 +3271,21 @@ taxid   kindom      phylum     class      order      family      genus   species
 Usage
 
 ```text
-gather columns into key-value pairs
+gather columns into key-value pairs, like tidyr::gather/pivot_longer
 
 Usage:
   csvtk gather [flags]
 
+Aliases:
+  gather, longer
+
 Flags:
-  -f, --fields string   fields for gathering. e.g -f 1,2 or -f columnA,columnB, or -f -columnA for unselect columnA
+  -f, --fields string   fields for gathering. e.g -f 1,2 or -f columnA,columnB, or -f -columnA for
+                        unselect columnA
   -F, --fuzzy-fields    using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
+  -h, --help            help for longer
   -k, --key string      name of key column to create in output
-  -v, --value string    name of value column to create in output
+  -v, --value string    name of value column to create in outpu
 
 ```
 
