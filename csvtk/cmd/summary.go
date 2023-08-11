@@ -221,13 +221,7 @@ Available operations:
 				fieldsD = record.Fields[:numFieldsD]
 				fieldsG = record.Fields[numFieldsD:]
 
-				tmp := make(map[int]interface{})
-				for _, f := range fieldsD {
-					tmp[f] = struct{}{}
-				}
-				for f := range tmp {
-					fieldsDUniq = append(fieldsDUniq, f)
-				}
+				fieldsDUniq = UniqInts(fieldsD)
 
 				for i, f := range fieldsD {
 					if _, ok = statsI[f]; !ok {

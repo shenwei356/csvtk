@@ -28,6 +28,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -508,7 +509,7 @@ func readDataFrame(config Config, file string, ignoreCase bool) ([]string, map[s
 }
 
 func parseCSVfile(cmd *cobra.Command, config Config, file string,
-	fieldStr string, fuzzyFields bool) ([]string, []int, [][]string, []string, [][]string, error) {
+	fieldStr string, fuzzyFields bool, allData bool) ([]string, []int, [][]string, []string, [][]string, error) {
 
 	csvReader, err := newCSVReaderByConfig(config, file)
 	if err != nil {
@@ -516,33 +517,39 @@ func parseCSVfile(cmd *cobra.Command, config Config, file string,
 	}
 
 	csvReader.Read(ReadOption{
-		FieldStr: "1-",
+		FieldStr:    fieldStr,
+		FuzzyFields: fuzzyFields,
+
+		DoNotAllowDuplicatedColumnName: true,
 	})
 
 	var fields []int
 	var HeaderRow []string
 	var HeaderRowAll []string
-	var Data [][]string
+	Data := make([][]string, 0, 1024)
 	var DataAll [][]string
 
-	parseHeaderRow := !config.NoHeaderRow
-	once := true
+	checkFirstLine := true
 	for record := range csvReader.Ch {
 		if record.Err != nil {
 			checkError(record.Err)
 		}
 
-		if parseHeaderRow {
-			HeaderRowAll, HeaderRow = record.All, record.Selected
-			parseHeaderRow = false
-			continue
-		}
-		if once {
+		if checkFirstLine {
+			checkFirstLine = false
+
 			fields = record.Fields
-			once = true
+			DataAll = make([][]string, 0, 1024)
+
+			if !config.NoHeaderRow || record.IsHeaderRow { // do not replace head line
+				HeaderRowAll, HeaderRow = record.All, record.Selected
+				continue
+			}
 		}
 
-		DataAll = append(DataAll, record.All)
+		if allData {
+			DataAll = append(DataAll, record.All)
+		}
 		Data = append(Data, record.Selected)
 	}
 
@@ -553,10 +560,7 @@ func parseCSVfile(cmd *cobra.Command, config Config, file string,
 		log.Warningf("file '%s': %d illegal rows ignored", file, csvReader.NumIllegalRows)
 	}
 
-	if fieldStr != "*" {
-		return HeaderRow, fields, Data, HeaderRowAll, DataAll, nil
-	}
-	return HeaderRow, fields, Data, HeaderRowAll, Data, nil
+	return HeaderRow, fields, Data, HeaderRowAll, DataAll, nil
 }
 
 func removeComma(s string) string {
@@ -704,4 +708,25 @@ func ParseByteSize(val string) (int64, error) {
 		size = 0
 	}
 	return int64(size * float64(u)), nil
+}
+
+func UniqInts(list []int) []int {
+	if len(list) == 0 {
+		return []int{}
+	} else if len(list) == 1 {
+		return []int{list[0]}
+	}
+
+	sort.Ints(list)
+
+	s := make([]int, 0, len(list))
+	p := list[0]
+	s = append(s, p)
+	for _, v := range list[1:] {
+		if v != p {
+			s = append(s, v)
+		}
+		p = v
+	}
+	return s
 }

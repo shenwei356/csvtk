@@ -141,6 +141,11 @@ var filterCmd = &cobra.Command{
 				n = 0
 
 				for _, val = range record.Selected {
+					if !reDigitals.MatchString(val) {
+						flag = false
+						break
+					}
+
 					v, err = strconv.ParseFloat(removeComma(val), 64)
 					checkError(err)
 

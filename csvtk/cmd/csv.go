@@ -124,7 +124,7 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 			csvReader.fh.Close()
 		}()
 
-		fields, colnames, negativeFields, needParseHeaderRow, x2ends := parseFields(fieldStr, ",", csvReader.NoHeaderRow)
+		fields, colnames, negativeFields, needParseHeaderRow, x2ends := parseFields(fieldStr, fieldStrSep, csvReader.NoHeaderRow)
 		var fieldsMap map[int]struct{}
 
 		if len(fields) > 0 && negativeFields {
@@ -485,7 +485,11 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 			}
 
 			for _, f = range fields {
-				items = append(items, record[f-1])
+				if f > len(record) { //  only occur when records have a variable number of fields
+					items = append(items, "")
+				} else {
+					items = append(items, record[f-1])
+				}
 			}
 
 			csvReader.Ch <- Record{

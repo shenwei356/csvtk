@@ -150,7 +150,7 @@ var sortCmd = &cobra.Command{
 
 		file := files[0]
 		colnames, fields, _, headerRow, data, err := parseCSVfile(cmd, config,
-			file, fieldsStr, fuzzyFields)
+			file, fieldsStr, fuzzyFields, true)
 
 		if err != nil {
 			if err == xopen.ErrNoContent {

@@ -73,7 +73,7 @@ Notes:
 		}
 
 		file := files[0]
-		headerRow, fields, data, _, _, err := parseCSVfile(cmd, config, file, plotConfig.fieldStr, false)
+		headerRow, fields, data, _, _, err := parseCSVfile(cmd, config, file, plotConfig.fieldStr, false, false)
 
 		if err != nil {
 			// if err == xopen.ErrNoContent {

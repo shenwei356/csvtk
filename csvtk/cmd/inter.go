@@ -84,7 +84,7 @@ Attention:
 		var hasInter = true
 		var ok bool
 
-		for _, file := range files {
+		for i, file := range files {
 			csvReader, err := newCSVReaderByConfig(config, file)
 
 			if err != nil {
@@ -114,7 +114,9 @@ Attention:
 					checkFirstLine = false
 
 					if !config.NoHeaderRow || record.IsHeaderRow { // do not replace head line
-						selectedColnames = record.Selected
+						if i == 0 { // use colname of the first file
+							selectedColnames = record.Selected
+						}
 						hasHeaderLine = true
 
 						continue
