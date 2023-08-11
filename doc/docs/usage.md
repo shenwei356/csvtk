@@ -71,6 +71,7 @@
 - [mutate2](#mutate2)
 - [sep](#sep)
 - [gather](#gather)
+- [spread](#spread)
 - [unfold](#unfold)
 - [fold](#fold)
 
@@ -3296,32 +3297,115 @@ Flags:
 
 Examples:
 
-    $ cat testdata/names.csv
-    id,first_name,last_name,username
-    11,"Rob","Pike",rob
-    2,Ken,Thompson,ken
-    4,"Robert","Griesemer","gri"
-    1,"Robert","Thompson","abc"
-    NA,"Robert","Abel","123
+    $ cat testdata/names.csv | csvtk pretty -S simple
+    ----------------------------------------
+    id   first_name   last_name   username
+    ----------------------------------------
+    11   Rob          Pike        rob
+    2    Ken          Thompson    ken
+    4    Robert       Griesemer   gri
+    1    Robert       Thompson    abc
+    NA   Robert       Abel        123
+    ----------------------------------------
 
     $ cat testdata/names.csv \
-        | csvtk gather -k item -v value -f -1
-    id,item,value
-    11,first_name,Rob
-    11,last_name,Pike
-    11,username,rob
-    2,first_name,Ken
-    2,last_name,Thompson
-    2,username,ken
-    4,first_name,Robert
-    4,last_name,Griesemer
-    4,username,gri
-    1,first_name,Robert
-    1,last_name,Thompson
-    1,username,abc
-    NA,first_name,Robert
-    NA,last_name,Abel
-    NA,username,123
+        | csvtk gather -k item -v value -f -1 \
+        | csvtk pretty -S simple
+    -----------------------------
+    id   item         value
+    -----------------------------
+    11   first_name   Rob
+    11   last_name    Pike
+    11   username     rob
+    2    first_name   Ken
+    2    last_name    Thompson
+    2    username     ken
+    4    first_name   Robert
+    4    last_name    Griesemer
+    4    username     gri
+    1    first_name   Robert
+    1    last_name    Thompson
+    1    username     abc
+    NA   first_name   Robert
+    NA   last_name    Abel
+    NA   username     123
+    -----------------------------
+
+## gather
+
+Usage
+
+```text
+spread a key-value pair across multiple columns, like tidyr::spread/pivot_wider
+
+Usage:
+  csvtk spread [flags]
+
+Aliases:
+  spread, wider
+
+Flags:
+  -h, --help           help for spread
+  -k, --key string     field of keys. e.g -f 1,2 or -f columnA,columnB, or -f -columnA for unselect columnA
+      --na string      content for filling NA data
+  -v, --value string   field of values. e.g -f 1,2 or -f columnA,columnB, or -f -columnA for unselect columnA
+
+```
+
+Examples:
+
+Shuffled columns:
+
+    $ csvtk cut -f 1,4,2,3 testdata/names.csv \
+      | csvtk pretty -S simple
+    ----------------------------------------
+    id   username   first_name   last_name
+    ----------------------------------------
+    11   rob        Rob          Pike
+    2    ken        Ken          Thompson
+    4    gri        Robert       Griesemer
+    1    abc        Robert       Thompson
+    NA   123        Robert       Abel
+    ----------------------------------------
+
+data -> gather/longer ->  spread/wider. Note that the orders of both rows and columns are kept :)
+
+    $ csvtk cut -f 1,4,2,3 testdata/names.csv \
+        | csvtk gather -k item -v value -f -1 \
+        | csvtk spread -k item -v value \
+        | csvtk pretty -S simple
+    ----------------------------------------
+    id   username   first_name   last_name
+    ----------------------------------------
+    11   rob        Rob          Pike
+    2    ken        Ken          Thompson
+    4    gri        Robert       Griesemer
+    1    abc        Robert       Thompson
+    NA   123        Robert       Abel
+    ----------------------------------------
+
+No header rows
+
+    $ echo -ne "a,a,0\nb,b,0\nc,c,0\na,b,1\na,c,2\nb,c,3\n"
+    a,a,0
+    b,b,0
+    c,c,0
+    a,b,1
+    a,c,2
+    b,c,3
+
+    $ echo -ne "a,a,0\nb,b,0\nc,c,0\na,b,1\na,c,2\nb,c,3\n" \
+      | csvtk spread -H -k 2 -v 3 \
+      | csvtk pretty -S bold
+    ┏━━━┳━━━┳━━━┳━━━┓
+    ┃   ┃ a ┃ b ┃ c ┃
+    ┣━━━╋━━━╋━━━╋━━━┫
+    ┃ a ┃ 0 ┃ 1 ┃ 2 ┃
+    ┣━━━╋━━━╋━━━╋━━━┫
+    ┃ b ┃   ┃ 0 ┃ 3 ┃
+    ┣━━━╋━━━╋━━━╋━━━┫
+    ┃ c ┃   ┃   ┃ 0 ┃
+    ┗━━━┻━━━┻━━━┻━━━┛
 
 ## unfold
 
