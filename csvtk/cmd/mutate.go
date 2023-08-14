@@ -188,7 +188,7 @@ var mutateCmd = &cobra.Command{
 						record2[at-1] = name
 					} else if before != "" {
 						if _fields, ok = colnames2fileds[before]; ok {
-							at = _fields[len(_fields)-1]
+							at = _fields[0]
 						} else {
 							checkError(fmt.Errorf(`column "%s" not existed in file: %s`, before, file))
 						}
@@ -227,7 +227,7 @@ var mutateCmd = &cobra.Command{
 					record2[at-1] = value
 				} else if before != "" {
 					if _fields, ok = colnames2fileds[before]; ok {
-						at = _fields[len(_fields)-1]
+						at = _fields[0]
 					} else {
 						checkError(fmt.Errorf(`column "%s" not existed in file: %s`, before, file))
 					}
