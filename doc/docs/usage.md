@@ -152,13 +152,13 @@ Available Commands:
   fmtdate         format date of selected fields
   fold            fold multiple values of a field into cells of groups
   freq            frequencies of selected fields
+  gather          gather columns into key-value pairs, like tidyr::gather/pivot_longer
   genautocomplete generate shell autocompletion script (bash|zsh|fish|powershell)
   grep            grep data by selected fields with patterns/regular expressions
   head            print first N records
   headers         print headers
   inter           intersection of multiple files
   join            join files by selected fields (inner, left and outer join)
-  gather          gather columns into key-value pairs, like tidyr::gather/pivot_longer
   mutate          create new column from selected fields by regular expression
   mutate2         create a new column from selected fields by awk-like arithmetic/string expressions
   ncol            print number of columns
@@ -175,6 +175,7 @@ Available Commands:
   space2tab       convert space delimited format to TSV
   split           split CSV/TSV into multiple files according to column values
   splitxlsx       split XLSX sheet into multiple sheets according to column values
+  spread          spread a key-value pair across multiple columns, like tidyr::spread/pivot_wider
   summary         summary statistics of selected numeric or text fields (groupby group fields)
   tab2csv         convert tabular format to CSV
   transpose       transpose CSV data
@@ -694,20 +695,20 @@ Examples:
 
 2. align right/center for some columns
 
-        $ csvtk pretty testdata/names.csv -r 1,username -m first_name
-        ┏━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┓
-        ┃ id ┃ first_name ┃ last_name ┃ username ┃
-        ┣━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
-        ┃ 11 ┃    Rob     ┃ Pike      ┃      rob ┃
-        ┣━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
-        ┃  2 ┃    Ken     ┃ Thompson  ┃      ken ┃
-        ┣━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
-        ┃  4 ┃   Robert   ┃ Griesemer ┃      gri ┃
-        ┣━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
-        ┃  1 ┃   Robert   ┃ Thompson  ┃      abc ┃
-        ┣━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
-        ┃ NA ┃   Robert   ┃ Abel      ┃      123 ┃
-        ┗━━━━┻━━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━┛
+        $ csvtk pretty testdata/names.csv -r 1,username -m first_name -w 6 -S bold
+        ┏━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┓
+        ┃     id ┃ first_name ┃ last_name ┃ username ┃
+        ┣━━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
+        ┃     11 ┃    Rob     ┃ Pike      ┃      rob ┃
+        ┣━━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
+        ┃      2 ┃    Ken     ┃ Thompson  ┃      ken ┃
+        ┣━━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
+        ┃      4 ┃   Robert   ┃ Griesemer ┃      gri ┃
+        ┣━━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
+        ┃      1 ┃   Robert   ┃ Thompson  ┃      abc ┃
+        ┣━━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
+        ┃     NA ┃   Robert   ┃ Abel      ┃      123 ┃
+        ┗━━━━━━━━┻━━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━┛
 
 3. custom separator
 
