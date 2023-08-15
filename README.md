@@ -4,7 +4,6 @@
 ( [**Usage**](http://bioinf.shenwei.me/csvtk/usage/)  and [**Tutorial**](http://bioinf.shenwei.me/csvtk/tutorial/)). [中文介绍](http://bioinf.shenwei.me/csvtk/chinese)
 - **Source code:**  [https://github.com/shenwei356/csvtk](https://github.com/shenwei356/csvtk) [![GitHub stars](https://img.shields.io/github/stars/shenwei356/csvtk.svg?style=social&label=Star&?maxAge=2592000)](https://github.com/shenwei356/csvtk)
 [![license](https://img.shields.io/github/license/shenwei356/csvtk.svg?maxAge=2592000)](https://github.com/shenwei356/csvtk/blob/master/LICENSE)
-[![Build Status](https://travis-ci.org/shenwei356/csvtk.svg?branch=master)](https://travis-ci.org/shenwei356/csvtk)
 - **Latest version:** [![Latest Stable Version](https://img.shields.io/github/release/shenwei356/csvtk.svg?style=flat)](https://github.com/shenwei356/csvtk/releases)
 [![Github Releases](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/total.svg?maxAge=3600)](http://bioinf.shenwei.me/csvtk/download/)
 [![Cross-platform](https://img.shields.io/badge/platform-any-ec2eb4.svg?style=flat)](http://bioinf.shenwei.me/csvtk/download/)
@@ -299,7 +298,7 @@ Examples
 1. Summary of selected numeric fields, supporting "group-by"
 
         $ cat testdata/digitals2.csv \
-            | csvtk summary --ignore-non-digits --fields f4:sum,f5:sum --groups f1,f2 \
+            | csvtk summary -i -f f4:sum,f5:sum -g f1,f2 \
             | csvtk pretty
         f1    f2     f4:sum   f5:sum
         bar   xyz    7.00     106.00
@@ -314,7 +313,7 @@ Examples
     - **Unselect**: `csvtk cut -f -1,-2` or `csvtk cut -f -first_name`
     - **Fuzzy fields**: `csvtk cut -F -f "*_name,username"`
     - Field ranges: `csvtk cut -f 2-4` for column 2,3,4 or `csvtk cut -f -3--1` for discarding column 1,2,3
-    - All fields: `csvtk cut -F -f "*"`
+    - All fields: `csvtk cut -f 1-` or  `csvtk cut -F -f "*"`
 
 1. Search by selected fields (`grep`) (matched parts will be highlighted as red)
 
@@ -326,7 +325,7 @@ Examples
 1. **Rename column names** (`rename` and `rename2`)
 
     - Setting new names: `csvtk rename -f A,B -n a,b` or `csvtk rename -f 1-3 -n a,b,c`
-    - Replacing with original names by regular express: `cat ../testdata/c.csv | ./csvtk rename2 -F -f "*" -p "(.*)" -r 'prefix_$1'` for adding prefix to all column names.
+    - Replacing with original names by regular express: `csvtk rename2 -f 1- -p "(.*)" -r 'prefix_$1'` for adding prefix to all column names.
 
 1. **Edit data with regular expression** (`replace`)
 
@@ -336,7 +335,7 @@ Examples
 
     - In default, copy a column: `csvtk mutate -f id `
     - Extract prefix of data as group name (get "A" from "A.1" as group name):
-      `csvtk mutate -f sample -n group -p "^(.+?)\."`
+      `csvtk mutate -f sample -n group -p "^(.+?)\." --after sample`
 
 1. Sort by multiple keys (`sort`)
 
