@@ -560,6 +560,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#gather_1" class="md-nav__link">
+    gather
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#unfold" class="md-nav__link">
     unfold
   </a>
@@ -996,6 +1003,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#gather_1" class="md-nav__link">
+    gather
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#unfold" class="md-nav__link">
     unfold
   </a>
@@ -1152,6 +1166,7 @@
 <li><a href="#mutate2">mutate2</a></li>
 <li><a href="#sep">sep</a></li>
 <li><a href="#gather">gather</a></li>
+<li><a href="#spread">spread</a></li>
 <li><a href="#unfold">unfold</a></li>
 <li><a href="#fold">fold</a></li>
 </ul>
@@ -1177,7 +1192,7 @@
 <p>Usage</p>
 <pre><code class="language-text">csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.26.0
+Version: 0.27.0
 
 Author: Wei Shen &lt;shenwei356@gmail.com&gt;
 
@@ -1229,7 +1244,7 @@ Available Commands:
   fmtdate         format date of selected fields
   fold            fold multiple values of a field into cells of groups
   freq            frequencies of selected fields
-  gather          gather columns into key-value pairs
+  gather          gather columns into key-value pairs, like tidyr::gather/pivot_longer
   genautocomplete generate shell autocompletion script (bash|zsh|fish|powershell)
   grep            grep data by selected fields with patterns/regular expressions
   head            print first N records
@@ -1237,7 +1252,7 @@ Available Commands:
   inter           intersection of multiple files
   join            join files by selected fields (inner, left and outer join)
   mutate          create new column from selected fields by regular expression
-  mutate2         create new column from selected fields by awk-like arithmetic/string expressions
+  mutate2         create a new column from selected fields by awk-like arithmetic/string expressions
   ncol            print number of columns
   nrow            print number of records
   plot            plot common figures
@@ -1252,6 +1267,7 @@ Available Commands:
   space2tab       convert space delimited format to TSV
   split           split CSV/TSV into multiple files according to column values
   splitxlsx       split XLSX sheet into multiple sheets according to column values
+  spread          spread a key-value pair across multiple columns, like tidyr::spread/pivot_wider
   summary         summary statistics of selected numeric or text fields (groupby group fields)
   tab2csv         convert tabular format to CSV
   transpose       transpose CSV data
@@ -1262,7 +1278,6 @@ Available Commands:
   xlsx2csv        convert XLSX to CSV format
 
 Flags:
-  -c, --chunk-size int         chunk size of CSV reader (default 50)
   -C, --comment-char string    lines starting with commment-character will be ignored. if your header
                                row starts with '#', please assign &quot;-C&quot; another rare symbol, e.g. '$'
                                (default &quot;#&quot;)
@@ -1276,14 +1291,15 @@ Flags:
   -l, --lazy-quotes            if given, a quote may appear in an unquoted field and a non-doubled quote
                                may appear in a quoted field
   -H, --no-header-row          specifies that the input CSV file does not have header row
-  -j, --num-cpus int           number of CPUs to use (default value depends on your computer) (default 16)
+  -j, --num-cpus int           number of CPUs to use (default 4)
   -D, --out-delimiter string   delimiting character of the output CSV file, e.g., -D $'\t' for tab
                                (default &quot;,&quot;)
   -o, --out-file string        out file (&quot;-&quot; for stdout, suffix .gz for gzipped out) (default &quot;-&quot;)
   -T, --out-tabs               specifies that the output is delimited with tabs. Overrides &quot;-D&quot;
+  -Z, --show-row-number        show row number as the first column, with header row skipped
   -t, --tabs                   specifies that the input CSV file is delimited with tabs. Overrides &quot;-d&quot;
 
-Use &quot;csvtk [command] --help&quot; for more information about a command.
+Use &quot;csvtk [command] --help&quot; for more information about a command
 </code></pre>
 <h2 id="headers">headers</h2>
 <p>Usage</p>
@@ -1508,6 +1524,7 @@ $ cat testdata/digitals2.csv \
     | csvtk summary -i -f f4:sum,f5:sum -g f1,f2 \
     | csvtk pretty
 f1    f2     f4:sum   f5:sum
+---   ----   ------   ------
 bar   xyz    7.00     106.00
 bar   xyz2   4.00     4.00
 foo   bar    6.00     3.00
@@ -1518,7 +1535,7 @@ foo   bar2   4.50     5.00
 <p>for data without header line</p>
 <pre><code>$ cat testdata/digitals2.csv | sed 1d \
     | csvtk summary -H -i -f 4:sum,5:sum -g 1,2 \
-    | csvtk pretty
+    | csvtk pretty -H
 bar   xyz    7.00   106.00
 bar   xyz2   4.00   4.00
 foo   bar    6.00   3.00
@@ -1531,26 +1548,29 @@ foo   bar2   4.50   5.00
     | csvtk summary -i -g f1 -f f4:countn,f4:mean,f4:stdev,f4:q1,f4:q2,f4:mean,f4:q3,f4:min,f4:max \
     | csvtk pretty
 f1    f4:countn   f4:mean   f4:stdev   f4:q1   f4:q2   f4:mean   f4:q3   f4:min   f4:max
-bar   6.00        1.83      0.75       1.00    2.00    1.83      2.00    1.00     3.00
-foo   4.00        2.62      1.80       1.25    2.25    2.62      4.00    1.00     5.00
+---   ---------   -------   --------   -----   -----   -------   -----   ------   ------
+bar   6           1.83      0.75       1.25    2.00    1.83      2.00    1.00     3.00
+foo   4           2.62      1.80       1.38    2.25    2.62      3.50    1.00     5.00
 </code></pre>
 </li>
 <li>
 <p>textual/numeric operations</p>
-<pre><code>$  cat testdata/digitals2.csv \
+<pre><code>$ cat testdata/digitals2.csv \
     | csvtk summary -i -g f1 -f f2:count,f2:first,f2:last,f2:rand,f2:collapse,f2:uniq,f2:countunique \
     | csvtk pretty
 f1    f2:count   f2:first   f2:last   f2:rand   f2:collapse                           f2:uniq     f2:countunique
-bar   7          xyz        xyz2      xyz2      xyz; xyz; xyz; xyz; xyz; xyz2; xyz2   xyz2; xyz   2
-foo   5          bar        bar2      bar2      bar; bar2; bar2; bar; bar2            bar; bar2   2
+---   --------   --------   -------   -------   -----------------------------------   ---------   --------------
+bar   7          xyz        xyz2      xyz2      xyz; xyz; xyz; xyz; xyz; xyz2; xyz2   xyz; xyz2   2
+foo   5          bar        bar2      bar2      bar; bar2; bar2; bar; bar2            bar2; bar
 </code></pre>
 </li>
 <li>
 <p>mixed operations</p>
-<pre><code>$  cat testdata/digitals2.csv \
+<pre><code>$ cat testdata/digitals2.csv \
     | csvtk summary -i -g f1 -f f4:collapse,f4:max \
     | csvtk pretty
 f1    f4:collapse            f4:max
+---   --------------------   ------
 bar   NA; 1; 2; 1; 3; 2; 2   3.00
 foo   1; 1.5; 3; 5; N/A      5.00
 </code></pre>
@@ -1561,6 +1581,7 @@ foo   1; 1.5; 3; 5; N/A      5.00
     | csvtk summary -f f4:count,f4:countn -i \
     | csvtk pretty
 f4:count   f4:countn
+--------   ---------
 12         10
 
 # details:
@@ -1568,6 +1589,7 @@ $ cat testdata/digitals2.csv \
     | csvtk summary -f f4:count,f4:countn,f4:collapse -i -g f1 \
     | csvtk pretty
 f1    f4:count   f4:countn   f4:collapse
+---   --------   ---------   --------------------
 bar   7          6           NA; 1; 2; 1; 3; 2; 2
 foo   5          4           1; 1.5; 3; 5; N/A
 </code></pre>
@@ -1718,8 +1740,8 @@ Usage:
   csvtk pretty [flags]
 
 Flags:
-  -m, --align-center            align center/middle
-  -r, --align-right             align right
+  -m, --align-center strings    align center/middle for selected columns (field index or column name)
+  -r, --align-right strings     align right for selected columns (field index or column name)
   -n, --buf-rows int            the number of rows to determine the min and max widths (default 128)
       --clip                    clip longer cell instead of wrapping
       --clip-mark string        clip mark (default &quot;...&quot;)
@@ -1729,7 +1751,7 @@ Flags:
   -s, --separator string        fields/columns separator (default &quot;   &quot;)
   -S, --style string            output syle. available vaules: default, plain, simple, grid, light,
                                 bold, double. check https://github.com/shenwei356/stable
-  -x, --wrap-delimiter string   delimiter for wrapping cells (default &quot; &quot;)
+  -x, --wrap-delimiter string   delimiter for wrapping cells (default &quot;
 
 </code></pre>
 <p>Examples:</p>
@@ -1747,15 +1769,21 @@ NA   Robert       Abel        123
 </code></pre>
 </li>
 <li>
-<p>align right</p>
-<pre><code>$ csvtk pretty testdata/names.csv -r
-id   first_name   last_name   username
---   ----------   ---------   --------
-11          Rob        Pike        rob
- 2          Ken    Thompson        ken
- 4       Robert   Griesemer        gri
- 1       Robert    Thompson        abc
-NA       Robert        Abel        123
+<p>align right/center for some columns</p>
+<pre><code>$ csvtk pretty testdata/names.csv -r 1,username -m first_name -w 6 -S bold
+┏━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┓
+┃     id ┃ first_name ┃ last_name ┃ username ┃
+┣━━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
+┃     11 ┃    Rob     ┃ Pike      ┃      rob ┃
+┣━━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
+┃      2 ┃    Ken     ┃ Thompson  ┃      ken ┃
+┣━━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
+┃      4 ┃   Robert   ┃ Griesemer ┃      gri ┃
+┣━━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
+┃      1 ┃   Robert   ┃ Thompson  ┃      abc ┃
+┣━━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
+┃     NA ┃   Robert   ┃ Abel      ┃      123 ┃
+┗━━━━━━━━┻━━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━┛
 </code></pre>
 </li>
 <li>
@@ -2436,6 +2464,7 @@ id2   First_name   Last_name    Username   col
 <pre><code>$ csvtk concat names.csv names.reorder.csv \
     | csvtk pretty
 id   first_name   last_name   username
+--   ----------   ---------   --------
 11   Rob          Pike        rob
 2    Ken          Thompson    ken
 4    Robert       Griesemer   gri
@@ -2453,24 +2482,26 @@ NA   Robert       Abel        123
 <pre><code>$ csvtk concat names.csv names.with-unmatched-colname.csv -i \
     | csvtk pretty
 id   first_name   last_name    username
+--   ----------   ----------   --------
 11   Rob          Pike         rob
 2    Ken          Thompson     ken
 4    Robert       Griesemer    gri
 1    Robert       Thompson     abc
 NA   Robert       Abel         123
-     Rob33        Pike222      rob111
-     Ken33        Thompson22   ken111
+    Rob33        Pike222      rob111
+    Ken33        Thompson22   ken111
 
  $ csvtk concat names.csv names.with-unmatched-colname.csv -i -u Unmached \
     | csvtk pretty
- id         first_name   last_name    username
- 11         Rob          Pike         rob
- 2          Ken          Thompson     ken
- 4          Robert       Griesemer    gri
- 1          Robert       Thompson     abc
- NA         Robert       Abel         123
- Unmached   Rob33        Pike222      rob111
- Unmached   Ken33        Thompson22   ken111
+id         first_name   last_name    username
+--------   ----------   ----------   --------
+11         Rob          Pike         rob
+2          Ken          Thompson     ken
+4          Robert       Griesemer    gri
+1          Robert       Thompson     abc
+NA         Robert       Abel         123
+Unmached   Rob33        Pike222      rob111
+Unmached   Ken33        Thompson22   ken111
 </code></pre>
 </li>
 <li>
@@ -2479,12 +2510,14 @@ NA   Robert       Abel         123
 <pre><code>$ csvtk concat names.with-unmatched-colname.csv names.csv \
     | csvtk pretty
 id2   First_name   Last_name    Username   col
+---   ----------   ----------   --------   ---
 22    Rob33        Pike222      rob111     abc
 44    Ken33        Thompson22   ken111     def
 
-$ csvtk concat names.with-unmatched-colname.csv names.csv -u -k NA \
+$ csvtk concat names.with-unmatched-colname.csv names.csv -k -u NA \
     | csvtk pretty
 id2   First_name   Last_name    Username   col
+---   ----------   ----------   --------   ---
 22    Rob33        Pike222      rob111     abc
 44    Ken33        Thompson22   ken111     def
 NA    NA           NA           NA         NA
@@ -2543,6 +2576,7 @@ Examples:
      csvtk cut -f 2-,1        # move 1th col to the end
   4. Unselect
      csvtk cut -f -1,-3       # discard 1st and 3rd column
+     csvtk cut -f -1--3       # discard 1st to 3rd column
      csvtk cut -f -2-         # discard 2nd and all columns on the right.
      csvtu cut -f -colA,-colB # discard colA and colB
 
@@ -2551,7 +2585,7 @@ Usage:
 
 Flags:
   -m, --allow-missing-col   allow missing column
-  -b, --blank-missing-col   blank missing column
+  -b, --blank-missing-col   blank missing column, only for using column fields
   -f, --fields string       select only these fields. type &quot;csvtk cut -h&quot; for examples
   -F, --fuzzy-fields        using fuzzy fields, e.g., -F -f &quot;*name&quot; or -F -f &quot;id123*&quot;
   -h, --help                help for cut
@@ -2632,6 +2666,18 @@ Abel,123
 </code></pre>
 </li>
 <li>
+<p>select columns except 1-3</p>
+<pre><code>$ cat testdata/names.csv \
+    | csvtk cut -f -1--3
+username
+rob
+ken
+gri
+abc
+123
+</code></pre>
+</li>
+<li>
 <p>select columns except <code>first_name</code>: <code>csvtk cut -f -first_name</code></p>
 <pre><code>$ cat testdata/names.csv \
     | csvtk cut -f -first_name
@@ -2686,7 +2732,8 @@ Robert,Abel,123
 </li>
 <li>
 <p><code>csvtk cut -f -3--1</code> for discarding column 1,2,3</p>
-<pre><code>$ cat testdata/names.csv \
+<pre><code># or -f -1--3
+$ cat testdata/names.csv \
     | csvtk cut -f -3--1
 username
 rob
@@ -2995,11 +3042,12 @@ NA   Robert       Abel        123
 $ cat names.csv \
     | csvtk grep -f first_name -r -i -p rob -n \
     | csvtk pretty
-n   id   first_name   last_name   username
-1   11   Rob          Pike        rob
-3   4    Robert       Griesemer   gri
-4   1    Robert       Thompson    abc
-5   NA   Robert       Abel        123
+row   id   first_name   last_name   username
+---   --   ----------   ---------   --------
+1     11   Rob          Pike        rob
+3     4    Robert       Griesemer   gri
+4     1    Robert       Thompson    abc
+5     NA   Robert       Abel        123
 </code></pre>
 </li>
 </ul>
@@ -3065,7 +3113,7 @@ $ cat  testdata/digitals.tsv \
 </li>
 <li>
 <p>fuzzy fields</p>
-<pre><code>$  cat testdata/names.csv \
+<pre><code>$ cat testdata/names.csv \
     | csvtk filter -F -f "i*!=0"
 id,first_name,last_name,username
 11,Rob,Pike,rob
@@ -3448,8 +3496,8 @@ $ ls result/*.csv | wc -l
 <pre><code>$ yes 2 | head -n 10000000 | gzip -c &gt; t.gz
 
 $ memusg -t csvtk -H split t.gz
-elapsed time: 7.959s
-peak rss: 35.7 MB
+elapsed time: 5.859s
+peak rss: 41.45 MB
 
 # check
 $ zcat t-2.gz | wc -l
@@ -3790,7 +3838,9 @@ Flags:
 </code></pre>
 <p>Examples:</p>
 <ul>
-<li>Setting new names: <code>csvtk rename -f A,B -n a,b</code> or <code>csvtk rename -f 1-3 -n a,b,c</code><pre><code>$ cat testdata/phones.csv
+<li>
+<p>Setting new names: <code>csvtk rename -f A,B -n a,b</code> or <code>csvtk rename -f 1-3 -n a,b,c</code></p>
+<pre><code>$ cat testdata/phones.csv
 username,phone
 gri,11111
 rob,12345
@@ -3800,6 +3850,18 @@ shenwei,999999
 $ cat testdata/phones.csv \
     | csvtk rename -f 1-2 -n 姓名,电话 \
     | csvtk pretty 
+姓名      电话
+gri       11111
+rob       12345
+ken       22222
+shenwei   999999
+</code></pre>
+</li>
+<li>
+<p>Also support any order</p>
+<pre><code>$ cat testdata/phones.csv \
+    | csvtk rename -f 2,1 -n 电话,姓名 \
+    | csvtk pretty
 姓名      电话
 gri       11111
 rob       12345
@@ -3978,7 +4040,7 @@ $ csvtk replace -t -f 2  -p "ID(.+)" -r "N: {nr}, alias: {kv}" -k alias.tsv  dat
 name    id
 A       N: 1, alias: Tom
 B       N: 2, alias: Bob
-C       N: 3, alias: 004
+C       N: 3, alias
 </code></pre>
 </li>
 </ul>
@@ -4023,12 +4085,15 @@ NA         1.00
 </code></pre>
 <h2 id="mutate">mutate</h2>
 <p>Usage</p>
-<pre><code class="language-text">create new column from selected fields by regular expression
+<pre><code class="language-text">create a new column from selected fields by regular expression
 
 Usage:
   csvtk mutate [flags]
 
 Flags:
+      --after string     insert the new column right after the given column name
+      --at int           where the new column should appear, 1 for the 1st column, 0 for the last column
+      --before string    insert the new column right before the given column name
   -f, --fields string    select only these fields. e.g -f 1,2 or -f columnA,columnB (default &quot;1&quot;)
   -i, --ignore-case      ignore case
       --na               for unmatched data, use blank instead of original data
@@ -4055,7 +4120,7 @@ rob,12345
 ken,22222
 shenwei,999999
 
-$ cat testdata/phones.csv \ 
+$ cat testdata/phones.csv \
     | csvtk mutate -f username -p "^(\w)" -n first_letter
 username,phone,first_letter
 gri,11111,g
@@ -4064,10 +4129,37 @@ ken,22222,k
 shenwei,999999,s
 </code></pre>
 </li>
+<li>
+<p>specify the position of the new column (see similar examples of <code>csvtk mutate2</code>)</p>
+<pre><code>$ cat testdata/phones.csv \
+    | csvtk mutate -f username -p "^(\w)" -n first_letter  --at 2
+username,first_letter,phone
+gri,g,11111
+rob,r,12345
+ken,k,22222
+shenwei,s,999999
+
+$ cat testdata/phones.csv \
+    | csvtk mutate -f username -p "^(\w)" -n first_letter  --after username
+username,first_letter,phone
+gri,g,11111
+rob,r,12345
+ken,k,22222
+shenwei,s,999999
+
+$ cat testdata/phones.csv \
+    | csvtk mutate -f username -p "^(\w)" -n first_letter  --before username
+first_letter,username,phone
+g,gri,11111
+r,rob,12345
+k,ken,22222
+s,shenwei,99999
+</code></pre>
+</li>
 </ul>
 <h2 id="mutate2">mutate2</h2>
 <p>Usage</p>
-<pre><code class="language-text">create new column from selected fields by awk-like arithmetic/string expressions
+<pre><code class="language-text">create a new column from selected fields by awk-like arithmetic/string expressions
 
 The arithmetic/string expression is supported by:
 
@@ -4103,6 +4195,9 @@ Usage:
   csvtk mutate2 [flags]
 
 Flags:
+      --after string        insert the new column right after the given column name
+      --at int              where the new column should appear, 1 for the 1st column, 0 for the last column
+      --before string       insert the new column right before the given column name
   -w, --decimal-width int   limit floats to N decimal points (default 2)
   -e, --expression string   arithmetic/string expressions. e.g. &quot;'string'&quot;, '&quot;abc&quot;', ' $a + &quot;-&quot; + $b ',
                             '$1 + $2', '$a / $b', ' $1 &gt; 100 ? &quot;big&quot; : &quot;small&quot; '
@@ -4191,6 +4286,38 @@ a1    a2    a1
 a2          a2
 </code></pre>
 </li>
+<li>
+<p>Specify the position of the new column</p>
+<pre><code>$ echo -ne "a,b,c\n1,2,3\n"
+a,b,c
+1,2,3
+
+# in the end (default)
+$ echo -ne "a,b,c\n1,2,3\n" | csvtk mutate2 -e '$a+$c' -n x -w 0
+a,b,c,x
+1,2,3,4
+
+# in the beginning
+$ echo -ne "a,b,c\n1,2,3\n" | csvtk mutate2 -e '$a+$c' -n x -w 0 --at 1
+x,a,b,c
+4,1,2,3
+
+# at another position
+$ echo -ne "a,b,c\n1,2,3\n" | csvtk mutate2 -e '$a+$c' -n x -w 0 --at 3
+a,b,x,c
+1,2,4,3
+
+# right after the given column name
+$ echo -ne "a,b,c\n1,2,3\n" | csvtk mutate2 -e '$a+$c' -n x -w 0 --after a
+a,x,b,c
+1,4,2,3
+
+# right before the given column name
+$ echo -ne "a,b,c\n1,2,3\n" | csvtk mutate2 -e '$a+$c' -n x -w 0 --before c
+a,b,x,c
+1,2,4,3
+</code></pre>
+</li>
 </ol>
 <h2 id="sep">sep</h2>
 <p>Usage</p>
@@ -4223,6 +4350,7 @@ $ cat players.csv | csvtk collapse -f 1 -v 3 -s ';' \
     | csvtk sep -f 2 -s ';' -n p1,p2,p3,p4 -N 4 --na NA \
     | csvtk pretty
 gender   name      p1   p2   p3   p4
+------   -------   --   --   --   --
 male     A;B;C     A    B    C    NA
 female   a;b;c;d   a    b    c    d
 
@@ -4231,6 +4359,7 @@ $ cat players.csv | csvtk collapse -f 1 -v 3 -s ';' \
     | csvtk sep -f 2 -s ';' -n p1,p2,p3  --drop \
     | csvtk pretty
 gender   name      p1   p2   p3
+------   -------   --   --   --
 male     A;B;C     A    B    C
 female   a;b;c;d   a    b    c
 
@@ -4239,8 +4368,9 @@ $ cat players.csv | csvtk collapse -f 1 -v 3 -s ';' \
     | csvtk sep -f 2 -s ';' -n p1,p2,p3  --merge \
     | csvtk pretty
 gender   name      p1   p2   p3
+------   -------   --   --   ---
 male     A;B;C     A    B    C
-female   a;b;c;d   a    b    c;d
+female   a;b;c;d   a    b    c;
 
 #
 $ echo -ne &quot;taxid\tlineage\n9606\tEukaryota;Chordata;Mammalia;Primates;Hominidae;Homo;Homo sapiens\n&quot;
@@ -4251,49 +4381,130 @@ $ echo -ne &quot;taxid\tlineage\n9606\tEukaryota;Chordata;Mammalia;Primates;Homi
     | csvtk sep -t -f 2 -s ';' -n kindom,phylum,class,order,family,genus,species --remove \
     | csvtk pretty -t
 taxid   kindom      phylum     class      order      family      genus   species
+-----   ---------   --------   --------   --------   ---------   -----   ------------
 9606    Eukaryota   Chordata   Mammalia   Primates   Hominidae   Homo    Homo sapiens
 </code></pre>
 <h2 id="gather">gather</h2>
 <p>Usage</p>
-<pre><code class="language-text">gather columns into key-value pairs
+<pre><code class="language-text">gather columns into key-value pairs, like tidyr::gather/pivot_longer
 
 Usage:
   csvtk gather [flags]
 
+Aliases:
+  gather, longer
+
 Flags:
-  -f, --fields string   fields for gathering. e.g -f 1,2 or -f columnA,columnB, or -f -columnA for unselect columnA
+  -f, --fields string   fields for gathering. e.g -f 1,2 or -f columnA,columnB, or -f -columnA for
+                        unselect columnA
   -F, --fuzzy-fields    using fuzzy fields, e.g., -F -f &quot;*name&quot; or -F -f &quot;id123*&quot;
+  -h, --help            help for longer
   -k, --key string      name of key column to create in output
-  -v, --value string    name of value column to create in output
+  -v, --value string    name of value column to create in outpu
 
 </code></pre>
 <p>Examples:</p>
-<pre><code>$ cat testdata/names.csv
-id,first_name,last_name,username
-11,"Rob","Pike",rob
-2,Ken,Thompson,ken
-4,"Robert","Griesemer","gri"
-1,"Robert","Thompson","abc"
-NA,"Robert","Abel","123
+<pre><code>$ cat testdata/names.csv | csvtk pretty -S simple
+----------------------------------------
+id   first_name   last_name   username
+----------------------------------------
+11   Rob          Pike        rob
+2    Ken          Thompson    ken
+4    Robert       Griesemer   gri
+1    Robert       Thompson    abc
+NA   Robert       Abel        123
+----------------------------------------
 
 $ cat testdata/names.csv \
-    | csvtk gather -k item -v value -f -1
-id,item,value
-11,first_name,Rob
-11,last_name,Pike
-11,username,rob
-2,first_name,Ken
-2,last_name,Thompson
-2,username,ken
-4,first_name,Robert
-4,last_name,Griesemer
-4,username,gri
-1,first_name,Robert
-1,last_name,Thompson
-1,username,abc
-NA,first_name,Robert
-NA,last_name,Abel
-NA,username,123
+    | csvtk gather -k item -v value -f -1 \
+    | csvtk pretty -S simple
+-----------------------------
+id   item         value
+-----------------------------
+11   first_name   Rob
+11   last_name    Pike
+11   username     rob
+2    first_name   Ken
+2    last_name    Thompson
+2    username     ken
+4    first_name   Robert
+4    last_name    Griesemer
+4    username     gri
+1    first_name   Robert
+1    last_name    Thompson
+1    username     abc
+NA   first_name   Robert
+NA   last_name    Abel
+NA   username     123
+-----------------------------
+</code></pre>
+<h2 id="gather_1">gather</h2>
+<p>Usage</p>
+<pre><code class="language-text">spread a key-value pair across multiple columns, like tidyr::spread/pivot_wider
+
+Usage:
+  csvtk spread [flags]
+
+Aliases:
+  spread, wider
+
+Flags:
+  -h, --help           help for spread
+  -k, --key string     field of keys. e.g -f 1,2 or -f columnA,columnB, or -f -columnA for unselect columnA
+      --na string      content for filling NA data
+  -v, --value string   field of values. e.g -f 1,2 or -f columnA,columnB, or -f -columnA for unselect columnA
+
+</code></pre>
+<p>Examples:</p>
+<p>Shuffled columns:</p>
+<pre><code>$ csvtk cut -f 1,4,2,3 testdata/names.csv \
+  | csvtk pretty -S simple
+----------------------------------------
+id   username   first_name   last_name
+----------------------------------------
+11   rob        Rob          Pike
+2    ken        Ken          Thompson
+4    gri        Robert       Griesemer
+1    abc        Robert       Thompson
+NA   123        Robert       Abel
+----------------------------------------
+</code></pre>
+<p>data -&gt; gather/longer -&gt;  spread/wider. Note that the orders of both rows and columns are kept :)</p>
+<pre><code>$ csvtk cut -f 1,4,2,3 testdata/names.csv \
+    | csvtk gather -k item -v value -f -1 \
+    | csvtk spread -k item -v value \
+    | csvtk pretty -S simple
+----------------------------------------
+id   username   first_name   last_name
+----------------------------------------
+11   rob        Rob          Pike
+2    ken        Ken          Thompson
+4    gri        Robert       Griesemer
+1    abc        Robert       Thompson
+NA   123        Robert       Abel
+----------------------------------------
+</code></pre>
+<p>No header rows</p>
+<pre><code>$ echo -ne "a,a,0\nb,b,0\nc,c,0\na,b,1\na,c,2\nb,c,3\n"
+a,a,0
+b,b,0
+c,c,0
+a,b,1
+a,c,2
+b,c,3
+
+$ echo -ne "a,a,0\nb,b,0\nc,c,0\na,b,1\na,c,2\nb,c,3\n" \
+  | csvtk spread -H -k 2 -v 3 \
+  | csvtk pretty -S bold
+┏━━━┳━━━┳━━━┳━━━┓
+┃   ┃ a ┃ b ┃ c ┃
+┣━━━╋━━━╋━━━╋━━━┫
+┃ a ┃ 0 ┃ 1 ┃ 2 ┃
+┣━━━╋━━━╋━━━╋━━━┫
+┃ b ┃   ┃ 0 ┃ 3 ┃
+┣━━━╋━━━╋━━━╋━━━┫
+┃ c ┃   ┃   ┃ 0 ┃
+┗━━━┻━━━┻━━━┻━━━┛
 </code></pre>
 <h2 id="unfold">unfold</h2>
 <p>Usage</p>
