@@ -37,7 +37,8 @@ type Record struct {
 	Row  int // the row number, header row skipped
 	Err  error
 
-	IsHeaderRow bool
+	IsHeaderRow        bool // is current record the header row
+	SelectWithColnames bool // wether user use colnames to select fields
 
 	All      []string
 	Fields   []int    // selected fields
@@ -126,6 +127,8 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 
 		fields, colnames, negativeFields, needParseHeaderRow, x2ends := parseFields(fieldStr, fieldStrSep, csvReader.NoHeaderRow)
 		var fieldsMap map[int]struct{}
+
+		selectWithColnames := len(fields) == 0
 
 		if len(fields) > 0 && negativeFields {
 			fieldsMap = make(map[int]struct{}, len(fields))
@@ -474,7 +477,8 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 					Fields:   fields, // the first variable
 					Selected: items,  // copied values
 
-					IsHeaderRow: isHeaderRow,
+					IsHeaderRow:        isHeaderRow,
+					SelectWithColnames: selectWithColnames,
 				}
 
 				continue
@@ -499,7 +503,8 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 				Fields:   fields, // the first variable
 				Selected: items,  // copied values
 
-				IsHeaderRow: isHeaderRow,
+				IsHeaderRow:        isHeaderRow,
+				SelectWithColnames: selectWithColnames,
 			}
 		}
 

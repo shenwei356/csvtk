@@ -224,7 +224,7 @@ Custom functions:
 			var colnamesMap map[string]*regexp.Regexp
 			var fieldsUniq []int
 
-			var hasHeaderRow bool
+			var selectWithColnames bool
 
 			keys := make([]string, 0, 8)
 
@@ -237,6 +237,8 @@ Custom functions:
 				if checkFirstLine {
 					checkFirstLine = false
 
+					selectWithColnames = record.SelectWithColnames
+
 					parameters = make(map[string]string, len(record.All))
 					parameters2 = make(map[string]interface{}, len(record.All))
 					parameters2["shenweiNULL"] = nil
@@ -244,8 +246,6 @@ Custom functions:
 					fieldsUniq = UniqInts(record.Fields)
 
 					if !config.NoHeaderRow || record.IsHeaderRow { // do not replace head line
-						hasHeaderRow = true
-
 						colnames2fileds = make(map[string][]int, len(record.All))
 
 						colnamesMap = make(map[string]*regexp.Regexp, len(record.All))
@@ -270,7 +270,7 @@ Custom functions:
 				N++
 
 				// prepaire parameters
-				if !hasHeaderRow {
+				if !selectWithColnames {
 					for _, fieldTmp = range fieldsUniq {
 						value = record.All[fieldTmp-1]
 						col = strconv.Itoa(fieldTmp)
