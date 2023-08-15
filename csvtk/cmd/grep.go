@@ -190,6 +190,7 @@ Attentions:
 			var target string
 			var hitOne, hit bool
 			var reHit *regexp.Regexp
+			var hitPattern string
 			var i, j int
 			var c string
 			var buf bytes.Buffer
@@ -218,7 +219,7 @@ Attentions:
 				}
 
 				hit = false
-				for _, target = range record.Selected {
+				for i, target = range record.Selected {
 					hitOne = false
 					if useRegexp {
 						for k, re = range patternsMap {
@@ -238,6 +239,7 @@ Attentions:
 						}
 						if _, ok = patternsMap[k]; ok {
 							hitOne = true
+							hitPattern = target
 							if deleteMatched && !invert {
 								delete(patternsMap, k)
 							}
@@ -276,7 +278,7 @@ Attentions:
 							}
 							buf.WriteString(c[j:])
 							record.All[i] = buf.String()
-						} else {
+						} else if c == hitPattern {
 							record.All[i] = redText(c)
 						}
 					}

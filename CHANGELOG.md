@@ -1,12 +1,12 @@
 - [csvtk v0.27.0](https://github.com/shenwei356/csvtk/releases/tag/v0.27.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.27.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.27.0)
   - `csvtk`:
-      - code refactoring and simplifying code, with 16% fewer code.
+      - code refactoring and simplifying code, with 16% less code.
       - **most commands support open column range syntax**, e.g.,  `csvtk grep -f 2-`. [#120](https://github.com/shenwei356/csvtk/issues/120)
       - **only selected column names are not allowed to be duplicated in the input data**: box, corr, filter, filter2, fold, freq, gather, historysort, inter, join, line, mutate, mutate2, rename, replace, sep, split, summary, unfold, uniq, watch. Other commands do not have the restriction. [#235](https://github.com/shenwei356/csvtk/issues/235)
       - add a new global flag `-Z/--show-row-number`, supported commands: cut, csv2tab, csv2xlsx, tab2csv, pretty.
       - the colum name of row number changes from "n" to "row":  csv2xlsx, csv2tab, cut, filter, filter2, grep, pretty, sample, tab2csv.
-  - new command:
+  - **new command**:
       - **`csvtk spread`: spread a key-value pair across multiple columns, like tidyr::spread/pivot_wider**.
        [#91](https://github.com/shenwei356/csvtk/issues/91), [#236](https://github.com/shenwei356/csvtk/issues/236), [#239](https://github.com/shenwei356/csvtk/issues/239)
   - `csvtk mutate/mutate2`:
