@@ -100,7 +100,7 @@ Usage
 ```text
 csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.27.0
+Version: 0.27.1
 
 Author: Wei Shen <shenwei356@gmail.com>
 
