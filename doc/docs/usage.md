@@ -614,12 +614,20 @@ Styles:
     simple:
 
         -----------
-        id   size
+         id   size
         -----------
-        1    Huge
-        2    Tiny
+         1    Huge
+         2    Tiny
         -----------
 
+    3line:
+
+        ━━━━━━━━━━━
+         id   size
+        -----------
+         1    Huge
+         2    Tiny
+        ━━━━━━━━━━━
 
     grid:
 
@@ -674,9 +682,9 @@ Flags:
   -W, --max-width int           max width
   -w, --min-width int           min width
   -s, --separator string        fields/columns separator (default "   ")
-  -S, --style string            output syle. available vaules: default, plain, simple, grid, light,
-                                bold, double. check https://github.com/shenwei356/stable
-  -x, --wrap-delimiter string   delimiter for wrapping cells (default "
+  -S, --style string            output syle. available vaules: default, plain, simple, 3line, grid,
+                                light, bold, double. check https://github.com/shenwei356/stable
+  -x, --wrap-delimiter string   delimiter for wrapping cells (default " ")
 
 ```
 
@@ -692,6 +700,37 @@ Examples:
         4    Robert       Griesemer   gri
         1    Robert       Thompson    abc
         NA   Robert       Abel        123
+
+        $ csvtk pretty testdata/names.csv -H
+        id   first_name   last_name   username
+        11   Rob          Pike        rob
+        2    Ken          Thompson    ken
+        4    Robert       Griesemer   gri
+        1    Robert       Thompson    abc
+        NA   Robert       Abel        123
+
+1. tree-line table
+
+        $ cat testdata/names.csv  | csvtk pretty -S 3line
+        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+         id   first_name   last_name   username
+        ----------------------------------------
+         11   Rob          Pike        rob
+         2    Ken          Thompson    ken
+         4    Robert       Griesemer   gri
+         1    Robert       Thompson    abc
+         NA   Robert       Abel        123
+        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        $ cat testdata/names.csv  | csvtk pretty -S 3line -H
+        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+         id   first_name   last_name   username
+         11   Rob          Pike        rob
+         2    Ken          Thompson    ken
+         4    Robert       Griesemer   gri
+         1    Robert       Thompson    abc
+         NA   Robert       Abel        123
+        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 2. align right/center for some columns
 

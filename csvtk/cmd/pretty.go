@@ -69,12 +69,20 @@ Styles:
     simple:
 
         -----------
-        id   size
+         id   size
         -----------
-        1    Huge
-        2    Tiny
+         1    Huge
+         2    Tiny
         -----------
 
+    3line:
+
+        ━━━━━━━━━━━
+         id   size
+        -----------
+         1    Huge
+         2    Tiny
+        ━━━━━━━━━━━
 
     grid:
 
@@ -163,7 +171,7 @@ Styles:
 
 		styles := map[string]*stable.TableStyle{
 			"default": &stable.TableStyle{
-				Name:            "simple",
+				Name:            "default",
 				LineBelowHeader: stable.LineStyle{"", "-", separator, ""},
 
 				HeaderRow: stable.RowStyle{"", separator, ""},
@@ -172,6 +180,7 @@ Styles:
 			},
 			"plain":  stable.StylePlain,
 			"simple": stable.StyleSimple,
+			"3line":  stable.StyleThreeLine,
 			"grid":   stable.StyleGrid,
 			"light":  stable.StyleLight,
 			"bold":   stable.StyleBold,
@@ -206,6 +215,7 @@ Styles:
 		tbl.Writer(outfh, uint(bufRows))
 
 		checkFirstLine := true
+		var hasHeaderRow bool
 		var header []stable.Column
 		for record := range csvReader.Ch {
 			if record.Err != nil {
@@ -227,6 +237,7 @@ Styles:
 				var col string
 				var ok bool
 				if !config.NoHeaderRow || record.IsHeaderRow {
+					hasHeaderRow = true
 					for i, col = range record.All {
 						if config.ShowRowNumber {
 							i++
@@ -270,6 +281,11 @@ Styles:
 				}
 
 				tbl.HeaderWithFormat(header)
+
+				if !hasHeaderRow {
+					tbl.AddRowStringSlice(record.Selected)
+				}
+
 				continue
 			}
 
@@ -291,7 +307,7 @@ func init() {
 
 	prettyCmd.Flags().StringP("wrap-delimiter", "x", " ", "delimiter for wrapping cells")
 	prettyCmd.Flags().IntP("buf-rows", "n", 128, "the number of rows to determine the min and max widths")
-	prettyCmd.Flags().StringP("style", "S", "", "output syle. available vaules: default, plain, simple, grid, light, bold, double. check https://github.com/shenwei356/stable")
+	prettyCmd.Flags().StringP("style", "S", "", "output syle. available vaules: default, plain, simple, 3line, grid, light, bold, double. check https://github.com/shenwei356/stable")
 	prettyCmd.Flags().BoolP("clip", "", false, "clip longer cell instead of wrapping")
 	prettyCmd.Flags().StringP("clip-mark", "", "...", "clip mark")
 }
