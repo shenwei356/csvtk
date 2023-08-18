@@ -1,8 +1,12 @@
 - [csvtk v0.27.2](https://github.com/shenwei356/csvtk/releases/tag/v0.27.2)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.27.2/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.27.2)
   - `csvtk pretty`:
-      - fix bug of empty first row with `-H/--no-header-row`, introduced in v0.27.0.
+      - fix the bug of empty first row with `-H/--no-header-row`, introduced in v0.27.0.
       - new style `3line` for three-line table.
+  - `csvtk csv2xlsx`:
+      - binaries compiled with go1.21 would result in a broken xlsx file. [#243](https://github.com/shenwei356/csvtk/issues/243)
+  - `csvtk splitxlsx`:
+      - fix the error of `invalid worksheet index`. [#1617](https://github.com/qax-os/excelize/issues/1617)
 - [csvtk v0.27.1](https://github.com/shenwei356/csvtk/releases/tag/v0.27.1)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.27.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.27.1)
   - `csvtk filter2/mutate2`:

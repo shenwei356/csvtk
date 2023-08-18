@@ -70,7 +70,8 @@ Attention:
 		var col, line int
 		var valFloat float64
 		var nSheets int
-		for _, file := range files {
+		var idx, firstIdx int
+		for i, file := range files {
 			csvReader, err := newCSVReaderByConfig(config, file)
 			if err != nil {
 				if err == xopen.ErrNoContent {
@@ -88,12 +89,20 @@ Attention:
 
 			if singleInput {
 				sheet = "Sheet1"
+
+				firstIdx, err = xlsx.GetSheetIndex(sheet)
+				checkError(err)
 			} else {
 				sheet, _ = filepathTrimExtension(filepath.Base(file))
 				if nSheets == 1 {
-					xlsx.SetSheetName("Sheet1", sheet)
+					checkError(xlsx.SetSheetName("Sheet1", sheet))
 				} else {
-					xlsx.NewSheet(sheet)
+					idx, err = xlsx.NewSheet(sheet)
+					checkError(err)
+
+					if i == 0 {
+						firstIdx = idx
+					}
 				}
 			}
 
@@ -132,7 +141,7 @@ Attention:
 			readerReport(&config, csvReader, file)
 		}
 
-		xlsx.SetActiveSheet(1)
+		xlsx.SetActiveSheet(firstIdx)
 		checkError(xlsx.SaveAs(outFile))
 	},
 }

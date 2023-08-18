@@ -260,22 +260,27 @@ Weakness : Complicated sheet structures are not well supported, e.g.,
 			Keys2RowIndex[key][rowIndex] = struct{}{}
 		}
 
+		from, err := xlsx.GetSheetIndex(sheetName)
+		checkError(err)
+
 		for _, key := range keysList {
-			index, err := xlsx.NewSheet(key)
+			// https://github.com/qax-os/excelize/issues/1617
+			to, err := xlsx.NewSheet(key)
 			checkError(err)
-			checkError(xlsx.CopySheet(sheetName2Index[sheetName], index))
+			checkError(xlsx.CopySheet(from, to))
 
 			for i := len(rows) - 1; i >= 0; i-- {
 				if i == 0 && needParseHeaderRow {
 					continue
 				}
 				if _, ok = Keys2RowIndex[key][i]; !ok {
-					xlsx.RemoveRow(key, i)
+					xlsx.RemoveRow(key, i+1)
 				}
 			}
 		}
+		log.Infof("Sheet %s is split into %d sheets", sheetName, len(keysList))
 
-		xlsx.SetActiveSheet(sheetName2Index[sheetName])
+		xlsx.SetActiveSheet(from)
 		if config.OutFile == "-" {
 			prefx, _ := filepathTrimExtension(files[0])
 			config.OutFile = fmt.Sprintf("%s.split.xlsx", prefx)
