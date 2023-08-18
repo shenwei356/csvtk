@@ -64,6 +64,7 @@ Attention:
 		}
 
 		xlsx := excelize.NewFile()
+		defer checkError(xlsx.Close())
 
 		var sheet, cell, val string
 		var col, line int
@@ -95,8 +96,16 @@ Attention:
 					xlsx.NewSheet(sheet)
 				}
 			}
+
 			if !config.NoHeaderRow {
-				xlsx.SetPanes(sheet, `{"freeze":true,"split":false,"x_split":0,"y_split":1,"top_left_cell":"A2","active_pane":"bottomLeft"}`)
+				checkError(xlsx.SetPanes(sheet, &excelize.Panes{
+					Freeze:      true,
+					Split:       false,
+					XSplit:      0,
+					YSplit:      1,
+					TopLeftCell: "A2",
+					ActivePane:  "bottomLeft",
+				}))
 			}
 
 			line = 1

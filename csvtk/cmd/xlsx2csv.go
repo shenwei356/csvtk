@@ -60,6 +60,7 @@ var xlsx2csvCmd = &cobra.Command{
 
 		xlsx, err := excelize.OpenFile(files[0])
 		checkError(err)
+		defer checkError(xlsx.Close())
 
 		sheets := xlsx.GetSheetMap()
 

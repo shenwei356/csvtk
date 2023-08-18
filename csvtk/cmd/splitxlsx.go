@@ -68,6 +68,7 @@ Weakness : Complicated sheet structures are not well supported, e.g.,
 
 		xlsx, err := excelize.OpenFile(files[0])
 		checkError(err)
+		defer checkError(xlsx.Close())
 
 		sheets := xlsx.GetSheetMap()
 
@@ -89,7 +90,10 @@ Weakness : Complicated sheet structures are not well supported, e.g.,
 		}
 
 		if sheetName == "" {
-			sheetName = sheets[sheetIndex]
+			var ok bool
+			if sheetName, ok = sheets[sheetIndex]; !ok {
+				checkError(fmt.Errorf(`%dth sheet does not exist in file: %s`, sheetIndex, files[0]))
+			}
 		} else {
 			var existed bool
 			for _, sheet := range sheets {
@@ -257,7 +261,8 @@ Weakness : Complicated sheet structures are not well supported, e.g.,
 		}
 
 		for _, key := range keysList {
-			index := xlsx.NewSheet(key)
+			index, err := xlsx.NewSheet(key)
+			checkError(err)
 			checkError(xlsx.CopySheet(sheetName2Index[sheetName], index))
 
 			for i := len(rows) - 1; i >= 0; i-- {
