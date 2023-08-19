@@ -198,7 +198,7 @@ Styles:
 		if _style, ok := styles[strings.ToLower(style)]; ok {
 			tbl.Style(_style)
 		} else {
-			checkError(fmt.Errorf("style not available: %s. available vaules: default, plain, simple, grid, light, bold, double", style))
+			checkError(fmt.Errorf("style not available: %s. available vaules: default, plain, simple, 3line, grid, light, bold, double", style))
 		}
 
 		if minWidth > 0 {
