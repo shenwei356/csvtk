@@ -955,16 +955,16 @@ id   first_name   last_name   username
 1    Robert       Thompson    abc
 NA   Robert       Abel        123
 
-$ csvtk pretty names.csv -S simple
+$ csvtk pretty names.csv -S 3line
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ id   first_name   last_name   username
 ----------------------------------------
-id   first_name   last_name   username
-----------------------------------------
-11   Rob          Pike        rob
-2    Ken          Thompson    ken
-4    Robert       Griesemer   gri
-1    Robert       Thompson    abc
-NA   Robert       Abel        123
-----------------------------------------
+ 11   Rob          Pike        rob
+ 2    Ken          Thompson    ken
+ 4    Robert       Griesemer   gri
+ 1    Robert       Thompson    abc
+ NA   Robert       Abel        123
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 $ csvtk pretty names.csv -S bold
 ┏━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┓
