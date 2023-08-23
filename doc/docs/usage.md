@@ -100,7 +100,7 @@ Usage
 ```text
 csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.27.1
+Version: 0.27.2
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -3371,7 +3371,7 @@ Examples:
     NA   username     123
     -----------------------------
 
-## gather
+## spread
 
 Usage
 
