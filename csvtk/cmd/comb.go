@@ -28,10 +28,10 @@ import (
 	"sort"
 	"strings"
 
-	combinations "github.com/mxschmitt/golang-combinations"
 	"github.com/shenwei356/natsort"
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
+	"gonum.org/v1/gonum/stat/combin"
 )
 
 // combCmd represents the comb command
@@ -49,7 +49,7 @@ var combCmd = &cobra.Command{
 
 		sortItems := getFlagBool(cmd, "sort")
 		sortItemsNatSort := getFlagBool(cmd, "nat-sort")
-		number := getFlagNonNegativeInt(cmd, "number")
+		number0 := getFlagNonNegativeInt(cmd, "number")
 		ignoreCase := getFlagBool(cmd, "ignore-case")
 
 		outfh, err := xopen.Wopen(config.OutFile)
@@ -77,9 +77,18 @@ var combCmd = &cobra.Command{
 		var line int
 		var item string
 		var _items, items []string
-		var combs [][]string
-		var comb []string
+		var m map[string]interface{}
+		var combs [][]int
+		var comb []int
+		var result []string
 		var n int
+		var ok bool
+		var i int
+		var number int
+
+		items = make([]string, 1024)
+		result = make([]string, 1024)
+		m = make(map[string]interface{}, 1024)
 
 		for _, file := range files {
 			fh, err = xopen.Ropen(file)
@@ -118,28 +127,44 @@ var combCmd = &cobra.Command{
 					}
 					break
 				}
-				items = make([]string, 0, len(_items))
+				items = items[:0]
 				for _, item = range _items {
 					if item == "" {
 						continue
 					}
-					items = append(items, item)
+					if _, ok = m[item]; !ok {
+						items = append(items, item)
+						m[item] = struct{}{}
+					}
 				}
 
 				if len(items) == 0 {
 					continue
 				}
 
-				combs = combinations.Combinations(items, number)
-				for _, comb = range combs {
-					if sortItems {
-						sort.Strings(comb)
-					} else if sortItemsNatSort {
-						natsort.Sort(comb)
-					}
-					writer.Write(comb)
+				number = number0
+				if number == 0 || number > len(items) {
+					number = len(items)
 				}
 
+				combs = combin.Combinations(len(items), number)
+				for _, comb = range combs {
+					result = result[:0]
+					for _, i = range comb {
+						result = append(result, items[i])
+					}
+
+					if sortItems {
+						sort.Strings(result)
+					} else if sortItemsNatSort {
+						natsort.Sort(result)
+					}
+					writer.Write(result)
+				}
+
+				for item = range m {
+					delete(m, item)
+				}
 			}
 			checkError(scanner.Err())
 			if n == 0 {

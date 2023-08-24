@@ -12,7 +12,6 @@ require (
 	github.com/mattn/go-runewidth v0.0.14
 	github.com/metakeule/fmtdate v1.1.2
 	github.com/mitchellh/go-homedir v1.1.0
-	github.com/mxschmitt/golang-combinations v1.1.0
 	github.com/pkg/errors v0.9.1
 	github.com/shenwei356/breader v0.3.2
 	github.com/shenwei356/go-logging v0.0.0-20171012171522-c6b9702d88ba
