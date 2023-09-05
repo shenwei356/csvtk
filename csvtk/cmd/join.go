@@ -68,6 +68,7 @@ Attention:
 		ignoreCase := getFlagBool(cmd, "ignore-case")
 		filenameAsPrefix := getFlagBool(cmd, "prefix-filename")
 		trimeExtention := getFlagBool(cmd, "prefix-trim-ext")
+		prefixDuplicates := getFlagBool(cmd, "prefix-duplicates")
 
 		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
 		leftJoin := getFlagBool(cmd, "left-join")
@@ -115,7 +116,7 @@ Attention:
 		var newColname string
 		var prefixedHeaderRow []string
 		if filenameAsPrefix {
-			prefixedHeaderRow = make([]string, 0, 8)
+			prefixedHeaderRow = make([]string, 0, 128)
 		}
 		var Data [][]string
 		var Fields []int
@@ -164,6 +165,7 @@ Attention:
 
 		var f int
 		var ok bool
+		mColnames := make(map[string]interface{}, 8)
 		for i, file := range files {
 			_, fields, _, headerRow, data, err := parseCSVfile(cmd, config,
 				file, allFields[i], fuzzyFields, true)
@@ -191,6 +193,7 @@ Attention:
 					if len(headerRow) == 0 { // no header row, we still create column names with the file name
 						if len(Data) > 0 {
 							iKey := 1
+							var Colname string
 							for f = range Data[0] {
 								if _, ok = fieldsMap1[f+1]; ok { //  the  field  of keys
 									prefixedHeaderRow = append(prefixedHeaderRow, fmt.Sprintf("key%d", iKey))
@@ -201,7 +204,20 @@ Attention:
 								if trimeExtention {
 									fbase, _, _ = filepathTrimExtension2(fbase, nil)
 								}
-								prefixedHeaderRow = append(prefixedHeaderRow, fbase)
+
+								Colname = fmt.Sprintf("c%d", f+1)
+								if prefixDuplicates {
+									if _, ok = mColnames[Colname]; ok {
+										newColname = fmt.Sprintf("%s-%s", fbase, Colname)
+									} else {
+										newColname = Colname
+										mColnames[Colname] = struct{}{}
+									}
+								} else {
+									newColname = fmt.Sprintf("%s-%s", fbase, Colname)
+								}
+
+								prefixedHeaderRow = append(prefixedHeaderRow, newColname)
 							}
 						}
 					} else {
@@ -215,7 +231,18 @@ Attention:
 							if trimeExtention {
 								fbase, _, _ = filepathTrimExtension2(fbase, nil)
 							}
-							newColname = fmt.Sprintf("%s-%s", fbase, Colname)
+
+							if prefixDuplicates {
+								if _, ok = mColnames[Colname]; ok {
+									newColname = fmt.Sprintf("%s-%s", fbase, Colname)
+								} else {
+									newColname = Colname
+									mColnames[Colname] = struct{}{}
+								}
+							} else {
+								newColname = fmt.Sprintf("%s-%s", fbase, Colname)
+							}
+
 							prefixedHeaderRow = append(prefixedHeaderRow, newColname)
 						}
 					}
@@ -308,20 +335,45 @@ Attention:
 						if trimeExtention {
 							fbase, _, _ = filepathTrimExtension2(fbase, nil)
 						}
-						newColname = fmt.Sprintf("%s-%s", fbase, colname)
+
+						if prefixDuplicates {
+							if _, ok = mColnames[colname]; ok {
+								newColname = fmt.Sprintf("%s-%s", fbase, colname)
+							} else {
+								newColname = colname
+								mColnames[colname] = struct{}{}
+							}
+						} else {
+							newColname = fmt.Sprintf("%s-%s", fbase, colname)
+						}
+
 						prefixedHeaderRow = append(prefixedHeaderRow, newColname)
 					}
 				}
 				HeaderRow = newHeaderRow
 			} else if filenameAsPrefix {
 				if len(Data) > 0 {
+					var Colname string
 					for f, colname = range data[0] {
 						if _, ok = fieldsMap[f+1]; !ok {
 							fbase := filepath.Base(file)
 							if trimeExtention {
 								fbase, _, _ = filepathTrimExtension2(fbase, nil)
 							}
-							prefixedHeaderRow = append(prefixedHeaderRow, fbase)
+
+							Colname = fmt.Sprintf("c%d", f+1)
+							if prefixDuplicates {
+								if _, ok = mColnames[Colname]; ok {
+									newColname = fmt.Sprintf("%s-%s", fbase, Colname)
+								} else {
+									newColname = Colname
+									mColnames[Colname] = struct{}{}
+								}
+							} else {
+								newColname = fmt.Sprintf("%s-%s", fbase, Colname)
+							}
+
+							prefixedHeaderRow = append(prefixedHeaderRow, newColname)
 						}
 					}
 				}
@@ -396,4 +448,5 @@ func init() {
 	joinCmd.Flags().BoolP("ignore-null", "n", false, "do not match NULL values")
 	joinCmd.Flags().BoolP("prefix-filename", "p", false, "add each filename as a prefix to each colname. if there's no header row, we'll add one")
 	joinCmd.Flags().BoolP("prefix-trim-ext", "e", false, "trim extension when adding filename as colname prefix")
+	joinCmd.Flags().BoolP("prefix-duplicates", "P", false, "add filenames as colname prefixes only for duplicated colnames")
 }

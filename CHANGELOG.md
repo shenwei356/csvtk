@@ -1,7 +1,9 @@
 - [csvtk v0.27.3](https://github.com/shenwei356/csvtk/releases/tag/v0.27.3)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.27.3/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.27.3)
   - `csvtk comb`:
-      - fix potential bug for sizes of alphabet greater than 64.
+      - fix the empty result bug for alphabet sizes greater than 64.
+  - `csvtk join`:
+      - a new flag `-P/--prefix-duplicates`: add filenames as colname prefixes only for duplicated colnames
 - [csvtk v0.27.2](https://github.com/shenwei356/csvtk/releases/tag/v0.27.2)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.27.2/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.27.2)
   - `csvtk pretty`:
