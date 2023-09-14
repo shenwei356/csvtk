@@ -591,12 +591,12 @@ How to:
          Usually, the text is wrapped in space (-x/--wrap-delimiter). But if one
          word is longer than the -W/--max-width, it will be force split.
      1b. Texts are aligned left (default), center (-m/--align-center)
-         or right (-r/--align-right). Users can specify columns with colnum names,
+         or right (-r/--align-right). Users can specify columns with column names,
          field indexes or ranges.
         Examples:
           -m A,B       # column A and B
           -m 1,2       # 1st and 2nd column          
-          -m -1        # the last column (it's not unslecting in other commands)
+          -m -1        # the last column (it's not unselecting in other commands)
           -m 1,3-5     # 1st, from 3rd to 5th column
           -m 1-        # 1st and later columns (all columns)
           -m -3-       # the last 3 columns
