@@ -665,3 +665,69 @@ func readerReport(config *Config, csvReader *CSVReader, file string) {
 		log.Warningf("file '%s': %d illegal rows ignored: %d", file, len(csvReader.NumIllegalRows), csvReader.NumIllegalRows)
 	}
 }
+
+// the result is 1-based
+func fieldRange(nFields int, _range string) []int {
+	found := reIntegerRange.FindAllStringSubmatch(_range, -1)
+	if len(found) == 0 {
+		return nil
+	}
+
+	fields := make([]int, 0, 8)
+
+	start, err := strconv.Atoi(found[0][1])
+	if err != nil {
+		checkError(fmt.Errorf("fail to parse field range: %s. it should be an integer", found[0][1]))
+	}
+	if start > nFields {
+		checkError(fmt.Errorf("invalid field range: %s. start (%d) should be less than the number of columns (%d)", _range, start, nFields))
+	}
+
+	if found[0][2] == "" {
+		if start == 0 {
+			checkError(fmt.Errorf("no 0 allowed in field range: %s", _range))
+		}
+
+		if start < 0 {
+			for i := nFields + 1 + start; i <= nFields; i++ {
+				fields = append(fields, i)
+			}
+		} else {
+			for i := start; i <= nFields; i++ {
+				fields = append(fields, i)
+			}
+		}
+		return fields
+	}
+
+	end, err := strconv.Atoi(found[0][2])
+	if err != nil {
+		checkError(fmt.Errorf("fail to parse field range: %s. it should be an integer", found[0][2]))
+	}
+	if start == 0 || end == 0 {
+		checkError(fmt.Errorf("no 0 allowed in field range: %s", _range))
+	}
+
+	if start < 0 && end < 0 {
+		if start < end {
+			for i := start; i <= end; i++ {
+				fields = append(fields, nFields+1+i)
+			}
+		} else {
+			for i := end; i <= start; i++ {
+				fields = append(fields, nFields+1+i)
+			}
+		}
+	} else if start > 0 && end > 0 {
+		if start >= end {
+			checkError(fmt.Errorf("invalid field range: %s. start (%d) should be less than end (%d)", _range, start, end))
+		}
+		for i := start; i <= end; i++ {
+			fields = append(fields, i)
+		}
+	} else {
+		checkError(fmt.Errorf("invalid field range: %s. start (%d) and end (%d) should be both > 0 or < 0", _range, start, end))
+	}
+
+	return fields
+}

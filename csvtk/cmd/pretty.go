@@ -22,6 +22,7 @@ package cmd
 
 import (
 	"fmt"
+	"regexp"
 	"runtime"
 	"strconv"
 	"strings"
@@ -46,7 +47,19 @@ How to:
          Usually, the text is wrapped in space (-x/--wrap-delimiter). But if one
          word is longer than the -W/--max-width, it will be force split.
      1b. Texts are aligned left (default), center (-m/--align-center)
-         or right (-r/--align-right).
+         or right (-r/--align-right). Users can specify columns with colnum names,
+         field indexes or ranges.
+        Examples:
+          -m A,B       # column A and B
+          -m 1,2       # 1st and 2nd column          
+          -m -1        # the last column (it's not unslecting in other commands)
+          -m 1,3-5     # 1st, from 3rd to 5th column
+          -m 1-        # 1st and later columns (all columns)
+          -m -3-       # the last 3 columns
+          -m -3--2     # the 2nd and 3rd to last columns
+          -m 1- -r -1  # all columns are center-aligned, except the last column
+                       # which is right-aligned. -r overides -m.
+         
   2. Remaining rows are read and immediately outputted, one by one, till the end.
 
 Styles:
@@ -217,6 +230,7 @@ Styles:
 		checkFirstLine := true
 		var hasHeaderRow bool
 		var header []stable.Column
+		var negativeField = regexp.MustCompile(`^(-\d+)$`)
 		for record := range csvReader.Ch {
 			if record.Err != nil {
 				checkError(record.Err)
@@ -231,6 +245,7 @@ Styles:
 				}
 				header = make([]stable.Column, ncols)
 
+				// the fields is 1-based
 				colnames2fileds := make(map[string][]int, ncols)
 
 				var i int
@@ -243,9 +258,9 @@ Styles:
 							i++
 						}
 						if _, ok = colnames2fileds[col]; !ok {
-							colnames2fileds[col] = []int{i}
+							colnames2fileds[col] = []int{i + 1}
 						} else {
-							colnames2fileds[col] = append(colnames2fileds[col], i)
+							colnames2fileds[col] = append(colnames2fileds[col], i+1)
 						}
 					}
 
@@ -257,26 +272,47 @@ Styles:
 				for i = range record.All {
 					col = strconv.Itoa(i + 1)
 					if _, ok = colnames2fileds[col]; !ok {
-						colnames2fileds[col] = []int{i}
+						colnames2fileds[col] = []int{i + 1}
 					} else {
-						colnames2fileds[col] = append(colnames2fileds[col], i)
+						colnames2fileds[col] = append(colnames2fileds[col], i+1)
 					}
 				}
 
+				var _range []int
+
 				for _, col = range alignCenters {
-					for _, i = range colnames2fileds[col] {
+					if negativeField.MatchString(col) { // negatvie field
+						found := negativeField.FindAllStringSubmatch(col, -1)
+						f, _ := strconv.Atoi(found[0][1])
+						_range = []int{len(record.All) + 1 + f}
+					} else if reIntegerRange.MatchString(col) { // field range
+						_range = fieldRange(len(record.All), col)
+					} else { // colname
+						_range = colnames2fileds[col]
+					}
+					for _, i = range _range {
 						if config.ShowRowNumber {
 							i++
 						}
-						header[i].Align = stable.AlignCenter
+						header[i-1].Align = stable.AlignCenter
 					}
 				}
+
 				for _, col = range alignRights {
-					for _, i = range colnames2fileds[col] {
+					if negativeField.MatchString(col) { // negatvie field
+						found := negativeField.FindAllStringSubmatch(col, -1)
+						f, _ := strconv.Atoi(found[0][1])
+						_range = []int{len(record.All) + 1 + f}
+					} else if reIntegerRange.MatchString(col) { // field range
+						_range = fieldRange(len(record.All), col)
+					} else { // colname
+						_range = colnames2fileds[col]
+					}
+					for _, i = range _range {
 						if config.ShowRowNumber {
 							i++
 						}
-						header[i].Align = stable.AlignRight
+						header[i-1].Align = stable.AlignRight
 					}
 				}
 
@@ -300,8 +336,8 @@ Styles:
 func init() {
 	RootCmd.AddCommand(prettyCmd)
 	prettyCmd.Flags().StringP("separator", "s", "   ", "fields/columns separator")
-	prettyCmd.Flags().StringSliceP("align-right", "r", []string{}, "align right for selected columns (field index or column name)")
-	prettyCmd.Flags().StringSliceP("align-center", "m", []string{}, "align center/middle for selected columns (field index or column name)")
+	prettyCmd.Flags().StringSliceP("align-right", "r", []string{}, `align right for selected columns (field index/range or column name, type "csvtk pretty -h" for examples)`)
+	prettyCmd.Flags().StringSliceP("align-center", "m", []string{}, `align right for selected columns (field index/range or column name, type "csvtk pretty -h" for examples)`)
 	prettyCmd.Flags().IntP("min-width", "w", 0, "min width")
 	prettyCmd.Flags().IntP("max-width", "W", 0, "max width")
 

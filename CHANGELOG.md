@@ -1,5 +1,5 @@
-- [csvtk v0.27.3](https://github.com/shenwei356/csvtk/releases/tag/v0.27.3)
-[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.27.3/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.27.3)
+- [csvtk v0.28.0](https://github.com/shenwei356/csvtk/releases/tag/v0.28.0)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.28.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.28.0)
   - `csvtk`:
       - add the shortcut `-X` for the flag `--infile-list`. [#249](https://github.com/shenwei356/csvtk/issues/249)
   - `csvtk comb`:
@@ -8,6 +8,8 @@
       - a new flag `-P/--prefix-duplicates`: add filenames as colname prefixes only for duplicated colnames. [#246](https://github.com/shenwei356/csvtk/issues/246)
   - `csvtk spread`:
       - support values sharing the same keys. [#248](https://github.com/shenwei356/csvtk/issues/248)
+  - `csvtk pretty`:
+      - support field range. [#244](https://github.com/shenwei356/csvtk/issues/244)
 - [csvtk v0.27.2](https://github.com/shenwei356/csvtk/releases/tag/v0.27.2)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.27.2/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.27.2)
   - `csvtk pretty`:

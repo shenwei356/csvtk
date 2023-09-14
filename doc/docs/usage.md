@@ -100,7 +100,7 @@ Usage
 ```text
 csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.27.3
+Version: 0.28.0
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -591,7 +591,19 @@ How to:
          Usually, the text is wrapped in space (-x/--wrap-delimiter). But if one
          word is longer than the -W/--max-width, it will be force split.
      1b. Texts are aligned left (default), center (-m/--align-center)
-         or right (-r/--align-right).
+         or right (-r/--align-right). Users can specify columns with colnum names,
+         field indexes or ranges.
+        Examples:
+          -m A,B       # column A and B
+          -m 1,2       # 1st and 2nd column          
+          -m -1        # the last column (it's not unslecting in other commands)
+          -m 1,3-5     # 1st, from 3rd to 5th column
+          -m 1-        # 1st and later columns (all columns)
+          -m -3-       # the last 3 columns
+          -m -3--2     # the 2nd and 3rd to last columns
+          -m 1- -r -1  # all columns are center-aligned, except the last column
+                       # which is right-aligned. -r overides -m.
+         
   2. Remaining rows are read and immediately outputted, one by one, till the end.
 
 Styles:
@@ -670,11 +682,13 @@ Styles:
         ╚════╩══════╝
 
 Usage:
-  csvtk pretty [flags]
+  csvtk pretty [flags] 
 
 Flags:
-  -m, --align-center strings    align center/middle for selected columns (field index or column name)
-  -r, --align-right strings     align right for selected columns (field index or column name)
+  -m, --align-center strings    align right for selected columns (field index/range or column name, type
+                                "csvtk pretty -h" for examples)
+  -r, --align-right strings     align right for selected columns (field index/range or column name, type
+                                "csvtk pretty -h" for examples)
   -n, --buf-rows int            the number of rows to determine the min and max widths (default 128)
       --clip                    clip longer cell instead of wrapping
       --clip-mark string        clip mark (default "...")
@@ -734,7 +748,7 @@ Examples:
 
 2. align right/center for some columns
 
-        $ csvtk pretty testdata/names.csv -r 1,username -m first_name -w 6 -S bold
+        $ csvtk pretty testdata/names.csv -w 6 -S bold -r 1,username -m first_name 
         ┏━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┓
         ┃     id ┃ first_name ┃ last_name ┃ username ┃
         ┣━━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
@@ -747,6 +761,21 @@ Examples:
         ┃      1 ┃   Robert   ┃ Thompson  ┃      abc ┃
         ┣━━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
         ┃     NA ┃   Robert   ┃ Abel      ┃      123 ┃
+        ┗━━━━━━━━┻━━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━┛
+        
+        $ csvtk pretty testdata/names.csv -w 6 -S bold -m 1- -r -1
+        ┏━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┓
+        ┃   id   ┃ first_name ┃ last_name ┃ username ┃
+        ┣━━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
+        ┃   11   ┃    Rob     ┃   Pike    ┃      rob ┃
+        ┣━━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
+        ┃   2    ┃    Ken     ┃ Thompson  ┃      ken ┃
+        ┣━━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
+        ┃   4    ┃   Robert   ┃ Griesemer ┃      gri ┃
+        ┣━━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
+        ┃   1    ┃   Robert   ┃ Thompson  ┃      abc ┃
+        ┣━━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
+        ┃   NA   ┃   Robert   ┃   Abel    ┃      123 ┃
         ┗━━━━━━━━┻━━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━┛
 
 3. custom separator
@@ -3386,12 +3415,10 @@ Aliases:
 
 Flags:
   -h, --help               help for spread
-  -k, --key string         field of keys. e.g -f 1,2 or -f columnA,columnB, or -f -columnA for unselect
-                           columnA
+  -k, --key string         field of the key. e.g -k 1 or -k columnA
       --na string          content for filling NA data
   -s, --separater string   separater for values that share the same key (default "; ")
-  -v, --value string       field of values. e.g -f 1,2 or -f columnA,columnB, or -f -columnA for
-                           unselect columnA
+  -v, --value string       field of the value. e.g -v 1 or -v columnA
 
 ```
 

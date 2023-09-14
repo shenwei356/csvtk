@@ -232,8 +232,8 @@ var spreadCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(spreadCmd)
 
-	spreadCmd.Flags().StringP("key", "k", "", `field of keys. e.g -f 1,2 or -f columnA,columnB, or -f -columnA for unselect columnA`)
-	spreadCmd.Flags().StringP("value", "v", "", `field of values. e.g -f 1,2 or -f columnA,columnB, or -f -columnA for unselect columnA`)
+	spreadCmd.Flags().StringP("key", "k", "", `field of the key. e.g -k 1 or -k columnA`)
+	spreadCmd.Flags().StringP("value", "v", "", `field of the value. e.g -v 1 or -v columnA`)
 	spreadCmd.Flags().StringP("na", "", "", "content for filling NA data")
 	spreadCmd.Flags().StringP("separater", "s", "; ", "separater for values that share the same key")
 }
