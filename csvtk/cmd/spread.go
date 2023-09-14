@@ -60,6 +60,7 @@ var spreadCmd = &cobra.Command{
 			}
 		}
 		na := getFlagString(cmd, "na")
+		separater := getFlagString(cmd, "separater")
 
 		fieldStr := fieldKey + "," + fieldValue
 		fuzzyFields := false
@@ -108,9 +109,10 @@ var spreadCmd = &cobra.Command{
 		var fieldsMap map[int]interface{}
 		var f int
 		var left, key, val string
+		var vals []string
 		var ok bool
 		var items []string
-		data := make(map[string]map[string]string) // other column -> key -> value
+		data := make(map[string]map[string][]string) // other column -> key -> []value
 		keysMap := make(map[string]interface{}, 128)
 		keysOrder := make(map[string]int, 128)
 		var nKey int
@@ -178,13 +180,14 @@ var spreadCmd = &cobra.Command{
 			key, val = record.Selected[0], record.Selected[1]
 
 			if _, ok = data[left]; !ok {
-				data[left] = make(map[string]string, 8)
+				data[left] = make(map[string][]string, 8)
 			}
 
 			if _, ok = data[left][key]; !ok {
-				data[left][key] = val
+				data[left][key] = []string{val}
 			} else {
-				log.Warningf("duplicated record: %s (%s) for %s at line %d", key, val, strings.Join(items, ","), record.Line)
+				// log.Warningf("duplicated record: %s (%s) for %s at line %d", key, val, strings.Join(items, ","), record.Line)
+				data[left][key] = append(data[left][key], val)
 			}
 
 			if _, ok = keysMap[key]; !ok {
@@ -205,15 +208,15 @@ var spreadCmd = &cobra.Command{
 		}
 		checkError(writer.Write(append(HeaderRow, keys...)))
 
-		var m map[string]string
+		var m map[string][]string
 
 		for _, o := range stringutil.SortCountOfString(groupOrder, false) {
 			items = strings.Split(o.Key, "_shenwei356_")
 			m = data[o.Key]
 
 			for _, key = range keys {
-				if val, ok = m[key]; ok {
-					items = append(items, val)
+				if vals, ok = m[key]; ok {
+					items = append(items, strings.Join(vals, separater))
 				} else {
 					items = append(items, na)
 				}
@@ -232,4 +235,5 @@ func init() {
 	spreadCmd.Flags().StringP("key", "k", "", `field of keys. e.g -f 1,2 or -f columnA,columnB, or -f -columnA for unselect columnA`)
 	spreadCmd.Flags().StringP("value", "v", "", `field of values. e.g -f 1,2 or -f columnA,columnB, or -f -columnA for unselect columnA`)
 	spreadCmd.Flags().StringP("na", "", "", "content for filling NA data")
+	spreadCmd.Flags().StringP("separater", "s", "; ", "separater for values that share the same key")
 }

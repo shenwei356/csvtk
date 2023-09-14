@@ -100,7 +100,7 @@ Usage
 ```text
 csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.27.2
+Version: 0.27.3
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -194,7 +194,7 @@ Flags:
   -E, --ignore-empty-row       ignore empty rows
   -I, --ignore-illegal-row     ignore illegal rows. You can also use 'csvtk fix' to fix files with
                                different numbers of columns in rows
-      --infile-list string     file of input files list (one file per line), if given, they are appended
+  -X, --infile-list string     file of input files list (one file per line), if given, they are appended
                                to files from cli arguments
   -l, --lazy-quotes            if given, a quote may appear in an unquoted field and a non-doubled quote
                                may appear in a quoted field
@@ -3385,10 +3385,13 @@ Aliases:
   spread, wider
 
 Flags:
-  -h, --help           help for spread
-  -k, --key string     field of keys. e.g -f 1,2 or -f columnA,columnB, or -f -columnA for unselect columnA
-      --na string      content for filling NA data
-  -v, --value string   field of values. e.g -f 1,2 or -f columnA,columnB, or -f -columnA for unselect columnA
+  -h, --help               help for spread
+  -k, --key string         field of keys. e.g -f 1,2 or -f columnA,columnB, or -f -columnA for unselect
+                           columnA
+      --na string          content for filling NA data
+  -s, --separater string   separater for values that share the same key (default "; ")
+  -v, --value string       field of values. e.g -f 1,2 or -f columnA,columnB, or -f -columnA for
+                           unselect columnA
 
 ```
 
