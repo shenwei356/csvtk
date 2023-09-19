@@ -60,7 +60,6 @@ var xlsx2csvCmd = &cobra.Command{
 
 		xlsx, err := excelize.OpenFile(files[0])
 		checkError(err)
-		defer checkError(xlsx.Close())
 
 		sheets := xlsx.GetSheetMap()
 
@@ -78,6 +77,7 @@ var xlsx2csvCmd = &cobra.Command{
 					fmt.Printf("%d\t%s\n", index, sheets[index])
 				}
 			}
+			checkError(xlsx.Close())
 			return
 		}
 
@@ -148,6 +148,7 @@ var xlsx2csvCmd = &cobra.Command{
 			}
 			checkError(writer.Write(row))
 		}
+		checkError(xlsx.Close())
 
 		if config.IgnoreEmptyRow {
 			log.Warningf("file '%s': %d empty rows ignored", files[0], numEmptyRows)

@@ -12,6 +12,8 @@
       - support field range. [#244](https://github.com/shenwei356/csvtk/issues/244)
   - `csvtk mutate2`:
       - fix changing the order of the header row, the code was accidentally missing during code refactoring in v0.27.0. [#252](https://github.com/shenwei356/csvtk/issues/252)
+  - `csvtk xlsx2csv`:
+      - fix `open /tmp/excelize-: no such file or directory` error for big `.xlsx` file. [#251](https://github.com/shenwei356/csvtk/issues/251)
 - [csvtk v0.27.2](https://github.com/shenwei356/csvtk/releases/tag/v0.27.2)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.27.2/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.27.2)
   - `csvtk pretty`:
