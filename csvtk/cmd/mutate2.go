@@ -327,7 +327,32 @@ Custom functions:
 							colnamesMap[col] = fuzzyField2Regexp(col)
 						}
 
-						checkError(writer.Write(append(record.All, name)))
+						value = name
+						record2 = record.All
+						record2 = append(record2, value)
+						if after != "" {
+							if _fields, ok = colnames2fileds[after]; ok {
+								at = _fields[len(_fields)-1] + 1
+							} else {
+								checkError(fmt.Errorf(`column "%s" not existed in file: %s`, after, file))
+							}
+							copy(record2[at:], record2[at-1:len(record2)-1])
+							record2[at-1] = value
+						} else if before != "" {
+							if _fields, ok = colnames2fileds[before]; ok {
+								at = _fields[0]
+							} else {
+								checkError(fmt.Errorf(`column "%s" not existed in file: %s`, before, file))
+							}
+							copy(record2[at:], record2[at-1:len(record2)-1])
+							record2[at-1] = value
+						} else if at > 0 && at <= len(record2) {
+							copy(record2[at:], record2[at-1:len(record2)-1])
+							record2[at-1] = value
+						}
+
+						checkError(writer.Write(record2))
+
 						continue
 					}
 				}
