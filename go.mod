@@ -17,10 +17,11 @@ require (
 	github.com/shenwei356/go-logging v0.0.0-20171012171522-c6b9702d88ba
 	github.com/shenwei356/natsort v0.0.0-20220117010048-580176ad49fb
 	github.com/shenwei356/stable v0.1.4
-	github.com/shenwei356/util v0.5.1
+	github.com/shenwei356/util v0.5.2
 	github.com/shenwei356/xopen v0.2.2
 	github.com/spf13/cobra v1.7.0
 	github.com/tatsushid/go-prettytable v0.0.0-20141013043238-ed2d14c29939
+	github.com/twotwotwo/sorts v0.0.0-20160814051341-bf5c1f2b8553
 	github.com/xuri/excelize/v2 v2.7.1
 	gonum.org/v1/gonum v0.12.0
 	gonum.org/v1/plot v0.12.0
@@ -46,7 +47,6 @@ require (
 	github.com/rivo/uniseg v0.4.2 // indirect
 	github.com/rogpeppe/go-internal v1.9.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	github.com/twotwotwo/sorts v0.0.0-20160814051341-bf5c1f2b8553 // indirect
 	github.com/ulikunitz/xz v0.5.10 // indirect
 	github.com/xuri/efp v0.0.0-20220603152613-6918739fd470 // indirect
 	github.com/xuri/nfp v0.0.0-20220409054826-5e722a1d9e22 // indirect

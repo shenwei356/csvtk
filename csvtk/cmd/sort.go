@@ -24,7 +24,6 @@ import (
 	"encoding/csv"
 	"fmt"
 	"runtime"
-	"sort"
 	"strconv"
 	"strings"
 
@@ -33,6 +32,7 @@ import (
 	"github.com/shenwei356/util/stringutil"
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
+	"github.com/twotwotwo/sorts"
 )
 
 // sortCmd represents the sort command
@@ -89,42 +89,50 @@ var sortCmd = &cobra.Command{
 
 		sortTypes := []sortType{}
 		fieldsStrs := []string{}
+		var i int
+		var _key, _type string
 		for _, key := range keys {
-			items = strings.Split(key, ":")
-			if len(items) == 1 {
-				fieldsStrs = append(fieldsStrs, items[0])
-				sortTypes = append(sortTypes, sortType{FieldStr: items[0], Number: false, Reverse: false})
+			i = strings.LastIndexByte(key, ':')
+			if i < 0 || i == len(key)-1 {
+				_key = key
+				fieldsStrs = append(fieldsStrs, _key)
+				sortTypes = append(sortTypes, sortType{FieldStr: _key, Number: false, Reverse: false})
+			} else if i == 0 {
+				checkError(fmt.Errorf(`invalid key: "%s"`, key))
 			} else {
-				if items[0] == "" {
-					checkError(fmt.Errorf(`invalid key: "%s"`, key))
-				}
-				fieldsStrs = append(fieldsStrs, items[0])
-				switch items[1] {
+				_key = key[:i]
+				fieldsStrs = append(fieldsStrs, _key)
+				_type = key[i+1:]
+				switch _type {
 				case "N":
-					sortTypes = append(sortTypes, sortType{FieldStr: items[0], Natural: true, Reverse: false})
+					sortTypes = append(sortTypes, sortType{FieldStr: _key, Natural: true, Reverse: false})
 				case "Nr", "rN":
-					sortTypes = append(sortTypes, sortType{FieldStr: items[0], Natural: true, Reverse: true})
+					sortTypes = append(sortTypes, sortType{FieldStr: _key, Natural: true, Reverse: true})
 				case "n":
-					sortTypes = append(sortTypes, sortType{FieldStr: items[0], Number: true, Reverse: false})
+					sortTypes = append(sortTypes, sortType{FieldStr: _key, Number: true, Reverse: false})
 				case "r":
-					sortTypes = append(sortTypes, sortType{FieldStr: items[0], Number: false, Reverse: true})
+					sortTypes = append(sortTypes, sortType{FieldStr: _key, Number: false, Reverse: true})
 				case "nr", "rn":
-					sortTypes = append(sortTypes, sortType{FieldStr: items[0], Number: true, Reverse: true})
+					sortTypes = append(sortTypes, sortType{FieldStr: _key, Number: true, Reverse: true})
 				case "u":
-					if _, ok := levelsMap[items[0]]; !ok {
-						checkError(fmt.Errorf("level file not provided for field: %s", items[0]))
+					if _, ok := levelsMap[_key]; !ok {
+						checkError(fmt.Errorf("level file not provided for field: %s", _key))
 					}
-					sortTypes = append(sortTypes, sortType{FieldStr: items[0], Number: false, Reverse: false, UserDefined: true, Levels: levelsMap[items[0]]})
+					sortTypes = append(sortTypes, sortType{FieldStr: _key, Number: false, Reverse: false, UserDefined: true, Levels: levelsMap[items[0]]})
 				case "ur", "ru":
-					if _, ok := levelsMap[items[0]]; !ok {
-						checkError(fmt.Errorf("level file not provided for field: %s", items[0]))
+					if _, ok := levelsMap[_key]; !ok {
+						checkError(fmt.Errorf("level file not provided for field: %s", _key))
 					}
-					sortTypes = append(sortTypes, sortType{FieldStr: items[0], Number: false, Reverse: true, UserDefined: true, Levels: levelsMap[items[0]]})
+					sortTypes = append(sortTypes, sortType{FieldStr: _key, Number: false, Reverse: true, UserDefined: true, Levels: levelsMap[items[0]]})
 				default:
-					checkError(fmt.Errorf("invalid sort type: %s", items[1]))
+					// checkError(fmt.Errorf("invalid sort type: %s", _type))
+					_key = key
+					fieldsStrs[len(fieldsStrs)-1] = _key
+					sortTypes = append(sortTypes, sortType{FieldStr: _key, Number: false, Reverse: false})
 				}
 			}
 		}
+
 		fieldsStr := strings.Join(fieldsStrs, ",")
 
 		fuzzyFields := false
@@ -201,7 +209,9 @@ var sortCmd = &cobra.Command{
 				checkError(err)
 				field--
 			}
-			sortTypes2[i] = stringutil.SortType{Index: field,
+
+			sortTypes2[i] = stringutil.SortType{
+				Index:       field,
 				IgnoreCase:  ignoreCase,
 				Natural:     t.Natural,
 				Number:      t.Number,
@@ -215,7 +225,7 @@ var sortCmd = &cobra.Command{
 		for i, record := range data {
 			list[i] = stringutil.MultiKeyStringSlice{SortTypes: &sortTypes2, Value: record}
 		}
-		sort.Sort(stringutil.MultiKeyStringSliceList(list))
+		sorts.Quicksort(stringutil.MultiKeyStringSliceList(list))
 
 		if len(headerRow) > 0 {
 			checkError(writer.Write(headerRow))

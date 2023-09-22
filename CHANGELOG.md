@@ -1,3 +1,7 @@
+- [csvtk v0.28.1](https://github.com/shenwei356/csvtk/releases/tag/v0.28.1)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.28.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.28.1)
+  - `csvtk sort`:
+      - support column name containing colons. [#254](https://github.com/shenwei356/csvtk/issues/254)
 - [csvtk v0.28.0](https://github.com/shenwei356/csvtk/releases/tag/v0.28.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.28.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.28.0)
   - `csvtk`:
