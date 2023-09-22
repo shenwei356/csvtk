@@ -1192,7 +1192,7 @@
 <p>Usage</p>
 <pre><code class="language-text">csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.27.2
+Version: 0.28.0
 
 Author: Wei Shen &lt;shenwei356@gmail.com&gt;
 
@@ -1286,7 +1286,7 @@ Flags:
   -E, --ignore-empty-row       ignore empty rows
   -I, --ignore-illegal-row     ignore illegal rows. You can also use 'csvtk fix' to fix files with
                                different numbers of columns in rows
-      --infile-list string     file of input files list (one file per line), if given, they are appended
+  -X, --infile-list string     file of input files list (one file per line), if given, they are appended
                                to files from cli arguments
   -l, --lazy-quotes            if given, a quote may appear in an unquoted field and a non-doubled quote
                                may appear in a quoted field
@@ -1666,7 +1666,19 @@ How to:
          Usually, the text is wrapped in space (-x/--wrap-delimiter). But if one
          word is longer than the -W/--max-width, it will be force split.
      1b. Texts are aligned left (default), center (-m/--align-center)
-         or right (-r/--align-right).
+         or right (-r/--align-right). Users can specify columns with column names,
+         field indexes or ranges.
+        Examples:
+          -m A,B       # column A and B
+          -m 1,2       # 1st and 2nd column          
+          -m -1        # the last column (it's not unselecting in other commands)
+          -m 1,3-5     # 1st, from 3rd to 5th column
+          -m 1-        # 1st and later columns (all columns)
+          -m -3-       # the last 3 columns
+          -m -3--2     # the 2nd and 3rd to last columns
+          -m 1- -r -1  # all columns are center-aligned, except the last column
+                       # which is right-aligned. -r overides -m.
+
   2. Remaining rows are read and immediately outputted, one by one, till the end.
 
 Styles:
@@ -1745,11 +1757,13 @@ Styles:
         ╚════╩══════╝
 
 Usage:
-  csvtk pretty [flags]
+  csvtk pretty [flags] 
 
 Flags:
-  -m, --align-center strings    align center/middle for selected columns (field index or column name)
-  -r, --align-right strings     align right for selected columns (field index or column name)
+  -m, --align-center strings    align right for selected columns (field index/range or column name, type
+                                &quot;csvtk pretty -h&quot; for examples)
+  -r, --align-right strings     align right for selected columns (field index/range or column name, type
+                                &quot;csvtk pretty -h&quot; for examples)
   -n, --buf-rows int            the number of rows to determine the min and max widths (default 128)
       --clip                    clip longer cell instead of wrapping
       --clip-mark string        clip mark (default &quot;...&quot;)
@@ -1810,7 +1824,7 @@ $ cat testdata/names.csv  | csvtk pretty -S 3line -H
 </li>
 <li>
 <p>align right/center for some columns</p>
-<pre><code>$ csvtk pretty testdata/names.csv -r 1,username -m first_name -w 6 -S bold
+<pre><code>$ csvtk pretty testdata/names.csv -w 6 -S bold -r 1,username -m first_name 
 ┏━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┓
 ┃     id ┃ first_name ┃ last_name ┃ username ┃
 ┣━━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
@@ -1823,6 +1837,21 @@ $ cat testdata/names.csv  | csvtk pretty -S 3line -H
 ┃      1 ┃   Robert   ┃ Thompson  ┃      abc ┃
 ┣━━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
 ┃     NA ┃   Robert   ┃ Abel      ┃      123 ┃
+┗━━━━━━━━┻━━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━┛
+
+$ csvtk pretty testdata/names.csv -w 6 -S bold -m 1- -r -1
+┏━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┓
+┃   id   ┃ first_name ┃ last_name ┃ username ┃
+┣━━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
+┃   11   ┃    Rob     ┃   Pike    ┃      rob ┃
+┣━━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
+┃   2    ┃    Ken     ┃ Thompson  ┃      ken ┃
+┣━━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
+┃   4    ┃   Robert   ┃ Griesemer ┃      gri ┃
+┣━━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
+┃   1    ┃   Robert   ┃ Thompson  ┃      abc ┃
+┣━━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
+┃   NA   ┃   Robert   ┃   Abel    ┃      123 ┃
 ┗━━━━━━━━┻━━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━┛
 </code></pre>
 </li>
@@ -4489,10 +4518,11 @@ Aliases:
   spread, wider
 
 Flags:
-  -h, --help           help for spread
-  -k, --key string     field of keys. e.g -f 1,2 or -f columnA,columnB, or -f -columnA for unselect columnA
-      --na string      content for filling NA data
-  -v, --value string   field of values. e.g -f 1,2 or -f columnA,columnB, or -f -columnA for unselect columnA
+  -h, --help               help for spread
+  -k, --key string         field of the key. e.g -k 1 or -k columnA
+      --na string          content for filling NA data
+  -s, --separater string   separater for values that share the same key (default &quot;; &quot;)
+  -v, --value string       field of the value. e.g -v 1 or -v columnA
 
 </code></pre>
 <p>Examples:</p>
