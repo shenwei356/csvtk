@@ -2,18 +2,18 @@
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.28.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.28.0)
   - `csvtk`:
       - add the shortcut `-X` for the flag `--infile-list`. [#249](https://github.com/shenwei356/csvtk/issues/249)
-  - `csvtk comb`:
-      - fix the empty result bug for alphabet sizes greater than 64.
-  - `csvtk join`:
-      - a new flag `-P/--prefix-duplicates`: add filenames as colname prefixes only for duplicated colnames. [#246](https://github.com/shenwei356/csvtk/issues/246)
+  - `csvtk pretty`:
+      - support field ranges for `-m/--align-center` and `-r/--align-right`. [#244](https://github.com/shenwei356/csvtk/issues/244)
   - `csvtk spread`:
       - support values sharing the same keys. [#248](https://github.com/shenwei356/csvtk/issues/248)
-  - `csvtk pretty`:
-      - support field range. [#244](https://github.com/shenwei356/csvtk/issues/244)
+  - `csvtk join`:
+      - a new flag `-P/--prefix-duplicates`: add filenames as colname prefixes only for duplicated colnames. [#246](https://github.com/shenwei356/csvtk/issues/246)
   - `csvtk mutate2`:
       - fix changing the order of the header row, the code was accidentally missing during code refactoring in v0.27.0. [#252](https://github.com/shenwei356/csvtk/issues/252)
   - `csvtk xlsx2csv`:
-      - fix `open /tmp/excelize-: no such file or directory` error for big `.xlsx` file. [#251](https://github.com/shenwei356/csvtk/issues/251)
+      - fix `open /tmp/excelize-: no such file or directory` error for big `.xlsx` files. [#251](https://github.com/shenwei356/csvtk/issues/251)
+  - `csvtk comb`:
+      - fix the empty result bug for alphabet sizes greater than 64.
 - [csvtk v0.27.2](https://github.com/shenwei356/csvtk/releases/tag/v0.27.2)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.27.2/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.27.2)
   - `csvtk pretty`:
