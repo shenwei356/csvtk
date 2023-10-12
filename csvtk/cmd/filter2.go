@@ -54,7 +54,7 @@ Variables formats:
 Supported operators and types:
 
   Modifiers: + - / * & | ^ ** % >> <<
-  Comparators: > >= < <= == != =~ !~
+  Comparators: > >= < <= == != =~ !~ in
   Logical ops: || &&
   Numeric constants, as 64-bit floating point (12345.678)
   String constants (single quotes: 'foobar')
