@@ -1868,6 +1868,12 @@ Examples:
         2,Ken,Thompson,ken
         4,Robert,Griesemer,gri
 
+        # negate by wrapping entire expression in `!()`
+        $ cat testdata/names.csv | csvtk filter2 -f '!($username in ("rob", "ken"))'
+        id,first_name,last_name,username
+        4,Robert,Griesemer,gri
+        1,Robert,Thompson,abc
+        NA,Robert,Abel,123
 
 
 ## join
