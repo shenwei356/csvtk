@@ -102,6 +102,11 @@ so only columns match that of the first files kept.
 			}
 		}
 
+		if len(COLNAMES) == 0 {
+			log.Warningf("csvtk concat: no input data")
+			return
+		}
+
 		writer := csv.NewWriter(outfh)
 		if config.OutTabs || config.Tabs {
 			if config.OutDelimiter == ',' {
