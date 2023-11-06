@@ -69,6 +69,7 @@ func init() {
 	plotCmd.PersistentFlags().IntP("label-size", "", 14, "label font size")
 	plotCmd.PersistentFlags().Float64P("axis-width", "", 1.5, "axis width")
 	plotCmd.PersistentFlags().Float64P("tick-width", "", 1.5, "axis tick width")
+	plotCmd.PersistentFlags().IntP("tick-label-size", "", 12, "tick label font size")
 
 	plotCmd.PersistentFlags().StringP("format", "", "png", `image format for stdout when flag -o/--out-file not given. available values: eps, jpg|jpeg, pdf, png, svg, and tif|tiff.`)
 
@@ -108,6 +109,7 @@ func getPlotConfigs(cmd *cobra.Command) *plotConfigs {
 	config.height = vg.Length(getFlagPositiveFloat64(cmd, "height"))
 	config.axisWidth = vg.Length(getFlagPositiveFloat64(cmd, "axis-width"))
 	config.tickWidth = vg.Length(getFlagPositiveFloat64(cmd, "tick-width"))
+	config.tickLabelSize = vg.Length(getFlagPositiveInt(cmd, "tick-label-size"))
 	config.xlab = getFlagString(cmd, "xlab")
 	config.ylab = getFlagString(cmd, "ylab")
 
@@ -155,7 +157,7 @@ func getPlotConfigs(cmd *cobra.Command) *plotConfigs {
 type plotConfigs struct {
 	dataFieldStr, groupFieldStr, fieldStr string
 	title, xlab, ylab                     string
-	titleSize, labelSize                  vg.Length
+	titleSize, labelSize, tickLabelSize   vg.Length
 	width, height, axisWidth, tickWidth   vg.Length
 	xmin, xmax, ymin, ymax                float64
 	xminStr, xmaxStr, yminStr, ymaxStr    string

@@ -199,6 +199,8 @@ Notes:
 		p.Y.Width = plotConfig.axisWidth
 		p.X.Tick.Width = plotConfig.tickWidth
 		p.Y.Tick.Width = plotConfig.tickWidth
+		p.X.Tick.Label.Font.Size = plotConfig.tickLabelSize
+		p.Y.Tick.Label.Font.Size = plotConfig.tickLabelSize
 
 		if plotConfig.xminStr != "" {
 			log.Warning("flag --x-min ignored for command box")

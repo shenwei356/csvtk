@@ -2,8 +2,10 @@
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.28.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.28.1)
   - `csvtk sort`:
       - support column name containing colons. [#254](https://github.com/shenwei356/csvtk/issues/254)
-  - `csvtk filter2:
+  - `csvtk filter2`:
       - update doc: add the `in` keyword. [#195](https://github.com/shenwei356/csvtk/pull/195)
+  - `csvtk plot`:
+      - add a new flag `--tick-label-size`.
 - [csvtk v0.28.0](https://github.com/shenwei356/csvtk/releases/tag/v0.28.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.28.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.28.0)
   - `csvtk`:

@@ -3912,6 +3912,7 @@ Flags:
       --label-size int       label font size (default 14)
       --na-values strings    NA values, case ignored (default [,NA,N/A])
       --skip-na              skip NA values in --na-values
+      --tick-label-size int   tick label font size (default 12)
       --tick-width float     axis tick width (default 1.5)
       --title string         Figure title
       --title-size int       title font size (default 16)
