@@ -6,6 +6,8 @@
       - update doc: add the `in` keyword. [#195](https://github.com/shenwei356/csvtk/pull/195)
   - `csvtk plot`:
       - add a new flag `--tick-label-size`.
+  - `csvtk del-header`:
+      - fix deleting headers of 2nd and later files. [#257](https://github.com/shenwei356/csvtk/issues/257)
 - [csvtk v0.28.0](https://github.com/shenwei356/csvtk/releases/tag/v0.28.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.28.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.28.0)
   - `csvtk`:

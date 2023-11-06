@@ -34,6 +34,9 @@ var delHeaderCmd = &cobra.Command{
 	Short: "delete column names",
 	Long: `delete column names
 
+Attention:
+  1. It delete the first lines of all input files.
+
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
@@ -59,8 +62,9 @@ var delHeaderCmd = &cobra.Command{
 			checkError(writer.Error())
 		}()
 
-		once := true
 		for _, file := range files {
+			once := true
+
 			csvReader, err := newCSVReaderByConfig(config, file)
 
 			if err != nil {

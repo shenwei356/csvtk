@@ -2760,6 +2760,9 @@ Usage
 ```text
 delete column names
 
+Attention:
+  1. It delete the first lines of all input files.
+
 Usage:
   csvtk del-header [flags]
 
