@@ -171,62 +171,6 @@ Custom functions:
 			}
 		}
 
-		// expressions doe not contains `$`
-		if !reFilter2.MatchString(exprStr) {
-			// checkError(fmt.Errorf("invalid expression: %s", exprStr))
-			var expression *govaluate.EvaluableExpression
-			if containCustomFuncs {
-				expression, err = govaluate.NewEvaluableExpressionWithFunctions(exprStr, functions)
-			} else {
-				expression, err = govaluate.NewEvaluableExpression(exprStr)
-			}
-			checkError(err)
-			var result interface{}
-			result, err = expression.Evaluate(emptyParams)
-			if err != nil {
-				checkError(fmt.Errorf("fail to evaluate: %s", exprStr))
-			}
-			result2 := fmt.Sprintf("%v", result)
-			for _, file := range files {
-				var csvReader *CSVReader
-				csvReader, err = newCSVReaderByConfig(config, file)
-
-				if err != nil {
-					if err == xopen.ErrNoContent {
-						log.Warningf("csvtk mutate2: skipping empty input file: %s", file)
-						continue
-					}
-					checkError(err)
-				}
-
-				csvReader.Read(ReadOption{
-					FieldStr: "1-",
-				})
-
-				checkFirstLine := true
-				for record := range csvReader.Ch {
-					if record.Err != nil {
-						checkError(record.Err)
-					}
-
-					if checkFirstLine {
-						checkFirstLine = false
-
-						if !config.NoHeaderRow || record.IsHeaderRow { // do not replace head line
-							checkError(writer.Write(append(record.All, name)))
-							continue
-						}
-					}
-
-					checkError(writer.Write(append(record.All, result2)))
-				}
-
-				readerReport(&config, csvReader, file)
-			}
-
-			return
-		}
-
 		decimalWidth := getFlagNonNegativeInt(cmd, "decimal-width")
 		decimalFormat := fmt.Sprintf("%%.%df", decimalWidth)
 
@@ -330,6 +274,7 @@ Custom functions:
 						value = name
 						record2 = record.All
 						record2 = append(record2, value)
+
 						if after != "" {
 							if _fields, ok = colnames2fileds[after]; ok {
 								at = _fields[len(_fields)-1] + 1
@@ -475,8 +420,8 @@ Custom functions:
 				}
 
 				record2 = record.All
-
 				record2 = append(record2, value)
+
 				if after != "" {
 					if _fields, ok = colnames2fileds[after]; ok {
 						at = _fields[len(_fields)-1] + 1

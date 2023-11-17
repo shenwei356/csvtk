@@ -4,6 +4,7 @@
       - support column name containing colons. [#254](https://github.com/shenwei356/csvtk/issues/254)
   - `csvtk filter2`:
       - update doc: add the `in` keyword. [#195](https://github.com/shenwei356/csvtk/pull/195)
+      - fix specifying the position for the new column containing only a constant string. [#252](https://github.com/shenwei356/csvtk/issues/252)
   - `csvtk plot`:
       - add a new flag `--tick-label-size`.
   - `csvtk del-header`:
