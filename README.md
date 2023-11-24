@@ -1,7 +1,8 @@
 # csvtk - a cross-platform, efficient and practical CSV/TSV toolkit
 
 - **Documents:** [http://bioinf.shenwei.me/csvtk](http://bioinf.shenwei.me/csvtk/)
-( [**Usage**](http://bioinf.shenwei.me/csvtk/usage/)  and [**Tutorial**](http://bioinf.shenwei.me/csvtk/tutorial/)). [中文介绍](http://bioinf.shenwei.me/csvtk/chinese)
+( [**Usage**](http://bioinf.shenwei.me/csvtk/usage/), [**Tutorial**](http://bioinf.shenwei.me/csvtk/tutorial/) and [**FAQs**](http://bioinf.shenwei.me/csvtk/faq/)).
+[中文介绍](http://bioinf.shenwei.me/csvtk/chinese)
 - **Source code:**  [https://github.com/shenwei356/csvtk](https://github.com/shenwei356/csvtk) [![GitHub stars](https://img.shields.io/github/stars/shenwei356/csvtk.svg?style=social&label=Star&?maxAge=2592000)](https://github.com/shenwei356/csvtk)
 [![license](https://img.shields.io/github/license/shenwei356/csvtk.svg?maxAge=2592000)](https://github.com/shenwei356/csvtk/blob/master/LICENSE)
 - **Latest version:** [![Latest Stable Version](https://img.shields.io/github/release/shenwei356/csvtk.svg?style=flat)](https://github.com/shenwei356/csvtk/releases)
@@ -63,7 +64,7 @@ It could save you lots of time in (not) writing Python/R scripts.
 
 ## Subcommands
 
-51 subcommands in total.
+53 subcommands in total.
 
 **Information**
 
@@ -108,6 +109,8 @@ It could save you lots of time in (not) writing Python/R scripts.
 **Edit**
 
 - [`fix`](https://bioinf.shenwei.me/csvtk/usage/#fix): fix CSV/TSV with different numbers of columns in rows
+- [`fix-quotes`](https://bioinf.shenwei.me/csvtk/usage/#fix-quotes): fix malformed CSV/TSV caused by double-quotes
+- [`del-quotes`](https://bioinf.shenwei.me/csvtk/usage/#del-quotes): remove extra double-quotes added by `fix-quotes`
 - [`add-header`](https://bioinf.shenwei.me/csvtk/usage/#add-header): add column names
 - [`del-header`](https://bioinf.shenwei.me/csvtk/usage/#del-header): delete column names
 - [`rename`](https://bioinf.shenwei.me/csvtk/usage/#rename): renames column names with new names

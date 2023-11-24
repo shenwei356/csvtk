@@ -1,0 +1,6 @@
+1	Cellvibrio	no quotes & not tab
+2	"Cellvibrio gilvus"	quotes can be removed
+3	"quotes	required"	quotes needed (with a tab in the cell)
+4	fake" record	bare double-quote in non-quoted-field
+5	"Cellvibrio" Winogradsky	only with doub-quote in the beginning
+6	fake record2"	"only with doub-quote in the end"

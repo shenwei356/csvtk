@@ -100,7 +100,7 @@ Usage
 ```text
 csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.28.0
+Version: 0.29.0
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -145,10 +145,12 @@ Available Commands:
   csv2xlsx        convert CSV/TSV files to XLSX file
   cut             select and arrange fields
   del-header      delete column names
+  del-quotes      remove extra double quotes added by 'fix-quotes'
   dim             dimensions of CSV file
   filter          filter rows by values of selected fields with arithmetic expression
   filter2         filter rows by awk-like arithmetic/string expressions
   fix             fix CSV/TSV with different numbers of columns in rows
+  fix-quotes      fix malformed CSV/TSV caused by double-quotes
   fmtdate         format date of selected fields
   fold            fold multiple values of a field into cells of groups
   freq            frequencies of selected fields
@@ -207,7 +209,7 @@ Flags:
   -Z, --show-row-number        show row number as the first column, with header row skipped
   -t, --tabs                   specifies that the input CSV file is delimited with tabs. Overrides "-d"
 
-Use "csvtk [command] --help" for more information about a command
+Use "csvtk [command] --help" for more information about a command.
 ```
 
 ## headers
@@ -2702,6 +2704,139 @@ $ cat testdata/unequal_ncols.csv | csvtk fix | csvtk pretty -S grid
 +----+------------+-----------+-----+
 
 ```
+
+## fix-quotes
+
+Usage
+
+```text
+fix malformed CSV/TSV caused by double-quotes
+
+This command fixes fields not appropriately enclosed by double-quotes
+to meet the RFC4180 standard (https://rfc-editor.org/rfc/rfc4180.html).
+
+When and how to:
+  1. Values containing bare double quotes. e.g.,
+       a,abc" xyz,d
+     Error information: bare " in non-quoted-field.
+     Fix: adding the flag -l/--lazy-quotes.
+     Using this command:
+       a,abc" xyz,d   ->   a,"abc"" xyz",d
+  2. Values with double quotes in the begining but not in the end. e.g.,
+       a,"abc" xyz,d
+     Error information: extraneous or missing " in quoted-field.
+     Using this command:
+       a,"abc" xyz,d  ->   a,"""abc"" xyz",d
+
+Next:
+  1. You can process the data without the flag -l/--lazy-quotes.
+  2. Use 'csvtk del-quotes' if you want to restore the original format.
+
+Limitation:
+  1. Values containing line breaks are not supported.
+
+Usage:
+  csvtk fix-quotes [flags]
+
+Flags:
+  -h, --help   help for fix-quotes
+```
+
+Examples:
+
+1. Test data, in which there are five cases with values containing double quotes.
+
+        $ cat testdata/malformed.tsv
+        1       Cellvibrio      no quotes & not tab
+        2       "Cellvibrio gilvus"     quotes can be removed
+        3       "quotes required"       quotes needed (with a tab in the cell)
+        4       fake" record    bare double-quote in non-quoted-field
+        5       "Cellvibrio" Winogradsky        only with doub-quote in the beginning
+        6       fake record2"   "only with doub-quote in the end"
+
+        $ cat testdata/malformed.tsv  | csvtk cut -f 1-
+        [ERRO] parse error on line 2, column 3: bare " in non-quoted-field
+
+        # -l does not work, and it's messed up.
+        $ cat testdata/malformed.tsv  | csvtk cut -f 1- -l
+        1       Cellvibrio      no quotes & not tab
+        "2      ""Cellvibrio gilvus""   quotes can be removed"
+        "3      ""quotes        required""      quotes needed (with a tab in the cell)"
+        "4      fake"" record   bare double-quote in non-quoted-field"
+        "5      ""Cellvibrio"" Winogradsky      only with doub-quote in the beginning"
+        "6      fake record2""  ""only with doub-quote in the end"""
+
+1. Fix it!!!
+
+        $ cat testdata/malformed.tsv  | csvtk fix-quotes -t
+        1       Cellvibrio      no quotes & not tab
+        2       "Cellvibrio gilvus"     quotes can be removed
+        3       "quotes required"       quotes needed (with a tab in the cell)
+        4       "fake"" record" bare double-quote in non-quoted-field
+        5       """Cellvibrio"" Winogradsky"    only with doub-quote in the beginning
+        6       "fake record2"""        "only with doub-quote in the end"
+
+        # pretty
+        $ cat testdata/malformed.tsv  | csvtk fix-quotes -t | csvtk pretty -Ht -S grid
+        +---+--------------------------+----------------------------------------+
+        | 1 | Cellvibrio               | no quotes & not tab                    |
+        +---+--------------------------+----------------------------------------+
+        | 2 | Cellvibrio gilvus        | quotes can be removed                  |
+        +---+--------------------------+----------------------------------------+
+        | 3 | quotes required          | quotes needed (with a tab in the cell) |
+        +---+--------------------------+----------------------------------------+
+        | 4 | fake" record             | bare double-quote in non-quoted-field  |
+        +---+--------------------------+----------------------------------------+
+        | 5 | "Cellvibrio" Winogradsky | only with doub-quote in the beginning  |
+        +---+--------------------------+----------------------------------------+
+        | 6 | fake record2"            | only with doub-quote in the end        |
+        +---+--------------------------+----------------------------------------+
+
+        # do something, like searching rows containing double-quotes.
+        # since the command-line argument parser csvtk uses parse the value of flag -p
+        # as CSV data, we have to use -p '""""' to represents one double-quotes,
+        # where the outter two double quotes are used to quote the value,
+        # and the two inner double-quotes actually means an escaped double-quote
+        #
+        $ cat testdata/malformed.tsv  \
+            | csvtk fix-quotes -t \
+            | csvtk grep -Ht -f 2 -r -p '""""'
+        4       "fake"" record" bare double-quote in non-quoted-field
+        5       """Cellvibrio"" Winogradsky"    only with doub-quote in the beginning
+        6       "fake record2"""        only with doub-quote in the end
+
+1. Note that fixed rows are different from the orginal ones, you can use `csvtk del-quotes` to reset them.
+
+        $ cat testdata/malformed.tsv  \
+            | csvtk fix-quotes -t \
+            | csvtk filter2 -t -f '$1 > 0' \
+            | csvtk del-quotes -t
+        1       Cellvibrio      no quotes & not tab
+        2       Cellvibrio gilvus       quotes can be removed
+        3       "quotes required"       quotes needed (with a tab in the cell)
+        4       fake" record    bare double-quote in non-quoted-field
+        5       "Cellvibrio" Winogradsky        only with doub-quote in the beginning
+        6       fake record2"   only with doub-quote in the end
+
+
+## del-quotes
+
+Usage
+
+```text
+remove extra double quotes added by 'fix-quotes'
+
+Limitation:
+  1. Values containing line breaks are not supported.
+
+Usage:
+  csvtk del-quotes [flags]
+
+Flags:
+  -h, --help   help for del-quotes
+```
+
+Examples: see eamples of [fix-quotes](#fix-quotes)
 
 ## add-header
 

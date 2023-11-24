@@ -1,5 +1,12 @@
-- [csvtk v0.28.1](https://github.com/shenwei356/csvtk/releases/tag/v0.28.1)
-[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.28.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.28.1)
+- [csvtk v0.29.0](https://github.com/shenwei356/csvtk/releases/tag/v0.29.0)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.29.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.29.0)
+  - new commands:
+      - [`fix-quotes`](https://bioinf.shenwei.me/csvtk/usage/#fix-quotes): fix malformed CSV/TSV caused by double-quotes. [#260](https://github.com/shenwei356/csvtk/issues/260)
+      - [`del-quotes`](https://bioinf.shenwei.me/csvtk/usage/#del-quotes): remove extra double-quotes added by `fix-quotes`.
+  - `csvtk del-header`:
+      - fix deleting headers of 2nd and later files. [#257](https://github.com/shenwei356/csvtk/issues/257)
+  - `csvtk concat`:
+      - fix panic when no data found.
   - `csvtk sort`:
       - support column name containing colons. [#254](https://github.com/shenwei356/csvtk/issues/254)
   - `csvtk filter2`:
@@ -7,10 +14,8 @@
       - fix specifying the position for the new column containing only a constant string. [#252](https://github.com/shenwei356/csvtk/issues/252)
   - `csvtk plot`:
       - add a new flag `--tick-label-size`.
-  - `csvtk del-header`:
-      - fix deleting headers of 2nd and later files. [#257](https://github.com/shenwei356/csvtk/issues/257)
-  - `csvtk concat`:
-      - fix panic when no data found.
+  - `csvtk pretty`:
+      - replace tabs with spaces.
 - [csvtk v0.28.0](https://github.com/shenwei356/csvtk/releases/tag/v0.28.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.28.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.28.0)
   - `csvtk`:

@@ -16,9 +16,9 @@ require (
 	github.com/shenwei356/breader v0.3.2
 	github.com/shenwei356/go-logging v0.0.0-20171012171522-c6b9702d88ba
 	github.com/shenwei356/natsort v0.0.0-20220117010048-580176ad49fb
-	github.com/shenwei356/stable v0.1.4
+	github.com/shenwei356/stable v0.1.5
 	github.com/shenwei356/util v0.5.2
-	github.com/shenwei356/xopen v0.2.2
+	github.com/shenwei356/xopen v0.3.1
 	github.com/spf13/cobra v1.7.0
 	github.com/tatsushid/go-prettytable v0.0.0-20141013043238-ed2d14c29939
 	github.com/twotwotwo/sorts v0.0.0-20160814051341-bf5c1f2b8553
@@ -31,6 +31,7 @@ require (
 	git.sr.ht/~sbinet/gg v0.3.1 // indirect
 	github.com/VividCortex/ewma v1.2.0 // indirect
 	github.com/ajstarks/svgo v0.0.0-20211024235047-1546f124cd8b // indirect
+	github.com/dsnet/compress v0.0.1 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/go-fonts/liberation v0.3.0 // indirect
 	github.com/go-latex/latex v0.0.0-20230307184459-12ec69307ad9 // indirect
