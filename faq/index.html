@@ -13,8 +13,10 @@
       
       
       
-        <link rel="prev" href="../tutorial/">
+        <link rel="prev" href="../usage/">
       
+      
+        <link rel="next" href="../tutorial/">
       
       
       <link rel="icon" href="../files/favicon.ico">
@@ -22,7 +24,7 @@
     
     
       
-        <title>中文介绍 - csvtk - CSV/TSV Toolkit</title>
+        <title>FAQs - csvtk - CSV/TSV Toolkit</title>
       
     
     
@@ -73,7 +75,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#_1" class="md-skip">
+        <a href="#frequently-asked-questions" class="md-skip">
           Skip to content
         </a>
       
@@ -109,7 +111,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              中文介绍
+              FAQs
             
           </span>
         </div>
@@ -279,9 +281,29 @@
       
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../faq/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    FAQs
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -290,6 +312,47 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-specification-of-csv-format" class="md-nav__link">
+    The specification of CSV format
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bare-in-non-quoted-field" class="md-nav__link">
+    bare " in non-quoted-field
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#extraneous-or-missing-in-quoted-field" class="md-nav__link">
+    extraneous or missing " in quoted-field
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -317,27 +380,9 @@
       
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    中文介绍
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../chinese/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -346,52 +391,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    介绍
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    功能
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    使用
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    例子
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -432,6 +431,8 @@
   
   
   
+    
+  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -440,29 +441,22 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    介绍
+  <a href="#the-specification-of-csv-format" class="md-nav__link">
+    The specification of CSV format
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    功能
+  <a href="#bare-in-non-quoted-field" class="md-nav__link">
+    bare " in non-quoted-field
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    使用
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    例子
+  <a href="#extraneous-or-missing-in-quoted-field" class="md-nav__link">
+    extraneous or missing " in quoted-field
   </a>
   
 </li>
@@ -485,298 +479,73 @@
   
 
 
-  <h1>中文介绍</h1>
+<h1 id="frequently-asked-questions">Frequently Asked Questions</h1>
+<h2 id="the-specification-of-csv-format">The specification of CSV format</h2>
+<p>The CSV parser used by csvtk follows the <a href="https://rfc-editor.org/rfc/rfc4180.html">RFC4180</a> specification.</p>
+<h2 id="bare-in-non-quoted-field">bare " in non-quoted-field</h2>
+<pre><code>   5.  Each field may or may not be enclosed in double quotes (however
+       some programs, such as Microsoft Excel, do not use double quotes
+       at all).  If fields are not enclosed with double quotes, then
+       double quotes may not appear inside the fields.  For example:
 
-<p>如同生物信息领域中的FASTA/Q格式一样，CSV/TSV作为计算机、数据科学和生物信息的基本格式，应用非常广泛。常用的处理软件包括：</p>
-<ol>
-<li>以微软Excel为代表的电子表格软件</li>
-<li>Notepad++/SublimeText等文本编辑器</li>
-<li>sed/awk/cut等Shell命令</li>
-<li>各种编程语言的数据处理库。</li>
-</ol>
-<p>然而，电子表格软件和文本编辑器固然强大，但依赖鼠标操作，不适合批量处理；<strong>sed/awk/cut等Shell命令主要用于通用的表格数据，不适合含有标题行的CSV格式</strong>；<strong>为了一个小操作写Python/R脚本也有点小题大作，且难以复用</strong>。</p>
-<p>开发csvtk前现有的工具主要是Python写的csvkit，Rust写的xsv，C语言写的miller，都各有优劣。当时我刚开发完seqkit，投文章过程中时间充足，便想趁热再造一个轮子。</p>
-<p>所以我决定写一个命令行工具来满足CSV/TSV格式的常见操作，这就是csvtk了。</p>
-<h2 id="_1">介绍</h2>
-<p>基本信息</p>
-<ul>
-<li>工具类型: 命令行工具，子命令结构</li>
-<li>支持格式: CSV/TSV, plain/gzip-compressed</li>
-<li>编程语言: Go</li>
-<li>支持平台: Linux, OS X， Windows 等</li>
-<li>发布方式: 单一可执行二进制文件，下载即用</li>
-<li>发布平台: Github, Bioconda</li>
-<li>项目主页: http://bioinf.shenwei.me/csvtk/</li>
-<li>开源地址: https://github.com/shenwei356/csvtk</li>
-</ul>
-<p>特性</p>
-<ul>
-<li>跨平台</li>
-<li><strong>轻量，无任何依赖，无需编译、配置，下载即用</strong></li>
-<li><strong>快速</strong></li>
-<li><strong>支持stdin和gzip压缩的输入和输出文件，便于流处理</strong></li>
-<li><strong>27个子命令提供多种实用的功能，且能通过命令行管道组合</strong></li>
-<li>支持Bash自动补全</li>
-<li>支持简单的绘图</li>
-</ul>
-<h2 id="_2">功能</h2>
-<p>在开发csvtk之前的两三年间，我已经写了几个可以复用的Python/Perl脚本（https://github.com/shenwei356/datakit） ，包括csv2tab、csvtk_grep、csv_join、csv_melt，intersection，unique。所以我的计划是首先集成这些已有的功能，随后根据需求进行扩展。</p>
-<p>到目前为止，csvtk已有27个子命令，分为以下几大类：</p>
-<ul>
-<li>信息<ul>
-<li><code>headers</code> 直观打印标题行（<strong>操作列数较多的CSV前使用最佳</strong>）</li>
-<li><code>stats</code> 基本统计</li>
-<li><code>stats2</code> 对选定的数值列进行基本统计</li>
-</ul>
-</li>
-<li>格式转化<ul>
-<li><code>pretty</code> 转为美观、可读性强的格式（<strong>最常用命令之一</strong>）</li>
-<li><code>csv2tab</code> 转CSV为制表符分割格式（TSV）</li>
-<li><code>tab2csv</code> 转TSV为CSV</li>
-<li><code>space2tab</code> 转空格分割格式为TSV</li>
-<li><code>transpose</code> 转置CSV/TSV</li>
-<li><code>csv2md</code> 转CSV/TSV为makrdown格式（<strong>写文档常用</strong>）</li>
-</ul>
-</li>
-<li>集合操作<ul>
-<li><code>head</code> 打印前N条记录</li>
-<li><code>sample</code> 按比例随机采样</li>
-<li><code>cut</code> 选择特定列，支持<strong>按列或列名进行基本选择、范围选择、模糊选择、负向选择</strong>（<strong>最常用命令之一，非常强大</strong>）</li>
-<li><code>uniq</code> 无须排序，返回按指定（多）列作为key的唯一记录（好绕。。）</li>
-<li><code>freq</code> 按指定（多）列进行计数（<strong>常用</strong>）</li>
-<li><code>inter</code> 多个文件间的交集</li>
-<li><code>grep</code> 指定（多）列为Key进行搜索（<strong>最常用命令之一，可按指定列搜索</strong>）</li>
-<li><code>filter</code> 按指定（多）列的数值进行过滤</li>
-<li><code>filter2</code> 用类似awk的数值/表达式，按指定（多）列的数值进行过滤</li>
-<li><code>join</code> 合并多个文件（<strong>常用</strong>）</li>
-</ul>
-</li>
-<li>编辑<ul>
-<li><code>rename</code> 直接重命名指定（多）列名（<strong>简单而实用</strong>）</li>
-<li><code>rename2</code> 以正则表达式重命名指定（多）列名（<strong>简单而实用</strong>）</li>
-<li><code>replace</code> 以正则表达式对指定（多）列进行替换编辑（<strong>最常用命令之一，可按指定列编辑</strong>）</li>
-<li><code>mutate</code> 以正则表达式基于已有列创建新的一列（<strong>常用于生成多列测试数据</strong>）</li>
-<li><code>mutate2</code> 用类似awk的数值/表达式，以正则表达式基于已有（多）列创建新的一列（<strong>常用</strong>）</li>
-<li><code>gather</code> 类似于R里面tidyr包的gather方法</li>
-</ul>
-</li>
-<li>排序<ul>
-<li><code>sort</code> 按指定（多）列进行排序</li>
-</ul>
-</li>
-<li>绘图<ul>
-<li><code>plot</code> 基本绘图<ul>
-<li><code>plot hist</code> histogram</li>
-<li><code>plot box</code> boxplot</li>
-<li><code>plot line</code> line plot and scatter plot</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>其它<ul>
-<li><code>version</code>   版本信息和检查新版本</li>
-<li><code>genautocomplete</code> 生成支持Bash自动补全的配置文件，重启Terminal生效。</li>
-</ul>
-</li>
-</ul>
-<h2 id="_3">使用</h2>
-<ol>
-<li><strong>输入数据要求每行的列数一致，空行也会报错</strong></li>
-<li><strong>csvtk默认输入数据含有标题行，如没有请开启全局参数<code>-H</code></strong></li>
-<li><strong>csvtk默认输入数据为CSV格式，如为TSV请开启全局参数<code>-t</code></strong></li>
-<li>输入数据列名最好唯一无重复</li>
-<li>如果TSV中存在双引号<code>""</code>，请开启全局参数<code>-l</code></li>
-<li>csvtk默认以<code>#</code>开始的为注释行，若标题行含<code>#</code>，请给全局参数<code>-C</code>指定另一个不常见的字符（如<code>$</code>）</li>
-</ol>
-<h2 id="_4">例子</h2>
-<p>仅提供少量例子，更多例子请看使用手册 http://bioinf.shenwei.me/csvtk/usage/ 。</p>
-<ol>
-<li>
-<p>示例数据</p>
-<pre><code>$ cat names.csv
-id,first_name,last_name,username
-11,"Rob","Pike",rob
-2,Ken,Thompson,ken
-4,"Robert","Griesemer","gri"
-1,"Robert","Thompson","abc"
-NA,"Robert","Abel","123"
-</code></pre>
-</li>
-<li>
-<p>增强可读性</p>
-<pre><code>$ cat names.csv  | csvtk pretty
-id   first_name   last_name   username
-11   Rob          Pike        rob
-2    Ken          Thompson    ken
-4    Robert       Griesemer   gri
-1    Robert       Thompson    abc
-NA   Robert       Abel        123
-</code></pre>
-</li>
-<li>
-<p>转为markdown</p>
-<pre><code>$ cat names.csv | csvtk csv2md
-id |first_name|last_name|username
-:--|:---------|:--------|:-------
-11 |Rob       |Pike     |rob
-2  |Ken       |Thompson |ken
-4  |Robert    |Griesemer|gri
-1  |Robert    |Thompson |abc
-NA |Robert    |Abel     |123
-</code></pre>
-<p>效果</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">id</th>
-<th style="text-align: left;">first_name</th>
-<th style="text-align: left;">last_name</th>
-<th style="text-align: left;">username</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;">11</td>
-<td style="text-align: left;">Rob</td>
-<td style="text-align: left;">Pike</td>
-<td style="text-align: left;">rob</td>
-</tr>
-<tr>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">Ken</td>
-<td style="text-align: left;">Thompson</td>
-<td style="text-align: left;">ken</td>
-</tr>
-<tr>
-<td style="text-align: left;">4</td>
-<td style="text-align: left;">Robert</td>
-<td style="text-align: left;">Griesemer</td>
-<td style="text-align: left;">gri</td>
-</tr>
-<tr>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">Robert</td>
-<td style="text-align: left;">Thompson</td>
-<td style="text-align: left;">abc</td>
-</tr>
-<tr>
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">Robert</td>
-<td style="text-align: left;">Abel</td>
-<td style="text-align: left;">123</td>
-</tr>
-</tbody>
-</table>
-</li>
-<li>
-<p>用列或列名来选择指定列，可改变列的顺序</p>
-<pre><code>$ cat names.csv | csvtk cut -f 3,1          | csvtk pretty
-$ cat names.csv | csvtk cut -f last_name,id | csvtk pretty
-last_name   id
-Pike        11
-Thompson    2
-Griesemer   4
-Thompson    1
-Abel        NA
-</code></pre>
-</li>
-<li>
-<p>用通配符选择多列</p>
-<pre><code>$ cat names.csv | csvtk cut -F -f '*name,id' | csvtk pretty
-first_name   last_name   username   id
-Rob          Pike        rob        11
-Ken          Thompson    ken        2
-Robert       Griesemer   gri        4
-Robert       Thompson    abc        1
-Robert       Abel        123        NA
-</code></pre>
-</li>
-<li>
-<p>删除第2，3列（<strong>下列第二种方法是选定范围，但-3在前,-2在后</strong>）</p>
-<pre><code>$ cat names.csv | csvtk cut -f -2,-3                  | csvtk pretty
-$ cat names.csv | csvtk cut -f -3--2                  | csvtk pretty
-$ cat names.csv | csvtk cut -f -first_name,-last_name | csvtk pretty
-id   username
-11   rob
-2    ken
-4    gri
-1    abc
-NA   123
-</code></pre>
-</li>
-<li>
-<p>按指定列搜索，<strong>默认精确匹配</strong></p>
-<pre><code>$ cat names.csv | csvtk grep -f id -p 1 | csvtk pretty
-id   first_name   last_name   username
-1    Robert       Thompson    abc
-</code></pre>
-</li>
-<li>
-<p>模糊搜索（正则表达式）</p>
-<pre><code>$ cat names.csv | csvtk grep -f id -p 1 -r | csvtk pretty
-id   first_name   last_name   username
-11   Rob          Pike        rob
-1    Robert       Thompson    abc
-</code></pre>
-</li>
-<li>
-<p>用文件作为模式来源</p>
-<pre><code>$ cat names.csv | csvtk grep -f id -P id-files.txt
-</code></pre>
-</li>
-<li>
-<p>对指定列做简单替换</p>
-<pre><code>$ cat names.csv | csvtk replace -f id -p '(\d+)' -r 'ID: $1' \
-    | csvtk pretty
-id       first_name   last_name   username
-ID: 11   Rob          Pike        rob
-ID: 2    Ken          Thompson    ken
-ID: 4    Robert       Griesemer   gri
-ID: 1    Robert       Thompson    abc
-NA       Robert       Abel        123
-</code></pre>
-</li>
-<li>
-<p>用key-value文件来替换（seqkit和brename都支持类似操作）</p>
-<pre><code>$ cat data.tsv
-name    id
-A       ID001
-B       ID002
-C       ID004
+       &quot;aaa&quot;,&quot;bbb&quot;,&quot;ccc&quot; CRLF
+       zzz,yyy,xxx
 
-$ cat alias.tsv
-001     Tom
-002     Bob
-003     Jim
+   6.  Fields containing line breaks (CRLF), double quotes, and commas
+       should be enclosed in double-quotes.  For example:
 
-$ csvtk replace -t -f 2 -p "ID(.+)" -r "N: {nr}, alias: {kv}" -k \
-    alias.tsv data.tsv
-name    id
-A       N: 1, alias: Tom
-B       N: 2, alias: Bob
-C       N: 3, alias: 004
-</code></pre>
-</li>
-<li>
-<p>合并表格，需要分别指定各文件中的key列：默认均为第一列；若列（名）相同提供一个；若不同用分号分割</p>
-<pre><code>$ cat testdata/phones.csv
-username,phone
-gri,11111
-rob,12345
-ken,22222
-shenwei,999999
+       &quot;aaa&quot;,&quot;b CRLF
+       bb&quot;,&quot;ccc&quot; CRLF
+       zzz,yyy,xxx
 
-$ csvtk join -f 'username;username' --keep-unmatched names.csv phones.csv \
-    | csvtk pretty
-id   first_name   last_name   username   phone
-11   Rob          Pike        rob        12345
-2    Ken          Thompson    ken        22222
-4    Robert       Griesemer   gri        11111
-1    Robert       Thompson    abc
-NA   Robert       Abel        123
+   7.  If double-quotes are used to enclose fields, then a double-quote
+       appearing inside a field must be escaped by preceding it with
+       another double quote.  For example:
+
+       &quot;aaa&quot;,&quot;b&quot;&quot;bb&quot;,&quot;ccc&quot;
 </code></pre>
-</li>
-</ol>
+<p>If a single double-quote exists in one non-quoted-field, an error will be reported. e.g,</p>
+<pre><code>$ echo 'a,abc" xyz,d'
+a,abc" xyz,d
+
+$ echo 'a,abc" xyz,d' | csvtk cut -f 1-
+[ERRO] parse error on line 1, column 6: bare " in non-quoted-field
+</code></pre>
+<p>You can add the flag <code>-l/--lazy-quotes</code> to fix this.</p>
+<pre><code>$ echo 'a,abc" xyz,d' | csvtk cut -f 1- -l
+a,"abc"" xyz",d
+</code></pre>
+<h2 id="extraneous-or-missing-in-quoted-field">extraneous or missing " in quoted-field</h2>
+<p>But for the situation below, <code>-l/--lazy-quotes</code> won't help:</p>
+<pre><code>$ echo 'a,"abc" xyz,d'
+a,"abc" xyz,d
+
+$ echo 'a,"abc" xyz,d' | csvtk cut -f 1-
+[ERRO] parse error on line 1, column 7: extraneous or missing " in quoted-field
+
+$ echo 'a,"abc" xyz,d' | csvtk cut -f 1- -l
+a,"abc"" xyz,d
+"
+
+$ echo 'a,"abc" xyz,d' | csvtk cut -f 1- -l | csvtk dim
+file  num_cols  num_rows
+-            2         0
+</code></pre>
+<p><strong>You need to use <a href="https://bioinf.shenwei.me/csvtk/usage/#fix-quotes">csvtk fix-quotes</a> (available in v0.29.0 or later versions)</strong>:</p>
+<pre><code>$ echo 'a,"abc" xyz,d' | csvtk fix-quotes
+a,"""abc"" xyz",d
+
+$ echo 'a,"abc" xyz,d' | csvtk fix-quotes | csvtk cut -f 1-
+a,"""abc"" xyz",d
+
+$ echo 'a,"abc" xyz,d' | csvtk fix-quotes | csvtk cut -f 1- | csvtk dim
+file  num_cols  num_rows
+-            3         0
+</code></pre>
+<p>Use <a href="https://bioinf.shenwei.me/csvtk/usage/#del-quotes">del-quotes</a> if you need the original format after some operations.</p>
+<pre><code>$ echo 'a,"abc" xyz,d' | csvtk fix-quotes | csvtk cut -f 1- | csvtk del-quotes
+a,"abc" xyz,d
+</code></pre>
 
 
 
