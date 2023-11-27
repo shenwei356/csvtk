@@ -8,14 +8,14 @@
   - `csvtk concat`:
       - fix panic when no data found.
   - `csvtk sort`:
-      - support column name containing colons. [#254](https://github.com/shenwei356/csvtk/issues/254)
+      - support column names containing colons. [#254](https://github.com/shenwei356/csvtk/issues/254)
   - `csvtk filter2`:
       - update doc: add the `in` keyword. [#195](https://github.com/shenwei356/csvtk/pull/195)
       - fix specifying the position for the new column containing only a constant string. [#252](https://github.com/shenwei356/csvtk/issues/252)
   - `csvtk plot`:
       - add a new flag `--tick-label-size`.
   - `csvtk pretty`:
-      - replace tabs with spaces.
+      - fix showing cell data containing "tabs", by replacing tabs with spaces.
 - [csvtk v0.28.0](https://github.com/shenwei356/csvtk/releases/tag/v0.28.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.28.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.28.0)
   - `csvtk`:

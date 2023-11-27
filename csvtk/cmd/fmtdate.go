@@ -27,7 +27,7 @@ import (
 	"time"
 
 	"github.com/araddon/dateparse"
-	"github.com/metakeule/fmtdate"
+	"gitlab.com/metakeule/fmtdate"
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
 )
