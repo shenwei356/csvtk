@@ -4,17 +4,36 @@
 
 **Attention**
 
-1. The CSV parser requires all the lines have same number of fields/columns.
-    Even lines with spaces will cause error. 
-    Use '-I/--ignore-illegal-row' to skip these lines if neccessary.
-    You can also use 'csvtk fix' to fix files with different numbers of columns in rows.
-2. By default, csvtk thinks your files have header row, if not, switch flag "-H" on.
+1. By default, csvtk assumes input files have header row, if not, switch flag `-H` on.
+2. By default, csvtk handles CSV files, use flag `-t` for tab-delimited files.
 3. Column names better be unique.
-4. By default, lines starting with "#" will be ignored, if the header row
-    starts with "#", please assign flag "-C" another rare symbol, e.g. '$'.
-5. By default, csvtk handles CSV files, use flag "-t" for tab-delimited files.
-6. If double quotes exist in fields, use flag "-l".
-7. Do not mix use field (column) numbers and names.
+4. By default, lines starting with `#` will be ignored, if the header row
+    starts with `#`, please assign flag `-C` another rare symbol, e.g. `$`.
+5. Do not mix use field (column) numbers and names to specify columns to operate.
+6. The CSV parser requires all the lines have same numbers of fields/columns.
+    Even lines with spaces will cause error.
+    Use `-I/--ignore-illegal-row` to skip these lines if neccessary.
+    You can also use "csvtk fix" to fix files with different numbers of columns in rows.
+7. If double-quotes exist in fields not enclosed with double-quotes, e.g.,
+
+        x,a "b" c,1
+
+    It would report error:
+
+        bare `"` in non-quoted-field.
+
+    Please switch on the flag `-l` or use `csvtk fix-quotes` to fix it.
+
+8. If somes fields have only a double-quote eighter in the beginning or in the end, e.g.,
+
+        x,d "e","a" b c,1
+
+    It would report error:
+
+        extraneous or missing " in quoted-field
+
+    Please use `csvtk fix-quotes` to fix it, and use `csvtk del-quotes` to reset to the
+    original format as needed.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -109,17 +128,27 @@ Source code: https://github.com/shenwei356/csvtk
 
 Attention:
 
-  1. The CSV parser requires all the lines have same number of fields/columns.
-     Even lines with spaces will cause error.
-     Use '-I/--ignore-illegal-row' to skip these lines if neccessary.
-     You can also use 'csvtk fix' to fix files with different numbers of columns in rows.
-  2. By default, csvtk thinks your files have header row, if not, switch flag "-H" on.
+  1. By default, csvtk assumes input files have header row, if not, switch flag "-H" on.
+  2. By default, csvtk handles CSV files, use flag "-t" for tab-delimited files.
   3. Column names better be unique.
   4. By default, lines starting with "#" will be ignored, if the header row
      starts with "#", please assign flag "-C" another rare symbol, e.g. '$'.
-  5. By default, csvtk handles CSV files, use flag "-t" for tab-delimited files.
-  6. If double quotes exist in fields, use flag "-l".
-  7. Do not mix use field (column) numbers and names.
+  5. Do not mix use field (column) numbers and names to specify columns to operate.
+  6. The CSV parser requires all the lines have same numbers of fields/columns.
+     Even lines with spaces will cause error.
+     Use '-I/--ignore-illegal-row' to skip these lines if neccessary.
+     You can also use "csvtk fix" to fix files with different numbers of columns in rows.
+  7. If double-quotes exist in fields not enclosed with double-quotes, e.g.,
+         x,a "b" c,1
+     It would report error:
+         bare " in non-quoted-field.
+     Please switch on the flag "-l" or use "csvtk fix-quotes" to fix it.
+  8. If somes fields have only a double-quote eighter in the beginning or in the end, e.g.,
+         x,d "e","a" b c,1
+     It would report error:
+         extraneous or missing " in quoted-field
+     Please use "csvtk fix-quotes" to fix it, and use "csvtk del-quotes" to reset to the
+     original format as needed.
 
 Environment variables for frequently used global flags:
 

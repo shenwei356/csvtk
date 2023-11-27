@@ -100,12 +100,13 @@ Limitation:
 		var iLine int
 		var reQuotedDelimiter = regexp.MustCompile(fmt.Sprintf(`(^|%c)".*%c.*"($|%c)`, d, d, d))
 		var hasQuotedDelimiter bool
+		var commentChar byte = byte(config.CommentChar)
 		for scanner.Scan() {
 			iLine++
 			line = scanner.Text()
 			hasQuotedDelimiter = reQuotedDelimiter.MatchString(line)
 
-			if len(line) == 0 || line[0] == byte(config.CommentChar) {
+			if len(line) == 0 || line[0] == commentChar {
 				outfh.WriteString(line)
 				outfh.WriteByte('\n')
 
