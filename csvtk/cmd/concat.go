@@ -58,7 +58,8 @@ so only columns match that of the first files kept.
 		var ok bool
 		var j int
 		var anyMatches bool
-		for i, file := range files {
+		var flag int // first non-empty file
+		for _, file := range files {
 			colnames, colname2OldName, df, err := readDataFrame(config, file, ignoreCase)
 
 			if err != nil {
@@ -71,9 +72,11 @@ so only columns match that of the first files kept.
 
 			if len(df) == 0 {
 				log.Warningf("no data in file: %s", file)
+				continue
 			}
 
-			if i == 0 {
+			flag++
+			if flag == 1 {
 				COLNAMES, COLNAME2OLDNAME, DF = colnames, colname2OldName, df
 				continue
 			}
