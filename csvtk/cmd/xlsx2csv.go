@@ -110,7 +110,7 @@ var xlsx2csvCmd = &cobra.Command{
 			checkError(writer.Error())
 		}()
 
-		rows, err := xlsx.GetRows(sheetName)
+		rows, err := xlsx.GetRows(sheetName, excelize.Options{RawCellValue: true})
 		checkError(err)
 
 		var nColsMax int = -1
