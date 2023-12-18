@@ -2224,10 +2224,13 @@ Flags:
   -k, --keep-unmatched    keep unmatched data of the first file (left join)
   -L, --left-join         left join, equals to -k/--keep-unmatched, exclusive with --outer-join
       --na string         content for filling NA data
+  -P, --only-duplicates   add filenames as colname prefixes or add custom suffixes only for duplicated
+                          colnames
   -O, --outer-join        outer join, exclusive with --left-join
   -p, --prefix-filename   add each filename as a prefix to each colname. if there's no header row, we'll
                           add one
   -e, --prefix-trim-ext   trim extension when adding filename as colname prefix
+  -s, --suffix strings    add suffixes to colnames from each file
 
 ```
 
@@ -2393,6 +2396,15 @@ Examples:
         a      x      1   3   5
         b      y      2   4   6
 
+
+1. add suffixes to colnames from each file (`-s/--suffix`)
+
+        $ csvtk join -H testdata/{A,B,C}.f.csv -s A,B,C  \
+            | csvtk pretty
+        key1   c2-A   c3-A   c2-B   c3-B   c2-C   c3-C
+        ----   ----   ----   ----   ----   ----   ----
+        a      x      1      x      3      x      5
+        b      y      2      y      4      y      6
 
 ## split
 

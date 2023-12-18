@@ -68,7 +68,16 @@ Attention:
 		ignoreCase := getFlagBool(cmd, "ignore-case")
 		filenameAsPrefix := getFlagBool(cmd, "prefix-filename")
 		trimeExtention := getFlagBool(cmd, "prefix-trim-ext")
-		prefixDuplicates := getFlagBool(cmd, "prefix-duplicates")
+		onlyDuplicates := getFlagBool(cmd, "only-duplicates")
+		suffixes := getFlagStringSlice(cmd, "suffix")
+
+		addSuffix := len(suffixes) > 0
+		if addSuffix && len(suffixes) != len(files) {
+			checkError(fmt.Errorf("number of suffxes (%d) should be equal to number of files (%d)", len(suffixes), len(files)))
+		}
+		if filenameAsPrefix && addSuffix {
+			checkError(fmt.Errorf("the flag -p/--prefix-filename and -s/--suffix are incompatible"))
+		}
 
 		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
 		leftJoin := getFlagBool(cmd, "left-join")
@@ -118,6 +127,10 @@ Attention:
 		if filenameAsPrefix {
 			prefixedHeaderRow = make([]string, 0, 128)
 		}
+		var suffixedHeaderRow []string
+		if addSuffix {
+			suffixedHeaderRow = make([]string, 0, 128)
+		}
 		var Data [][]string
 		var Fields []int
 		firstFile := true
@@ -141,11 +154,10 @@ Attention:
 					checkError(err)
 				}
 
-				var f int
 				var ok bool
 				for _, record := range data {
 					items = make([]string, len(fields))
-					for i, f = range fields {
+					for i, f := range fields {
 						items[i] = record[f-1]
 					}
 					key = strings.Join(items, "_shenwei356_")
@@ -206,7 +218,7 @@ Attention:
 								}
 
 								Colname = fmt.Sprintf("c%d", f+1)
-								if prefixDuplicates {
+								if onlyDuplicates {
 									if _, ok = mColnames[Colname]; ok {
 										newColname = fmt.Sprintf("%s-%s", fbase, Colname)
 									} else {
@@ -232,7 +244,7 @@ Attention:
 								fbase, _, _ = filepathTrimExtension2(fbase, nil)
 							}
 
-							if prefixDuplicates {
+							if onlyDuplicates {
 								if _, ok = mColnames[Colname]; ok {
 									newColname = fmt.Sprintf("%s-%s", fbase, Colname)
 								} else {
@@ -244,6 +256,61 @@ Attention:
 							}
 
 							prefixedHeaderRow = append(prefixedHeaderRow, newColname)
+						}
+					}
+				}
+				if addSuffix {
+					fieldsMap1 := make(map[int]interface{}, len(fields))
+					for _, f = range fields {
+						fieldsMap1[f] = struct{}{}
+					}
+
+					if len(headerRow) == 0 { // no header row, we still create column names with the file name
+						if len(Data) > 0 {
+							iKey := 1
+							var Colname string
+							for f = range Data[0] {
+								if _, ok = fieldsMap1[f+1]; ok { //  the  field  of keys
+									suffixedHeaderRow = append(suffixedHeaderRow, fmt.Sprintf("key%d", iKey))
+									iKey++
+									continue
+								}
+
+								Colname = fmt.Sprintf("c%d", f+1)
+								if onlyDuplicates {
+									if _, ok = mColnames[Colname]; ok {
+										newColname = fmt.Sprintf("%s-%s", Colname, suffixes[i])
+									} else {
+										newColname = Colname
+										mColnames[Colname] = struct{}{}
+									}
+								} else {
+									newColname = fmt.Sprintf("%s-%s", Colname, suffixes[i])
+								}
+
+								suffixedHeaderRow = append(suffixedHeaderRow, newColname)
+							}
+						}
+					} else {
+						var Colname string
+						for f, Colname = range headerRow {
+							if _, ok = fieldsMap1[f+1]; ok { //  the  field  of keys
+								suffixedHeaderRow = append(suffixedHeaderRow, Colname)
+								continue
+							}
+
+							if onlyDuplicates {
+								if _, ok = mColnames[Colname]; ok {
+									newColname = fmt.Sprintf("%s-%s", Colname, suffixes[i])
+								} else {
+									newColname = Colname
+									mColnames[Colname] = struct{}{}
+								}
+							} else {
+								newColname = fmt.Sprintf("%s-%s", Colname, suffixes[i])
+							}
+
+							suffixedHeaderRow = append(suffixedHeaderRow, newColname)
 						}
 					}
 				}
@@ -261,7 +328,7 @@ Attention:
 				items = make([]string, len(fields))
 				for _, record := range Data {
 					nCols = len(record)
-					for i, f = range fields {
+					for i, f := range fields {
 						items[i] = record[f-1]
 					}
 					key = strings.Join(items, "_shenwei356_")
@@ -307,7 +374,7 @@ Attention:
 			keysMaps := make(map[string][][]string)
 			items = make([]string, len(fields))
 			for _, record := range data {
-				for i, f = range fields {
+				for i, f := range fields {
 					items[i] = record[f-1]
 				}
 				key = strings.Join(items, "_shenwei356_")
@@ -331,23 +398,40 @@ Attention:
 					if _, ok = fieldsMap[f+1]; !ok {
 						newHeaderRow = append(newHeaderRow, colname)
 
-						fbase := filepath.Base(file)
-						if trimeExtention {
-							fbase, _, _ = filepathTrimExtension2(fbase, nil)
-						}
-
-						if prefixDuplicates {
-							if _, ok = mColnames[colname]; ok {
-								newColname = fmt.Sprintf("%s-%s", fbase, colname)
-							} else {
-								newColname = colname
-								mColnames[colname] = struct{}{}
+						if filenameAsPrefix {
+							fbase := filepath.Base(file)
+							if trimeExtention {
+								fbase, _, _ = filepathTrimExtension2(fbase, nil)
 							}
-						} else {
-							newColname = fmt.Sprintf("%s-%s", fbase, colname)
+
+							if onlyDuplicates {
+								if _, ok = mColnames[colname]; ok {
+									newColname = fmt.Sprintf("%s-%s", fbase, colname)
+								} else {
+									newColname = colname
+									mColnames[colname] = struct{}{}
+								}
+							} else {
+								newColname = fmt.Sprintf("%s-%s", fbase, colname)
+							}
+
+							prefixedHeaderRow = append(prefixedHeaderRow, newColname)
+						} else if addSuffix {
+							if onlyDuplicates {
+								if _, ok = mColnames[colname]; ok {
+									newColname = fmt.Sprintf("%s-%s", colname, suffixes[i])
+								} else {
+									newColname = colname
+									mColnames[colname] = struct{}{}
+								}
+							} else {
+								newColname = fmt.Sprintf("%s-%s", colname, suffixes[i])
+							}
+
+							suffixedHeaderRow = append(suffixedHeaderRow, newColname)
 						}
 
-						prefixedHeaderRow = append(prefixedHeaderRow, newColname)
+						fmt.Println(suffixedHeaderRow, i, file)
 					}
 				}
 				HeaderRow = newHeaderRow
@@ -362,7 +446,7 @@ Attention:
 							}
 
 							Colname = fmt.Sprintf("c%d", f+1)
-							if prefixDuplicates {
+							if onlyDuplicates {
 								if _, ok = mColnames[Colname]; ok {
 									newColname = fmt.Sprintf("%s-%s", fbase, Colname)
 								} else {
@@ -377,13 +461,34 @@ Attention:
 						}
 					}
 				}
+			} else if addSuffix {
+				if len(Data) > 0 {
+					var Colname string
+					for f, colname = range data[0] {
+						if _, ok = fieldsMap[f+1]; !ok {
+							Colname = fmt.Sprintf("c%d", f+1)
+							if onlyDuplicates {
+								if _, ok = mColnames[Colname]; ok {
+									newColname = fmt.Sprintf("%s-%s", Colname, suffixes[i])
+								} else {
+									newColname = Colname
+									mColnames[Colname] = struct{}{}
+								}
+							} else {
+								newColname = fmt.Sprintf("%s-%s", Colname, suffixes[i])
+							}
+
+							suffixedHeaderRow = append(suffixedHeaderRow, newColname)
+						}
+					}
+				}
 			}
 
 			items = make([]string, len(Fields))
 			var records [][]string
 			var record2 []string
 			for _, record0 := range Data {
-				for i, f = range Fields {
+				for i, f := range fields {
 					items[i] = record0[f-1]
 				}
 				key = strings.Join(items, "_shenwei356_")
@@ -421,11 +526,15 @@ Attention:
 		if withHeaderRow {
 			if filenameAsPrefix {
 				checkError(writer.Write(prefixedHeaderRow))
+			} else if addSuffix {
+				checkError(writer.Write(suffixedHeaderRow))
 			} else {
 				checkError(writer.Write(HeaderRow))
 			}
 		} else if filenameAsPrefix {
 			checkError(writer.Write(prefixedHeaderRow))
+		} else if addSuffix {
+			checkError(writer.Write(suffixedHeaderRow))
 		}
 		for _, record := range Data {
 			checkError(writer.Write(record))
@@ -448,5 +557,6 @@ func init() {
 	joinCmd.Flags().BoolP("ignore-null", "n", false, "do not match NULL values")
 	joinCmd.Flags().BoolP("prefix-filename", "p", false, "add each filename as a prefix to each colname. if there's no header row, we'll add one")
 	joinCmd.Flags().BoolP("prefix-trim-ext", "e", false, "trim extension when adding filename as colname prefix")
-	joinCmd.Flags().BoolP("prefix-duplicates", "P", false, "add filenames as colname prefixes only for duplicated colnames")
+	joinCmd.Flags().BoolP("only-duplicates", "P", false, "add filenames as colname prefixes or add custom suffixes only for duplicated colnames")
+	joinCmd.Flags().StringSliceP("suffix", "s", []string{}, "add suffixes to colnames from each file")
 }

@@ -6,6 +6,8 @@
       - output raw data. [#262](https://github.com/shenwei356/csvtk/issues/262)
   - `csvtk pretty`:
       - change the default value of `-n/--buf-rows` from 128 to 1024.
+  - `csvtk join`:
+      - new flag `-s/--suffix` for adding suffixes to colnames from each file. [#263](https://github.com/shenwei356/csvtk/issues/263)
 - [csvtk v0.29.0](https://github.com/shenwei356/csvtk/releases/tag/v0.29.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.29.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.29.0)
   - new commands:
