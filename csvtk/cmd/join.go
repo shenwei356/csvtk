@@ -431,7 +431,6 @@ Attention:
 							suffixedHeaderRow = append(suffixedHeaderRow, newColname)
 						}
 
-						fmt.Println(suffixedHeaderRow, i, file)
 					}
 				}
 				HeaderRow = newHeaderRow

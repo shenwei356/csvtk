@@ -720,7 +720,8 @@ Flags:
                                 "csvtk pretty -h" for examples)
   -r, --align-right strings     align right for selected columns (field index/range or column name, type
                                 "csvtk pretty -h" for examples)
-  -n, --buf-rows int            the number of rows to determine the min and max widths (default 128)
+  -n, --buf-rows int            the number of rows to determine the min and max widths (0 for all rows)
+                                (default 1024)
       --clip                    clip longer cell instead of wrapping
       --clip-mark string        clip mark (default "...")
   -h, --help                    help for pretty

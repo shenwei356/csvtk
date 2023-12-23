@@ -22,6 +22,7 @@ package cmd
 
 import (
 	"fmt"
+	"math"
 	"regexp"
 	"runtime"
 	"strconv"
@@ -225,7 +226,12 @@ Styles:
 			tbl.ClipCell(clipMark)
 		}
 
-		tbl.Writer(outfh, uint(bufRows))
+		_bufRow := uint(bufRows)
+		if bufRows == 0 {
+			_bufRow = math.MaxUint
+		}
+
+		tbl.Writer(outfh, _bufRow)
 
 		checkFirstLine := true
 		var hasHeaderRow bool
@@ -342,7 +348,7 @@ func init() {
 	prettyCmd.Flags().IntP("max-width", "W", 0, "max width")
 
 	prettyCmd.Flags().StringP("wrap-delimiter", "x", " ", "delimiter for wrapping cells")
-	prettyCmd.Flags().IntP("buf-rows", "n", 1024, "the number of rows to determine the min and max widths")
+	prettyCmd.Flags().IntP("buf-rows", "n", 1024, "the number of rows to determine the min and max widths (0 for all rows)")
 	prettyCmd.Flags().StringP("style", "S", "", "output syle. available vaules: default, plain, simple, 3line, grid, light, bold, double. check https://github.com/shenwei356/stable")
 	prettyCmd.Flags().BoolP("clip", "", false, "clip longer cell instead of wrapping")
 	prettyCmd.Flags().StringP("clip-mark", "", "...", "clip mark")
