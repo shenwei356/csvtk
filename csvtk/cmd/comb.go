@@ -36,6 +36,8 @@ import (
 
 // combCmd represents the comb command
 var combCmd = &cobra.Command{
+	GroupID: "set",
+
 	Use:     "comb",
 	Aliases: []string{"combination"},
 	Short:   "compute combinations of items at every row",

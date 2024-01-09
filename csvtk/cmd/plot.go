@@ -31,6 +31,8 @@ import (
 
 // plotCmd represents the seq command
 var plotCmd = &cobra.Command{
+	GroupID: "plot",
+
 	Use:   "plot",
 	Short: "plot common figures",
 	Long: `plot common figures

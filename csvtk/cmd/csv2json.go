@@ -32,6 +32,8 @@ import (
 
 // csv2jsonCmd represents the uniq command
 var csv2jsonCmd = &cobra.Command{
+	GroupID: "format",
+
 	Use:   "csv2json",
 	Short: "convert CSV to JSON format",
 	Long: `convert CSV to JSON format

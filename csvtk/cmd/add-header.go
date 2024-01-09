@@ -31,6 +31,8 @@ import (
 
 // addHeaderCmd represents the addHeader command
 var addHeaderCmd = &cobra.Command{
+	GroupID: "edit",
+
 	Use:   "add-header",
 	Short: "add column names",
 	Long: `add column names

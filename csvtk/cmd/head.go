@@ -30,6 +30,8 @@ import (
 
 // headCmd represents the seq command
 var headCmd = &cobra.Command{
+	GroupID: "set",
+
 	Use:   "head",
 	Short: "print first N records",
 	Long: `print first N records

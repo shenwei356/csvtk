@@ -86,6 +86,41 @@ func Execute() {
 }
 
 func init() {
+	RootCmd.AddGroup(
+		&cobra.Group{
+			ID:    "info",
+			Title: "Commands for Information:",
+		},
+		&cobra.Group{
+			ID:    "format",
+			Title: "Format Conversion:",
+		},
+		&cobra.Group{
+			ID:    "set",
+			Title: "Commands for Set Operation:",
+		},
+		&cobra.Group{
+			ID:    "edit",
+			Title: "Commands for Edit:",
+		},
+		&cobra.Group{
+			ID:    "transform",
+			Title: "Commands for Data Transformation:",
+		},
+		&cobra.Group{
+			ID:    "order",
+			Title: "Commands for Ordering:",
+		},
+		&cobra.Group{
+			ID:    "plot",
+			Title: "Commands for Ploting:",
+		},
+		&cobra.Group{
+			ID:    "misc",
+			Title: "Commands for Miscellaneous Functions:",
+		},
+	)
+
 	defaultThreads := runtime.NumCPU()
 	if defaultThreads > 4 {
 		defaultThreads = 4
@@ -124,10 +159,16 @@ Aliases:
   {{.NameAndAliases}}{{end}}{{if .HasExample}}
 
 Examples:
-{{.Example}}{{end}}{{if .HasAvailableSubCommands}}
+{{.Example}}{{end}}{{if .HasAvailableSubCommands}}{{$cmds := .Commands}}{{if eq (len .Groups) 0}}
 
-Available Commands:{{range .Commands}}{{if (or .IsAvailableCommand (eq .Name "help"))}}
-  {{rpad .Name .NamePadding }} {{.Short}}{{end}}{{end}}{{end}}{{if .HasAvailableLocalFlags}}
+Available Commands:{{range $cmds}}{{if (or .IsAvailableCommand (eq .Name "help"))}}
+  {{rpad .Name .NamePadding }} {{.Short}}{{end}}{{end}}{{else}}{{range $group := .Groups}}
+
+{{.Title}}{{range $cmds}}{{if (and (eq .GroupID $group.ID) (or .IsAvailableCommand (eq .Name "help")))}}
+  {{rpad .Name .NamePadding }} {{.Short}}{{end}}{{end}}{{end}}{{if not .AllChildCommandsHaveGroup}}
+
+Additional Commands:{{range $cmds}}{{if (and (eq .GroupID "") (or .IsAvailableCommand (eq .Name "help")))}}
+  {{rpad .Name .NamePadding }} {{.Short}}{{end}}{{end}}{{end}}{{end}}{{end}}{{if .HasAvailableLocalFlags}}
 
 Flags:
 {{.LocalFlags.FlagUsagesWrapped 110 | trimTrailingWhitespaces}}{{end}}{{if .HasAvailableInheritedFlags}}

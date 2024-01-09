@@ -33,6 +33,8 @@ import (
 
 // fixquotesCmd represents the pretty command
 var fixquotesCmd = &cobra.Command{
+	GroupID: "edit",
+
 	Use:   "fix-quotes",
 	Short: "fix malformed CSV/TSV caused by double-quotes",
 	Long: `fix malformed CSV/TSV caused by double-quotes

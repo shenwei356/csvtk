@@ -32,6 +32,8 @@ import (
 
 // csv2rstCmd represents the pretty command
 var csv2rstCmd = &cobra.Command{
+	GroupID: "format",
+
 	Use:   "csv2rst",
 	Short: "convert CSV to reStructuredText format",
 	Long: `convert CSV to readable aligned table

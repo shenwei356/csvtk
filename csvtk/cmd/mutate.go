@@ -32,6 +32,8 @@ import (
 
 // mutateCmd represents the mutate command
 var mutateCmd = &cobra.Command{
+	GroupID: "edit",
+
 	Use:   "mutate",
 	Short: "create new column from selected fields by regular expression",
 	Long: `create new column from selected fields by regular expression

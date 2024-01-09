@@ -33,6 +33,8 @@ import (
 
 // xlsx2csvCmd represents the seq command
 var xlsx2csvCmd = &cobra.Command{
+	GroupID: "format",
+
 	Use:   "xlsx2csv",
 	Short: "convert XLSX to CSV format",
 	Long: `convert XLSX to CSV format

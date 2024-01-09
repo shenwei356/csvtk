@@ -33,6 +33,8 @@ import (
 
 // delQuotesCmd represents the csv2tab command
 var delQuotesCmd = &cobra.Command{
+	GroupID: "edit",
+
 	Use:   "del-quotes",
 	Short: "remove extra double quotes added by 'fix-quotes'",
 	Long: `remove extra double quotes added by 'fix-quotes'

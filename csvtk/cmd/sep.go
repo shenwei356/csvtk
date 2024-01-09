@@ -33,6 +33,8 @@ import (
 
 // sepCmd represents the mutate command
 var sepCmd = &cobra.Command{
+	GroupID: "transform",
+
 	Use:     "sep",
 	Aliases: []string{"separate"},
 	Short:   "separate column into multiple columns",

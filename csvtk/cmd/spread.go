@@ -33,6 +33,8 @@ import (
 
 // spreadCmd represents the gather command
 var spreadCmd = &cobra.Command{
+	GroupID: "transform",
+
 	Use: "spread",
 
 	Aliases: []string{"wider"},

@@ -34,6 +34,8 @@ import (
 
 // rename2Cmd represents the rename2 command
 var rename2Cmd = &cobra.Command{
+	GroupID: "edit",
+
 	Use:   "rename2",
 	Short: "rename column names by regular expression",
 	Long: `rename column names by regular expression

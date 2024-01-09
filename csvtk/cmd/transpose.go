@@ -31,6 +31,8 @@ import (
 
 // transposeCmd represents the transpose command
 var transposeCmd = &cobra.Command{
+	GroupID: "transform",
+
 	Use:   "transpose",
 	Short: "transpose CSV data",
 	Long: `transpose CSV data

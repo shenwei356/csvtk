@@ -33,6 +33,8 @@ import (
 
 // filterCmd represents the filter command
 var filterCmd = &cobra.Command{
+	GroupID: "set",
+
 	Use:   "filter",
 	Short: "filter rows by values of selected fields with arithmetic expression",
 	Long: `filter rows by values of selected fields with arithmetic expression

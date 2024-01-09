@@ -32,6 +32,8 @@ import (
 
 // sampleCmd represents the seq command
 var sampleCmd = &cobra.Command{
+	GroupID: "set",
+
 	Use:   "sample",
 	Short: "sampling by proportion",
 	Long: `sampling by proportion

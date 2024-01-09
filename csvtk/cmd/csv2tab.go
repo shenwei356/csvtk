@@ -30,6 +30,8 @@ import (
 
 // csv2tabCmd represents the csv2tab command
 var csv2tabCmd = &cobra.Command{
+	GroupID: "format",
+
 	Use:   "csv2tab",
 	Short: "convert CSV to tabular format",
 	Long: `convert CSV to tabular format

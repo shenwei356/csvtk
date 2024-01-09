@@ -35,6 +35,8 @@ import (
 
 // prettyCmd represents the pretty command
 var prettyCmd = &cobra.Command{
+	GroupID: "format",
+
 	Use:   "pretty",
 	Short: "convert CSV to a readable aligned table",
 	Long: `convert CSV to a readable aligned table

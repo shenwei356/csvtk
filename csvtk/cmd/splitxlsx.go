@@ -33,6 +33,8 @@ import (
 
 // splitXlsxCmd represents the splitXlsx command
 var splitXlsxCmd = &cobra.Command{
+	GroupID: "format",
+
 	Use:   "splitxlsx",
 	Short: "split XLSX sheet into multiple sheets according to column values",
 	Long: `split XLSX sheet into multiple sheets according to column values

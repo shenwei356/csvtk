@@ -31,6 +31,8 @@ import (
 
 // dimCmd represents the stat command
 var dimCmd = &cobra.Command{
+	GroupID: "info",
+
 	Use:     "dim",
 	Aliases: []string{"size", "stats", "stat"},
 	Short:   "dimensions of CSV file",

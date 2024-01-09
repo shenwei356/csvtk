@@ -33,6 +33,8 @@ import (
 
 // csv2mdCmd represents the csv2md command
 var csv2mdCmd = &cobra.Command{
+	GroupID: "format",
+
 	Use:   "csv2md",
 	Short: "convert CSV to markdown format",
 	Long: `convert CSV to markdown format

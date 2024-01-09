@@ -35,6 +35,8 @@ import (
 
 // freqCmd represents the freq command
 var freqCmd = &cobra.Command{
+	GroupID: "set",
+
 	Use:   "freq",
 	Short: "frequencies of selected fields",
 	Long: `frequencies of selected fields

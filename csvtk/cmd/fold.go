@@ -33,6 +33,8 @@ import (
 
 // collapseCmd represents the colapse command
 var collapseCmd = &cobra.Command{
+	GroupID: "transform",
+
 	Use:     "fold",
 	Aliases: []string{"collapse"},
 	Short:   "fold multiple values of a field into cells of groups",

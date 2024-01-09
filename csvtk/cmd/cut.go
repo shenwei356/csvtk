@@ -31,6 +31,8 @@ import (
 
 // cutCmd represents the cut command
 var cutCmd = &cobra.Command{
+	GroupID: "set",
+
 	Use:   "cut",
 	Short: "select and arrange fields",
 	Long: `select and arrange fields

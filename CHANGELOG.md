@@ -1,5 +1,7 @@
-- [csvtk v0.29.1](https://github.com/shenwei356/csvtk/releases/tag/v0.29.1)
-[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.29.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.29.1)
+- [csvtk v0.30.0](https://github.com/shenwei356/csvtk/releases/tag/v0.30.0)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.30.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.30.0)
+  - `csvtk`:
+      - grouping subcommands in help message.
   - `csvtk concat`:
       - fix panic when no data found. [#259](https://github.com/shenwei356/csvtk/issues/259)
   - `csvtk xls2csv`:

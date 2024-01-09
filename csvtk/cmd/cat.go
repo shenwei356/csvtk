@@ -34,6 +34,8 @@ import (
 
 // concateCmd represents the concatenate command
 var catCmd = &cobra.Command{
+	GroupID: "misc",
+
 	Use:   "cat",
 	Short: "stream file to stdout and report progress on stderr",
 	Long:  "stream file to stdout and report progress on stderr",

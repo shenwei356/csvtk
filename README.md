@@ -82,7 +82,6 @@ It could save you lots of time in (not) writing Python/R scripts.
 - [`csv2tab`](https://bioinf.shenwei.me/csvtk/usage/#csv2tab): converts CSV to tabular format
 - [`tab2csv`](https://bioinf.shenwei.me/csvtk/usage/#tab2csv): converts tabular format to CSV
 - [`space2tab`](https://bioinf.shenwei.me/csvtk/usage/#space2tab): converts space delimited format to TSV
-- [`transpose`](https://bioinf.shenwei.me/csvtk/usage/#transpose): transposes CSV data
 - [`csv2md`](https://bioinf.shenwei.me/csvtk/usage/#csv2md): converts CSV to markdown format
 - [`csv2rst`](https://bioinf.shenwei.me/csvtk/usage/#csv2rst): converts CSV to reStructuredText format
 - [`csv2json`](https://bioinf.shenwei.me/csvtk/usage/#csv2json): converts CSV to JSON format
@@ -119,12 +118,16 @@ It could save you lots of time in (not) writing Python/R scripts.
 - [`round`](https://bioinf.shenwei.me/csvtk/usage/#round): round float to n decimal places
 - [`mutate`](https://bioinf.shenwei.me/csvtk/usage/#mutate): creates new columns from selected fields by regular expression
 - [`mutate2`](https://bioinf.shenwei.me/csvtk/usage/#mutate2): creates a new column from selected fields by awk-like arithmetic/string expressions
+- [`fmtdate`](https://bioinf.shenwei.me/csvtk/usage/#fmtdate): format date of selected fields
+
+**Transform**
+
+- [`transpose`](https://bioinf.shenwei.me/csvtk/usage/#transpose): transposes CSV data
 - [`sep`](https://bioinf.shenwei.me/csvtk/usage/#sep): separate column into multiple columns
 - [`gather`](https://bioinf.shenwei.me/csvtk/usage/#gather): gather columns into key-value pairs, like `tidyr::gather/pivot_longer`
 - [`spread`](https://bioinf.shenwei.me/csvtk/usage/spread): spread a key-value pair across multiple columns, like `tidyr::spread/pivot_wider`
 - [`unfold`](https://bioinf.shenwei.me/csvtk/usage/#unfold): unfold multiple values in cells of a field
 - [`fold`](https://bioinf.shenwei.me/csvtk/usage/#fold): fold multiple values of a field into cells of groups
-- [`fmtdate`](https://bioinf.shenwei.me/csvtk/usage/#fmtdate): format date of selected fields
 
 **Ordering**
 

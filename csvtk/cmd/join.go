@@ -33,6 +33,8 @@ import (
 
 // joinCmd represents the join command
 var joinCmd = &cobra.Command{
+	GroupID: "set",
+
 	Use:     "join",
 	Aliases: []string{"merge"},
 	Short:   "join files by selected fields (inner, left and outer join)",

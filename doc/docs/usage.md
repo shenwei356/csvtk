@@ -52,7 +52,6 @@
 **Format conversion**
 
 - [pretty](#pretty)
-- [transpose](#transpose)
 - [space2tab](#space2tab)
 - [csv2md](#csv2md)
 - [csv2json](#csv2json)
@@ -80,6 +79,8 @@
 **Edit**
 
 - [fix](#fix)
+- [fix-quotes](#fix-quotes)
+- [del-quotes](#del-quotes)
 - [add-header](#add-header)
 - [del-header](#del-header)
 - [rename](#rename)
@@ -88,6 +89,10 @@
 - [round](#round)
 - [mutate](#mutate)
 - [mutate2](#mutate2)
+
+**Transform**
+
+- [transpose](#transpose)
 - [sep](#sep)
 - [gather](#gather)
 - [spread](#spread)

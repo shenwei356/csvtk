@@ -35,6 +35,8 @@ import (
 
 // corrCmd represents the corr command
 var corrCmd = &cobra.Command{
+	GroupID: "info",
+
 	Use:   "corr",
 	Short: "calculate Pearson correlation between two columns",
 	Long:  "calculate Pearson correlation between two columns",

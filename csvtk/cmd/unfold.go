@@ -32,6 +32,8 @@ import (
 
 // unfoldCmd represents the unfold command
 var unfoldCmd = &cobra.Command{
+	GroupID: "transform",
+
 	Use:   "unfold",
 	Short: "unfold multiple values in cells of a field",
 	Long: `unfold multiple values in cells of a field

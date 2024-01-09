@@ -36,6 +36,8 @@ import (
 
 // splitCmd represents the split command
 var splitCmd = &cobra.Command{
+	GroupID: "set",
+
 	Use:   "split",
 	Short: "split CSV/TSV into multiple files according to column values",
 	Long: `split CSV/TSV into multiple files according to column values

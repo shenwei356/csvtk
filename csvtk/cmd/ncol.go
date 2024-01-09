@@ -30,6 +30,8 @@ import (
 
 // ncolCmd represents the ncol command
 var ncolCmd = &cobra.Command{
+	GroupID: "info",
+
 	Use:     "ncol",
 	Aliases: []string{"ncols"},
 	Short:   "print number of columns",

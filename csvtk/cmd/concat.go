@@ -30,6 +30,8 @@ import (
 
 // concatCmd represents the concat command
 var concatCmd = &cobra.Command{
+	GroupID: "set",
+
 	Use:   "concat",
 	Short: "concatenate CSV/TSV files by rows",
 	Long: `concatenate CSV/TSV files by rows

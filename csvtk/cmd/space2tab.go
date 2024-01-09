@@ -33,6 +33,8 @@ import (
 
 // space2tabCmd represents the space2tab command
 var space2tabCmd = &cobra.Command{
+	GroupID: "format",
+
 	Use:   "space2tab",
 	Short: "convert space delimited format to TSV",
 	Long: `convert space delimited format to TSV

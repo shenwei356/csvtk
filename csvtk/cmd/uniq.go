@@ -32,6 +32,8 @@ import (
 
 // uniqCmd represents the uniq command
 var uniqCmd = &cobra.Command{
+	GroupID: "set",
+
 	Use:   "uniq",
 	Short: "unique data without sorting",
 	Long: `unique data without sorting

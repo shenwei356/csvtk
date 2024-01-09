@@ -39,6 +39,8 @@ import (
 
 // grepCmd represents the grep command
 var grepCmd = &cobra.Command{
+	GroupID: "set",
+
 	Use:   "grep",
 	Short: "grep data by selected fields with patterns/regular expressions",
 	Long: `grep data by selected fields with patterns/regular expressions

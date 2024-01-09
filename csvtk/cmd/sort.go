@@ -37,6 +37,8 @@ import (
 
 // sortCmd represents the sort command
 var sortCmd = &cobra.Command{
+	GroupID: "order",
+
 	Use:   "sort",
 	Short: "sort by selected fields",
 	Long: `sort by selected fields

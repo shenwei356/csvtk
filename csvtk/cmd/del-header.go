@@ -30,6 +30,8 @@ import (
 
 // delHeaderCmd represents the delHeader command
 var delHeaderCmd = &cobra.Command{
+	GroupID: "edit",
+
 	Use:   "del-header",
 	Short: "delete column names",
 	Long: `delete column names

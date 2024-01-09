@@ -40,6 +40,8 @@ var separater string
 
 // summaryCmd represents the stat2 command
 var summaryCmd = &cobra.Command{
+	GroupID: "info",
+
 	Use:   "summary",
 	Short: "summary statistics of selected numeric or text fields (groupby group fields)",
 	Long: `summary statistics of selected numeric or text fields (groupby group fields)

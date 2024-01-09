@@ -31,6 +31,8 @@ import (
 
 // gatherCmd represents the gather command
 var gatherCmd = &cobra.Command{
+	GroupID: "transform",
+
 	Use: "gather",
 
 	Aliases: []string{"longer"},

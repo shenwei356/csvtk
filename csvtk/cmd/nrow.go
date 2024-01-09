@@ -30,6 +30,8 @@ import (
 
 // nrowCmd represents the nrow command
 var nrowCmd = &cobra.Command{
+	GroupID: "info",
+
 	Use:     "nrow",
 	Aliases: []string{"nrows"},
 	Short:   "print number of records",

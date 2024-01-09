@@ -18,7 +18,7 @@ require (
 	github.com/shenwei356/stable v0.1.7
 	github.com/shenwei356/util v0.5.2
 	github.com/shenwei356/xopen v0.3.1
-	github.com/spf13/cobra v1.7.0
+	github.com/spf13/cobra v1.8.0
 	github.com/tatsushid/go-prettytable v0.0.0-20141013043238-ed2d14c29939
 	github.com/twotwotwo/sorts v0.0.0-20160814051341-bf5c1f2b8553
 	github.com/xuri/excelize/v2 v2.8.0

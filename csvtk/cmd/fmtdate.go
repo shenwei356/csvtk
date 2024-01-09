@@ -27,13 +27,15 @@ import (
 	"time"
 
 	"github.com/araddon/dateparse"
-	"gitlab.com/metakeule/fmtdate"
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
+	"gitlab.com/metakeule/fmtdate"
 )
 
 // fmtdateCmd represents the replace command
 var fmtdateCmd = &cobra.Command{
+	GroupID: "edit",
+
 	Use:   "fmtdate",
 	Short: "format date of selected fields",
 	Long: `format date of selected fields

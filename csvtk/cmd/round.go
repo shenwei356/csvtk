@@ -33,6 +33,8 @@ import (
 
 // roundCmd represents the round command
 var roundCmd = &cobra.Command{
+	GroupID: "edit",
+
 	Use:   "round",
 	Short: "round float to n decimal places",
 	Long: `round float to n decimal places

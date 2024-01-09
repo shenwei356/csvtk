@@ -33,6 +33,8 @@ import (
 
 // replaceCmd represents the replace command
 var replaceCmd = &cobra.Command{
+	GroupID: "edit",
+
 	Use:   "replace",
 	Short: "replace data of selected fields by regular expression",
 	Long: `replace data of selected fields by regular expression

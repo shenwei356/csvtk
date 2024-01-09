@@ -36,6 +36,8 @@ import (
 
 // watchCmd represents the seq command
 var watchCmd = &cobra.Command{
+	GroupID: "info",
+
 	Use:   "watch",
 	Short: "monitor the specified fields",
 	Long:  "monitor the specified fields",

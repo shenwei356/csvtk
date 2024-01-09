@@ -31,6 +31,8 @@ import (
 
 // fixCmd represents the pretty command
 var fixCmd = &cobra.Command{
+	GroupID: "edit",
+
 	Use:   "fix",
 	Short: "fix CSV/TSV with different numbers of columns in rows",
 	Long: `fix CSV/TSV with different numbers of columns in rows

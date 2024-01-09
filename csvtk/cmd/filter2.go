@@ -37,6 +37,8 @@ import (
 
 // filter2Cmd represents the filter command
 var filter2Cmd = &cobra.Command{
+	GroupID: "set",
+
 	Use:   "filter2",
 	Short: "filter rows by awk-like arithmetic/string expressions",
 	Long: `filter rows by awk-like arithmetic/string expressions

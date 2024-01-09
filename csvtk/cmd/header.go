@@ -30,6 +30,8 @@ import (
 
 // headersCmd represents the cut command
 var headersCmd = &cobra.Command{
+	GroupID: "info",
+
 	Use:   "headers",
 	Short: "print headers",
 	Long: `print headers

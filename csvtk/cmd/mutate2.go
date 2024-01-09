@@ -37,6 +37,8 @@ import (
 
 // mutate2Cmd represents the mutate command
 var mutate2Cmd = &cobra.Command{
+	GroupID: "edit",
+
 	Use:   "mutate2",
 	Short: "create a new column from selected fields by awk-like arithmetic/string expressions",
 	Long: `create a new column from selected fields by awk-like arithmetic/string expressions

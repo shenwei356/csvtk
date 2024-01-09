@@ -32,6 +32,8 @@ import (
 
 // interCmd represents the inter command
 var interCmd = &cobra.Command{
+	GroupID: "set",
+
 	Use:   "inter",
 	Short: "intersection of multiple files",
 	Long: `intersection of multiple files
