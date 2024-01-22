@@ -53,13 +53,11 @@ var spreadCmd = &cobra.Command{
 
 		fieldKey := getFlagString(cmd, "key")
 		fieldValue := getFlagString(cmd, "value")
-		if !config.NoHeaderRow {
-			if fieldKey == "" {
-				checkError(fmt.Errorf("flag -k/--key needed"))
-			}
-			if fieldValue == "" {
-				checkError(fmt.Errorf("flag -v/--value needed"))
-			}
+		if fieldKey == "" {
+			checkError(fmt.Errorf("flag -k/--key needed"))
+		}
+		if fieldValue == "" {
+			checkError(fmt.Errorf("flag -v/--value needed"))
 		}
 		na := getFlagString(cmd, "na")
 		separater := getFlagString(cmd, "separater")

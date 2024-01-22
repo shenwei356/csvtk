@@ -124,7 +124,7 @@ Usage
 ```text
 csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.29.0
+Version: 0.30.0
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -166,60 +166,76 @@ which sets "-t/--tabs" by default.
 Usage:
   csvtk [command]
 
-Available Commands:
-  add-header      add column names
-  cat             stream file to stdout and report progress on stderr
-  comb            compute combinations of items at every row
-  concat          concatenate CSV/TSV files by rows
+Commands for Information:
   corr            calculate Pearson correlation between two columns
+  dim             dimensions of CSV file
+  headers         print headers
+  ncol            print number of columns
+  nrow            print number of records
+  summary         summary statistics of selected numeric or text fields (groupby group fields)
+  watch           monitor the specified fields
+
+Format Conversion:
   csv2json        convert CSV to JSON format
   csv2md          convert CSV to markdown format
   csv2rst         convert CSV to reStructuredText format
   csv2tab         convert CSV to tabular format
   csv2xlsx        convert CSV/TSV files to XLSX file
+  pretty          convert CSV to a readable aligned table
+  space2tab       convert space delimited format to TSV
+  splitxlsx       split XLSX sheet into multiple sheets according to column values
+  tab2csv         convert tabular format to CSV
+  xlsx2csv        convert XLSX to CSV format
+
+Commands for Set Operation:
+  comb            compute combinations of items at every row
+  concat          concatenate CSV/TSV files by rows
   cut             select and arrange fields
-  del-header      delete column names
-  del-quotes      remove extra double quotes added by 'fix-quotes'
-  dim             dimensions of CSV file
   filter          filter rows by values of selected fields with arithmetic expression
   filter2         filter rows by awk-like arithmetic/string expressions
+  freq            frequencies of selected fields
+  grep            grep data by selected fields with patterns/regular expressions
+  head            print first N records
+  inter           intersection of multiple files
+  join            join files by selected fields (inner, left and outer join)
+  sample          sampling by proportion
+  split           split CSV/TSV into multiple files according to column values
+  uniq            unique data without sorting
+
+Commands for Edit:
+  add-header      add column names
+  del-header      delete column names
+  del-quotes      remove extra double quotes added by 'fix-quotes'
   fix             fix CSV/TSV with different numbers of columns in rows
   fix-quotes      fix malformed CSV/TSV caused by double-quotes
   fmtdate         format date of selected fields
-  fold            fold multiple values of a field into cells of groups
-  freq            frequencies of selected fields
-  gather          gather columns into key-value pairs, like tidyr::gather/pivot_longer
-  genautocomplete generate shell autocompletion script (bash|zsh|fish|powershell)
-  grep            grep data by selected fields with patterns/regular expressions
-  head            print first N records
-  headers         print headers
-  inter           intersection of multiple files
-  join            join files by selected fields (inner, left and outer join)
   mutate          create new column from selected fields by regular expression
   mutate2         create a new column from selected fields by awk-like arithmetic/string expressions
-  ncol            print number of columns
-  nrow            print number of records
-  plot            plot common figures
-  pretty          convert CSV to a readable aligned table
   rename          rename column names with new names
   rename2         rename column names by regular expression
   replace         replace data of selected fields by regular expression
   round           round float to n decimal places
-  sample          sampling by proportion
+
+Commands for Data Transformation:
+  fold            fold multiple values of a field into cells of groups
+  gather          gather columns into key-value pairs, like tidyr::gather/pivot_longer
   sep             separate column into multiple columns
-  sort            sort by selected fields
-  space2tab       convert space delimited format to TSV
-  split           split CSV/TSV into multiple files according to column values
-  splitxlsx       split XLSX sheet into multiple sheets according to column values
   spread          spread a key-value pair across multiple columns, like tidyr::spread/pivot_wider
-  summary         summary statistics of selected numeric or text fields (groupby group fields)
-  tab2csv         convert tabular format to CSV
   transpose       transpose CSV data
   unfold          unfold multiple values in cells of a field
-  uniq            unique data without sorting
+
+Commands for Ordering:
+  sort            sort by selected fields
+
+Commands for Ploting:
+  plot            plot common figures
+
+Commands for Miscellaneous Functions:
+  cat             stream file to stdout and report progress on stderr
+
+Additional Commands:
+  genautocomplete generate shell autocompletion script (bash|zsh|fish|powershell)
   version         print version information and check for update
-  watch           monitor the specified fields
-  xlsx2csv        convert XLSX to CSV format
 
 Flags:
   -C, --comment-char string    lines starting with commment-character will be ignored. if your header

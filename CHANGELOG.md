@@ -4,6 +4,8 @@
       - grouping subcommands in help message.
   - `csvtk concat`:
       - fix panic when no data found. [#259](https://github.com/shenwei356/csvtk/issues/259)
+  - `csvtk spread`:
+      - fix flag checking of `-k` and `-v`. 
   - `csvtk xls2csv`:
       - output raw data. [#262](https://github.com/shenwei356/csvtk/issues/262)
   - `csvtk pretty`:
