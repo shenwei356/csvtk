@@ -155,11 +155,11 @@ var dimCmd = &cobra.Command{
 				})
 			}
 
-			if !(rows || cols) && !tabular {
-				outfh.Write(tbl.Render(style))
-			}
-
 			readerReport(&config, csvReader, file)
+		}
+
+		if !(rows || cols) && !tabular {
+			outfh.Write(tbl.Render(style))
 		}
 	},
 }
