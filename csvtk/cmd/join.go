@@ -489,7 +489,7 @@ Attention:
 			var records [][]string
 			var record2 []string
 			for _, record0 := range Data {
-				for i, f := range fields {
+				for i, f := range Fields {
 					items[i] = record0[f-1]
 				}
 				key = strings.Join(items, "_shenwei356_")
