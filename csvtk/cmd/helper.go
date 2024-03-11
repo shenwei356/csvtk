@@ -107,7 +107,9 @@ func getFileListFromArgsAndFile(cmd *cobra.Command, args []string, checkFileFrom
 		_files, err := getFileListFromFile(infileList, checkFileFromFile)
 		checkError(err)
 		if len(_files) == 0 {
-			log.Warningf("no files found in file list: %s", infileList)
+			if !getFlagBool(cmd, "quiet") {
+				log.Warningf("no files found in file list: %s", infileList)
+			}
 			return files
 		}
 
@@ -242,6 +244,8 @@ func unshift(list *[]string, val string) {
 
 // Config is the struct containing all global flags
 type Config struct {
+	Verbose bool
+
 	NumCPUs int
 
 	Delimiter    rune
@@ -289,6 +293,13 @@ func getConfigs(cmd *cobra.Command) Config {
 		noHeaderRow = getFlagBool(cmd, "no-header-row")
 	}
 
+	var verbose bool
+	if val = os.Getenv("CSVTK_QUIET"); val != "" {
+		verbose = !isTrue(val)
+	} else {
+		verbose = !getFlagBool(cmd, "quiet")
+	}
+
 	threads := getFlagPositiveInt(cmd, "num-cpus")
 	if threads >= 1000 {
 		checkError(fmt.Errorf("are your seriously? %d threads? It will exhaust your RAM", threads))
@@ -297,6 +308,7 @@ func getConfigs(cmd *cobra.Command) Config {
 	}
 
 	return Config{
+		Verbose: verbose,
 		NumCPUs: threads,
 
 		Delimiter:    getFlagRune(cmd, "delimiter"),
@@ -455,7 +467,9 @@ func readDataFrame(config Config, file string, ignoreCase bool) ([]string, map[s
 			if colnamesCount[col] > 0 ||
 				(ignoreCase && colnamesCount[colLower] > 0) {
 
-				log.Warningf(`duplicated colname (%s) in file: %s. this may bring incorrect result`, col, file)
+				if config.Verbose {
+					log.Warningf(`duplicated colname (%s) in file: %s. this may bring incorrect result`, col, file)
+				}
 
 				newName = fmt.Sprintf("%s_%d", col, colnamesCount[col])
 				if ignoreCase {
@@ -554,10 +568,14 @@ func parseCSVfile(cmd *cobra.Command, config Config, file string,
 	}
 
 	if config.IgnoreEmptyRow {
-		log.Warningf("file '%s': %d empty rows ignored", file, csvReader.NumEmptyRows)
+		if config.Verbose {
+			log.Warningf("file '%s': %d empty rows ignored", file, csvReader.NumEmptyRows)
+		}
 	}
 	if config.IgnoreIllegalRow {
-		log.Warningf("file '%s': %d illegal rows ignored", file, csvReader.NumIllegalRows)
+		if config.Verbose {
+			log.Warningf("file '%s': %d illegal rows ignored", file, csvReader.NumIllegalRows)
+		}
 	}
 
 	return HeaderRow, fields, Data, HeaderRowAll, DataAll, nil

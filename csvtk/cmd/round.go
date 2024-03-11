@@ -87,7 +87,9 @@ var roundCmd = &cobra.Command{
 
 			if err != nil {
 				if err == xopen.ErrNoContent {
-					log.Warningf("csvtk round: skipping empty input file: %s", file)
+					if config.Verbose {
+						log.Warningf("csvtk round: skipping empty input file: %s", file)
+					}
 					continue
 				}
 				checkError(err)

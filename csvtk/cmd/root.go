@@ -69,6 +69,7 @@ Environment variables for frequently used global flags:
 
   - "CSVTK_T" for flag "-t/--tabs"
   - "CSVTK_H" for flag "-H/--no-header-row"
+  - "CSVTK_QUIET" for flag "--quiet"
 
 You can also create a soft link named "tsvtk" for "csvtk", 
 which sets "-t/--tabs" by default.
@@ -126,6 +127,8 @@ func init() {
 		defaultThreads = 4
 	}
 	RootCmd.PersistentFlags().IntP("num-cpus", "j", defaultThreads, `number of CPUs to use`)
+
+	RootCmd.PersistentFlags().BoolP("quiet", "", false, "be quiet and do not show extra information and warnings")
 
 	RootCmd.PersistentFlags().StringP("delimiter", "d", ",", `delimiting character of the input CSV file`)
 	RootCmd.PersistentFlags().StringP("out-delimiter", "D", ",", `delimiting character of the output CSV file, e.g., -D $'\t' for tab`)

@@ -45,7 +45,9 @@ var addHeaderCmd = &cobra.Command{
 
 		colnames := getFlagStringSlice(cmd, "names")
 		if len(colnames) == 0 {
-			log.Warningf("colnames not given, c1, c2, c3... will be used")
+			if config.Verbose {
+				log.Warningf("colnames not given, c1, c2, c3... will be used")
+			}
 		}
 
 		outfh, err := xopen.Wopen(config.OutFile)
@@ -72,7 +74,9 @@ var addHeaderCmd = &cobra.Command{
 			csvReader, err := newCSVReaderByConfig(config, file)
 			if err != nil {
 				if err == xopen.ErrNoContent {
-					log.Warningf("csvtk add-header: skipping empty input file: %s", file)
+					if config.Verbose {
+						log.Warningf("csvtk add-header: skipping empty input file: %s", file)
+					}
 					continue
 				}
 				checkError(err)

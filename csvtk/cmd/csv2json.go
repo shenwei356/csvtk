@@ -95,7 +95,9 @@ var csv2jsonCmd = &cobra.Command{
 
 		if err != nil {
 			if err == xopen.ErrNoContent {
-				log.Warningf("csvtk csv2json: skipping empty input file: %s", file)
+				if config.Verbose {
+					log.Warningf("csvtk csv2json: skipping empty input file: %s", file)
+				}
 				if keyed {
 					outfh.WriteString("{")
 				} else {
@@ -156,7 +158,9 @@ var csv2jsonCmd = &cobra.Command{
 			if keyed {
 				key = record.Selected[0]
 				if _, ok = keysMaps[key]; ok {
-					log.Warningf("ignore record with duplicated key (%s) at line %d", key, record.Line)
+					if config.Verbose {
+						log.Warningf("ignore record with duplicated key (%s) at line %d", key, record.Line)
+					}
 					continue
 				}
 				keysMaps[key] = struct{}{}

@@ -90,7 +90,9 @@ How to:
 
 		if err != nil {
 			if err == xopen.ErrNoContent {
-				log.Warningf("csvtk pretty: skipping empty input file: %s", file)
+				if config.Verbose {
+					log.Warningf("csvtk pretty: skipping empty input file: %s", file)
+				}
 				return
 			}
 			checkError(err)
@@ -127,7 +129,9 @@ How to:
 			if !checkedMaxNcols {
 				if n == bufRows {
 					maxN = maxNcols(buf)
-					log.Infof("the maximum number of columns in first %d rows: %d", bufRows, maxN)
+					if config.Verbose {
+						log.Infof("the maximum number of columns in first %d rows: %d", bufRows, maxN)
+					}
 					checkedMaxNcols = true
 					empty = make([]string, maxN)
 
@@ -155,7 +159,10 @@ How to:
 		if readAll || !checkedMaxNcols {
 			maxN = maxNcols(buf)
 			empty = make([]string, maxN)
-			log.Infof("the maximum number of columns in all %d rows: %d", len(buf), maxN)
+
+			if config.Verbose {
+				log.Infof("the maximum number of columns in all %d rows: %d", len(buf), maxN)
+			}
 
 			for _, row = range buf {
 				ncol = len(row)

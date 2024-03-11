@@ -68,7 +68,9 @@ var headCmd = &cobra.Command{
 
 			if err != nil {
 				if err == xopen.ErrNoContent {
-					log.Warningf("csvtk head: skipping empty input file: %s", file)
+					if config.Verbose {
+						log.Warningf("csvtk head: skipping empty input file: %s", file)
+					}
 					continue
 				}
 				checkError(err)

@@ -67,7 +67,9 @@ Attention:
 
 		if err != nil {
 			if err == xopen.ErrNoContent {
-				log.Warningf("csvtk csv2rst: skipping empty input file: %s", file)
+				if config.Verbose {
+					log.Warningf("csvtk csv2rst: skipping empty input file: %s", file)
+				}
 				return
 			}
 			checkError(err)

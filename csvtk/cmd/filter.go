@@ -99,7 +99,9 @@ var filterCmd = &cobra.Command{
 
 			if err != nil {
 				if err == xopen.ErrNoContent {
-					log.Warningf("csvtk filter: skipping empty input file: %s", file)
+					if config.Verbose {
+						log.Warningf("csvtk filter: skipping empty input file: %s", file)
+					}
 					continue
 				}
 				checkError(err)

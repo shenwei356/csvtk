@@ -150,7 +150,9 @@ Attention:
 
 				if err != nil {
 					if err == xopen.ErrNoContent {
-						log.Warningf("csvtk join: skipping empty input file: %s", file)
+						if config.Verbose {
+							log.Warningf("csvtk join: skipping empty input file: %s", file)
+						}
 						continue
 					}
 					checkError(err)
@@ -186,14 +188,18 @@ Attention:
 
 			if err != nil {
 				if err == xopen.ErrNoContent {
-					log.Warningf("csvtk join: skipping empty input file: %s", file)
+					if config.Verbose {
+						log.Warningf("csvtk join: skipping empty input file: %s", file)
+					}
 					continue
 				}
 				checkError(err)
 			}
 
 			if len(data) == 0 {
-				log.Warningf("no data found in file: %s", file)
+				if config.Verbose {
+					log.Warningf("no data found in file: %s", file)
+				}
 				continue
 			}
 			if firstFile {

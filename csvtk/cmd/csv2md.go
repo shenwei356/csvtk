@@ -80,7 +80,9 @@ Attention:
 
 		if err != nil {
 			if err == xopen.ErrNoContent {
-				log.Warningf("csvtk csv2md: skipping empty input file: %s", file)
+				if config.Verbose {
+					log.Warningf("csvtk csv2md: skipping empty input file: %s", file)
+				}
 				return
 			}
 			checkError(err)
@@ -94,7 +96,9 @@ Attention:
 		} else {
 			if len(data) == 0 {
 				// checkError(fmt.Errorf("no data found in file: %s", file))
-				log.Warningf("no data found in file: %s", file)
+				if config.Verbose {
+					log.Warningf("no data found in file: %s", file)
+				}
 				readerReport(&config, csvReader, file)
 				return
 			} else if len(data) > 0 {

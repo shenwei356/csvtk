@@ -105,7 +105,10 @@ Special replacement symbols:
 			if kvFile == "" {
 				checkError(fmt.Errorf(`since replacement symbol "{kv}"/"{KV}" found in value of flag -r (--replacement), tab-delimited key-value file should be given by flag -k (--kv-file)`))
 			}
-			log.Infof("read key-value file: %s", kvFile)
+
+			if config.Verbose {
+				log.Infof("read key-value file: %s", kvFile)
+			}
 			kvs, err = readKVs(kvFile, kvFileAllLeftColumnsAsValue)
 			if err != nil {
 				checkError(fmt.Errorf("read key-value file: %s", err))
@@ -122,7 +125,9 @@ Special replacement symbols:
 				kvs = kvs2
 			}
 
-			log.Infof("%d pairs of key-value loaded", len(kvs))
+			if config.Verbose {
+				log.Infof("%d pairs of key-value loaded", len(kvs))
+			}
 		}
 
 		fieldStr := getFlagString(cmd, "fields")
@@ -156,7 +161,9 @@ Special replacement symbols:
 
 			if err != nil {
 				if err == xopen.ErrNoContent {
-					log.Warningf("csvtk replace: skipping empty input file: %s", file)
+					if config.Verbose {
+						log.Warningf("csvtk replace: skipping empty input file: %s", file)
+					}
 					continue
 				}
 				checkError(err)

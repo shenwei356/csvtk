@@ -130,7 +130,9 @@ Example:
 
 		if err != nil {
 			if err == xopen.ErrNoContent {
-				log.Warningf("csvtk fold: skipping empty input file: %s", file)
+				if config.Verbose {
+					log.Warningf("csvtk fold: skipping empty input file: %s", file)
+				}
 
 				writer.Flush()
 				checkError(writer.Error())

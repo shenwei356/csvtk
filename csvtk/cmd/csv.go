@@ -100,6 +100,8 @@ type ReadOption struct {
 	AllowMissingColumn             bool // allow missing column
 	BlankMissingColumn             bool
 	ShowRowNumber                  bool
+
+	Verbose bool
 }
 
 // Run begins to read
@@ -125,7 +127,7 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 			csvReader.fh.Close()
 		}()
 
-		fields, colnames, negativeFields, needParseHeaderRow, x2ends := parseFields(fieldStr, fieldStrSep, csvReader.NoHeaderRow)
+		fields, colnames, negativeFields, needParseHeaderRow, x2ends := parseFields(fieldStr, fieldStrSep, csvReader.NoHeaderRow, opt.Verbose)
 		var fieldsMap map[int]struct{}
 
 		selectWithColnames := len(fields) == 0
@@ -516,6 +518,7 @@ func parseFields(
 	fieldsStr string,
 	fieldsStrSep string,
 	noHeaderRow bool,
+	verbose bool,
 ) (
 	[]int, // fields
 	[]string, // colnames
@@ -636,7 +639,9 @@ func parseFields(
 			}
 		}
 		if noHeaderRow {
-			log.Warningf("colnames detected, flag -H (--no-header-row) ignored")
+			if verbose {
+				log.Warningf("colnames detected, flag -H (--no-header-row) ignored")
+			}
 		}
 		parseHeaderRow = true
 	}
@@ -658,10 +663,10 @@ func readerReport(config *Config, csvReader *CSVReader, file string) {
 	if csvReader == nil {
 		return
 	}
-	if config.IgnoreEmptyRow && len(csvReader.NumEmptyRows) > 0 {
+	if config.IgnoreEmptyRow && len(csvReader.NumEmptyRows) > 0 && config.Verbose {
 		log.Warningf("file '%s': %d empty rows ignored: %d", file, len(csvReader.NumEmptyRows), csvReader.NumEmptyRows)
 	}
-	if config.IgnoreIllegalRow && len(csvReader.NumIllegalRows) > 0 {
+	if config.IgnoreIllegalRow && len(csvReader.NumIllegalRows) > 0 && config.Verbose {
 		log.Warningf("file '%s': %d illegal rows ignored: %d", file, len(csvReader.NumIllegalRows), csvReader.NumIllegalRows)
 	}
 }

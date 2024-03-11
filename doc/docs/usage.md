@@ -159,6 +159,7 @@ Environment variables for frequently used global flags:
 
   - "CSVTK_T" for flag "-t/--tabs"
   - "CSVTK_H" for flag "-H/--no-header-row"
+  - "CSVTK_QUIET" for flag "--quiet"
 
 You can also create a soft link named "tsvtk" for "csvtk",
 which sets "-t/--tabs" by default.
@@ -256,6 +257,7 @@ Flags:
                                (default ",")
   -o, --out-file string        out file ("-" for stdout, suffix .gz for gzipped out) (default "-")
   -T, --out-tabs               specifies that the output is delimited with tabs. Overrides "-D"
+      --quiet                  be quiet and do not show extra information and warnings
   -Z, --show-row-number        show row number as the first column, with header row skipped
   -t, --tabs                   specifies that the input CSV file is delimited with tabs. Overrides "-d"
 

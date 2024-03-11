@@ -83,7 +83,9 @@ var corrCmd = &cobra.Command{
 
 		if err != nil {
 			if err == xopen.ErrNoContent {
-				log.Warningf("csvtk corr: skipping empty input file: %s", file)
+				if config.Verbose {
+					log.Warningf("csvtk corr: skipping empty input file: %s", file)
+				}
 				return
 			}
 			checkError(err)

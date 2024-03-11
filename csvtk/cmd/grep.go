@@ -77,7 +77,7 @@ Attentions:
 		ignoreCase := getFlagBool(cmd, "ignore-case")
 		useRegexp := getFlagBool(cmd, "use-regexp")
 		invert := getFlagBool(cmd, "invert")
-		verbose := getFlagBool(cmd, "verbose")
+		verbose := getFlagBool(cmd, "verbose") || config.Verbose
 		noHighlight := getFlagBool(cmd, "no-highlight")
 		printLineNumber := getFlagBool(cmd, "line-number") || config.ShowRowNumber
 		deleteMatched := getFlagBool(cmd, "delete-matched")
@@ -174,7 +174,9 @@ Attentions:
 
 			if err != nil {
 				if err == xopen.ErrNoContent {
-					log.Warningf("csvtk grep: skipping empty input file: %s", file)
+					if config.Verbose {
+						log.Warningf("csvtk grep: skipping empty input file: %s", file)
+					}
 					continue
 				}
 				checkError(err)

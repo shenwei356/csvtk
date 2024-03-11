@@ -77,7 +77,9 @@ Attention:
 			csvReader, err := newCSVReaderByConfig(config, file)
 			if err != nil {
 				if err == xopen.ErrNoContent {
-					log.Warningf("csvtk csv2xlsx: skipping empty input file: %s", file)
+					if config.Verbose {
+						log.Warningf("csvtk csv2xlsx: skipping empty input file: %s", file)
+					}
 					continue
 				}
 				checkError(err)

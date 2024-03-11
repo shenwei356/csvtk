@@ -174,7 +174,9 @@ Styles:
 
 		if err != nil {
 			if err == xopen.ErrNoContent {
-				log.Warningf("csvtk pretty: skipping empty input file: %s", file)
+				if config.Verbose {
+					log.Warningf("csvtk pretty: skipping empty input file: %s", file)
+				}
 				return
 			}
 			checkError(err)

@@ -91,7 +91,9 @@ Attention:
 
 			if err != nil {
 				if err == xopen.ErrNoContent {
-					log.Warningf("csvtk inter: skipping empty input file: %s", file)
+					if config.Verbose {
+						log.Warningf("csvtk inter: skipping empty input file: %s", file)
+					}
 					continue
 				}
 				checkError(err)

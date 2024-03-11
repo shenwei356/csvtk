@@ -153,7 +153,9 @@ var xlsx2csvCmd = &cobra.Command{
 		checkError(xlsx.Close())
 
 		if config.IgnoreEmptyRow {
-			log.Warningf("file '%s': %d empty rows ignored", files[0], numEmptyRows)
+			if config.Verbose {
+				log.Warningf("file '%s': %d empty rows ignored", files[0], numEmptyRows)
+			}
 		}
 	},
 }

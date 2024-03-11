@@ -2,6 +2,7 @@
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.30.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.30.0)
   - `csvtk`:
       - grouping subcommands in help message.
+      - add a new global flag `--quiet`. [#261](https://github.com/shenwei356/csvtk/issues/261)
   - `csvtk dim`:
       - fix duplicated rows for multiple input files, this bug was introduced in v0.27.0.
   - `csvtk concat`:

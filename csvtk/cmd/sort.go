@@ -84,7 +84,9 @@ var sortCmd = &cobra.Command{
 				}
 			}
 			if _, ok := levelsMap[items[0]]; ok {
-				log.Warningf("overide user-defined level for field %s", items[0])
+				if config.Verbose {
+					log.Warningf("overide user-defined level for field %s", items[0])
+				}
 			}
 			levelsMap[items[0]] = m
 		}
@@ -164,7 +166,9 @@ var sortCmd = &cobra.Command{
 
 		if err != nil {
 			if err == xopen.ErrNoContent {
-				log.Warningf("csvtk sort: skipping empty input file: %s", file)
+				if config.Verbose {
+					log.Warningf("csvtk sort: skipping empty input file: %s", file)
+				}
 				return
 			}
 			checkError(err)

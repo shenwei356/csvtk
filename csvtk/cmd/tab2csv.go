@@ -54,7 +54,9 @@ var tab2csvCmd = &cobra.Command{
 
 			if err != nil {
 				if err == xopen.ErrNoContent {
-					log.Warningf("csvtk tab2csv: skipping empty input file: %s", file)
+					if config.Verbose {
+						log.Warningf("csvtk tab2csv: skipping empty input file: %s", file)
+					}
 					continue
 				}
 				checkError(err)

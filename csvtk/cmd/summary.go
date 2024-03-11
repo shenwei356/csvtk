@@ -177,7 +177,9 @@ Available operations:
 
 		if err != nil {
 			if err == xopen.ErrNoContent {
-				log.Warningf("csvtk summary: skipping empty input file: %s", file)
+				if config.Verbose {
+					log.Warningf("csvtk summary: skipping empty input file: %s", file)
+				}
 
 				writer.Flush()
 				checkError(writer.Error())

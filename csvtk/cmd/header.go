@@ -45,7 +45,9 @@ var headersCmd = &cobra.Command{
 		verbose := getFlagBool(cmd, "verbose")
 
 		if config.NoHeaderRow {
-			log.Warningf("flag -H (--no-header-row) ignored")
+			if config.Verbose {
+				log.Warningf("flag -H (--no-header-row) ignored")
+			}
 		}
 
 		outfh, err := xopen.Wopen(config.OutFile)
@@ -57,7 +59,9 @@ var headersCmd = &cobra.Command{
 
 			if err != nil {
 				if err == xopen.ErrNoContent {
-					log.Warningf("csvtk header: skipping empty input file: %s", file)
+					if config.Verbose {
+						log.Warningf("csvtk header: skipping empty input file: %s", file)
+					}
 					continue
 				}
 				checkError(err)

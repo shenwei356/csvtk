@@ -66,14 +66,18 @@ so only columns match that of the first files kept.
 
 			if err != nil {
 				if err == xopen.ErrNoContent {
-					log.Warningf("csvtk concat: skipping empty input file: %s", file)
+					if config.Verbose {
+						log.Warningf("csvtk concat: skipping empty input file: %s", file)
+					}
 					continue
 				}
 				checkError(err)
 			}
 
 			if len(df) == 0 {
-				log.Warningf("no data in file: %s", file)
+				if config.Verbose {
+					log.Warningf("no data in file: %s", file)
+				}
 				continue
 			}
 
@@ -108,7 +112,9 @@ so only columns match that of the first files kept.
 		}
 
 		if len(COLNAMES) == 0 {
-			log.Warningf("csvtk concat: no input data")
+			if config.Verbose {
+				log.Warningf("csvtk concat: no input data")
+			}
 			return
 		}
 

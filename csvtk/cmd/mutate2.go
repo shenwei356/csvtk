@@ -210,7 +210,9 @@ Custom functions:
 
 			if err != nil {
 				if err == xopen.ErrNoContent {
-					log.Warningf("csvtk mutate2: skipping empty input file: %s", file)
+					if config.Verbose {
+						log.Warningf("csvtk mutate2: skipping empty input file: %s", file)
+					}
 					continue
 				}
 				checkError(err)
