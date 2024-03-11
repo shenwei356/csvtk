@@ -120,12 +120,12 @@ var sortCmd = &cobra.Command{
 					if _, ok := levelsMap[_key]; !ok {
 						checkError(fmt.Errorf("level file not provided for field: %s", _key))
 					}
-					sortTypes = append(sortTypes, sortType{FieldStr: _key, Number: false, Reverse: false, UserDefined: true, Levels: levelsMap[items[0]]})
+					sortTypes = append(sortTypes, sortType{FieldStr: _key, Number: false, Reverse: false, UserDefined: true, Levels: levelsMap[_key]})
 				case "ur", "ru":
 					if _, ok := levelsMap[_key]; !ok {
 						checkError(fmt.Errorf("level file not provided for field: %s", _key))
 					}
-					sortTypes = append(sortTypes, sortType{FieldStr: _key, Number: false, Reverse: true, UserDefined: true, Levels: levelsMap[items[0]]})
+					sortTypes = append(sortTypes, sortType{FieldStr: _key, Number: false, Reverse: true, UserDefined: true, Levels: levelsMap[_key]})
 				default:
 					// checkError(fmt.Errorf("invalid sort type: %s", _type))
 					_key = key

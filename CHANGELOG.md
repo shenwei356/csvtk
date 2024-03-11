@@ -2,12 +2,14 @@
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.30.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.30.0)
   - `csvtk`:
       - grouping subcommands in help message.
-    - `csvtk dim`:
-      - fix duplicated rows for multiple input files this bug was introduced in v0.27.0.
+  - `csvtk dim`:
+      - fix duplicated rows for multiple input files, this bug was introduced in v0.27.0.
   - `csvtk concat`:
       - fix panic when no data found. [#259](https://github.com/shenwei356/csvtk/issues/259)
   - `csvtk spread`:
       - fix flag checking of `-k` and `-v`. 
+  - `csvtk sort`:
+      - fix ordering when given multiple custom levels.
   - `csvtk xls2csv`:
       - output raw data. [#262](https://github.com/shenwei356/csvtk/issues/262)
   - `csvtk pretty`:
