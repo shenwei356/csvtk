@@ -22,10 +22,10 @@ package cmd
 
 import (
 	"fmt"
-	"net/http"
-	"strings"
 
 	"github.com/spf13/cobra"
+    "github.com/blang/semver"
+    "github.com/rhysd/go-github-selfupdate/selfupdate"
 )
 
 // VERSION of csvtk
@@ -47,22 +47,17 @@ var versionCmd = &cobra.Command{
 		}
 
 		fmt.Println("\nChecking new version...")
-
-		resp, err := http.Get(fmt.Sprintf("https://github.com/shenwei356/%s/releases/latest", app))
-		if err != nil {
-			checkError(fmt.Errorf("Network error"))
+        v := semver.MustParse(VERSION)
+        latest, err := selfupdate.UpdateSelf(v, "shenwei356/csvtk")
+        if err != nil {
+			fmt.Println("Binary update failed:", err)
+			return
 		}
-		items := strings.Split(resp.Request.URL.String(), "/")
-		version := ""
-		if items[len(items)-1] == "" {
-			version = items[len(items)-2]
+		if latest.Version.Equals(v) {
+			// latest version is the same as current version. It means current binary is up to date.
+			fmt.Println("Current binary is the latest version", VERSION)
 		} else {
-			version = items[len(items)-1]
-		}
-		if version == "v"+VERSION {
-			fmt.Printf("You are using the latest version of %s\n", app)
-		} else {
-			fmt.Printf("New version available: %s %s at %s\n", app, version, resp.Request.URL.String())
+			fmt.Println("Successfully updated to version", latest.Version)
 		}
 	},
 }
