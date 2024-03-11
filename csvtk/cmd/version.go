@@ -23,9 +23,9 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/blang/semver"
+	"github.com/rhysd/go-github-selfupdate/selfupdate"
 	"github.com/spf13/cobra"
-    "github.com/blang/semver"
-    "github.com/rhysd/go-github-selfupdate/selfupdate"
 )
 
 // VERSION of csvtk
@@ -47,9 +47,9 @@ var versionCmd = &cobra.Command{
 		}
 
 		fmt.Println("\nChecking new version...")
-        v := semver.MustParse(VERSION)
-        latest, err := selfupdate.UpdateSelf(v, "shenwei356/csvtk")
-        if err != nil {
+		v := semver.MustParse(VERSION)
+		latest, err := selfupdate.UpdateSelf(v, "shenwei356/csvtk")
+		if err != nil {
 			fmt.Println("Binary update failed:", err)
 			return
 		}
