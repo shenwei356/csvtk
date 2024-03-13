@@ -101,7 +101,7 @@ Custom functions:
 		runtime.GOMAXPROCS(config.NumCPUs)
 
 		name := getFlagString(cmd, "name")
-		if !config.NoHeaderRow && name == "" {
+		if !config.NoHeaderRow && name == "" && !config.NoOutHeader {
 			checkError(fmt.Errorf("falg -n (--name) needed"))
 		}
 
@@ -300,7 +300,9 @@ Custom functions:
 							record2[at-1] = value
 						}
 
-						checkError(writer.Write(record2))
+						if !config.NoOutHeader {
+							checkError(writer.Write(record2))
+						}
 
 						continue
 					}

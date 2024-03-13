@@ -133,7 +133,7 @@ so only columns match that of the first files kept.
 			checkError(writer.Error())
 		}()
 
-		if !config.NoHeaderRow {
+		if !config.NoHeaderRow && !config.NoOutHeader {
 			colnames := make([]string, len(COLNAMES))
 			for i, col := range COLNAMES {
 				colnames[i] = COLNAME2OLDNAME[col]

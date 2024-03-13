@@ -173,7 +173,7 @@ Attention:
 			return
 		}
 
-		if hasHeaderLine {
+		if hasHeaderLine && !config.NoOutHeader {
 			checkError(writer.Write(selectedColnames))
 		}
 		for key := range keysMaps {

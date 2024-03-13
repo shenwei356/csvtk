@@ -164,8 +164,9 @@ var gatherCmd = &cobra.Command{
 			if handleHeaderRow {
 				items[nFieldsLeft] = fieldKey
 				items[nFieldsLeft+1] = fieldValue
-				checkError(writer.Write(items))
-
+				if !config.NoOutHeader {
+					checkError(writer.Write(items))
+				}
 				handleHeaderRow = false
 			} else {
 				for _, f = range record.Fields {

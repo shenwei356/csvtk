@@ -119,6 +119,9 @@ var freqCmd = &cobra.Command{
 			if checkFirstLine {
 				checkFirstLine = false
 				if !config.NoHeaderRow || record.IsHeaderRow {
+					if config.NoOutHeader {
+						continue
+					}
 					checkError(writer.Write(append(record.Selected, "frequency")))
 					continue
 				}

@@ -503,7 +503,7 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 				Row:      row,
 				All:      record, // copied values
 				Fields:   fields, // the first variable
-				Selected: items,  // copied values
+				Selected: items,  // copied values. Warning: if showRowNumber is true, the first vlaue is the row number
 
 				IsHeaderRow:        isHeaderRow,
 				SelectWithColnames: selectWithColnames,

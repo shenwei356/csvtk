@@ -3,6 +3,8 @@
   - `csvtk`:
       - grouping subcommands in help message.
       - add a new global flag `--quiet`. [#261](https://github.com/shenwei356/csvtk/issues/261)
+      - add a new global flag `-U, --delete-header` for disable outputing the header row. Supported commands: concat, csv2tab/tab2csv, csv2xlsx/xlsx2csv, cut, filter, filter2, freq, fold/unfold, gather, fmtdate, grep, head, join, mutate, mutate2, replace, round, sample. [#258](https://github.com/shenwei356/csvtk/issues/258)
+      - support more commands with `-Z/--show-row-number`: head.
   - `csvtk dim`:
       - fix duplicated rows for multiple input files, this bug was introduced in v0.27.0.
   - `csvtk concat`:
@@ -11,6 +13,8 @@
       - fix flag checking of `-k` and `-v`. 
   - `csvtk sort`:
       - fix ordering when given multiple custom levels.
+  - `csvtk filter/filter2`:
+      - fix printing row number with `-Z`.
   - `csvtk xls2csv`:
       - output raw data. [#262](https://github.com/shenwei356/csvtk/issues/262)
   - `csvtk pretty`:

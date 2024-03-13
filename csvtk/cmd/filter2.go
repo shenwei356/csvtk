@@ -190,6 +190,8 @@ Custom functions:
 			checkError(writer.Error())
 		}()
 
+		showRowNumber := printLineNumber || config.ShowRowNumber
+
 		for _, file := range files {
 			csvReader, err := newCSVReaderByConfig(config, file)
 
@@ -207,7 +209,7 @@ Custom functions:
 				FieldStr:      fieldStr,
 				FieldStrSep:   varSep,
 				FuzzyFields:   fuzzyFields,
-				ShowRowNumber: printLineNumber || config.ShowRowNumber,
+				ShowRowNumber: showRowNumber,
 
 				DoNotAllowDuplicatedColumnName: true,
 			})
@@ -263,7 +265,10 @@ Custom functions:
 							colnamesMap[col] = fuzzyField2Regexp(col)
 						}
 
-						if printLineNumber {
+						if config.NoOutHeader {
+							continue
+						}
+						if showRowNumber {
 							unshift(&record.All, "row")
 						}
 						checkError(writer.Write(record.All))
@@ -398,7 +403,7 @@ Custom functions:
 					continue
 				}
 
-				if printLineNumber {
+				if showRowNumber {
 					unshift(&record.All, strconv.Itoa(record.Row))
 				}
 				checkError(writer.Write(record.All))

@@ -242,6 +242,7 @@ Flags:
   -C, --comment-char string    lines starting with commment-character will be ignored. if your header
                                row starts with '#', please assign "-C" another rare symbol, e.g. '$'
                                (default "#")
+  -U, --delete-header          do not output header row
   -d, --delimiter string       delimiting character of the input CSV file (default ",")
   -h, --help                   help for csvtk
   -E, --ignore-empty-row       ignore empty rows
@@ -620,13 +621,13 @@ Flags:
   -i, --ignore_nan      Ignore non-numeric fields to avoid returning NaN
   -L, --log             Calcute correlations on Log10 transformed data
   -x, --pass            passthrough mode (forward input to output)
-```
+``` 
 
 Examples
 
 1. Calculate pairwise correlations between field, ignore non-numeric values
 
-        csvtk -t corr -i -f 1,Foo,Bar input.tsv
+        csvtk -t corr -i -f Foo,Bar input.tsv
 
 
 ## pretty

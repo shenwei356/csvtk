@@ -233,7 +233,7 @@ var sortCmd = &cobra.Command{
 		}
 		sorts.Quicksort(stringutil.MultiKeyStringSliceList(list))
 
-		if len(headerRow) > 0 {
+		if len(headerRow) > 0 && !config.NoOutHeader {
 			checkError(writer.Write(headerRow))
 		}
 		for _, s := range list {

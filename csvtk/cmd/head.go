@@ -23,6 +23,7 @@ package cmd
 import (
 	"encoding/csv"
 	"runtime"
+	"strconv"
 
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
@@ -63,6 +64,8 @@ var headCmd = &cobra.Command{
 			checkError(writer.Error())
 		}()
 
+		printLineNumber := config.ShowRowNumber
+
 		for _, file := range files {
 			csvReader, err := newCSVReaderByConfig(config, file)
 
@@ -87,13 +90,22 @@ var headCmd = &cobra.Command{
 					checkError(record.Err)
 				}
 
-				checkError(writer.Write(record.All))
-
 				if isHeaderLine {
 					isHeaderLine = false
+					if config.NoOutHeader {
+						continue
+					}
+					if printLineNumber {
+						unshift(&record.All, "row")
+					}
 				} else {
 					i++
+					if printLineNumber {
+						unshift(&record.All, strconv.Itoa(record.Row))
+					}
 				}
+
+				checkError(writer.Write(record.All))
 
 				if number == i {
 					break

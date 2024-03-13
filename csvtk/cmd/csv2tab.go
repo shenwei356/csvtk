@@ -50,6 +50,8 @@ var csv2tabCmd = &cobra.Command{
 		writer.Comma = '\t'
 
 		for _, file := range files {
+			handleHeaderRow := !config.NoHeaderRow
+
 			csvReader, err := newCSVReaderByConfig(config, file)
 			if err != nil {
 				if err == xopen.ErrNoContent {
@@ -69,6 +71,13 @@ var csv2tabCmd = &cobra.Command{
 			for record := range csvReader.Ch {
 				if record.Err != nil {
 					checkError(record.Err)
+				}
+
+				if handleHeaderRow {
+					handleHeaderRow = false
+					if config.NoOutHeader {
+						continue
+					}
 				}
 
 				checkError(writer.Write(record.Selected))

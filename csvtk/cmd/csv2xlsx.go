@@ -110,7 +110,7 @@ Attention:
 				}
 			}
 
-			if !config.NoHeaderRow {
+			if !config.NoHeaderRow && !config.NoOutHeader {
 				checkError(xlsx.SetPanes(sheet, &excelize.Panes{
 					Freeze:      true,
 					Split:       false,
@@ -122,10 +122,19 @@ Attention:
 			}
 
 			line = 1
+			handleHeaderRow := !config.NoHeaderRow
 			for record := range csvReader.Ch {
 				if record.Err != nil {
 					checkError(record.Err)
 				}
+
+				if handleHeaderRow {
+					handleHeaderRow = false
+					if config.NoOutHeader {
+						continue
+					}
+				}
+
 				for col, val = range record.Selected {
 					cell = fmt.Sprintf("%s%d", ExcelColumnIndex(col), line)
 					if formatNumbers {

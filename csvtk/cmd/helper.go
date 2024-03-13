@@ -321,7 +321,7 @@ func getConfigs(cmd *cobra.Command) Config {
 		Tabs:        tabs,
 		OutTabs:     getFlagBool(cmd, "out-tabs"),
 		NoHeaderRow: noHeaderRow,
-		NoOutHeader: getFlagBool(cmd, "no-out-header"),
+		NoOutHeader: getFlagBool(cmd, "delete-header"),
 
 		ShowRowNumber: getFlagBool(cmd, "show-row-number"),
 

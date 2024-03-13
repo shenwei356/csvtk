@@ -530,18 +530,20 @@ Attention:
 			Data = Data2
 		}
 
-		if withHeaderRow {
-			if filenameAsPrefix {
+		if !config.NoOutHeader {
+			if withHeaderRow {
+				if filenameAsPrefix {
+					checkError(writer.Write(prefixedHeaderRow))
+				} else if addSuffix {
+					checkError(writer.Write(suffixedHeaderRow))
+				} else {
+					checkError(writer.Write(HeaderRow))
+				}
+			} else if filenameAsPrefix {
 				checkError(writer.Write(prefixedHeaderRow))
 			} else if addSuffix {
 				checkError(writer.Write(suffixedHeaderRow))
-			} else {
-				checkError(writer.Write(HeaderRow))
 			}
-		} else if filenameAsPrefix {
-			checkError(writer.Write(prefixedHeaderRow))
-		} else if addSuffix {
-			checkError(writer.Write(suffixedHeaderRow))
 		}
 		for _, record := range Data {
 			checkError(writer.Write(record))

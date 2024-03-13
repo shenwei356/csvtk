@@ -210,6 +210,9 @@ Attentions:
 					checkFirstLine = false
 
 					if !config.NoHeaderRow || record.IsHeaderRow {
+						if config.NoOutHeader {
+							continue
+						}
 						if printLineNumber {
 							unshift(&record.All, "row")
 						}

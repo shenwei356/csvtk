@@ -164,6 +164,9 @@ Example:
 				checkFirstLine = false
 
 				if !config.NoHeaderRow || record.IsHeaderRow { // do not replace head line
+					if config.NoOutHeader {
+						continue
+					}
 					checkError(writer.Write(record.Selected))
 					continue
 				}

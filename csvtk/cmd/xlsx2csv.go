@@ -131,6 +131,7 @@ var xlsx2csvCmd = &cobra.Command{
 		var notBlank bool
 		var data string
 		var numEmptyRows int
+		handleHeaderRow := !config.NoHeaderRow
 		for _, row := range rows {
 			if len(row) < nColsMax {
 				row = append(row, emptyRow[0:nColsMax-len(row)]...)
@@ -148,6 +149,14 @@ var xlsx2csvCmd = &cobra.Command{
 					continue
 				}
 			}
+
+			if handleHeaderRow {
+				handleHeaderRow = false
+				if config.NoOutHeader {
+					continue
+				}
+			}
+
 			checkError(writer.Write(row))
 		}
 		checkError(xlsx.Close())

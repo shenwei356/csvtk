@@ -73,7 +73,7 @@ var mutateCmd = &cobra.Command{
 		}
 
 		name := getFlagString(cmd, "name")
-		if !config.NoHeaderRow && name == "" {
+		if !config.NoHeaderRow && name == "" && !config.NoOutHeader {
 			checkError(fmt.Errorf("flag -n (--name) needed"))
 		}
 
@@ -204,7 +204,9 @@ var mutateCmd = &cobra.Command{
 					}
 
 					handleHeaderRow = false
-					checkError(writer.Write(record2))
+					if !config.NoOutHeader {
+						checkError(writer.Write(record2))
+					}
 					continue
 				}
 

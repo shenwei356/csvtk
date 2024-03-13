@@ -124,9 +124,17 @@ Examples:
 			ShowRowNumber:      config.ShowRowNumber,
 		})
 
+		handleHeaderRow := !config.NoHeaderRow
 		for record := range csvReader.Ch {
 			if record.Err != nil {
 				checkError(record.Err)
+			}
+
+			if handleHeaderRow {
+				handleHeaderRow = false
+				if config.NoOutHeader {
+					continue
+				}
 			}
 
 			writer.Write(record.Selected)

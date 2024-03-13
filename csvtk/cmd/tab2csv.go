@@ -69,9 +69,18 @@ var tab2csvCmd = &cobra.Command{
 				ShowRowNumber: config.ShowRowNumber,
 			})
 
+			handleHeaderRow := !config.NoHeaderRow
+
 			for record := range csvReader.Ch {
 				if record.Err != nil {
 					checkError(record.Err)
+				}
+
+				if handleHeaderRow {
+					handleHeaderRow = false
+					if config.NoOutHeader {
+						continue
+					}
 				}
 
 				checkError(writer.Write(record.Selected))

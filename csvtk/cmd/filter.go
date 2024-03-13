@@ -94,6 +94,8 @@ var filterCmd = &cobra.Command{
 			checkError(writer.Error())
 		}()
 
+		showRowNumber := printLineNumber || config.ShowRowNumber
+
 		for _, file := range files {
 			csvReader, err := newCSVReaderByConfig(config, file)
 
@@ -110,7 +112,7 @@ var filterCmd = &cobra.Command{
 			csvReader.Read(ReadOption{
 				FieldStr:      fieldStr,
 				FuzzyFields:   fuzzyFields,
-				ShowRowNumber: printLineNumber || config.ShowRowNumber,
+				ShowRowNumber: showRowNumber,
 
 				DoNotAllowDuplicatedColumnName: true,
 			})
@@ -120,6 +122,7 @@ var filterCmd = &cobra.Command{
 			var n int
 			var v float64
 			var val string
+			var i int
 
 			checkFirstLine := true
 			for record := range csvReader.Ch {
@@ -131,7 +134,10 @@ var filterCmd = &cobra.Command{
 					checkFirstLine = false
 
 					if !config.NoHeaderRow || record.IsHeaderRow { // do not replace head line
-						if printLineNumber {
+						if config.NoOutHeader {
+							continue
+						}
+						if showRowNumber {
 							unshift(&record.All, "row")
 						}
 						checkError(writer.Write(record.All))
@@ -144,7 +150,11 @@ var filterCmd = &cobra.Command{
 				flag = false
 				n = 0
 
-				for _, val = range record.Selected {
+				for i, val = range record.Selected {
+					if showRowNumber && i == 0 { // skip the row number
+						continue
+					}
+
 					if !reDigitals.MatchString(val) {
 						flag = false
 						break
@@ -187,6 +197,7 @@ var filterCmd = &cobra.Command{
 							break
 						}
 					}
+
 				}
 
 				if n == len(record.Fields) { // all satisfied
@@ -196,7 +207,7 @@ var filterCmd = &cobra.Command{
 					continue
 				}
 
-				if printLineNumber {
+				if showRowNumber {
 					unshift(&record.All, strconv.Itoa(record.Row))
 				}
 				checkError(writer.Write(record.All))
