@@ -257,6 +257,7 @@ type Config struct {
 	Tabs        bool
 	OutTabs     bool
 	NoHeaderRow bool
+	NoOutHeader bool
 
 	ShowRowNumber bool
 
@@ -320,6 +321,7 @@ func getConfigs(cmd *cobra.Command) Config {
 		Tabs:        tabs,
 		OutTabs:     getFlagBool(cmd, "out-tabs"),
 		NoHeaderRow: noHeaderRow,
+		NoOutHeader: getFlagBool(cmd, "no-out-header"),
 
 		ShowRowNumber: getFlagBool(cmd, "show-row-number"),
 

@@ -45,7 +45,7 @@ Attention:
 
   1. By default, csvtk assumes input files have header row, if not, switch flag "-H" on.
   2. By default, csvtk handles CSV files, use flag "-t" for tab-delimited files.
-  3. Column names better be unique.
+  3. Column names should be unique.
   4. By default, lines starting with "#" will be ignored, if the header row
      starts with "#", please assign flag "-C" another rare symbol, e.g. '$'.
   5. Do not mix use field (column) numbers and names to specify columns to operate.
@@ -140,6 +140,7 @@ func init() {
 	RootCmd.PersistentFlags().BoolP("tabs", "t", false, `specifies that the input CSV file is delimited with tabs. Overrides "-d"`)
 	RootCmd.PersistentFlags().BoolP("out-tabs", "T", false, `specifies that the output is delimited with tabs. Overrides "-D"`)
 	RootCmd.PersistentFlags().BoolP("no-header-row", "H", false, `specifies that the input CSV file does not have header row`)
+	RootCmd.PersistentFlags().BoolP("no-out-header", "U", false, `do not output header row`)
 	RootCmd.PersistentFlags().StringP("out-file", "o", "-", `out file ("-" for stdout, suffix .gz for gzipped out)`)
 
 	RootCmd.PersistentFlags().BoolP("show-row-number", "Z", false, `show row number as the first column, with header row skipped`)

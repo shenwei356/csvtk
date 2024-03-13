@@ -253,7 +253,7 @@ More [examples](http://shenwei356.github.io/csvtk/usage/) and [tutorial](http://
 
 1. By default, csvtk assumes input files have header row, if not, switch flag `-H` on.
 2. By default, csvtk handles CSV files, use flag `-t` for tab-delimited files.
-3. Column names better be unique.
+3. Column names should be unique.
 4. By default, lines starting with `#` will be ignored, if the header row
     starts with `#`, please assign flag `-C` another rare symbol, e.g. `$`.
 5. Do not mix use field (column) numbers and names to specify columns to operate.
