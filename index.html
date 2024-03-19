@@ -759,7 +759,6 @@ It could save you lots of time in (not) writing Python/R scripts.</p>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#csv2tab"><code>csv2tab</code></a>: converts CSV to tabular format</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#tab2csv"><code>tab2csv</code></a>: converts tabular format to CSV</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#space2tab"><code>space2tab</code></a>: converts space delimited format to TSV</li>
-<li><a href="https://bioinf.shenwei.me/csvtk/usage/#transpose"><code>transpose</code></a>: transposes CSV data</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#csv2md"><code>csv2md</code></a>: converts CSV to markdown format</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#csv2rst"><code>csv2rst</code></a>: converts CSV to reStructuredText format</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#csv2json"><code>csv2json</code></a>: converts CSV to JSON format</li>
@@ -796,12 +795,16 @@ It could save you lots of time in (not) writing Python/R scripts.</p>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#round"><code>round</code></a>: round float to n decimal places</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#mutate"><code>mutate</code></a>: creates new columns from selected fields by regular expression</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#mutate2"><code>mutate2</code></a>: creates a new column from selected fields by awk-like arithmetic/string expressions</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#fmtdate"><code>fmtdate</code></a>: format date of selected fields</li>
+</ul>
+<p><strong>Transform</strong></p>
+<ul>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#transpose"><code>transpose</code></a>: transposes CSV data</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#sep"><code>sep</code></a>: separate column into multiple columns</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#gather"><code>gather</code></a>: gather columns into key-value pairs, like <code>tidyr::gather/pivot_longer</code></li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/spread"><code>spread</code></a>: spread a key-value pair across multiple columns, like <code>tidyr::spread/pivot_wider</code></li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#unfold"><code>unfold</code></a>: unfold multiple values in cells of a field</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#fold"><code>fold</code></a>: fold multiple values of a field into cells of groups</li>
-<li><a href="https://bioinf.shenwei.me/csvtk/usage/#fmtdate"><code>fmtdate</code></a>: format date of selected fields</li>
 </ul>
 <p><strong>Ordering</strong></p>
 <ul>
@@ -1003,7 +1006,7 @@ name-indexed data such as CSV and tabular JSON http://johnkerl.org/miller</li>
 <ol>
 <li>By default, csvtk assumes input files have header row, if not, switch flag <code>-H</code> on.</li>
 <li>By default, csvtk handles CSV files, use flag <code>-t</code> for tab-delimited files.</li>
-<li>Column names better be unique.</li>
+<li>Column names should be unique.</li>
 <li>By default, lines starting with <code>#</code> will be ignored, if the header row
     starts with <code>#</code>, please assign flag <code>-C</code> another rare symbol, e.g. <code>$</code>.</li>
 <li>Do not mix use field (column) numbers and names to specify columns to operate.</li>

@@ -1199,7 +1199,7 @@
 <ol>
 <li>By default, csvtk assumes input files have header row, if not, switch flag <code>-H</code> on.</li>
 <li>By default, csvtk handles CSV files, use flag <code>-t</code> for tab-delimited files.</li>
-<li>Column names better be unique.</li>
+<li>Column names should be unique.</li>
 <li>By default, lines starting with <code>#</code> will be ignored, if the header row
     starts with <code>#</code>, please assign flag <code>-C</code> another rare symbol, e.g. <code>$</code>.</li>
 <li>Do not mix use field (column) numbers and names to specify columns to operate.</li>
@@ -1244,7 +1244,6 @@ original format as needed.</p>
 <p><strong>Format conversion</strong></p>
 <ul>
 <li><a href="#pretty">pretty</a></li>
-<li><a href="#transpose">transpose</a></li>
 <li><a href="#space2tab">space2tab</a></li>
 <li><a href="#csv2md">csv2md</a></li>
 <li><a href="#csv2json">csv2json</a></li>
@@ -1271,6 +1270,8 @@ original format as needed.</p>
 <p><strong>Edit</strong></p>
 <ul>
 <li><a href="#fix">fix</a></li>
+<li><a href="#fix-quotes">fix-quotes</a></li>
+<li><a href="#del-quotes">del-quotes</a></li>
 <li><a href="#add-header">add-header</a></li>
 <li><a href="#del-header">del-header</a></li>
 <li><a href="#rename">rename</a></li>
@@ -1279,6 +1280,10 @@ original format as needed.</p>
 <li><a href="#round">round</a></li>
 <li><a href="#mutate">mutate</a></li>
 <li><a href="#mutate2">mutate2</a></li>
+</ul>
+<p><strong>Transform</strong></p>
+<ul>
+<li><a href="#transpose">transpose</a></li>
 <li><a href="#sep">sep</a></li>
 <li><a href="#gather">gather</a></li>
 <li><a href="#spread">spread</a></li>
@@ -1307,7 +1312,7 @@ original format as needed.</p>
 <p>Usage</p>
 <pre><code class="language-text">csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.29.0
+Version: 0.30.0
 
 Author: Wei Shen &lt;shenwei356@gmail.com&gt;
 
@@ -1318,7 +1323,7 @@ Attention:
 
   1. By default, csvtk assumes input files have header row, if not, switch flag &quot;-H&quot; on.
   2. By default, csvtk handles CSV files, use flag &quot;-t&quot; for tab-delimited files.
-  3. Column names better be unique.
+  3. Column names should be unique.
   4. By default, lines starting with &quot;#&quot; will be ignored, if the header row
      starts with &quot;#&quot;, please assign flag &quot;-C&quot; another rare symbol, e.g. '$'.
   5. Do not mix use field (column) numbers and names to specify columns to operate.
@@ -1342,6 +1347,7 @@ Environment variables for frequently used global flags:
 
   - &quot;CSVTK_T&quot; for flag &quot;-t/--tabs&quot;
   - &quot;CSVTK_H&quot; for flag &quot;-H/--no-header-row&quot;
+  - &quot;CSVTK_QUIET&quot; for flag &quot;--quiet&quot;
 
 You can also create a soft link named &quot;tsvtk&quot; for &quot;csvtk&quot;,
 which sets &quot;-t/--tabs&quot; by default.
@@ -1349,65 +1355,82 @@ which sets &quot;-t/--tabs&quot; by default.
 Usage:
   csvtk [command]
 
-Available Commands:
-  add-header      add column names
-  cat             stream file to stdout and report progress on stderr
-  comb            compute combinations of items at every row
-  concat          concatenate CSV/TSV files by rows
+Commands for Information:
   corr            calculate Pearson correlation between two columns
+  dim             dimensions of CSV file
+  headers         print headers
+  ncol            print number of columns
+  nrow            print number of records
+  summary         summary statistics of selected numeric or text fields (groupby group fields)
+  watch           monitor the specified fields
+
+Format Conversion:
   csv2json        convert CSV to JSON format
   csv2md          convert CSV to markdown format
   csv2rst         convert CSV to reStructuredText format
   csv2tab         convert CSV to tabular format
   csv2xlsx        convert CSV/TSV files to XLSX file
+  pretty          convert CSV to a readable aligned table
+  space2tab       convert space delimited format to TSV
+  splitxlsx       split XLSX sheet into multiple sheets according to column values
+  tab2csv         convert tabular format to CSV
+  xlsx2csv        convert XLSX to CSV format
+
+Commands for Set Operation:
+  comb            compute combinations of items at every row
+  concat          concatenate CSV/TSV files by rows
   cut             select and arrange fields
-  del-header      delete column names
-  del-quotes      remove extra double quotes added by 'fix-quotes'
-  dim             dimensions of CSV file
   filter          filter rows by values of selected fields with arithmetic expression
   filter2         filter rows by awk-like arithmetic/string expressions
+  freq            frequencies of selected fields
+  grep            grep data by selected fields with patterns/regular expressions
+  head            print first N records
+  inter           intersection of multiple files
+  join            join files by selected fields (inner, left and outer join)
+  sample          sampling by proportion
+  split           split CSV/TSV into multiple files according to column values
+  uniq            unique data without sorting
+
+Commands for Edit:
+  add-header      add column names
+  del-header      delete column names
+  del-quotes      remove extra double quotes added by 'fix-quotes'
   fix             fix CSV/TSV with different numbers of columns in rows
   fix-quotes      fix malformed CSV/TSV caused by double-quotes
   fmtdate         format date of selected fields
-  fold            fold multiple values of a field into cells of groups
-  freq            frequencies of selected fields
-  gather          gather columns into key-value pairs, like tidyr::gather/pivot_longer
-  genautocomplete generate shell autocompletion script (bash|zsh|fish|powershell)
-  grep            grep data by selected fields with patterns/regular expressions
-  head            print first N records
-  headers         print headers
-  inter           intersection of multiple files
-  join            join files by selected fields (inner, left and outer join)
   mutate          create new column from selected fields by regular expression
   mutate2         create a new column from selected fields by awk-like arithmetic/string expressions
-  ncol            print number of columns
-  nrow            print number of records
-  plot            plot common figures
-  pretty          convert CSV to a readable aligned table
   rename          rename column names with new names
   rename2         rename column names by regular expression
   replace         replace data of selected fields by regular expression
   round           round float to n decimal places
-  sample          sampling by proportion
+
+Commands for Data Transformation:
+  fold            fold multiple values of a field into cells of groups
+  gather          gather columns into key-value pairs, like tidyr::gather/pivot_longer
   sep             separate column into multiple columns
-  sort            sort by selected fields
-  space2tab       convert space delimited format to TSV
-  split           split CSV/TSV into multiple files according to column values
-  splitxlsx       split XLSX sheet into multiple sheets according to column values
   spread          spread a key-value pair across multiple columns, like tidyr::spread/pivot_wider
-  summary         summary statistics of selected numeric or text fields (groupby group fields)
-  tab2csv         convert tabular format to CSV
   transpose       transpose CSV data
   unfold          unfold multiple values in cells of a field
-  uniq            unique data without sorting
+
+Commands for Ordering:
+  sort            sort by selected fields
+
+Commands for Ploting:
+  plot            plot common figures
+
+Commands for Miscellaneous Functions:
+  cat             stream file to stdout and report progress on stderr
+
+Additional Commands:
+  genautocomplete generate shell autocompletion script (bash|zsh|fish|powershell)
   version         print version information and check for update
-  watch           monitor the specified fields
-  xlsx2csv        convert XLSX to CSV format
 
 Flags:
   -C, --comment-char string    lines starting with commment-character will be ignored. if your header
                                row starts with '#', please assign &quot;-C&quot; another rare symbol, e.g. '$'
                                (default &quot;#&quot;)
+  -U, --delete-header          do not output header row
   -d, --delimiter string       delimiting character of the input CSV file (default &quot;,&quot;)
   -h, --help                   help for csvtk
   -E, --ignore-empty-row       ignore empty rows
@@ -1423,6 +1446,7 @@ Flags:
                                (default &quot;,&quot;)
   -o, --out-file string        out file (&quot;-&quot; for stdout, suffix .gz for gzipped out) (default &quot;-&quot;)
   -T, --out-tabs               specifies that the output is delimited with tabs. Overrides &quot;-D&quot;
+      --quiet                  be quiet and do not show extra information and warnings
   -Z, --show-row-number        show row number as the first column, with header row skipped
   -t, --tabs                   specifies that the input CSV file is delimited with tabs. Overrides &quot;-d&quot;
 
@@ -1776,7 +1800,7 @@ Flags:
 </code></pre>
 <p>Examples</p>
 <ol>
-<li>Calculate pairwise correlations between field, ignore non-numeric values<pre><code>csvtk -t corr -i -f 1,Foo,Bar input.tsv
+<li>Calculate pairwise correlations between field, ignore non-numeric values<pre><code>csvtk -t corr -i -f Foo,Bar input.tsv
 </code></pre>
 </li>
 </ol>
@@ -1891,7 +1915,8 @@ Flags:
                                 &quot;csvtk pretty -h&quot; for examples)
   -r, --align-right strings     align right for selected columns (field index/range or column name, type
                                 &quot;csvtk pretty -h&quot; for examples)
-  -n, --buf-rows int            the number of rows to determine the min and max widths (default 128)
+  -n, --buf-rows int            the number of rows to determine the min and max widths (0 for all rows)
+                                (default 1024)
       --clip                    clip longer cell instead of wrapping
       --clip-mark string        clip mark (default &quot;...&quot;)
   -h, --help                    help for pretty
@@ -3463,10 +3488,13 @@ Flags:
   -k, --keep-unmatched    keep unmatched data of the first file (left join)
   -L, --left-join         left join, equals to -k/--keep-unmatched, exclusive with --outer-join
       --na string         content for filling NA data
+  -P, --only-duplicates   add filenames as colname prefixes or add custom suffixes only for duplicated
+                          colnames
   -O, --outer-join        outer join, exclusive with --left-join
   -p, --prefix-filename   add each filename as a prefix to each colname. if there's no header row, we'll
                           add one
   -e, --prefix-trim-ext   trim extension when adding filename as colname prefix
+  -s, --suffix strings    add suffixes to colnames from each file
 
 </code></pre>
 <p>Examples:</p>
@@ -3633,6 +3661,16 @@ key1   key2   A   B   C
 ----   ----   -   -   -
 a      x      1   3   5
 b      y      2   4   6
+</code></pre>
+</li>
+<li>
+<p>add suffixes to colnames from each file (<code>-s/--suffix</code>)</p>
+<pre><code>$ csvtk join -H testdata/{A,B,C}.f.csv -s A,B,C  \
+    | csvtk pretty
+key1   c2-A   c3-A   c2-B   c3-B   c2-C   c3-C
+----   ----   ----   ----   ----   ----   ----
+a      x      1      x      3      x      5
+b      y      2      y      4      y      6
 </code></pre>
 </li>
 </ul>
@@ -4792,7 +4830,7 @@ Usage:
   csvtk spread [flags]
 
 Aliases:
-  spread, wider
+  spread, wider, scatter
 
 Flags:
   -h, --help               help for spread
