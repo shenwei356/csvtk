@@ -3633,7 +3633,7 @@ Usage:
   csvtk spread [flags]
 
 Aliases:
-  spread, wider
+  spread, wider, scatter
 
 Flags:
   -h, --help               help for spread

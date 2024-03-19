@@ -37,7 +37,7 @@ var spreadCmd = &cobra.Command{
 
 	Use: "spread",
 
-	Aliases: []string{"wider"},
+	Aliases: []string{"wider", "scatter"},
 
 	Short: "spread a key-value pair across multiple columns, like tidyr::spread/pivot_wider",
 	Long: `spread a key-value pair across multiple columns, like tidyr::spread/pivot_wider
