@@ -31,6 +31,7 @@ import (
 
 	"github.com/expr-lang/expr"
 	"github.com/expr-lang/expr/vm"
+	"github.com/mattn/go-runewidth"
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
 )
@@ -77,6 +78,10 @@ Supported Literals:
   String: "foo" 'bar'
 
 See Expr language definition link for documentation on built-in functions.
+
+Custom functions:
+  - ulen(), length of unicode strings/width of unicode strings rendered
+    to a terminal, e.g., len("沈伟")==6, ulen("沈伟")==4
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
@@ -178,6 +183,29 @@ func doMutate3(config Config, opts mutate3Opts) {
 
 	var exprStr1 string
 	var program *vm.Program
+
+	customFuncs := []expr.Option{
+		expr.Function(
+			"ulen",
+			func(args ...interface{}) (interface{}, error) {
+				n := 0
+				for _, s := range args {
+					switch s.(type) {
+					case int:
+						n += runewidth.StringWidth(fmt.Sprintf("%d", s.(int)))
+					case float64:
+						n += runewidth.StringWidth(fmt.Sprintf("%f", s.(float64)))
+					case string:
+						n += runewidth.StringWidth(s.(string))
+					}
+				}
+				return float64(n), nil
+			},
+			new(func(int) float64),
+			new(func(float64) float64),
+			new(func(string) float64),
+		),
+	}
 
 	fuzzyFields := false
 
@@ -374,7 +402,7 @@ func doMutate3(config Config, opts mutate3Opts) {
 			}
 
 			// evaluate
-			program, err = expr.Compile(exprStr1)
+			program, err = expr.Compile(exprStr1, customFuncs...)
 			checkError(err)
 
 			decimalFormat := fmt.Sprintf("%%.%df", opts.DecimalWidth)

@@ -173,6 +173,30 @@ a2,,a2
 3,Alf,2023-08-26 11:29:00,2023-08-29 20:43:00,81
 `,
 		},
+
+		// len
+		{
+			opts: mutate3Opts{
+				ExprStr: `len($SD)`,
+				Files:   []string{"../../testdata/mutate3len.csv"},
+				Name:    "Len",
+			},
+			expect: `SD,Len
+沈伟,6
+`,
+		},
+
+		// ulen
+		{
+			opts: mutate3Opts{
+				ExprStr: `ulen($SD)`,
+				Files:   []string{"../../testdata/mutate3len.csv"},
+				Name:    "Len",
+			},
+			expect: `SD,Len
+沈伟,4
+`,
+		},
 	}
 
 	for _, c := range cases {
