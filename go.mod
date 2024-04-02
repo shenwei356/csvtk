@@ -7,6 +7,7 @@ require (
 	github.com/araddon/dateparse v0.0.0-20210429162001-6b43995a97de
 	github.com/botond-sipos/thist v1.1.0
 	github.com/cheggaaa/pb/v3 v3.1.0
+	github.com/expr-lang/expr v1.16.3
 	github.com/fatih/color v1.13.0
 	github.com/mattn/go-colorable v0.1.13
 	github.com/mattn/go-runewidth v0.0.14
