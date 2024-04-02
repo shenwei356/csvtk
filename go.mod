@@ -7,6 +7,7 @@ require (
 	github.com/araddon/dateparse v0.0.0-20210429162001-6b43995a97de
 	github.com/botond-sipos/thist v1.1.0
 	github.com/cheggaaa/pb/v3 v3.1.0
+	github.com/expr-lang/expr v1.16.3
 	github.com/fatih/color v1.13.0
 	github.com/mattn/go-colorable v0.1.13
 	github.com/mattn/go-runewidth v0.0.14
@@ -34,7 +35,6 @@ require (
 	github.com/campoy/embedmd v1.0.0 // indirect
 	github.com/dsnet/compress v0.0.1 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
-	github.com/expr-lang/expr v1.16.1 // indirect
 	github.com/go-fonts/liberation v0.3.1 // indirect
 	github.com/go-latex/latex v0.0.0-20230307184459-12ec69307ad9 // indirect
 	github.com/go-pdf/fpdf v0.8.0 // indirect
