@@ -77,7 +77,7 @@ Attentions:
 		ignoreCase := getFlagBool(cmd, "ignore-case")
 		useRegexp := getFlagBool(cmd, "use-regexp")
 		invert := getFlagBool(cmd, "invert")
-		verbose := getFlagBool(cmd, "verbose") || config.Verbose
+		// verbose := getFlagBool(cmd, "verbose") || config.Verbose
 		noHighlight := getFlagBool(cmd, "no-highlight")
 		printLineNumber := getFlagBool(cmd, "line-number") || config.ShowRowNumber
 		deleteMatched := getFlagBool(cmd, "delete-matched")
@@ -221,9 +221,9 @@ Attentions:
 					}
 				}
 
-				if verbose && record.Row&8191 == 0 {
-					log.Infof("processed records: %d", record.Row)
-				}
+				// if verbose && record.Row&8191 == 0 {
+				// 	log.Infof("processed records: %d", record.Row)
+				// }
 
 				hit = false
 				for i, target = range record.Selected {
