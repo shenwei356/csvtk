@@ -58,7 +58,7 @@ Attention:
      It would report error:
          bare " in non-quoted-field.
      Please switch on the flag "-l" or use "csvtk fix-quotes" to fix it.
-  8. If somes fields have only a double-quote eighter in the beginning or in the end, e.g.,
+  8. If somes fields have only a double-quote either in the beginning or in the end, e.g.,
          x,d "e","a" b c,1
      It would report error:
          extraneous or missing " in quoted-field

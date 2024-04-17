@@ -1,15 +1,14 @@
 # csvtk - a cross-platform, efficient and practical CSV/TSV toolkit
 
 - **Documents:** [http://bioinf.shenwei.me/csvtk](http://bioinf.shenwei.me/csvtk/)
-( [**Usage**](http://bioinf.shenwei.me/csvtk/usage/), [**Tutorial**](http://bioinf.shenwei.me/csvtk/tutorial/) and [**FAQs**](http://bioinf.shenwei.me/csvtk/faq/)).
-[中文介绍](http://bioinf.shenwei.me/csvtk/chinese)
-- **Source code:**  [https://github.com/shenwei356/csvtk](https://github.com/shenwei356/csvtk) [![GitHub stars](https://img.shields.io/github/stars/shenwei356/csvtk.svg?style=social&label=Star&?maxAge=2592000)](https://github.com/shenwei356/csvtk)
-[![license](https://img.shields.io/github/license/shenwei356/csvtk.svg?maxAge=2592000)](https://github.com/shenwei356/csvtk/blob/master/LICENSE)
+  ( [**Usage**](http://bioinf.shenwei.me/csvtk/usage/), [**Tutorial**](http://bioinf.shenwei.me/csvtk/tutorial/) and [**FAQs**](http://bioinf.shenwei.me/csvtk/faq/)).
+  [中文介绍](http://bioinf.shenwei.me/csvtk/chinese)
+- **Source code:** [https://github.com/shenwei356/csvtk](https://github.com/shenwei356/csvtk) [![GitHub stars](https://img.shields.io/github/stars/shenwei356/csvtk.svg?style=social&label=Star&?maxAge=2592000)](https://github.com/shenwei356/csvtk)
+  [![license](https://img.shields.io/github/license/shenwei356/csvtk.svg?maxAge=2592000)](https://github.com/shenwei356/csvtk/blob/master/LICENSE)
 - **Latest version:** [![Latest Stable Version](https://img.shields.io/github/release/shenwei356/csvtk.svg?style=flat)](https://github.com/shenwei356/csvtk/releases)
-[![Github Releases](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/total.svg?maxAge=3600)](http://bioinf.shenwei.me/csvtk/download/)
-[![Cross-platform](https://img.shields.io/badge/platform-any-ec2eb4.svg?style=flat)](http://bioinf.shenwei.me/csvtk/download/)
-[![Anaconda Cloud](https://anaconda.org/bioconda/csvtk/badges/version.svg)](https://anaconda.org/bioconda/csvtk)
-
+  [![Github Releases](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/total.svg?maxAge=3600)](http://bioinf.shenwei.me/csvtk/download/)
+  [![Cross-platform](https://img.shields.io/badge/platform-any-ec2eb4.svg?style=flat)](http://bioinf.shenwei.me/csvtk/download/)
+  [![Anaconda Cloud](https://anaconda.org/bioconda/csvtk/badges/version.svg)](https://anaconda.org/bioconda/csvtk)
 
 ## Introduction
 
@@ -21,14 +20,13 @@ However this is all by clicking and typing, which is **not
 automated and is time-consuming to repeat**, especially when you want to
 apply similar operations with different datasets or purposes.
 
-***You can also accomplish some CSV/TSV manipulations using shell commands,
+**_You can also accomplish some CSV/TSV manipulations using shell commands,
 but more code is needed to handle the header line. Shell commands do not
-support selecting columns with column names either.***
+support selecting columns with column names either._**
 
 `csvtk` is **convenient for rapid data investigation
 and also easy to integrate into analysis pipelines**.
 It could save you lots of time in (not) writing Python/R scripts.
-
 
 ## Table of Contents
 
@@ -48,15 +46,14 @@ It could save you lots of time in (not) writing Python/R scripts.
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-
 ## Features
 
 - **Cross-platform** (Linux/Windows/Mac OS X/OpenBSD/FreeBSD)
 - **Light weight and out-of-the-box, no dependencies, no compilation, no configuration**
-- **Fast**,  **multiple-CPUs supported** (some commands)
+- **Fast**, **multiple-CPUs supported** (some commands)
 - **Practical functions provided by N subcommands**
 - **Support STDIN and gziped input/output file, easy being used in pipe**
-- Most of the subcommands support ***unselecting fields*** and ***fuzzy fields***,
+- Most of the subcommands support **_unselecting fields_** and **_fuzzy fields_**,
   e.g. `-f "-id,-name"` for all fields except "id" and "name",
   `-F -f "a.*"` for all fields with prefix "a.".
 - **Support some common plots** (see [usage](http://bioinf.shenwei.me/csvtk/usage/#plot))
@@ -136,24 +133,23 @@ It could save you lots of time in (not) writing Python/R scripts.
 **Ploting**
 
 - [`plot`](https://bioinf.shenwei.me/csvtk/usage/#plot) see [usage](http://bioinf.shenwei.me/csvtk/usage/#plot)
-    - [`plot hist`](https://bioinf.shenwei.me/csvtk/usage/#hist) histogram
-    - [`plot box`](https://bioinf.shenwei.me/csvtk/usage/#box) boxplot
-    - [`plot line`](https://bioinf.shenwei.me/csvtk/usage/#line) line plot and scatter plot
+  - [`plot hist`](https://bioinf.shenwei.me/csvtk/usage/#hist) histogram
+  - [`plot box`](https://bioinf.shenwei.me/csvtk/usage/#box) boxplot
+  - [`plot line`](https://bioinf.shenwei.me/csvtk/usage/#line) line plot and scatter plot
 
 **Misc**
 
 - [`cat`](https://bioinf.shenwei.me/csvtk/usage/#cat) stream file and report progress
-- [`version`](https://bioinf.shenwei.me/csvtk/usage/#version)   print version information and check for update
+- [`version`](https://bioinf.shenwei.me/csvtk/usage/#version) print version information and check for update
 - [`genautocomplete`](https://bioinf.shenwei.me/csvtk/usage/#genautocomplete) generate shell autocompletion script (bash|zsh|fish|powershell)
-
 
 ## Installation
 
 [Download Page](https://github.com/shenwei356/csvtk/releases)
 
 `csvtk` is implemented in [Go](https://golang.org/) programming language,
- executable binary files **for most popular operating systems** are freely available
-  in [release](https://github.com/shenwei356/csvtk/releases) page.
+executable binary files **for most popular operating systems** are freely available
+in [release](https://github.com/shenwei356/csvtk/releases) page.
 
 #### Method 1: Download binaries (latest stable/dev version)
 
@@ -162,18 +158,19 @@ executable file of your operating system,
 and decompress it with `tar -zxvf *.tar.gz` command or other tools.
 And then:
 
-1. **For Linux-like systems**
-    1. If you have root privilege simply copy it to `/usr/local/bin`:
+1.  **For Linux-like systems**
+
+    1.  If you have root privilege simply copy it to `/usr/local/bin`:
 
             sudo cp csvtk /usr/local/bin/
 
-    1. Or copy to anywhere in the environment variable `PATH`:
+    1.  Or copy to anywhere in the environment variable `PATH`:
 
             mkdir -p $HOME/bin/; cp csvtk $HOME/bin/
 
-1. **For windows**, just copy `csvtk.exe` to `C:\WINDOWS\system32`.
+1.  **For windows**, just copy `csvtk.exe` to `C:\WINDOWS\system32`.
 
-#### Method 2: Install via conda (latest stable version)  [![Anaconda Cloud](	https://anaconda.org/bioconda/csvtk/badges/version.svg)](https://anaconda.org/bioconda/csvtk) [![downloads](https://anaconda.org/bioconda/csvtk/badges/downloads.svg)](https://anaconda.org/bioconda/csvtk)
+#### Method 2: Install via conda (latest stable version) [![Anaconda Cloud](https://anaconda.org/bioconda/csvtk/badges/version.svg)](https://anaconda.org/bioconda/csvtk) [![downloads](https://anaconda.org/bioconda/csvtk/badges/downloads.svg)](https://anaconda.org/bioconda/csvtk)
 
     conda install -c bioconda csvtk
 
@@ -214,35 +211,34 @@ fish:
 
     csvtk genautocomplete --shell fish --file ~/.config/fish/completions/csvtk.fish
 
-
 ## Compared to `csvkit`
 
 [csvkit](http://csvkit.readthedocs.org/), attention: this table wasn't updated for many years.
 
-Features                |  csvtk   |  csvkit   |   Note
-:-----------------------|:--------:|:---------:|:---------
-Read    Gzip            |   Yes    |  Yes      | read gzip files
-Fields ranges           |   Yes    |  Yes      | e.g. `-f 1-4,6`
-**Unselect fileds**     |   Yes    |  --       | e.g. `-1` for excluding first column
-**Fuzzy fields**        |   Yes    |  --       | e.g. `ab*` for columns with name prefix "ab"
-Reorder fields          |   Yes    |  Yes      | it means `-f 1,2` is different from `-f 2,1`
-**Rename columns**      |   Yes    |  --       | rename with new name(s) or from existed names
-Sort by multiple keys   |   Yes    |  Yes      | bash sort like operations
-**Sort by number**      |   Yes    |  --       | e.g. `-k 1:n`
-**Multiple sort**       |   Yes    |  --       | e.g. `-k 2:r -k 1:nr`
-Pretty output           |   Yes    |  Yes      | convert CSV to readable aligned table
-**Unique data**         |   Yes    |  --       | unique data of selected fields
-**frequency**           |   Yes    |  --       | frequencies of selected fields
-**Sampling**            |   Yes    |  --       | sampling by proportion
-**Mutate fields**       |   Yes    |  --       | create new columns from selected fields
-**Replace**             |   Yes    |  --       | replace data of selected fields
+| Features              | csvtk | csvkit | Note                                          |
+| :-------------------- | :---: | :----: | :-------------------------------------------- |
+| Read Gzip             |  Yes  |  Yes   | read gzip files                               |
+| Fields ranges         |  Yes  |  Yes   | e.g. `-f 1-4,6`                               |
+| **Unselect fileds**   |  Yes  |   --   | e.g. `-1` for excluding first column          |
+| **Fuzzy fields**      |  Yes  |   --   | e.g. `ab*` for columns with name prefix "ab"  |
+| Reorder fields        |  Yes  |  Yes   | it means `-f 1,2` is different from `-f 2,1`  |
+| **Rename columns**    |  Yes  |   --   | rename with new name(s) or from existed names |
+| Sort by multiple keys |  Yes  |  Yes   | bash sort like operations                     |
+| **Sort by number**    |  Yes  |   --   | e.g. `-k 1:n`                                 |
+| **Multiple sort**     |  Yes  |   --   | e.g. `-k 2:r -k 1:nr`                         |
+| Pretty output         |  Yes  |  Yes   | convert CSV to readable aligned table         |
+| **Unique data**       |  Yes  |   --   | unique data of selected fields                |
+| **frequency**         |  Yes  |   --   | frequencies of selected fields                |
+| **Sampling**          |  Yes  |   --   | sampling by proportion                        |
+| **Mutate fields**     |  Yes  |   --   | create new columns from selected fields       |
+| **Replace**           |  Yes  |   --   | replace data of selected fields               |
 
 Similar tools:
 
 - [csvkit](http://csvkit.readthedocs.org/) - A suite of utilities for converting to and working with CSV, the king of tabular file formats. http://csvkit.rtfd.org/
 - [xsv](https://github.com/BurntSushi/xsv) - A fast CSV toolkit written in Rust.
 - [miller](https://github.com/johnkerl/miller) - Miller is like sed, awk, cut, join, and sort for
-name-indexed data such as CSV and tabular JSON http://johnkerl.org/miller
+  name-indexed data such as CSV and tabular JSON http://johnkerl.org/miller
 - [tsv-utils](https://github.com/eBay/tsv-utils) - Command line utilities for tab-separated value files written in the D programming language.
 
 ## Examples
@@ -251,17 +247,17 @@ More [examples](http://shenwei356.github.io/csvtk/usage/) and [tutorial](http://
 
 **Attention**
 
-1. By default, csvtk assumes input files have header row, if not, switch flag `-H` on.
-2. By default, csvtk handles CSV files, use flag `-t` for tab-delimited files.
-3. Column names should be unique.
-4. By default, lines starting with `#` will be ignored, if the header row
+1.  By default, csvtk assumes input files have header row, if not, switch flag `-H` on.
+2.  By default, csvtk handles CSV files, use flag `-t` for tab-delimited files.
+3.  Column names should be unique.
+4.  By default, lines starting with `#` will be ignored, if the header row
     starts with `#`, please assign flag `-C` another rare symbol, e.g. `$`.
-5. Do not mix use field (column) numbers and names to specify columns to operate.
-6. The CSV parser requires all the lines have same numbers of fields/columns.
+5.  Do not mix use field (column) numbers and names to specify columns to operate.
+6.  The CSV parser requires all the lines have same numbers of fields/columns.
     Even lines with spaces will cause error.
     Use `-I/--ignore-illegal-row` to skip these lines if neccessary.
     You can also use "csvtk fix" to fix files with different numbers of columns in rows.
-7. If double-quotes exist in fields not enclosed with double-quotes, e.g.,
+7.  If double-quotes exist in fields not enclosed with double-quotes, e.g.,
 
         x,a "b" c,1
 
@@ -271,11 +267,11 @@ More [examples](http://shenwei356.github.io/csvtk/usage/) and [tutorial](http://
 
     Please switch on the flag `-l` or use `csvtk fix-quotes` to fix it.
 
-8. If somes fields have only a double-quote eighter in the beginning or in the end, e.g.,
+8.  If somes fields have only a double-quote either in the beginning or in the end, e.g.,
 
         x,d "e","a" b c,1
 
-    It would report error:
+    It would report error:either
 
         extraneous or missing " in quoted-field
 
@@ -284,7 +280,7 @@ More [examples](http://shenwei356.github.io/csvtk/usage/) and [tutorial](http://
 
 Examples
 
-1. Pretty result
+1.  Pretty result
 
         $ csvtk pretty names.csv
         id   first_name   last_name   username
@@ -321,7 +317,7 @@ Examples
         ┃  NA   ┃   Robert   ┃   Abel    ┃   123    ┃
         ┗━━━━━━━┻━━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━┛
 
-1. Summary of selected numeric fields, supporting "group-by"
+1.  Summary of selected numeric fields, supporting "group-by"
 
         $ cat testdata/digitals2.csv \
             | csvtk summary -i -f f4:sum,f5:sum -g f1,f2 \
@@ -332,97 +328,97 @@ Examples
         foo   bar    6.00     3.00
         foo   bar2   4.50     5.00
 
-1. Select fields/columns (`cut`)
+1.  Select fields/columns (`cut`)
 
     - By index: `csvtk cut -f 1,2`
     - By names: `csvtk cut -f first_name,username`
     - **Unselect**: `csvtk cut -f -1,-2` or `csvtk cut -f -first_name`
     - **Fuzzy fields**: `csvtk cut -F -f "*_name,username"`
     - Field ranges: `csvtk cut -f 2-4` for column 2,3,4 or `csvtk cut -f -3--1` for discarding column 1,2,3
-    - All fields: `csvtk cut -f 1-` or  `csvtk cut -F -f "*"`
+    - All fields: `csvtk cut -f 1-` or `csvtk cut -F -f "*"`
 
-1. Search by selected fields (`grep`) (matched parts will be highlighted as red)
+1.  Search by selected fields (`grep`) (matched parts will be highlighted as red)
 
     - By exactly matching: `csvtk grep -f first_name -p Robert -p Rob`
     - By regular expression: `csvtk grep -f first_name -r -p Rob`
     - By pattern list: `csvtk grep -f first_name -P name_list.txt`
     - Remore rows containing missing data (NA): `csvtk grep -F -f "*" -r -p "^$" -v `
 
-1. **Rename column names** (`rename` and `rename2`)
+1.  **Rename column names** (`rename` and `rename2`)
 
     - Setting new names: `csvtk rename -f A,B -n a,b` or `csvtk rename -f 1-3 -n a,b,c`
     - Replacing with original names by regular express: `csvtk rename2 -f 1- -p "(.*)" -r 'prefix_$1'` for adding prefix to all column names.
 
-1. **Edit data with regular expression** (`replace`)
+1.  **Edit data with regular expression** (`replace`)
 
-    - Remove Chinese charactors:  `csvtk replace -F -f "*_name" -p "\p{Han}+" -r ""`
+    - Remove Chinese charactors: `csvtk replace -F -f "*_name" -p "\p{Han}+" -r ""`
 
-1. **Create new column from selected fields by regular expression** (`mutate`)
+1.  **Create new column from selected fields by regular expression** (`mutate`)
 
     - In default, copy a column: `csvtk mutate -f id `
     - Extract prefix of data as group name (get "A" from "A.1" as group name):
       `csvtk mutate -f sample -n group -p "^(.+?)\." --after sample`
 
-1. Sort by multiple keys (`sort`)
+1.  Sort by multiple keys (`sort`)
 
     - By single column : `csvtk sort -k 1` or `csvtk sort -k last_name`
     - By multiple columns: `csvtk sort -k 1,2` or `csvtk sort -k 1 -k 2` or `csvtk sort -k last_name,age`
-    - Sort by number: `csvtk sort -k 1:n` or  `csvtk sort -k 1:nr` for reverse number
+    - Sort by number: `csvtk sort -k 1:n` or `csvtk sort -k 1:nr` for reverse number
     - Complex sort: `csvtk sort -k region -k age:n -k id:nr`
     - In natural order: `csvtk sort -k chr:N`
 
-1. **Join multiple files by keys** (`join`)
+1.  **Join multiple files by keys** (`join`)
 
     - All files have same key column: `csvtk join -f id file1.csv file2.csv`
     - Files have different key columns: `csvtk join -f "username;username;name" names.csv phone.csv adress.csv -k`
 
-1. Filter by numbers (`filter`)
+1.  Filter by numbers (`filter`)
 
     - Single field: `csvtk filter -f "id>0"`
     - **Multiple fields**: `csvtk filter -f "1-3>0"`
     - Using `--any` to print record if any of the field satisfy the condition: `csvtk filter -f "1-3>0" --any`
     - **fuzzy fields**: `csvtk filter -F -f "A*!=0"`
 
-1. **Filter rows by awk-like arithmetic/string expressions** (`filter2`)
+1.  **Filter rows by awk-like arithmetic/string expressions** (`filter2`)
 
     - Using field index: `csvtk filter2 -f '$3>0'`
     - Using column names: `csvtk filter2 -f '$id > 0'`
     - Both arithmetic and string expressions: `csvtk filter2 -f '$id > 3 || $username=="ken"'`
     - More complicated: `csvtk filter2 -H -t -f '$1 > 2 && $2 % 2 == 0'`
 
-1. Ploting
+1.  Ploting
+
     - plot histogram with data of the second column:
-     
+
             csvtk -t plot hist testdata/grouped_data.tsv.gz -f 2 | display
 
       ![histogram.png](testdata/figures/histogram.png)
-        
+
     - plot boxplot with data of the "GC Content" (third) column,
-    group information is the "Group" column.
-    
-            csvtk -t plot box testdata/grouped_data.tsv.gz -g "Group" \
-                -f "GC Content" --width 3 | display
-            
+      group information is the "Group" column.
+
+              csvtk -t plot box testdata/grouped_data.tsv.gz -g "Group" \
+                  -f "GC Content" --width 3 | display
+
       ![boxplot.png](testdata/figures/boxplot.png)
-      
-    -  plot horiz boxplot with data of the "Length" (second) column,
-    group information is the "Group" column.
-    
-            csvtk -t plot box testdata/grouped_data.tsv.gz -g "Group" -f "Length"  \
-                --height 3 --width 5 --horiz --title "Horiz box plot" | display
-      
-      ![boxplot2.png](testdata/figures/boxplot2.png)
-      
+
+    - plot horiz boxplot with data of the "Length" (second) column,
+      group information is the "Group" column.
+
+              csvtk -t plot box testdata/grouped_data.tsv.gz -g "Group" -f "Length"  \
+                  --height 3 --width 5 --horiz --title "Horiz box plot" | display
+
+    ![boxplot2.png](testdata/figures/boxplot2.png)
+
     - plot line plot with X-Y data
-    
+
             csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group | display
-            
+
       ![lineplot.png](testdata/figures/lineplot.png)
-      
+
     - plot scatter plot with X-Y data
-        
-            csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group --scatter | display
-            
+      csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group --scatter | display
+
       ![scatter.png](testdata/figures/scatter.png)
 
 ## Acknowledgements
