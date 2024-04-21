@@ -75,6 +75,16 @@ Limitation:
 			config.Delimiter = '\t'
 		}
 
+		bufferSizeS := getFlagString(cmd, "buffer-size")
+		if bufferSizeS == "" {
+			checkError(fmt.Errorf("value of buffer size. supported unit: K, M, G"))
+		}
+		bufferSize, err := ParseByteSize(bufferSizeS)
+		if err != nil {
+			checkError(fmt.Errorf("invalid value of buffer size. supported unit: K, M, G"))
+		}
+		_buf := make([]byte, bufferSize)
+
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
 		defer outfh.Close()
@@ -88,6 +98,7 @@ Limitation:
 		var buf bytes.Buffer
 
 		scanner := bufio.NewScanner(fh)
+		scanner.Buffer(_buf, int(bufferSize))
 		var line string
 		var i, s int
 		var r, p rune
@@ -229,4 +240,6 @@ Limitation:
 
 func init() {
 	RootCmd.AddCommand(fixquotesCmd)
+
+	fixquotesCmd.Flags().StringP("buffer-size", "b", "1G", `size of buffer, supported unit: K, M, G. You need increase the value when "bufio.Scanner: token too long" error reported`)
 }

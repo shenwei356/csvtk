@@ -2,6 +2,10 @@
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.30.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.30.1)
     - `csvtk spread`:
         - add a new alias "scatter" to "spread". [#265](https://github.com/shenwei356/csvtk/issues/265)
+    - `csvtk grep`:
+        - do not show progress.
+    - `csvtk fix-quotes`:
+        - new flag `-b, --buffer-size`.
 - [csvtk v0.30.0](https://github.com/shenwei356/csvtk/releases/tag/v0.30.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.30.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.30.0)
   - `csvtk`:

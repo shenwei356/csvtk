@@ -2805,7 +2805,10 @@ Usage:
   csvtk fix-quotes [flags]
 
 Flags:
-  -h, --help   help for fix-quotes
+  -b, --buffer-size string   size of buffer, supported unit: K, M, G. You need increase the value when
+                             "bufio.Scanner: token too long" error reported (default "1G")
+  -h, --help                 help for fix-quotes
+
 ```
 
 Examples:
