@@ -191,6 +191,7 @@ Notes:
 		sort.Sort(stringutil.StringCountList(groupOrders))
 
 		i := colorIndex - 1
+		addLegend := len(groupOrders) > 1
 		for _, gor := range groupOrders {
 			v := groups[gor.Key]
 			g := gor.Key
@@ -204,7 +205,9 @@ Notes:
 				points.Color = plotutil.Color(i)
 				points.Radius = pointSize
 				p.Add(lines, points)
-				p.Legend.Add(g, lines, points)
+				if addLegend {
+					p.Legend.Add(g, lines, points)
+				}
 			} else {
 				points, err := plotter.NewScatter(v)
 				checkError(err)
@@ -212,7 +215,9 @@ Notes:
 				points.Color = plotutil.Color(i)
 				points.Radius = pointSize
 				p.Add(points)
-				p.Legend.Add(g, points)
+				if addLegend {
+					p.Legend.Add(g, points)
+				}
 			}
 
 			i++
