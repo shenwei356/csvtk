@@ -222,10 +222,12 @@ Available operations:
 			if checkFirstLine {
 				checkFirstLine = false
 
-				fieldsD = record.Fields[:numFieldsD]
-				fieldsG = record.Fields[numFieldsD:]
+				fieldsD = append(fieldsD, record.Fields[:numFieldsD]...) //  copy
+				fieldsG = append(fieldsG, record.Fields[numFieldsD:]...) //  copy
 
-				fieldsDUniq = UniqInts(fieldsD)
+				fieldsDUniq = make([]int, len(fieldsD))
+				copy(fieldsDUniq, fieldsD)
+				fieldsDUniq = UniqInts(fieldsDUniq)
 
 				for i, f := range fieldsD {
 					if _, ok = statsI[f]; !ok {

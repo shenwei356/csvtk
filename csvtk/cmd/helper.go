@@ -731,6 +731,7 @@ func ParseByteSize(val string) (int64, error) {
 	return int64(size * float64(u)), nil
 }
 
+// UniqInts sort the list first and compute uniq values
 func UniqInts(list []int) []int {
 	if len(list) == 0 {
 		return []int{}
