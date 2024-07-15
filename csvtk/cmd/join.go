@@ -146,7 +146,7 @@ Attention:
 			keys = make(map[string]bool)
 			for i, file := range files {
 				_, fields, _, _, data, err := parseCSVfile(cmd, config,
-					file, allFields[i], fuzzyFields, true)
+					file, allFields[i], fuzzyFields, false, true)
 
 				if err != nil {
 					if err == xopen.ErrNoContent {
@@ -184,7 +184,7 @@ Attention:
 		mColnames := make(map[string]interface{}, 8)
 		for i, file := range files {
 			_, fields, _, headerRow, data, err := parseCSVfile(cmd, config,
-				file, allFields[i], fuzzyFields, true)
+				file, allFields[i], fuzzyFields, false, true)
 
 			if err != nil {
 				if err == xopen.ErrNoContent {

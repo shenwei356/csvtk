@@ -1,5 +1,7 @@
 - [csvtk v0.30.1](https://github.com/shenwei356/csvtk/releases/tag/v0.30.1)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.30.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.30.1)
+    - `csvtk sort/join`:
+        - faster speed and lower memory.
     - `csvtk spread`:
         - add a new alias "scatter" to "spread". [#265](https://github.com/shenwei356/csvtk/issues/265)
     - `csvtk grep`:

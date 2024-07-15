@@ -525,7 +525,7 @@ func readDataFrame(config Config, file string, ignoreCase bool) ([]string, map[s
 }
 
 func parseCSVfile(cmd *cobra.Command, config Config, file string,
-	fieldStr string, fuzzyFields bool, allData bool) ([]string, []int, [][]string, []string, [][]string, error) {
+	fieldStr string, fuzzyFields bool, returnSelectedData, returnAllData bool) ([]string, []int, [][]string, []string, [][]string, error) {
 
 	csvReader, err := newCSVReaderByConfig(config, file)
 	if err != nil {
@@ -542,7 +542,10 @@ func parseCSVfile(cmd *cobra.Command, config Config, file string,
 	var fields []int
 	var HeaderRow []string
 	var HeaderRowAll []string
-	Data := make([][]string, 0, 1024)
+	var Data [][]string
+	if returnSelectedData {
+		Data = make([][]string, 0, 1024)
+	}
 	var DataAll [][]string
 
 	checkFirstLine := true
@@ -563,10 +566,12 @@ func parseCSVfile(cmd *cobra.Command, config Config, file string,
 			}
 		}
 
-		if allData {
+		if returnAllData {
 			DataAll = append(DataAll, record.All)
 		}
-		Data = append(Data, record.Selected)
+		if returnSelectedData {
+			Data = append(Data, record.Selected)
+		}
 	}
 
 	if config.IgnoreEmptyRow {
@@ -584,15 +589,11 @@ func parseCSVfile(cmd *cobra.Command, config Config, file string,
 }
 
 func removeComma(s string) string {
-	newSlice := []byte{}
-	for i := 0; i < len(s); i++ {
-		switch s[i] {
-		case ',':
-		default:
-			newSlice = append(newSlice, s[i])
-		}
+	if !strings.ContainsRune(s, ',') {
+		return s
 	}
-	return string(newSlice)
+
+	return strings.ReplaceAll(s, ",", "")
 }
 
 func readKVs(file string, allLeftAsValue bool) (map[string]string, error) {
