@@ -181,8 +181,8 @@ Special replacement symbols:
 					checkFirstLine = false
 
 					if !config.NoHeaderRow || record.IsHeaderRow {
+						nr = startNum
 						for _, f := range record.Fields {
-							nr = startNum
 							r = replacement
 
 							if replaceWithNR {
