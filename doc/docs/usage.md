@@ -3069,6 +3069,8 @@ Flags:
                                             when using "{kv}" in -r (--replacement)
   -A, --kv-file-all-left-columns-as-value   treat all columns except 1th one as value for kv-file with
                                             more than 2 columns
+      --nr-width int                        minimum width for {nr} in flag -r/--replacement. e.g.,
+                                            formating "1" to "001" by --nr-width 3 (default 1)
   -p, --pattern string                      search regular expression
   -r, --replacement string                  renamement. supporting capture variables.  e.g. $1
                                             represents the text of the first submatch. ATTENTION: use

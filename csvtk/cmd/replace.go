@@ -88,6 +88,7 @@ Special replacement symbols:
 		keyMissRepl := getFlagString(cmd, "key-miss-repl")
 		nrWidth := getFlagPositiveInt(cmd, "nr-width")
 		nrFormat := fmt.Sprintf("%%0%dd", nrWidth)
+		startNum := getFlagNonNegativeInt(cmd, "start-num")
 		kvFileAllLeftColumnsAsValue := getFlagBool(cmd, "kv-file-all-left-columns-as-value")
 
 		var replaceWithNR bool
@@ -182,7 +183,9 @@ Special replacement symbols:
 			var found []string
 			var founds [][]string
 			var k string
-			nr := 0
+			var nr int
+
+			nr = startNum
 
 			checkFirstLine := true
 			for record := range csvReader.Ch {
@@ -202,7 +205,6 @@ Special replacement symbols:
 					}
 				}
 
-				nr++
 				for _, i = range record.Fields {
 					i--
 
@@ -239,6 +241,8 @@ Special replacement symbols:
 					record.All[i] = patternRegexp.ReplaceAllString(record.All[i], r)
 				}
 				checkError(writer.Write(record.All))
+
+				nr++
 			}
 
 			readerReport(&config, csvReader, file)
@@ -264,6 +268,7 @@ func init() {
 	replaceCmd.Flags().IntP("key-capt-idx", "", 1, "capture variable index of key (1-based)")
 	replaceCmd.Flags().StringP("key-miss-repl", "", "", "replacement for key with no corresponding value")
 	replaceCmd.Flags().IntP("nr-width", "", 1, `minimum width for {nr} in flag -r/--replacement. e.g., formating "1" to "001" by --nr-width 3`)
+	replaceCmd.Flags().IntP("start-num", "n", 1, `starting number when using {nr} in replacement`)
 	replaceCmd.Flags().BoolP("kv-file-all-left-columns-as-value", "A", false, "treat all columns except 1th one as value for kv-file with more than 2 columns")
 }
 

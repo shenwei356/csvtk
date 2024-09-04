@@ -25,7 +25,6 @@ import (
 	"fmt"
 	"regexp"
 	"runtime"
-	"strconv"
 	"strings"
 
 	"github.com/shenwei356/xopen"
@@ -78,6 +77,8 @@ Special replacement symbols:
 		keepKey := getFlagBool(cmd, "keep-key")
 		keyCaptIdx := getFlagPositiveInt(cmd, "key-capt-idx")
 		keyMissRepl := getFlagString(cmd, "key-miss-repl")
+		nrWidth := getFlagPositiveInt(cmd, "nr-width")
+		nrFormat := fmt.Sprintf("%%0%dd", nrWidth)
 		startNum := getFlagNonNegativeInt(cmd, "start-num")
 		kvFileAllLeftColumnsAsValue := getFlagBool(cmd, "kv-file-all-left-columns-as-value")
 		var replaceWithNR bool
@@ -186,7 +187,7 @@ Special replacement symbols:
 							r = replacement
 
 							if replaceWithNR {
-								r = reNR.ReplaceAllString(r, strconv.Itoa(nr))
+								r = reNR.ReplaceAllString(r, fmt.Sprintf(nrFormat, nr))
 							}
 
 							if replaceWithKV {
@@ -248,6 +249,7 @@ func init() {
 	rename2Cmd.Flags().BoolP("keep-key", "K", false, "keep the key as value when no value found for the key")
 	rename2Cmd.Flags().IntP("key-capt-idx", "", 1, "capture variable index of key (1-based)")
 	rename2Cmd.Flags().StringP("key-miss-repl", "", "", "replacement for key with no corresponding value")
+	rename2Cmd.Flags().IntP("nr-width", "", 1, `minimum width for {nr} in flag -r/--replacement. e.g., formating "1" to "001" by --nr-width 3`)
 	rename2Cmd.Flags().IntP("start-num", "n", 1, `starting number when using {nr} in replacement`)
 	rename2Cmd.Flags().BoolP("kv-file-all-left-columns-as-value", "A", false, "treat all columns except 1th one as value for kv-file with more than 2 columns")
 }

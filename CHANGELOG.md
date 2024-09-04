@@ -6,6 +6,9 @@
         - fix the order of columns. [#282](https://github.com/shenwei356/csvtk/issues/282)
     - `csvtk rename2`:
         - fix `-n/--start-num`. [#286](https://github.com/shenwei356/csvtk/issues/286)
+        - add flag `--nr-width`.
+    - `csvtk replace`:
+        - fix implementing `{nr}`. [#286](https://github.com/shenwei356/csvtk/issues/286)
     - `csvtk spread`:
         - add a new alias "scatter" to "spread". [#265](https://github.com/shenwei356/csvtk/issues/265)
     - `csvtk grep`:
