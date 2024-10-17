@@ -175,7 +175,11 @@ var sortCmd = &cobra.Command{
 		}
 
 		if len(data) == 0 {
-			checkError(fmt.Errorf("no data to sort"))
+			log.Warningf("no data to sort from file: %s", file)
+			if len(headerRow) > 0 && !config.NoOutHeader {
+				checkError(writer.Write(headerRow))
+			}
+			return
 		}
 
 		// checking keys

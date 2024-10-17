@@ -2,6 +2,8 @@
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.31.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.31.0)
     - `csvtk sort/join`:
         - faster speed and lower memory.
+    - `csvtk sort`:
+        - do not panic for empty input. [#287](https://github.com/shenwei356/csvtk/issues/287)
     - `csvtk summary`:
         - fix the order of columns. [#282](https://github.com/shenwei356/csvtk/issues/282)
     - `csvtk rename2`:
