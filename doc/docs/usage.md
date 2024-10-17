@@ -2438,22 +2438,29 @@ Usage
 ```text
 split CSV/TSV into multiple files according to column values
 
-Note:
+Notes:
 
-  1. flag -o/--out-file can specify out directory for splitted files
+  1. flag -o/--out-file can specify out directory for splitted files.
+  2. flag -s/--prefix-as-subdir can create subdirectories with prefixes of
+     keys of length X, to avoid writing too many files in the output directory.
 
 Usage:
   csvtk split [flags]
 
 Flags:
-  -g, --buf-groups int   buffering N groups before writing to file (default 100)
-  -b, --buf-rows int     buffering N rows for every group before writing to file (default 100000)
-  -f, --fields string    comma separated key fields, column name or index. e.g. -f 1-3 or -f id,id2 or
-                         -F -f "group*" (default "1")
-  -F, --fuzzy-fields     using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
-  -h, --help             help for split
-  -i, --ignore-case      ignore case
-  -G, --out-gzip         force output gzipped file
+  -g, --buf-groups int         buffering N groups before writing to file (default 100)
+  -b, --buf-rows int           buffering N rows for every group before writing to file (default 100000)
+  -f, --fields string          comma separated key fields, column name or index. e.g. -f 1-3 or -f
+                               id,id2 or -F -f "group*" (default "1")
+      --force                  overwrite existing output directory (given by -o).
+  -F, --fuzzy-fields           using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
+  -h, --help                   help for split
+  -i, --ignore-case            ignore case
+  -G, --out-gzip               force output gzipped file
+  -p, --out-prefix string      output file prefix, the default value is the input file. use -p "" to
+                               disable outputting prefix
+  -s, --prefix-as-subdir int   create subdirectories with prefixes of keys of length X, to avoid writing
+                               too many files in the output directory
 
 ```
 
@@ -2502,6 +2509,27 @@ Examples
         $ ls result/*.csv | wc -l
         10000
 
+1. Do not output prefix, use `-p ""`.
+
+        $ echo -ne "1,ACGT\n2,GGCA\n3,ACAAC\n"
+        1,ACGT
+        2,GGCA
+        3,ACAAC
+
+        $ echo -ne "1,ACGT\n2,GGCA\n3,ACAAC\n" | csvtk split -H -f 2 -o t -p "" -s 3 --force
+
+        $ tree t
+        t
+        ├── ACA
+        │   └── ACAAC.csv
+        ├── ACG
+        │   └── ACGT.csv
+        └── GGC
+            └── GGCA.csv
+
+        4 directories, 3 files
+
+
 1. extreme example 1: lots (1M) of rows in groups
 
         $ yes 2 | head -n 10000000 | gzip -c > t.gz
@@ -2533,6 +2561,47 @@ Examples
         72d4ff27a28afbc066d5804999d5a504  -
         $ zcat t2.gz | md5sum
         72d4ff27a28afbc066d5804999d5a504  -
+
+    since, v0.31.0, the flag `-s/--prefix-as-subdir` can create subdirectories with prefixes of
+    keys of length X, to avoid writing too many files in the output directory.
+
+        $ memusg -t csvtk -H split t2.gz -o t2 -s 3
+        elapsed time: 2.668s
+        peak rss: 1.79 GB
+
+      $ fd .gz$ t2 | rush 'zcat {}' | sort -k 1,1n | md5sum
+      72d4ff27a28afbc066d5804999d5a504  -
+
+        $ tree t2/ | more
+        t2/
+        ├── 100
+        │   ├── t2-10000.gz
+        │   ├── t2-1000.gz
+        │   ├── t2-1001.gz
+        │   ├── t2-1002.gz
+        │   ├── t2-1003.gz
+        │   ├── t2-1004.gz
+        │   ├── t2-1005.gz
+        │   ├── t2-1006.gz
+        │   ├── t2-1007.gz
+        │   ├── t2-1008.gz
+        │   └── t2-1009.gz
+        ├── 101
+        │   ├── t2-1010.gz
+        │   ├── t2-1011.gz
+        ...
+        ├── t2-994.gz
+        ├── t2-995.gz
+        ├── t2-996.gz
+        ├── t2-997.gz
+        ├── t2-998.gz
+        ├── t2-999.gz
+        ├── t2-99.gz
+        └── t2-9.gz
+
+        901 directories, 10000 files
+
+
 
 ## splitxlsx
 

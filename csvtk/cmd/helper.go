@@ -32,7 +32,9 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/pkg/errors"
 	"github.com/shenwei356/breader"
+	"github.com/shenwei356/util/pathutil"
 	"github.com/shenwei356/util/stringutil"
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
@@ -751,4 +753,31 @@ func UniqInts(list []int) []int {
 		p = v
 	}
 	return s
+}
+
+func makeOutDir(outDir string, force bool, logname string, verbose bool) {
+	pwd, _ := os.Getwd()
+	if outDir != "./" && outDir != "." && pwd != filepath.Clean(outDir) {
+		existed, err := pathutil.DirExists(outDir)
+		checkError(errors.Wrap(err, outDir))
+		if existed {
+			empty, err := pathutil.IsEmpty(outDir)
+			checkError(errors.Wrap(err, outDir))
+			if !empty {
+				if force {
+					if verbose {
+						log.Infof("removing old output directory: %s", outDir)
+					}
+					checkError(os.RemoveAll(outDir))
+				} else {
+					checkError(fmt.Errorf("%s not empty: %s, use --force to overwrite", logname, outDir))
+				}
+			} else {
+				checkError(os.RemoveAll(outDir))
+			}
+		}
+		checkError(os.MkdirAll(outDir, 0777))
+	} else {
+		log.Errorf("%s should not be current directory", logname)
+	}
 }

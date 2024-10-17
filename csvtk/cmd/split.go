@@ -29,7 +29,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/shenwei356/util/pathutil"
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
 )
@@ -42,9 +41,11 @@ var splitCmd = &cobra.Command{
 	Short: "split CSV/TSV into multiple files according to column values",
 	Long: `split CSV/TSV into multiple files according to column values
 
-Note:
+Notes:
 
-  1. flag -o/--out-file can specify out directory for splitted files
+  1. flag -o/--out-file can specify out directory for splitted files.
+  2. flag -s/--prefix-as-subdir can create subdirectories with prefixes of
+     keys of length X, to avoid writing too many files in the output directory.
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -65,6 +66,9 @@ Note:
 		bufRowsSize := getFlagNonNegativeInt(cmd, "buf-rows")
 		bufGroupsSize := getFlagNonNegativeInt(cmd, "buf-groups")
 		gzipped := getFlagBool(cmd, "out-gzip")
+		outPrefix := getFlagString(cmd, "out-prefix")
+		subdirLen := getFlagNonNegativeInt(cmd, "prefix-as-subdir")
+		force := getFlagBool(cmd, "force")
 
 		file := files[0]
 		csvReader, err := newCSVReaderByConfig(config, file)
@@ -92,15 +96,28 @@ Note:
 			outFileSuffix = outFileSuffix + ".gz"
 		}
 
+		outdir := "./"
 		if config.OutFile != "-" { // outdir
-			outdir := config.OutFile
-			var existed bool
-			existed, err = pathutil.DirExists(outdir)
-			checkError(err)
-			if !existed {
-				checkError(os.MkdirAll(outdir, 0775))
+			outdir = config.OutFile
+			makeOutDir(outdir, force, "-o/--outfile", true)
+		}
+
+		if outPrefix != "" || cmd.Flags().Lookup("out-prefix").Changed {
+			outFilePrefix = outPrefix
+		} else {
+			outFilePrefix += "-"
+		}
+
+		outfile := func(key string) string {
+			if subdirLen == 0 {
+				return filepath.Join(outdir, outFilePrefix+key+outFileSuffix)
 			}
-			outFilePrefix = filepath.Join(outdir, filepath.Base(outFilePrefix))
+			var subdir string
+			if len(key) > subdirLen {
+				subdir = key[:subdirLen]
+				return filepath.Join(outdir, subdir, outFilePrefix+key+outFileSuffix)
+			}
+			return filepath.Join(outdir, outFilePrefix+key+outFileSuffix)
 		}
 
 		var key string
@@ -138,7 +155,7 @@ Note:
 					appendRows(config,
 						csvReader,
 						headerRow,
-						fmt.Sprintf("%s-%s%s", outFilePrefix, key, outFileSuffix),
+						outfile(key),
 						rowsBuf[key],
 						key,
 					)
@@ -161,7 +178,7 @@ Note:
 							appendRows(config,
 								csvReader,
 								headerRow,
-								fmt.Sprintf("%s-%s%s", outFilePrefix, key, outFileSuffix),
+								outfile(key),
 								rows,
 								key,
 							)
@@ -189,7 +206,7 @@ Note:
 				appendRows(config,
 					csvReader,
 					headerRow,
-					fmt.Sprintf("%s-%s%s", outFilePrefix, key, outFileSuffix),
+					outfile(key),
 					rows,
 					key,
 				)
@@ -212,7 +229,9 @@ func init() {
 	splitCmd.Flags().BoolP("out-gzip", "G", false, `force output gzipped file`)
 	splitCmd.Flags().IntP("buf-rows", "b", 100000, `buffering N rows for every group before writing to file`)
 	splitCmd.Flags().IntP("buf-groups", "g", 100, `buffering N groups before writing to file`)
-
+	splitCmd.Flags().StringP("out-prefix", "p", "", `output file prefix, the default value is the input file. use -p "" to disable outputting prefix`)
+	splitCmd.Flags().IntP("prefix-as-subdir", "s", 0, `create subdirectories with prefixes of keys of length X, to avoid writing too many files in the output directory`)
+	splitCmd.Flags().BoolP("force", "", false, `overwrite existing output directory (given by -o).`)
 }
 
 var writtenFiles sync.Map
