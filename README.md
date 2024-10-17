@@ -125,7 +125,7 @@ It could save you lots of time in (not) writing Python/R scripts.
 - [`transpose`](https://bioinf.shenwei.me/csvtk/usage/#transpose): transposes CSV data
 - [`sep`](https://bioinf.shenwei.me/csvtk/usage/#sep): separate column into multiple columns
 - [`gather`](https://bioinf.shenwei.me/csvtk/usage/#gather): gather columns into key-value pairs, like `tidyr::gather/pivot_longer`
-- [`spread`](https://bioinf.shenwei.me/csvtk/usage/spread): spread a key-value pair across multiple columns, like `tidyr::spread/pivot_wider`
+- [`spread`](https://bioinf.shenwei.me/csvtk/usage/#spread): spread a key-value pair across multiple columns, like `tidyr::spread/pivot_wider`
 - [`unfold`](https://bioinf.shenwei.me/csvtk/usage/#unfold): unfold multiple values in cells of a field
 - [`fold`](https://bioinf.shenwei.me/csvtk/usage/#fold): fold multiple values of a field into cells of groups
 
