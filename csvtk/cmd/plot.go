@@ -72,6 +72,7 @@ func init() {
 	plotCmd.PersistentFlags().Float64P("axis-width", "", 1.5, "axis width")
 	plotCmd.PersistentFlags().Float64P("tick-width", "", 1.5, "axis tick width")
 	plotCmd.PersistentFlags().IntP("tick-label-size", "", 12, "tick label font size")
+	plotCmd.PersistentFlags().Float64P("scale", "", 1, "scale the image width/height, tick, axes, line/point and font sizes proportionally")
 
 	plotCmd.PersistentFlags().StringP("format", "", "png", `image format for stdout when flag -o/--out-file not given. available values: eps, jpg|jpeg, pdf, png, svg, and tif|tiff.`)
 
@@ -105,13 +106,18 @@ func getPlotConfigs(cmd *cobra.Command) *plotConfigs {
 	}
 
 	config.title = getFlagString(cmd, "title")
-	config.titleSize = vg.Length(getFlagPositiveInt(cmd, "title-size"))
-	config.labelSize = vg.Length(getFlagPositiveInt(cmd, "label-size"))
-	config.width = vg.Length(getFlagPositiveFloat64(cmd, "width"))
-	config.height = vg.Length(getFlagPositiveFloat64(cmd, "height"))
-	config.axisWidth = vg.Length(getFlagPositiveFloat64(cmd, "axis-width"))
-	config.tickWidth = vg.Length(getFlagPositiveFloat64(cmd, "tick-width"))
-	config.tickLabelSize = vg.Length(getFlagPositiveInt(cmd, "tick-label-size"))
+
+	scale := getFlagPositiveFloat64(cmd, "scale")
+	config.scale = scale
+
+	config.titleSize = vg.Length(int(float64(getFlagPositiveInt(cmd, "title-size")) * scale))
+	config.labelSize = vg.Length(int(float64(getFlagPositiveInt(cmd, "label-size")) * scale))
+	config.width = vg.Length(getFlagPositiveFloat64(cmd, "width") * scale)
+	config.height = vg.Length(getFlagPositiveFloat64(cmd, "height") * scale)
+	config.axisWidth = vg.Length(getFlagPositiveFloat64(cmd, "axis-width") * scale)
+	config.tickWidth = vg.Length(getFlagPositiveFloat64(cmd, "tick-width") * scale)
+	config.tickLabelSize = vg.Length(int(float64(getFlagPositiveInt(cmd, "tick-label-size")) * scale))
+
 	config.xlab = getFlagString(cmd, "xlab")
 	config.ylab = getFlagString(cmd, "ylab")
 
@@ -161,6 +167,7 @@ type plotConfigs struct {
 	title, xlab, ylab                     string
 	titleSize, labelSize, tickLabelSize   vg.Length
 	width, height, axisWidth, tickWidth   vg.Length
+	scale                                 float64
 	xmin, xmax, ymin, ymax                float64
 	xminStr, xmaxStr, yminStr, ymaxStr    string
 	format                                string

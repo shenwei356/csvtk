@@ -401,7 +401,7 @@ Examples
     group information is the "Group" column.
     
             csvtk -t plot box testdata/grouped_data.tsv.gz -g "Group" \
-                -f "GC Content" --width 3 | display
+                -f "GC Content" --width 3 --title "Box plot" | display
             
       ![boxplot.png](testdata/figures/boxplot.png)
       

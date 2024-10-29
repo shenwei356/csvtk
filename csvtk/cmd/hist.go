@@ -56,6 +56,8 @@ Notes:
 		config := getConfigs(cmd)
 		plotConfig := getPlotConfigs(cmd)
 
+		lineWidth := vg.Points(getFlagPositiveFloat64(cmd, "line-width") * plotConfig.scale)
+
 		files := getFileListFromArgsAndFile(cmd, args, true, "infile-list", true)
 		if len(files) > 1 {
 			checkError(fmt.Errorf("no more than one file should be given"))
@@ -137,6 +139,7 @@ Notes:
 
 		// h.Normalize(1)
 		h.FillColor = plotutil.Color(colorIndex - 1)
+		h.LineStyle.Width = lineWidth
 		p.Add(h)
 
 		p.Title.Text = plotConfig.title
@@ -192,5 +195,7 @@ func init() {
 	histCmd.Flags().IntP("bins", "", 50, `number of bins`)
 	histCmd.Flags().IntP("color-index", "", 1, `color index, 1-7`)
 	histCmd.Flags().BoolP("percentiles", "", false, `calculate percentiles`)
+
+	histCmd.Flags().Float64P("line-width", "", 1, "line width")
 
 }

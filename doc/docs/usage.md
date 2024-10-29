@@ -4180,27 +4180,29 @@ Available Commands:
   line        line plot and scatter plot
 
 Flags:
-      --axis-width float     axis width (default 1.5)
-  -f, --data-field string    column index or column name of data (default "1")
-      --format string        image format for stdout when flag -o/--out-file not given. available
-                             values: eps, jpg|jpeg, pdf, png, svg, and tif|tiff. (default "png")
-  -g, --group-field string   column index or column name of group
-      --height float         Figure height (default 4.5)
-  -h, --help                 help for plot
-      --label-size int       label font size (default 14)
-      --na-values strings    NA values, case ignored (default [,NA,N/A])
-      --skip-na              skip NA values in --na-values
+      --axis-width float      axis width (default 1.5)
+  -f, --data-field string     column index or column name of data (default "1")
+      --format string         image format for stdout when flag -o/--out-file not given. available
+                              values: eps, jpg|jpeg, pdf, png, svg, and tif|tiff. (default "png")
+  -g, --group-field string    column index or column name of group
+      --height float          Figure height (default 4.5)
+  -h, --help                  help for plot
+      --label-size int        label font size (default 14)
+      --na-values strings     NA values, case ignored (default [,NA,N/A])
+      --scale float           scale the image width/height, tick, axes, line/point and font sizes
+                              proportionally (default 1)
+      --skip-na               skip NA values in --na-values
       --tick-label-size int   tick label font size (default 12)
-      --tick-width float     axis tick width (default 1.5)
-      --title string         Figure title
-      --title-size int       title font size (default 16)
-      --width float          Figure width (default 6)
-      --x-max string         maximum value of X axis
-      --x-min string         minimum value of X axis
-      --xlab string          x label text
-      --y-max string         maximum value of Y axis
-      --y-min string         minimum value of Y axis
-      --ylab string          y label text
+      --tick-width float      axis tick width (default 1.5)
+      --title string          Figure title
+      --title-size int        title font size (default 16)
+      --width float           Figure width (default 6)
+      --x-max string          maximum value of X axis
+      --x-min string          minimum value of X axis
+      --xlab string           x label text
+      --y-max string          maximum value of Y axis
+      --y-min string          minimum value of Y axis
+      --ylab string           y label text
 
 ```
 
@@ -4236,8 +4238,11 @@ Usage:
   csvtk plot hist [flags]
 
 Flags:
-      --bins int          number of bins (default 50)
-      --color-index int   color index, 1-7 (default 1)
+      --bins int           number of bins (default 50)
+      --color-index int    color index, 1-7 (default 1)
+  -h, --help               help for hist
+      --line-width float   line width (default 1)
+      --percentiles        calculate percentiles
 
 ```
 
@@ -4284,8 +4289,12 @@ Usage:
   csvtk plot box [flags]
 
 Flags:
-      --box-width float   box width
-      --horiz             horize box plot
+      --box-width float    box width
+      --color-index int    color index, 1-7 (default 1)
+  -h, --help               help for box
+      --horiz              horize box plot
+      --line-width float   line width (default 1.5)
+      --point-size float   point size (default 3)
 
 ```
 
@@ -4329,8 +4338,10 @@ Usage:
   csvtk plot line [flags]
 
 Flags:
+      --color-index int       color index, 1-7 (default 1)
   -x, --data-field-x string   column index or column name of X for command line
   -y, --data-field-y string   column index or column name of Y for command line
+  -h, --help                  help for line
       --legend-left           locate legend along the left edge of the plot
       --legend-top            locate legend along the top edge of the plot
       --line-width float      line width (default 1.5)

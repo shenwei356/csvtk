@@ -32,6 +32,7 @@ import (
 	"github.com/spf13/cobra"
 	"gonum.org/v1/plot"
 	"gonum.org/v1/plot/plotter"
+	"gonum.org/v1/plot/plotutil"
 	"gonum.org/v1/plot/vg"
 )
 
@@ -67,6 +68,14 @@ Notes:
 		if skipNA && len(naValues) == 0 {
 			log.Errorf("the value of --na-values should not be empty when using --skip-na")
 		}
+
+		lineWidth := vg.Points(getFlagPositiveFloat64(cmd, "line-width") * plotConfig.scale)
+		pointSize := vg.Length(getFlagPositiveFloat64(cmd, "point-size") * plotConfig.scale)
+		colorIndex := getFlagPositiveInt(cmd, "color-index")
+		if colorIndex > 7 {
+			checkError(fmt.Errorf("unsupported color index"))
+		}
+
 		naMap := make(map[string]interface{}, len(naValues))
 		for _, na := range naValues {
 			naMap[strings.ToLower(na)] = struct{}{}
@@ -148,6 +157,7 @@ Notes:
 		}
 
 		groupNames := make([]string, len(groupOrders))
+		j := colorIndex - 1
 		for i, group := range groupOrders {
 			groupNames[i] = group.Key
 			b, err := plotter.NewBoxPlot(w, float64(i), groups[group.Key])
@@ -156,6 +166,20 @@ Notes:
 				b.Horizontal = true
 			}
 			p.Add(b)
+
+			b.BoxStyle.Color = plotutil.Color(j)
+			b.BoxStyle.Width = lineWidth
+
+			b.MedianStyle.Color = plotutil.Color(j)
+			b.MedianStyle.Width = lineWidth
+
+			b.WhiskerStyle.Color = plotutil.Color(j)
+			b.WhiskerStyle.Width = lineWidth
+
+			b.GlyphStyle.Color = plotutil.Color(j)
+			b.GlyphStyle.Radius = pointSize
+
+			j++
 		}
 
 		if !horiz {
@@ -236,4 +260,8 @@ func init() {
 
 	boxCmd.Flags().Float64P("box-width", "", 0, "box width")
 	boxCmd.Flags().BoolP("horiz", "", false, "horize box plot")
+
+	boxCmd.Flags().Float64P("line-width", "", 1.5, "line width")
+	boxCmd.Flags().Float64P("point-size", "", 3, "point size")
+	boxCmd.Flags().IntP("color-index", "", 1, `color index, 1-7`)
 }

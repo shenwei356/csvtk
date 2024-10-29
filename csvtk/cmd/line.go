@@ -62,9 +62,9 @@ Notes:
 		}
 		runtime.GOMAXPROCS(config.NumCPUs)
 
-		lineWidth := vg.Points(getFlagPositiveFloat64(cmd, "line-width"))
-		pointSize := vg.Length(getFlagPositiveFloat64(cmd, "point-size"))
 		scatter := getFlagBool(cmd, "scatter")
+		lineWidth := vg.Points(getFlagPositiveFloat64(cmd, "line-width") * plotConfig.scale)
+		pointSize := vg.Length(getFlagPositiveFloat64(cmd, "point-size") * plotConfig.scale)
 		colorIndex := getFlagPositiveInt(cmd, "color-index")
 		if colorIndex > 7 {
 			checkError(fmt.Errorf("unsupported color index"))
@@ -206,6 +206,7 @@ Notes:
 			if !scatter {
 				lines, points, err := plotter.NewLinePoints(v)
 				checkError(err)
+				fmt.Fprintln(os.Stderr, i)
 				lines.Color = plotutil.Color(i)
 				lines.LineStyle.Dashes = plotutil.Dashes(i)
 				lines.LineStyle.Width = lineWidth
