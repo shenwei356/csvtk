@@ -194,6 +194,14 @@ Notes:
 		addLegend := len(groupOrders) > 1
 		for _, gor := range groupOrders {
 			v := groups[gor.Key]
+
+			// sort by x
+			if !scatter {
+				sort.Slice(v, func(i, j int) bool {
+					return v[i].X < v[j].X
+				})
+			}
+
 			g := gor.Key
 			if !scatter {
 				lines, points, err := plotter.NewLinePoints(v)

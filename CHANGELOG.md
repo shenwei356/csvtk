@@ -21,6 +21,7 @@
         - new flag `-b, --buffer-size`.
     - `csvtk plot line`:
         - only add legend for more than one group. [#279](https://github.com/shenwei356/csvtk/issues/279)
+        - sort points by X for plotting lines. [#280](https://github.com/shenwei356/csvtk/issues/280)
 - [csvtk v0.30.0](https://github.com/shenwei356/csvtk/releases/tag/v0.30.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.30.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.30.0)
   - `csvtk`:
