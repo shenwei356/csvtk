@@ -802,7 +802,7 @@ It could save you lots of time in (not) writing Python/R scripts.</p>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#transpose"><code>transpose</code></a>: transposes CSV data</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#sep"><code>sep</code></a>: separate column into multiple columns</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#gather"><code>gather</code></a>: gather columns into key-value pairs, like <code>tidyr::gather/pivot_longer</code></li>
-<li><a href="https://bioinf.shenwei.me/csvtk/usage/spread"><code>spread</code></a>: spread a key-value pair across multiple columns, like <code>tidyr::spread/pivot_wider</code></li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#spread"><code>spread</code></a>: spread a key-value pair across multiple columns, like <code>tidyr::spread/pivot_wider</code></li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#unfold"><code>unfold</code></a>: unfold multiple values in cells of a field</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#fold"><code>fold</code></a>: fold multiple values of a field into cells of groups</li>
 </ul>
@@ -1173,7 +1173,7 @@ foo   bar2   4.50     5.00
 <ul>
 <li>plot boxplot with data of the "GC Content" (third) column,
 group information is the "Group" column.<pre><code>csvtk -t plot box testdata/grouped_data.tsv.gz -g "Group" \
-    -f "GC Content" --width 3 | display
+    -f "GC Content" --width 3 --title "Box plot" | display
 </code></pre>
 </li>
 </ul>
