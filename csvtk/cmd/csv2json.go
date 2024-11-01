@@ -22,6 +22,7 @@ package cmd
 
 import (
 	"fmt"
+	"regexp"
 	"runtime"
 	"strconv"
 	"strings"
@@ -262,12 +263,18 @@ func processJSONValue(val string, blanks bool, parseNum bool) string {
 		return "false"
 	case "", "na", "n/a", "none", "null", ".":
 		if blanks {
-			return `""`
+			return `"` + val + `"`
 		}
 		return "null"
 	}
 	if parseNum && reDigitals.MatchString(val) {
 		return val
 	}
+
+	val = reEscaple.ReplaceAllString(val, `\$1`)
+	val = strings.ReplaceAll(val, "\n", "\\n")
+
 	return `"` + val + `"`
 }
+
+var reEscaple = regexp.MustCompile(`(["\\])`)

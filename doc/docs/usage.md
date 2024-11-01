@@ -124,7 +124,7 @@ Usage
 ```text
 csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.30.0
+Version: 0.31.0
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -1088,7 +1088,34 @@ Examples
             "ID": "1e-3",
             "room": "2",
             "name": "",
-            "status": ""
+            "status": "N/A"
+          }
+        ]
+
+- values with `"`, `\`, `\n`.
+
+        $ cat testdata/data4json2.csv
+        test
+        none
+        "Make America ""great"" again"
+        \nations
+        "This is a
+        MULTILINE
+        string"
+
+        $ csvtk csv2json testdata/data4json2.csv
+        [
+          {
+            "test": null
+          },
+          {
+            "test": "Make America \"great\" again"
+          },
+          {
+            "test": "\\nations"
+          },
+          {
+            "test": "This is a\nMULTILINE\nstring"
           }
         ]
 

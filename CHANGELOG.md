@@ -11,6 +11,8 @@
         - add flag `--nr-width`.
     - `csvtk replace`:
         - fix implementing `{nr}`. [#286](https://github.com/shenwei356/csvtk/issues/286)
+    - `csvtk csv2json`:
+        - fix values with double quotes and new line symbols. [#291](https://github.com/shenwei356/csvtk/issues/291)
     - `csvtk split`:
         - support customize output file prefix and subdirectory from prefix of keys. [#288](https://github.com/shenwei356/csvtk/issues/288)
     - `csvtk spread`:

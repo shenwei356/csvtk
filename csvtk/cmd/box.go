@@ -178,7 +178,6 @@ Notes:
 
 			b.GlyphStyle.Color = plotutil.Color(j)
 			b.GlyphStyle.Radius = pointSize
-
 			j++
 		}
 
