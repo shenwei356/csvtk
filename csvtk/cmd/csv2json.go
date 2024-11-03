@@ -271,10 +271,12 @@ func processJSONValue(val string, blanks bool, parseNum bool) string {
 		return val
 	}
 
-	val = reEscaple.ReplaceAllString(val, `\$1`)
-	val = strings.ReplaceAll(val, "\n", "\\n")
+	val = reEscape.ReplaceAllString(val, `\$1`)
+	val = reEscapeNewLine.ReplaceAllString(val, "\\n")
+	val = strings.ReplaceAll(val, "\t", "\\t")
 
 	return `"` + val + `"`
 }
 
-var reEscaple = regexp.MustCompile(`(["\\])`)
+var reEscape = regexp.MustCompile(`(["\\])`)
+var reEscapeNewLine = regexp.MustCompile(`\r?\n`)
