@@ -55,12 +55,12 @@ It could save you lots of time in (not) writing Python/R scripts.
 - **Light weight and out-of-the-box, no dependencies, no compilation, no configuration**
 - **Fast**,  **multiple-CPUs supported** (some commands)
 - **Practical functions provided by N subcommands**
-- **Support STDIN and gziped input/output file, easy being used in pipe**
+- **Support STDIN and gzipped input/output file, easy being used in pipe**
 - Most of the subcommands support ***unselecting fields*** and ***fuzzy fields***,
   e.g. `-f "-id,-name"` for all fields except "id" and "name",
   `-F -f "a.*"` for all fields with prefix "a.".
 - **Support some common plots** (see [usage](http://bioinf.shenwei.me/csvtk/usage/#plot))
-- <del>Seamlessly support for data with meta line (e.g., `sep=,`) of separator declaration used by MS Excel</del>
+- <del>Seamless support for data with meta line (e.g., `sep=,`) of separator declaration used by MS Excel</del>
 
 ## Subcommands
 
@@ -223,7 +223,7 @@ Features                |  csvtk   |  csvkit   |   Note
 :-----------------------|:--------:|:---------:|:---------
 Read    Gzip            |   Yes    |  Yes      | read gzip files
 Fields ranges           |   Yes    |  Yes      | e.g. `-f 1-4,6`
-**Unselect fileds**     |   Yes    |  --       | e.g. `-1` for excluding first column
+**Unselect fields**     |   Yes    |  --       | e.g. `-1` for excluding first column
 **Fuzzy fields**        |   Yes    |  --       | e.g. `ab*` for columns with name prefix "ab"
 Reorder fields          |   Yes    |  Yes      | it means `-f 1,2` is different from `-f 2,1`
 **Rename columns**      |   Yes    |  --       | rename with new name(s) or from existed names
@@ -271,11 +271,11 @@ More [examples](http://shenwei356.github.io/csvtk/usage/) and [tutorial](http://
 
     Please switch on the flag `-l` or use `csvtk fix-quotes` to fix it.
 
-8. If somes fields have only a double-quote eighter in the beginning or in the end, e.g.,
+8. If somes fields have only a double-quote either in the beginning or in the end, e.g.,
 
         x,d "e","a" b c,1
 
-    It would report error:
+    It would report an error:
 
         extraneous or missing " in quoted-field
 
@@ -390,7 +390,7 @@ Examples
     - Both arithmetic and string expressions: `csvtk filter2 -f '$id > 3 || $username=="ken"'`
     - More complicated: `csvtk filter2 -H -t -f '$1 > 2 && $2 % 2 == 0'`
 
-1. Ploting
+1. Plotting
     - plot histogram with data of the second column:
      
             csvtk -t plot hist testdata/grouped_data.tsv.gz -f 2 | display
@@ -430,7 +430,7 @@ Examples
 We are grateful to [Zhiluo Deng](https://github.com/dawnmy) and
 [Li Peng](https://github.com/penglbio) for suggesting features and reporting bugs.
 
-Thanks [Albert Vilella](https://github.com/avilella) for features suggestion,
+Thanks [Albert Vilella](https://github.com/avilella) for feature suggestions,
 which makes csvtk feature-rich。
 
 ## Contact
