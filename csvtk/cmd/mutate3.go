@@ -266,14 +266,14 @@ func doMutate3(config Config, opts mutate3Opts) {
 				fieldsUniq = UniqInts(record.Fields)
 
 				if !config.NoHeaderRow || record.IsHeaderRow { // do not replace head line
-					colnames2fileds = make(map[string][]int, len(record.All))
+					colnames2fileds = make(map[string][]int, len(record.Selected))
 
-					colnamesMap = make(map[string]*regexp.Regexp, len(record.All))
-					for i, col = range record.All {
+					colnamesMap = make(map[string]*regexp.Regexp, len(record.Selected))
+					for i, col = range record.Selected {
 						if _, ok = colnames2fileds[col]; !ok {
-							colnames2fileds[col] = []int{i + 1}
+							colnames2fileds[col] = []int{record.Fields[i]}
 						} else {
-							colnames2fileds[col] = append(colnames2fileds[col], i+1)
+							colnames2fileds[col] = append(colnames2fileds[col], record.Fields[i])
 						}
 
 						colnamesMap[col] = fuzzyField2Regexp(col)
