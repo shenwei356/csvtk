@@ -89,6 +89,7 @@
 - [round](#round)
 - [mutate](#mutate)
 - [mutate2](#mutate2)
+- [mutate3](#mutate3)
 
 **Transform**
 
@@ -124,7 +125,7 @@ Usage
 ```text
 csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.31.0
+Version: 0.31.1
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -212,6 +213,7 @@ Commands for Edit:
   fmtdate         format date of selected fields
   mutate          create new column from selected fields by regular expression
   mutate2         create a new column from selected fields by awk-like arithmetic/string expressions
+  mutate3         create a new column from selected fields with Go-like expressions
   rename          rename column names with new names
   rename2         rename column names by regular expression
   replace         replace data of selected fields by regular expression
@@ -3588,6 +3590,173 @@ Example
 
         # right before the given column name
         $ echo -ne "a,b,c\n1,2,3\n" | csvtk mutate2 -e '$a+$c' -n x -w 0 --before c
+        a,b,x,c
+        1,2,4,3
+
+## mutate3
+
+Usage
+
+```text
+create a new column from selected fields with Go-like expressions
+
+The expression language is supported by Expr:
+
+  https://expr-lang.org/docs/language-definition
+
+Variables formats:
+  $1 or ${1}                        The first field/column
+  $a or ${a}                        Column "a"
+  ${a,b} or ${a b} or ${a (b)}      Column name with special charactors,
+                                    e.g., commas, spaces, and parentheses
+
+Supported Operators:
+
+  Arithmetic: + - / * ^ ** %
+  Comparison: > >= < <= == !=
+  Logical: not ! and && or ||
+  String: + contains startsWith endsWith
+  Regex: matches
+  Range: ..
+  Slice: [:]
+  Pipe: |
+  Ternary conditional: ? :
+  Null coalescence: ??
+
+Supported Literals:
+
+  Arrays: [1, 2, 3]
+  Boolean: true false
+  Float: 0.5 .5
+  Integer: 42 0x2A 0o52 0b101010
+  Map: {a: 1, b: 2}
+  Null: nil
+  String: "foo" 'bar'
+
+See Expr language definition link for documentation on built-in functions.
+
+Custom functions:
+  - ulen(), length of unicode strings/width of unicode strings rendered
+    to a terminal, e.g., len("沈伟")==6, ulen("沈伟")==4
+
+Usage:
+  csvtk mutate3 [flags]
+
+Flags:
+      --after string        insert the new column right after the given column name
+      --at int              where the new column should appear, 1 for the 1st column, 0 for the last column
+      --before string       insert the new column right before the given column name
+  -w, --decimal-width int   limit floats to N decimal points (default 2)
+  -e, --expression string   arithmetic/string expressions. e.g. "'string'", '"abc"', ' $a + "-" + $b ',
+                            '$1 + $2', '$a / $b', ' $1 > 100 ? "big" : "small" '
+  -h, --help                help for mutate3
+  -n, --name string         new column name
+  -s, --numeric-as-string   treat even numeric fields as strings to avoid converting big numbers into
+                            scientific notation
+```
+
+Examples
+
+1. Constants
+
+        $ cat testdata/digitals.tsv \
+            | csvtk mutate3 -t -H -e " 'abc' "
+        4       5       6       abc
+        1       2       3       abc
+        7       8       0       abc
+        8       1,000   4       abc
+
+        $ val=123 \
+            && cat testdata/digitals.tsv \
+            | csvtk mutate3 -t -H -e " $val "
+        4       5       6       123
+        1       2       3       123
+        7       8       0       123
+        8       1,000   4       123
+
+1. String concatenation
+
+        $ cat testdata/names.csv  \
+            | csvtk mutate3 -n full_name -e ' $first_name + " " + $last_name ' \
+            | csvtk pretty
+        id   first_name   last_name   username   full_name
+        11   Rob          Pike        rob        Rob Pike
+        2    Ken          Thompson    ken        Ken Thompson
+        4    Robert       Griesemer   gri        Robert Griesemer
+        1    Robert       Thompson    abc        Robert Thompson
+        NA   Robert       Abel        123        Robert Abel
+
+1. Math
+
+        $ cat testdata/digitals.tsv | csvtk mutate3 -t -H -e '$1 + $3' -w 0
+        4       5       6       10
+        1       2       3       4
+        7       8       0       7
+        8       1,000   4       12
+
+1. Bool
+
+        $ cat testdata/digitals.tsv | csvtk mutate3 -t -H -e '$1 > 5'
+        4       5       6       false
+        1       2       3       false
+        7       8       0       true
+        8       1,000   4       true
+
+1. Ternary condition (`? :`)
+
+        $ cat testdata/digitals.tsv | csvtk mutate3 -t -H -e '$1 > 5 ? "big" : "small" '
+        4       5       6       small
+        1       2       3       small
+        7       8       0       big
+        8       1,000   4       big
+
+1. Null coalescence (`??`)
+
+        $ echo -e "one,two\na1,a2\n,b2\na2," | csvtk pretty
+        one   two
+        ---   ---
+        a1    a2
+              b2
+        a2
+
+        $ echo -e "one,two\na1,a2\n,b2\na2," \
+            | csvtk mutate3 -n three -e '$one ?? $two' \
+            | csvtk pretty
+        one   two   three
+        ---   ---   -----
+        a1    a2    a1
+              b2    b2
+        a2          a2
+
+1. Specify the position of the new column
+
+        $ echo -ne "a,b,c\n1,2,3\n"
+        a,b,c
+        1,2,3
+
+        # in the end (default)
+        $ echo -ne "a,b,c\n1,2,3\n" | csvtk mutate3 -e '$a+$c' -n x -w 0
+        a,b,c,x
+        1,2,3,4
+
+        # in the beginning
+        $ echo -ne "a,b,c\n1,2,3\n" | csvtk mutate3 -e '$a+$c' -n x -w 0 --at 1
+        x,a,b,c
+        4,1,2,3
+
+        # at another position
+        $ echo -ne "a,b,c\n1,2,3\n" | csvtk mutate3 -e '$a+$c' -n x -w 0 --at 3
+        a,b,x,c
+        1,2,4,3
+
+
+        # right after the given column name
+        $ echo -ne "a,b,c\n1,2,3\n" | csvtk mutate3 -e '$a+$c' -n x -w 0 --after a
+        a,x,b,c
+        1,4,2,3
+
+        # right before the given column name
+        $ echo -ne "a,b,c\n1,2,3\n" | csvtk mutate3 -e '$a+$c' -n x -w 0 --before c
         a,b,x,c
         1,2,4,3
 

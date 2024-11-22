@@ -118,6 +118,7 @@ It could save you lots of time in (not) writing Python/R scripts.
 - [`round`](https://bioinf.shenwei.me/csvtk/usage/#round): round float to n decimal places
 - [`mutate`](https://bioinf.shenwei.me/csvtk/usage/#mutate): creates new columns from selected fields by regular expression
 - [`mutate2`](https://bioinf.shenwei.me/csvtk/usage/#mutate2): creates a new column from selected fields by awk-like arithmetic/string expressions
+- [`mutate3`](https://bioinf.shenwei.me/csvtk/usage/#mutate3): create a new column from selected fields with Go-like expressions
 - [`fmtdate`](https://bioinf.shenwei.me/csvtk/usage/#fmtdate): format date of selected fields
 
 **Transform**

@@ -247,6 +247,7 @@ func doMutate3(config Config, opts mutate3Opts) {
 		var selectWithColnames bool
 		var record2 []string // for output
 		keys := make([]string, 0, 8)
+		decimalFormat := fmt.Sprintf("%%.%df", opts.DecimalWidth)
 
 		checkFirstLine := true
 		for record := range csvReader.Ch {
@@ -404,8 +405,6 @@ func doMutate3(config Config, opts mutate3Opts) {
 			// evaluate
 			program, err = expr.Compile(exprStr1, customFuncs...)
 			checkError(err)
-
-			decimalFormat := fmt.Sprintf("%%.%df", opts.DecimalWidth)
 
 			// check result
 			if hasNullCoalescence {
