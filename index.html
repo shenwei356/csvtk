@@ -734,15 +734,15 @@ It could save you lots of time in (not) writing Python/R scripts.</p>
 <li><strong>Light weight and out-of-the-box, no dependencies, no compilation, no configuration</strong></li>
 <li><strong>Fast</strong>,  <strong>multiple-CPUs supported</strong> (some commands)</li>
 <li><strong>Practical functions provided by N subcommands</strong></li>
-<li><strong>Support STDIN and gziped input/output file, easy being used in pipe</strong></li>
+<li><strong>Support STDIN and gzipped input/output file, easy being used in pipe</strong></li>
 <li>Most of the subcommands support <strong><em>unselecting fields</em></strong> and <strong><em>fuzzy fields</em></strong>,
   e.g. <code>-f "-id,-name"</code> for all fields except "id" and "name",
   <code>-F -f "a.*"</code> for all fields with prefix "a.".</li>
 <li><strong>Support some common plots</strong> (see <a href="http://bioinf.shenwei.me/csvtk/usage/#plot">usage</a>)</li>
-<li><del>Seamlessly support for data with meta line (e.g., <code>sep=,</code>) of separator declaration used by MS Excel</del></li>
+<li><del>Seamless support for data with meta line (e.g., <code>sep=,</code>) of separator declaration used by MS Excel</del></li>
 </ul>
 <h2 id="subcommands">Subcommands</h2>
-<p>53 subcommands in total.</p>
+<p>54 subcommands in total.</p>
 <p><strong>Information</strong></p>
 <ul>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#headers"><code>headers</code></a>: prints headers</li>
@@ -795,6 +795,7 @@ It could save you lots of time in (not) writing Python/R scripts.</p>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#round"><code>round</code></a>: round float to n decimal places</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#mutate"><code>mutate</code></a>: creates new columns from selected fields by regular expression</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#mutate2"><code>mutate2</code></a>: creates a new column from selected fields by awk-like arithmetic/string expressions</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#mutate3"><code>mutate3</code></a>: create a new column from selected fields with Go-like expressions</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#fmtdate"><code>fmtdate</code></a>: format date of selected fields</li>
 </ul>
 <p><strong>Transform</strong></p>
@@ -913,7 +914,7 @@ echo "autoload -U compinit; compinit" &gt;&gt; ~/.zshrc
 <td style="text-align: left;">e.g. <code>-f 1-4,6</code></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Unselect fileds</strong></td>
+<td style="text-align: left;"><strong>Unselect fields</strong></td>
 <td style="text-align: center;">Yes</td>
 <td style="text-align: center;">--</td>
 <td style="text-align: left;">e.g. <code>-1</code> for excluding first column</td>
@@ -1024,10 +1025,10 @@ name-indexed data such as CSV and tabular JSON http://johnkerl.org/miller</li>
 <p>Please switch on the flag <code>-l</code> or use <code>csvtk fix-quotes</code> to fix it.</p>
 </li>
 <li>
-<p>If somes fields have only a double-quote eighter in the beginning or in the end, e.g.,</p>
+<p>If somes fields have only a double-quote either in the beginning or in the end, e.g.,</p>
 <pre><code>x,d "e","a" b c,1
 </code></pre>
-<p>It would report error:</p>
+<p>It would report an error:</p>
 <pre><code>extraneous or missing " in quoted-field
 </code></pre>
 <p>Please use <code>csvtk fix-quotes</code> to fix it, and use <code>csvtk del-quotes</code> to reset to the
@@ -1163,7 +1164,7 @@ foo   bar2   4.50     5.00
 </ul>
 </li>
 <li>
-<p>Ploting</p>
+<p>Plotting</p>
 <ul>
 <li>plot histogram with data of the second column:<pre><code>csvtk -t plot hist testdata/grouped_data.tsv.gz -f 2 | display
 </code></pre>
@@ -1203,7 +1204,7 @@ group information is the "Group" column.<pre><code>csvtk -t plot box testdata/gr
 <h2 id="acknowledgements">Acknowledgements</h2>
 <p>We are grateful to <a href="https://github.com/dawnmy">Zhiluo Deng</a> and
 <a href="https://github.com/penglbio">Li Peng</a> for suggesting features and reporting bugs.</p>
-<p>Thanks <a href="https://github.com/avilella">Albert Vilella</a> for features suggestion,
+<p>Thanks <a href="https://github.com/avilella">Albert Vilella</a> for feature suggestions,
 which makes csvtk feature-rich。</p>
 <h2 id="contact">Contact</h2>
 <p><a href="https://github.com/shenwei356/csvtk/issues">Create an issue</a> to report bugs,
