@@ -1,7 +1,7 @@
 - [csvtk v0.31.1](https://github.com/shenwei356/csvtk/releases/tag/v0.31.1)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.31.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.31.1)
     - `csvtk filter2/mutate2/mutate3`:
-        - **fix the slow speed**, I was stupid before. [#172](https://github.com/shenwei356/csvtk/issues/172)
+        - **fix the slow speed**, I was stupid before. [#269](https://github.com/shenwei356/csvtk/issues/269)
     - `csvtk csv2json`:
         - further fix values with double quotes and new line symbols. [#291](https://github.com/shenwei356/csvtk/issues/291)
 - [csvtk v0.31.0](https://github.com/shenwei356/csvtk/releases/tag/v0.31.0)
