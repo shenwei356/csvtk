@@ -695,7 +695,7 @@
 <li><strong>Latest version:</strong> <a href="https://github.com/shenwei356/csvtk/releases"><img alt="Latest Stable Version" src="https://img.shields.io/github/release/shenwei356/csvtk.svg?style=flat" /></a>
 <a href="http://bioinf.shenwei.me/csvtk/download/"><img alt="Github Releases" src="https://img.shields.io/github/downloads/shenwei356/csvtk/latest/total.svg?maxAge=3600" /></a>
 <a href="http://bioinf.shenwei.me/csvtk/download/"><img alt="Cross-platform" src="https://img.shields.io/badge/platform-any-ec2eb4.svg?style=flat" /></a>
-<a href="https://anaconda.org/bioconda/csvtk"><img alt="Anaconda Cloud" src="https://anaconda.org/bioconda/csvtk/badges/version.svg" /></a></li>
+<a href="https://anaconda.org/conda-forge/csvtk"><img alt="Anaconda Cloud" src="https://anaconda.org/conda-forge/csvtk/badges/version.svg" /></a></li>
 </ul>
 <h2 id="introduction">Introduction</h2>
 <p>Similar to FASTA/Q format in field of Bioinformatics,
@@ -856,8 +856,12 @@ And then:</p>
 <p><strong>For windows</strong>, just copy <code>csvtk.exe</code> to <code>C:\WINDOWS\system32</code>.</p>
 </li>
 </ol>
-<h4 id="method-2-install-via-conda-latest-stable-version">Method 2: Install via conda (latest stable version)  <a href="https://anaconda.org/bioconda/csvtk"><img alt="Anaconda Cloud" src="https://anaconda.org/bioconda/csvtk/badges/version.svg" /></a> <a href="https://anaconda.org/bioconda/csvtk"><img alt="downloads" src="https://anaconda.org/bioconda/csvtk/badges/downloads.svg" /></a></h4>
-<pre><code>conda install -c bioconda csvtk
+<h4 id="method-2-install-via-conda-latest-stable-version">Method 2: Install via conda (latest stable version)  <a href="https://anaconda.org/conda-forge/csvtk"><img alt="Anaconda Cloud" src="https://anaconda.org/conda-forge/csvtk/badges/version.svg" /></a></h4>
+<pre><code># &gt;= v0.31.0
+conda install -c conda-forge csvtk
+
+# &lt;= v0.31.0
+conda install -c bioconda csvtk
 </code></pre>
 <h4 id="method-3-install-via-homebrew">Method 3: Install via homebrew</h4>
 <pre><code>brew install csvtk
