@@ -8,7 +8,7 @@
 - **Latest version:** [![Latest Stable Version](https://img.shields.io/github/release/shenwei356/csvtk.svg?style=flat)](https://github.com/shenwei356/csvtk/releases)
 [![Github Releases](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/total.svg?maxAge=3600)](http://bioinf.shenwei.me/csvtk/download/)
 [![Cross-platform](https://img.shields.io/badge/platform-any-ec2eb4.svg?style=flat)](http://bioinf.shenwei.me/csvtk/download/)
-[![Anaconda Cloud](https://anaconda.org/bioconda/csvtk/badges/version.svg)](https://anaconda.org/bioconda/csvtk)
+[![Anaconda Cloud](https://anaconda.org/conda-forge/csvtk/badges/version.svg)](https://anaconda.org/conda-forge/csvtk)
 
 
 ## Introduction
@@ -174,8 +174,12 @@ And then:
 
 1. **For windows**, just copy `csvtk.exe` to `C:\WINDOWS\system32`.
 
-#### Method 2: Install via conda (latest stable version)  [![Anaconda Cloud](	https://anaconda.org/bioconda/csvtk/badges/version.svg)](https://anaconda.org/bioconda/csvtk) [![downloads](https://anaconda.org/bioconda/csvtk/badges/downloads.svg)](https://anaconda.org/bioconda/csvtk)
+#### Method 2: Install via conda (latest stable version)  [![Anaconda Cloud](https://anaconda.org/conda-forge/csvtk/badges/version.svg)](https://anaconda.org/conda-forge/csvtk)
 
+    # >= v0.31.0
+    conda install -c conda-forge csvtk
+
+    # <= v0.31.0
     conda install -c bioconda csvtk
 
 #### Method 3: Install via homebrew

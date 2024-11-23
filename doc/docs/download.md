@@ -58,8 +58,12 @@ And then:
 
 1. **For windows**, just copy `csvtk.exe` to `C:\WINDOWS\system32`.
 
-#### Method 2: Install via conda (latest stable version)  [![Anaconda Cloud](https://anaconda.org/bioconda/csvtk/badges/version.svg)](https://anaconda.org/bioconda/csvtk) [![downloads](https://anaconda.org/bioconda/csvtk/badges/downloads.svg)](https://anaconda.org/bioconda/csvtk)
+#### Method 2: Install via conda (latest stable version)  [![Anaconda Cloud](https://anaconda.org/conda-forge/csvtk/badges/version.svg)](https://anaconda.org/conda-forge/csvtk)
 
+    # >= v0.31.0
+    conda install -c conda-forge csvtk
+
+    # <= v0.31.0
     conda install -c bioconda csvtk
 
 #### Method 3: Install via homebrew (may be not the latest)
