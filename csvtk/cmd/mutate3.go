@@ -243,7 +243,6 @@ func doMutate3(config Config, opts mutate3Opts) {
 		var result interface{}
 		var colnames2fileds map[string][]int // column name -> []field
 		var colnamesMap map[string]*regexp.Regexp
-		var fieldsUniq []int
 		var selectWithColnames bool
 		var record2 []string // for output
 		keys := make([]string, 0, 8)
@@ -263,8 +262,6 @@ func doMutate3(config Config, opts mutate3Opts) {
 				parameters = make(map[string]string, len(record.All))
 				parameters2 = make(map[string]interface{}, len(record.All))
 				parameters2["shenweiNULL"] = nil
-
-				fieldsUniq = UniqInts(record.Fields)
 
 				if !config.NoHeaderRow || record.IsHeaderRow { // do not replace head line
 					colnames2fileds = make(map[string][]int, len(record.Selected))
@@ -315,7 +312,7 @@ func doMutate3(config Config, opts mutate3Opts) {
 
 			// prepare parameters
 			if !selectWithColnames {
-				for _, fieldTmp = range fieldsUniq {
+				for _, fieldTmp = range record.Fields {
 					value = record.All[fieldTmp-1]
 					col = strconv.Itoa(fieldTmp)
 					if varType[col] == 1 {

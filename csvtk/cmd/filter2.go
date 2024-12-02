@@ -228,7 +228,6 @@ Custom functions:
 			var valueFloat float64
 			var colnames2fileds map[string][]int // column name -> []field
 			var colnamesMap map[string]*regexp.Regexp
-			var fieldsUniq []int
 
 			var selectWithColnames bool
 
@@ -249,8 +248,6 @@ Custom functions:
 					parameters2 = make(map[string]interface{}, len(record.All))
 					parameters2["shenweiNULL"] = nil
 
-					fieldsUniq = UniqInts(record.Fields)
-
 					if !config.NoHeaderRow || record.IsHeaderRow { // do not replace head line
 						colnames2fileds = make(map[string][]int, len(record.Selected))
 
@@ -261,7 +258,6 @@ Custom functions:
 							} else {
 								colnames2fileds[col] = append(colnames2fileds[col], record.Fields[i])
 							}
-
 							colnamesMap[col] = fuzzyField2Regexp(col)
 						}
 
@@ -280,7 +276,7 @@ Custom functions:
 
 				// prepaire parameters
 				if !selectWithColnames {
-					for _, fieldTmp = range fieldsUniq {
+					for _, fieldTmp = range record.Fields {
 						value = record.All[fieldTmp-1]
 						col = strconv.Itoa(fieldTmp)
 						if varType[col] == 1 {
