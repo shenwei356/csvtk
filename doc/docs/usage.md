@@ -125,7 +125,7 @@ Usage
 ```text
 csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.31.1
+Version: 0.32.0
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -641,8 +641,11 @@ convert CSV to a readable aligned table
 
 How to:
   1. First -n/--buf-rows rows are read to check the minimum and maximum widths
-     of each columns. You can also set the global thresholds -w/--min-width and
-     -W/--max-width.
+     of each columns.
+
+     You can also set the global or column-specific (the number of values need
+     equal to the number of columns) thresholds via -w/--min-width and -W/--max-width.
+
      1a. Cells longer than the maximum width will be wrapped (default) or
          clipped (--clip).
          Usually, the text is wrapped in space (-x/--wrap-delimiter). But if one
@@ -718,6 +721,16 @@ Styles:
         | 2  | Tiny |
         └----┴------┘
 
+    round:
+
+        ╭----┬------╮
+        | id | size |
+        ├====┼======┤
+        | 1  | Huge |
+        ├----┼------┤
+        | 2  | Tiny |
+        ╰----┴------╯
+
     bold:
 
         ┏━━━━┳━━━━━━┓
@@ -751,11 +764,15 @@ Flags:
       --clip                    clip longer cell instead of wrapping
       --clip-mark string        clip mark (default "...")
   -h, --help                    help for pretty
-  -W, --max-width int           max width
-  -w, --min-width int           min width
+  -W, --max-width strings       max width, multiple values (max widths for each column, 0 for no limit)
+                                should be separated by commas. E.g., -W 40,20,0 limits the max widths of
+                                1st and 2nd columns
+  -w, --min-width strings       min width, multiple values (min widths for each column, 0 for no limit)
+                                should be separated by commas. E.g., -w 0,10,10 limits the min widths of
+                                2nd and 3rd columns
   -s, --separator string        fields/columns separator (default "   ")
   -S, --style string            output syle. available vaules: default, plain, simple, 3line, grid,
-                                light, bold, double. check https://github.com/shenwei356/stable
+                                light, round, bold, double. check https://github.com/shenwei356/stable
   -x, --wrap-delimiter string   delimiter for wrapping cells (default " ")
 
 ```
@@ -847,7 +864,7 @@ Examples:
         1  | Robert     | Thompson  | abc
         NA | Robert     | Abel      | 123
 
-1. Set the minimum and maximum width.
+1. Set the global minimum and maximum width.
 
         $ csvtk pretty testdata/long.csv -w 5 -W 40
         id      name                 message
@@ -859,6 +876,23 @@ Examples:
                                      Nam eget dui. Etiam rhoncus. Maecenas
                                      tempus, tellus eget condimentum
                                      rhoncus, sem quam semper libero.
+                                     
+1. Set min and max widths for all columns.
+
+        $ csvtk pretty testdata/long.csv -w 5,25,0 -W 0,30,40 -m 1,2 -S round
+        ╭-------┬---------------------------┬------------------------------------------╮
+        |  id   |           name            | message                                  |
+        ├=======┼===========================┼==========================================┤
+        |   1   |        Donec Vitae        | Quis autem vel eum iure reprehenderit    |
+        |       |                           | qui in ea voluptate velit esse.          |
+        ├-------┼---------------------------┼------------------------------------------┤
+        |   2   |    Quaerat Voluptatem     | At vero eos et accusamus et iusto odio.  |
+        ├-------┼---------------------------┼------------------------------------------┤
+        |   3   |       Aliquam lorem       | Curabitur ullamcorper ultricies nisi.    |
+        |       |                           | Nam eget dui. Etiam rhoncus. Maecenas    |
+        |       |                           | tempus, tellus eget condimentum          |
+        |       |                           | rhoncus, sem quam semper libero.         |
+        ╰-------┴---------------------------┴------------------------------------------╯      
 
 1. Clipping cells instead of wrapping
 

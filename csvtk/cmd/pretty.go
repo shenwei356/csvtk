@@ -43,8 +43,11 @@ var prettyCmd = &cobra.Command{
 
 How to:
   1. First -n/--buf-rows rows are read to check the minimum and maximum widths
-     of each columns. You can also set the global thresholds -w/--min-width and
-     -W/--max-width.
+     of each columns.
+
+     You can also set the global or column-specific (the number of values need
+     equal to the number of columns) thresholds via -w/--min-width and -W/--max-width.
+
      1a. Cells longer than the maximum width will be wrapped (default) or
          clipped (--clip).
          Usually, the text is wrapped in space (-x/--wrap-delimiter). But if one
@@ -120,6 +123,16 @@ Styles:
         | 2  | Tiny |
         └----┴------┘
 
+    round:
+
+        ╭----┬------╮
+        | id | size |
+        ├====┼======┤
+        | 1  | Huge |
+        ├----┼------┤
+        | 2  | Tiny |
+        ╰----┴------╯
+
     bold:
 
         ┏━━━━┳━━━━━━┓
@@ -152,8 +165,8 @@ Styles:
 		alignRights := getFlagStringSlice(cmd, "align-right")
 		alignCenters := getFlagStringSlice(cmd, "align-center")
 		separator := getFlagString(cmd, "separator")
-		minWidth := getFlagNonNegativeInt(cmd, "min-width")
-		maxWidth := getFlagNonNegativeInt(cmd, "max-width")
+		minWidths := getFlagStringSliceAsInts(cmd, "min-width")
+		maxWidths := getFlagStringSliceAsInts(cmd, "max-width")
 		bufRows := getFlagNonNegativeInt(cmd, "buf-rows")
 		style := getFlagString(cmd, "style")
 		clip := getFlagBool(cmd, "clip")
@@ -201,6 +214,7 @@ Styles:
 			"3line":  stable.StyleThreeLine,
 			"grid":   stable.StyleGrid,
 			"light":  stable.StyleLight,
+			"round":  stable.StyleRound,
 			"bold":   stable.StyleBold,
 			"double": stable.StyleDouble,
 		}
@@ -219,11 +233,11 @@ Styles:
 			checkError(fmt.Errorf("style not available: %s. available vaules: default, plain, simple, 3line, grid, light, bold, double", style))
 		}
 
-		if minWidth > 0 {
-			tbl.MinWidth(minWidth)
+		if len(minWidths) == 1 {
+			tbl.MinWidth(minWidths[0])
 		}
-		if maxWidth > 0 {
-			tbl.MaxWidth(maxWidth)
+		if len(maxWidths) == 1 {
+			tbl.MaxWidth(maxWidths[0])
 		}
 
 		if clip {
@@ -250,15 +264,41 @@ Styles:
 				checkFirstLine = false
 
 				ncols := len(record.All)
+
+				if len(minWidths) > 1 && len(minWidths) != ncols {
+					checkError(fmt.Errorf("the number of values from --min-width (%d) need equal to the number of columns (%d)", len(minWidths), ncols))
+				}
+				if len(maxWidths) > 1 && len(maxWidths) != ncols {
+					checkError(fmt.Errorf("the number of values from --max-width (%d) need equal to the number of columns (%d)", len(maxWidths), ncols))
+				}
+
 				if config.ShowRowNumber {
 					ncols++
 				}
 				header = make([]stable.Column, ncols)
 
+				var i, w int
+
+				if len(minWidths) > 1 {
+					for i, w = range minWidths {
+						if config.ShowRowNumber {
+							i++
+						}
+						header[i].MinWidth = w
+					}
+				}
+				if len(maxWidths) > 1 {
+					for i, w = range maxWidths {
+						if config.ShowRowNumber {
+							i++
+						}
+						header[i].MaxWidth = w
+					}
+				}
+
 				// the fields is 1-based
 				colnames2fileds := make(map[string][]int, ncols)
 
-				var i int
 				var col string
 				var ok bool
 				if !config.NoHeaderRow || record.IsHeaderRow {
@@ -348,12 +388,12 @@ func init() {
 	prettyCmd.Flags().StringP("separator", "s", "   ", "fields/columns separator")
 	prettyCmd.Flags().StringSliceP("align-right", "r", []string{}, `align right for selected columns (field index/range or column name, type "csvtk pretty -h" for examples)`)
 	prettyCmd.Flags().StringSliceP("align-center", "m", []string{}, `align right for selected columns (field index/range or column name, type "csvtk pretty -h" for examples)`)
-	prettyCmd.Flags().IntP("min-width", "w", 0, "min width")
-	prettyCmd.Flags().IntP("max-width", "W", 0, "max width")
+	prettyCmd.Flags().StringSliceP("min-width", "w", []string{}, "min width, multiple values (min widths for each column, 0 for no limit) should be separated by commas. E.g., -w 0,10,10 limits the min widths of 2nd and 3rd columns")
+	prettyCmd.Flags().StringSliceP("max-width", "W", []string{}, "max width, multiple values (max widths for each column, 0 for no limit) should be separated by commas. E.g., -W 40,20,0 limits the max widths of 1st and 2nd columns")
 
 	prettyCmd.Flags().StringP("wrap-delimiter", "x", " ", "delimiter for wrapping cells")
 	prettyCmd.Flags().IntP("buf-rows", "n", 1024, "the number of rows to determine the min and max widths (0 for all rows)")
-	prettyCmd.Flags().StringP("style", "S", "", "output syle. available vaules: default, plain, simple, 3line, grid, light, bold, double. check https://github.com/shenwei356/stable")
+	prettyCmd.Flags().StringP("style", "S", "", "output syle. available vaules: default, plain, simple, 3line, grid, light, round, bold, double. check https://github.com/shenwei356/stable")
 	prettyCmd.Flags().BoolP("clip", "", false, "clip longer cell instead of wrapping")
 	prettyCmd.Flags().StringP("clip-mark", "", "...", "clip mark")
 }

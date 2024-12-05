@@ -234,6 +234,21 @@ func getFlagStringSlice(cmd *cobra.Command, flag string) []string {
 	return value
 }
 
+func getFlagStringSliceAsInts(cmd *cobra.Command, flag string) []int {
+	values, err := cmd.Flags().GetStringSlice(flag)
+	checkError(err)
+
+	ints := make([]int, len(values))
+	for i, s := range values {
+		v, err := strconv.Atoi(s)
+		if err != nil {
+			checkError(fmt.Errorf("the value of %s should be a number: %s", flag, s))
+		}
+		ints[i] = v
+	}
+	return ints
+}
+
 func unshift(list *[]string, val string) {
 	if len(*list) == 0 {
 		list = &[]string{val}

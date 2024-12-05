@@ -168,5 +168,85 @@ assert_equal $? 1
 rm corr.tsv
 
 # ----------------------------------------------------------------------------
+# csvtk mutate2/filter2
+# ----------------------------------------------------------------------------
+
+# a       b       c
+# 1       2.00    0.50
+# 2       4.00    0.50
+# 3       6.00    0.50
+# 4       8.00    0.50
+# 5       10.00   0.50
+# 6       12.00   0.50
+# 7       14.00   0.50
+# 8       16.00   0.50
+# 9       18.00   0.50
+# 10      20.00   0.50
+
+# $a / $b
+assert_equal $(seq 10 \
+    | $app mutate2 -Ht -e '$1 * 2' \
+    | $app add-header -t -n a,b \
+    | $app mutate2 -t -n c -e '$a / $b' \
+    | $app filter2 -t -f '$c >= 0.5' \
+    | $app summary -t -f c:sum -w 0 \
+    | $app del-header) \
+    5
+
+# $1 / $2
+assert_equal $(seq 10 \
+    | $app mutate2 -Ht -e '$1 * 2' \
+    | $app add-header -t -n a,b \
+    | $app mutate2 -t -n c -e '$1 / $2' \
+    | $app filter2 -t -f '$c >= 0.5' \
+    | $app summary -t -f c:sum -w 0 \
+    | $app del-header) \
+    5
+
+# $a / $b
+# replace filter2 with filter3
+assert_equal $(seq 10 \
+    | $app mutate2 -Ht -e '$1 * 2' \
+    | $app add-header -t -n a,b \
+    | $app mutate3 -t -n c -e '$a / $b' \
+    | $app filter2 -t -f '$c >= 0.5' \
+    | $app summary -t -f c:sum -w 0 \
+    | $app del-header) \
+    5
+
+
+# a       b       c
+# 1       2.00    2.00
+# 2       4.00    2.00
+# 3       6.00    2.00
+# 4       8.00    2.00
+# 5       10.00   2.00
+# 6       12.00   2.00
+# 7       14.00   2.00
+# 8       16.00   2.00
+# 9       18.00   2.00
+# 10      20.00   2.00
+
+# $b / $a
+assert_equal $(seq 10 \
+    | $app mutate2 -Ht -e '$1 * 2' \
+    | $app add-header -t -n a,b \
+    | $app mutate2 -t -n c -e '$b / $a' \
+    | $app filter2 -t -f '$c >= 2' \
+    | $app summary -t -f c:sum -w 0 \
+    | $app del-header) \
+    20
+
+# $2 / $1
+assert_equal $(seq 10 \
+    | $app mutate2 -Ht -e '$1 * 2' \
+    | $app add-header -t -n a,b \
+    | $app mutate2 -t -n c -e '$2 / $1' \
+    | $app filter2 -t -f '$c >= 2' \
+    | $app summary -t -f c:sum -w 0 \
+    | $app del-header) \
+    20
+
+# ----------------------------------------------------------------------------
 # csvtk xxx
 # ----------------------------------------------------------------------------

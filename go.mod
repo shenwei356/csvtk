@@ -10,13 +10,13 @@ require (
 	github.com/expr-lang/expr v1.16.3
 	github.com/fatih/color v1.13.0
 	github.com/mattn/go-colorable v0.1.13
-	github.com/mattn/go-runewidth v0.0.14
+	github.com/mattn/go-runewidth v0.0.16
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/pkg/errors v0.9.1
 	github.com/shenwei356/breader v0.3.2
 	github.com/shenwei356/go-logging v0.0.0-20171012171522-c6b9702d88ba
 	github.com/shenwei356/natsort v0.0.0-20220117010048-580176ad49fb
-	github.com/shenwei356/stable v0.1.7
+	github.com/shenwei356/stable v0.2.0
 	github.com/shenwei356/util v0.5.3
 	github.com/shenwei356/xopen v0.3.1
 	github.com/spf13/cobra v1.8.0
@@ -48,7 +48,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/richardlehane/mscfb v1.0.4 // indirect
 	github.com/richardlehane/msoleps v1.0.3 // indirect
-	github.com/rivo/uniseg v0.4.2 // indirect
+	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/rogpeppe/go-internal v1.9.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/ulikunitz/xz v0.5.10 // indirect

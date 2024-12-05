@@ -1,7 +1,11 @@
-- [csvtk v0.31.2](https://github.com/shenwei356/csvtk/releases/tag/v0.31.2)
-[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.31.2/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.31.2)
+- [csvtk v0.32.0](https://github.com/shenwei356/csvtk/releases/tag/v0.32.0)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.32.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.32.0)
     - `csvtk filter2/mutate2/mutate3`:
-        - fix a bug of mismatch between column names and values. [#295](https://github.com/shenwei356/csvtk/issues/295)
+        - fix a bug of mismatch between column names and values which was brought in v0.31.1. [#295](https://github.com/shenwei356/csvtk/issues/295)
+        - add some unit tests.
+    - `csvtk pretty`:
+        - `-w/--min-width` and `-W/--max-width` accept multiple values for setting column-specific thresholds.
+        - add a new format style `round` for round corners.
 - [csvtk v0.31.1](https://github.com/shenwei356/csvtk/releases/tag/v0.31.1)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.31.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.31.1)
     - `csvtk filter2/mutate2/mutate3`:
