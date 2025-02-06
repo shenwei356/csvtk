@@ -95,9 +95,6 @@ Example:
 		}
 
 		separater := getFlagString(cmd, "separater")
-		if separater == "" {
-			checkError(fmt.Errorf("flag -s (--separater) needed"))
-		}
 
 		fieldStr = fmt.Sprintf("%s,%s", fieldStr, vfieldStr)
 
