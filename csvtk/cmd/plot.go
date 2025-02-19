@@ -74,6 +74,9 @@ func init() {
 	plotCmd.PersistentFlags().IntP("tick-label-size", "", 12, "tick label font size")
 	plotCmd.PersistentFlags().Float64P("scale", "", 1, "scale the image width/height, tick, axes, line/point and font sizes proportionally")
 
+	plotCmd.PersistentFlags().BoolP("x-scale-ln", "", false, "scale the X axis by the natural log")
+	plotCmd.PersistentFlags().BoolP("y-scale-ln", "", false, "scale the Y axis by the natural log")
+
 	plotCmd.PersistentFlags().StringP("format", "", "png", `image format for stdout when flag -o/--out-file not given. available values: eps, jpg|jpeg, pdf, png, svg, and tif|tiff.`)
 
 	plotCmd.PersistentFlags().StringSliceP("na-values", "", []string{"", "NA", "N/A"}, `NA values, case ignored`)
@@ -120,6 +123,9 @@ func getPlotConfigs(cmd *cobra.Command) *plotConfigs {
 
 	config.xlab = getFlagString(cmd, "xlab")
 	config.ylab = getFlagString(cmd, "ylab")
+
+	config.scaleLnX = getFlagBool(cmd, "x-scale-ln")
+	config.scaleLnY = getFlagBool(cmd, "y-scale-ln")
 
 	var err error
 
@@ -168,6 +174,7 @@ type plotConfigs struct {
 	titleSize, labelSize, tickLabelSize   vg.Length
 	width, height, axisWidth, tickWidth   vg.Length
 	scale                                 float64
+	scaleLnX, scaleLnY                    bool
 	xmin, xmax, ymin, ymax                float64
 	xminStr, xmaxStr, yminStr, ymaxStr    string
 	format                                string

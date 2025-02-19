@@ -4433,6 +4433,8 @@ Flags:
       --y-max string          maximum value of Y axis
       --y-min string          minimum value of Y axis
       --ylab string           y label text
+      --x-scale-ln            scale the X axis with natural log
+      --y-scale-ln            scale the Y axis with natural log
 
 ```
 
