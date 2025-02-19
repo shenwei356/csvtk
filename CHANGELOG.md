@@ -1,5 +1,7 @@
 - [csvtk v0.33.0](https://github.com/shenwei356/csvtk/releases/tag/v0.33.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.33.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.33.0)
+    - `csvtk plot box/hist/line`:
+        - adds `--x-scale-ln` and `--y-scale-ln` for natural log scaling of the X & Y axes. [#302]()https://github.com/shenwei356/csvtk/pull/302) by @xxxserxxx
     - `csvtk fold`:
         - allow folding fields with no separater. [#299](https://github.com/shenwei356/csvtk/pull/299) by @fgvieira
 - [csvtk v0.32.0](https://github.com/shenwei356/csvtk/releases/tag/v0.32.0)
