@@ -74,6 +74,8 @@ Available operations:
 		ignore := getFlagBool(cmd, "ignore-non-numbers")
 		decimalWidth := getFlagNonNegativeInt(cmd, "decimal-width")
 		decimalFormat := fmt.Sprintf("%%.%df", decimalWidth)
+		decimalFormatScientificE := fmt.Sprintf("%%.%dE", decimalWidth)
+		decimalFormatScientifice := fmt.Sprintf("%%.%de", decimalWidth)
 		groupsStr := getFlagString(cmd, "groups")
 		separater = getFlagString(cmd, "separater")
 		if separater == "" {
@@ -200,6 +202,7 @@ Available operations:
 		// group -> field -> data
 		data := make(map[string]map[int][]float64) // for numbers
 		data2 := make(map[string]map[int][]string) // for strings
+		scientifc := make(map[string]map[int]byte) // for numbers
 
 		fieldsG := []int{}
 		fieldsD := []int{}
@@ -247,6 +250,7 @@ Available operations:
 			group = strings.Join(record.Selected[numFieldsD:], "_shenwei356_")
 			if _, ok = data[group]; !ok {
 				data[group] = make(map[int][]float64, 1024)
+				scientifc[group] = make(map[int]byte)
 			}
 			if _, ok = data2[group]; !ok {
 				data2[group] = make(map[int][]string, 1024)
@@ -275,6 +279,12 @@ Available operations:
 					}
 					checkError(fmt.Errorf("column %d has non-numeric data: %s, you can use flag -i/--ignore-non-numbers to skip these data", f, record.All[f-1]))
 				}
+				if strings.Contains(record.All[f-1], "E") {
+					scientifc[group][f] = 'E'
+				} else if strings.Contains(record.All[f-1], "e") {
+					scientifc[group][f] = 'e'
+				}
+
 				v, e = strconv.ParseFloat(removeComma(record.All[f-1]), 64)
 				checkError(e)
 				if _, ok = data[group][f]; !ok {
@@ -341,6 +351,10 @@ Available operations:
 					fu = allStats[s]
 					if s == "countn" {
 						record = append(record, fmt.Sprintf("%.0f", fu(data[group][f])))
+					} else if scientifc[group][f] == 'E' {
+						record = append(record, fmt.Sprintf(decimalFormatScientificE, fu(data[group][f])))
+					} else if scientifc[group][f] == 'e' {
+						record = append(record, fmt.Sprintf(decimalFormatScientifice, fu(data[group][f])))
 					} else {
 						record = append(record, fmt.Sprintf(decimalFormat, fu(data[group][f])))
 					}
