@@ -269,9 +269,11 @@ Notes:
 
 		if plotConfig.scaleLnX {
 			p.X.Scale = plot.LogScale{}
+			p.X.Tick.Marker = plot.LogTicks{Prec: -1}
 		}
 		if plotConfig.scaleLnY {
 			p.Y.Scale = plot.LogScale{}
+			p.Y.Tick.Marker = plot.LogTicks{Prec: -1}
 		}
 
 		if plotConfig.xminStr != "" {
