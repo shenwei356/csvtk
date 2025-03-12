@@ -583,6 +583,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#comma" class="md-nav__link">
+    comma
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#mutate" class="md-nav__link">
     mutate
   </a>
@@ -1078,6 +1085,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#comma" class="md-nav__link">
+    comma
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#mutate" class="md-nav__link">
     mutate
   </a>
@@ -1292,6 +1306,7 @@ original format as needed.</p>
 <li><a href="#rename2">rename2</a></li>
 <li><a href="#replace">replace</a></li>
 <li><a href="#round">round</a></li>
+<li><a href="#comma">comma</a></li>
 <li><a href="#mutate">mutate</a></li>
 <li><a href="#mutate2">mutate2</a></li>
 <li><a href="#mutate3">mutate3</a></li>
@@ -1327,7 +1342,7 @@ original format as needed.</p>
 <p>Usage</p>
 <pre><code class="language-text">csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.32.0
+Version: 0.33.0
 
 Author: Wei Shen &lt;shenwei356@gmail.com&gt;
 
@@ -1364,11 +1379,12 @@ Environment variables for frequently used global flags:
   - &quot;CSVTK_H&quot; for flag &quot;-H/--no-header-row&quot;
   - &quot;CSVTK_QUIET&quot; for flag &quot;--quiet&quot;
 
-You can also create a soft link named &quot;tsvtk&quot; for &quot;csvtk&quot;,
+You can also create a soft link named &quot;tsvtk&quot; for &quot;csvtk&quot;, 
 which sets &quot;-t/--tabs&quot; by default.
 
 Usage:
-  csvtk [command]
+  csvtk [flags]
+  csvtk [command] 
 
 Commands for Information:
   corr            calculate Pearson correlation between two columns
@@ -1408,6 +1424,7 @@ Commands for Set Operation:
 
 Commands for Edit:
   add-header      add column names
+  comma           make numbers more readable by adding commas
   del-header      delete column names
   del-quotes      remove extra double quotes added by 'fix-quotes'
   fix             fix CSV/TSV with different numbers of columns in rows
@@ -1465,6 +1482,7 @@ Flags:
       --quiet                  be quiet and do not show extra information and warnings
   -Z, --show-row-number        show row number as the first column, with header row skipped
   -t, --tabs                   specifies that the input CSV file is delimited with tabs. Overrides &quot;-d&quot;
+  -V, --version                print version information
 
 Use &quot;csvtk [command] --help&quot; for more information about a command.
 </code></pre>
@@ -4616,6 +4634,35 @@ NA         1.00
 12.30      e3
 1.48e-05   -3.14E05
 </code></pre>
+<h2 id="comma">comma</h2>
+<p>Usage</p>
+<pre><code class="language-text">make numbers more readable by adding commas
+
+Usage:
+  csvtk comma [flags] 
+
+Flags:
+  -f, --fields string   select only these fields. e.g -f 1,2 or -f columnA,columnB (default &quot;1&quot;)
+  -F, --fuzzy-fields    using fuzzy fields, e.g., -F -f &quot;*name&quot; or -F -f &quot;id123*&quot;
+  -h, --help            help for comma
+</code></pre>
+<p>Example</p>
+<pre><code>$ echo -ne &quot;12345\nNA\n12345.12\n1.2e6\n&quot; \
+  | csvtk mutate -Ht | csvtk pretty -Ht
+12345      12345   
+NA         NA      
+12345.12   12345.12
+1.2e6      1.2e6
+
+$ echo -ne &quot;12345\nNA\n12345.12\n1.2e6\n&quot; \
+  | csvtk mutate -Ht \
+  | csvtk comma -Ht -f 1- \
+  | csvtk pretty -Ht
+12,345      12,345   
+NA          NA       
+12,345.12   12,345.12
+1,200,000   1,200,000
+</code></pre>
 <h2 id="mutate">mutate</h2>
 <p>Usage</p>
 <pre><code class="language-text">create a new column from selected fields by regular expression
@@ -5633,6 +5680,8 @@ Flags:
       --y-max string          maximum value of Y axis
       --y-min string          minimum value of Y axis
       --ylab string           y label text
+      --x-scale-ln            scale the X axis with natural log
+      --y-scale-ln            scale the Y axis with natural log
 
 </code></pre>
 <p><strong><em>Note that most of the flags of <code>plot</code> are global flags of the subcommands
