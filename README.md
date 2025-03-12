@@ -64,7 +64,7 @@ It could save you lots of time in (not) writing Python/R scripts.
 
 ## Subcommands
 
-54 subcommands in total.
+55 subcommands in total.
 
 **Information**
 
@@ -116,6 +116,7 @@ It could save you lots of time in (not) writing Python/R scripts.
 - [`rename2`](https://bioinf.shenwei.me/csvtk/usage/#rename2): renames column names by regular expression
 - [`replace`](https://bioinf.shenwei.me/csvtk/usage/#replace): replaces data of selected fields by regular expression
 - [`round`](https://bioinf.shenwei.me/csvtk/usage/#round): round float to n decimal places
+- [`comma`](https://bioinf.shenwei.me/csvtk/usage/comma): make numbers more readable by adding commas
 - [`mutate`](https://bioinf.shenwei.me/csvtk/usage/#mutate): creates new columns from selected fields by regular expression
 - [`mutate2`](https://bioinf.shenwei.me/csvtk/usage/#mutate2): creates a new column from selected fields by awk-like arithmetic/string expressions
 - [`mutate3`](https://bioinf.shenwei.me/csvtk/usage/#mutate3): create a new column from selected fields with Go-like expressions

@@ -75,6 +75,13 @@ You can also create a soft link named "tsvtk" for "csvtk",
 which sets "-t/--tabs" by default.
 
 `, VERSION),
+
+	Run: func(cmd *cobra.Command, args []string) {
+		if getFlagBool(cmd, "version") {
+			fmt.Printf("csvtk v%s\n", VERSION)
+			os.Exit(0)
+		}
+	},
 }
 
 // Execute adds all child commands to the root command sets flags appropriately.
@@ -148,6 +155,8 @@ func init() {
 	RootCmd.PersistentFlags().BoolP("ignore-empty-row", "E", false, `ignore empty rows`)
 	RootCmd.PersistentFlags().BoolP("ignore-illegal-row", "I", false, `ignore illegal rows. You can also use 'csvtk fix' to fix files with different numbers of columns in rows`)
 	RootCmd.PersistentFlags().StringP("infile-list", "X", "", "file of input files list (one file per line), if given, they are appended to files from cli arguments")
+
+	RootCmd.PersistentFlags().BoolP("version", "V", false, "print version information")
 
 	RootCmd.CompletionOptions.DisableDefaultCmd = true
 	RootCmd.SetHelpCommand(&cobra.Command{Hidden: true})

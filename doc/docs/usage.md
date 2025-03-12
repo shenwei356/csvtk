@@ -87,6 +87,7 @@
 - [rename2](#rename2)
 - [replace](#replace)
 - [round](#round)
+- [comma](#comma)
 - [mutate](#mutate)
 - [mutate2](#mutate2)
 - [mutate3](#mutate3)
@@ -125,7 +126,7 @@ Usage
 ```text
 csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.32.0
+Version: 0.33.0
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -162,11 +163,12 @@ Environment variables for frequently used global flags:
   - "CSVTK_H" for flag "-H/--no-header-row"
   - "CSVTK_QUIET" for flag "--quiet"
 
-You can also create a soft link named "tsvtk" for "csvtk",
+You can also create a soft link named "tsvtk" for "csvtk", 
 which sets "-t/--tabs" by default.
 
 Usage:
-  csvtk [command]
+  csvtk [flags]
+  csvtk [command] 
 
 Commands for Information:
   corr            calculate Pearson correlation between two columns
@@ -206,6 +208,7 @@ Commands for Set Operation:
 
 Commands for Edit:
   add-header      add column names
+  comma           make numbers more readable by adding commas
   del-header      delete column names
   del-quotes      remove extra double quotes added by 'fix-quotes'
   fix             fix CSV/TSV with different numbers of columns in rows
@@ -263,6 +266,7 @@ Flags:
       --quiet                  be quiet and do not show extra information and warnings
   -Z, --show-row-number        show row number as the first column, with header row skipped
   -t, --tabs                   specifies that the input CSV file is delimited with tabs. Overrides "-d"
+  -V, --version                print version information
 
 Use "csvtk [command] --help" for more information about a command.
 ```
@@ -3395,6 +3399,42 @@ Examples:
     1.48e-05   -3.14E05
 
 
+## comma
+
+Usage
+
+```text
+make numbers more readable by adding commas
+
+Usage:
+  csvtk comma [flags] 
+
+Flags:
+  -f, --fields string   select only these fields. e.g -f 1,2 or -f columnA,columnB (default "1")
+  -F, --fuzzy-fields    using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
+  -h, --help            help for comma
+```
+
+Example
+
+```
+$ echo -ne "12345\nNA\n12345.12\n1.2e6\n" \
+  | csvtk mutate -Ht | csvtk pretty -Ht
+12345      12345   
+NA         NA      
+12345.12   12345.12
+1.2e6      1.2e6
+
+$ echo -ne "12345\nNA\n12345.12\n1.2e6\n" \
+  | csvtk mutate -Ht \
+  | csvtk comma -Ht -f 1- \
+  | csvtk pretty -Ht
+12,345      12,345   
+NA          NA       
+12,345.12   12,345.12
+1,200,000   1,200,000
+```
+
 ## mutate
 
 Usage
@@ -4232,7 +4272,8 @@ data                  value
 NA                    3
                       4
 ```
-        
+
+
 ## sort
 
 Usage

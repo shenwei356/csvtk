@@ -282,6 +282,8 @@ type Config struct {
 
 	IgnoreEmptyRow   bool
 	IgnoreIllegalRow bool
+
+	Version bool
 }
 
 func isTrue(s string) bool {
@@ -293,6 +295,11 @@ func isTrue(s string) bool {
 }
 
 func getConfigs(cmd *cobra.Command) Config {
+	if getFlagBool(cmd, "version") {
+		fmt.Printf("csvtk v%s\n", VERSION)
+		os.Exit(0)
+	}
+
 	var val string
 
 	var tabs bool

@@ -1,5 +1,8 @@
 - [csvtk v0.33.0](https://github.com/shenwei356/csvtk/releases/tag/v0.33.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.33.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.33.0)
+    - new command `csvtk comma`: make numbers more readable by adding commas. [#300](https://github.com/shenwei356/csvtk/issues/300)
+    - `csvtk`:
+        - add a global flag `-V/--version`. [#304](https://github.com/shenwei356/csvtk/issues/304)
     - `csvtk plot box/hist/line`:
         - adds `--x-scale-ln` and `--y-scale-ln` for natural log scaling of the X & Y axes. [#302]()https://github.com/shenwei356/csvtk/pull/302) by @xxxserxxx
     - `csvtk fold`:

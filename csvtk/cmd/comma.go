@@ -35,9 +35,9 @@ import (
 var fmtnumCmd = &cobra.Command{
 	GroupID: "edit",
 
-	Use:   "fmtnum",
-	Short: "format numbers of selected fields",
-	Long: `format numbers of selected fields
+	Use:   "comma",
+	Short: "make numbers more readable by adding commas",
+	Long: `make numbers more readable by adding commas
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
