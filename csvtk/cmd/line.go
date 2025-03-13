@@ -24,6 +24,7 @@ import (
 	"fmt"
 	"os"
 	"runtime"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -126,6 +127,22 @@ Notes:
 			checkError(err)
 		}
 
+		nominal := getFlagBool(cmd, "data-field-x-nominal")
+		var xNominalValues []string
+		if nominal {
+			// Collect unique values
+			xNominalValues = make([]string, 0, len(data)/4) // Assume a quarter of the data is unique
+			for _, d := range data {
+				i, found := slices.BinarySearch(xNominalValues, d[0])
+				if !found {
+					// 0 alloc insert slice trick https://go.dev/wiki/SliceTricks#insert
+					xNominalValues = append(xNominalValues, "")
+					copy(xNominalValues[i+1:], xNominalValues[i:])
+					xNominalValues[i] = d[0]
+				}
+			}
+		}
+
 		// =======================================
 
 		groups := make(map[string]plotter.XYs)
@@ -134,6 +151,7 @@ Notes:
 		var ok bool
 		var order int
 		var groupName string
+
 		for _, d := range data {
 			if skipNA {
 				if _, ok = naMap[strings.ToLower(d[0])]; ok {
@@ -141,13 +159,19 @@ Notes:
 				}
 			}
 
-			x, err = strconv.ParseFloat(d[0], 64)
-			if err != nil {
-				if len(headerRow) > 0 {
-					checkError(fmt.Errorf("fail to parse X value: %s at column: %s. please choose the right column by flag --data-field-x", d[0], headerRow[0]))
-				} else {
-					checkError(fmt.Errorf("fail to parse X value: %s at column: %d. please choose the right column by flag --data-field-x", d[0], fields[0]))
+			if !nominal {
+				// X is considered a coordinate
+				x, err = strconv.ParseFloat(d[0], 64)
+				if err != nil {
+					if len(headerRow) > 0 {
+						checkError(fmt.Errorf("fail to parse X value: %s at column: %s. please choose the right column by flag --data-field-x or use --data-field-x-nominal", d[0], headerRow[0]))
+					} else {
+						checkError(fmt.Errorf("fail to parse X value: %s at column: %d. please choose the right column by flag --data-field-x or use --data-field-x-nominal", d[0], fields[0]))
+					}
 				}
+			} else {
+				// X is considered a nominal value
+				x = float64(slices.Index(xNominalValues, d[0]))
 			}
 			if len(d) > 1 {
 				if skipNA {
@@ -232,9 +256,9 @@ Notes:
 			i++
 		}
 		if lineWidth > pointSize {
-			p.Legend.Padding = vg.Length(lineWidth)
+			p.Legend.Padding = lineWidth
 		} else {
-			p.Legend.Padding = vg.Length(pointSize)
+			p.Legend.Padding = pointSize
 		}
 		p.Legend.Top = getFlagBool(cmd, "legend-top")
 		p.Legend.Left = getFlagBool(cmd, "legend-left")
@@ -274,6 +298,22 @@ Notes:
 		if plotConfig.scaleLnY {
 			p.Y.Scale = plot.LogScale{}
 			p.Y.Tick.Marker = plot.LogTicks{Prec: -1}
+		}
+		if nominal {
+			defaultTicks := p.X.Tick.Marker
+			if defaultTicks == nil {
+				defaultTicks = plot.DefaultTicks{}
+			}
+			p.X.Tick.Marker = plot.TickerFunc(func(min, max float64) []plot.Tick {
+				ticks := defaultTicks.Ticks(min, max)
+				for i, t := range ticks {
+					if t.Label == "" { // Skip minor ticks, they are fine.
+						continue
+					}
+					ticks[i].Label = xNominalValues[i]
+				}
+				return ticks
+			})
 		}
 
 		if plotConfig.xminStr != "" {
@@ -317,4 +357,6 @@ func init() {
 	lineCmd.Flags().Float64P("line-width", "", 1.5, "line width")
 	lineCmd.Flags().Float64P("point-size", "", 3, "point size")
 	lineCmd.Flags().IntP("color-index", "", 1, `color index, 1-7`)
+
+	lineCmd.Flags().BoolP("data-field-x-nominal", "", false, `data field X is treated as a nominal field`)
 }
