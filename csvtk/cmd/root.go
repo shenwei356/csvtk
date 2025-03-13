@@ -80,6 +80,8 @@ which sets "-t/--tabs" by default.
 		if getFlagBool(cmd, "version") {
 			fmt.Printf("csvtk v%s\n", VERSION)
 			os.Exit(0)
+		} else {
+			cmd.Help()
 		}
 	},
 }
