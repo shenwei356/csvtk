@@ -116,6 +116,11 @@ Notes:
 			naMap[strings.ToLower(na)] = struct{}{}
 		}
 
+		nominal := getFlagBool(cmd, "data-field-x-nominal")
+		if nominal && plotConfig.scaleLnX {
+			checkError(fmt.Errorf("can't use --data-field-x-nominal and --x-scale-ln together"))
+		}
+
 		file := files[0]
 		headerRow, fields, data, _, _, err := parseCSVfile(cmd, config, file, plotConfig.fieldStr, false, true, false)
 
@@ -127,7 +132,6 @@ Notes:
 			checkError(err)
 		}
 
-		nominal := getFlagBool(cmd, "data-field-x-nominal")
 		var xNominalValues []string
 		if nominal {
 			// Collect unique values
@@ -300,17 +304,13 @@ Notes:
 			p.Y.Tick.Marker = plot.LogTicks{Prec: -1}
 		}
 		if nominal {
-			defaultTicks := p.X.Tick.Marker
-			if defaultTicks == nil {
-				defaultTicks = plot.DefaultTicks{}
-			}
 			p.X.Tick.Marker = plot.TickerFunc(func(min, max float64) []plot.Tick {
-				ticks := defaultTicks.Ticks(min, max)
+				ticks := plot.DefaultTicks{}.Ticks(min, max)
 				for i, t := range ticks {
 					if t.Label == "" { // Skip minor ticks, they are fine.
 						continue
 					}
-					ticks[i].Label = xNominalValues[i]
+					ticks[i].Label = xNominalValues[int(t.Value)]
 				}
 				return ticks
 			})
