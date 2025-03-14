@@ -234,7 +234,6 @@ Notes:
 			if !scatter {
 				lines, points, err := plotter.NewLinePoints(v)
 				checkError(err)
-				fmt.Fprintln(os.Stderr, i)
 				lines.Color = plotutil.Color(i)
 				lines.LineStyle.Dashes = plotutil.Dashes(i)
 				lines.LineStyle.Width = lineWidth

@@ -1,3 +1,8 @@
+- [csvtk v0.34.0](https://github.com/shenwei356/csvtk/releases/tag/v0.34.0)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.34.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.34.0)
+    - `csvtk line`:
+        - add a new flag `--data-field-x-nominal` to plot line with sortable nominal X axis values, such as date.
+        [#308](https://github.com/shenwei356/csvtk/pull/308) by @lovromazgon
 - [csvtk v0.33.0](https://github.com/shenwei356/csvtk/releases/tag/v0.33.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.33.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.33.0)
     - new command `csvtk comma`: make numbers more readable by adding commas. [#300](https://github.com/shenwei356/csvtk/issues/300)

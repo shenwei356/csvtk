@@ -3137,18 +3137,19 @@ Notes:
      or just redirect to file.
 
 Usage:
-  csvtk plot line [flags]
+  csvtk plot line [flags] 
 
 Flags:
-      --color-index int       color index, 1-7 (default 1)
-  -x, --data-field-x string   column index or column name of X for command line
-  -y, --data-field-y string   column index or column name of Y for command line
-  -h, --help                  help for line
-      --legend-left           locate legend along the left edge of the plot
-      --legend-top            locate legend along the top edge of the plot
-      --line-width float      line width (default 1.5)
-      --point-size float      point size (default 3)
-      --scatter               only plot points
+      --color-index int        color index, 1-7 (default 1)
+  -x, --data-field-x string    column index or column name of X for command line
+      --data-field-x-nominal   data field X is treated as a nominal field
+  -y, --data-field-y string    column index or column name of Y for command line
+  -h, --help                   help for line
+      --legend-left            locate legend along the left edge of the plot
+      --legend-top             locate legend along the top edge of the plot
+      --line-width float       line width (default 1.5)
+      --point-size float       point size (default 3)
+      --scatter                only plot points
 
 ```
 
@@ -3178,7 +3179,27 @@ Examples
             > lineplot.png
 
     ![scatter.png](testdata/figures/scatter.png)
+    
+- sortable nominal values. see also [#308](https://github.com/shenwei356/csvtk/pull/308)
 
+        $ csvtk pretty testdata/date2value.csv
+        date    views   unique_visitors
+        -----   -----   ---------------
+        03/01   7       5              
+        03/02   5       3              
+        03/03   39      21             
+        03/04   37      20             
+        03/05   59      25             
+        03/06   23      14             
+        03/07   49      24
+
+        $ cat testdata/date2value.csv \
+            | csvtk gather -f 2- -k type -v count \
+            | csvtk plot line --group-field type -x date -y count --data-field-x-nominal \
+            > testdata/figures/line_plot_date.png 
+
+    ![line_plot_date.png](testdata/figures/line_plot_date.png)
+            
 ## pretty
 
 Usage

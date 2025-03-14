@@ -425,6 +425,15 @@ Examples
             
       ![lineplot.png](testdata/figures/lineplot.png)
       
+    - plot line plot with X-Y data (where X values are dates or other sortable values)
+    
+            cat testdata/date2value.csv \
+                | csvtk gather -f 2- -k type -v count \
+                | csvtk plot line --group-field type -x date -y count --data-field-x-nominal \
+                    -o testdata/figures/line_plot_date.png 
+    
+      ![line_plot_date.png](testdata/figures/line_plot_date.png)
+      
     - plot scatter plot with X-Y data
         
             csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group --scatter | display
