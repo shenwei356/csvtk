@@ -63,5 +63,3 @@ require (
 	golang.org/x/term v0.29.0 // indirect
 	golang.org/x/text v0.22.0 // indirect
 )
-
-replace github.com/miekg/dns v1.0.14 => github.com/miekg/dns v1.1.46

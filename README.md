@@ -189,7 +189,7 @@ And then:
 
 #### Method 4: For Go developer (latest stable/dev version)
 
-    go get -u github.com/shenwei356/csvtk/csvtk
+    go install github.com/shenwei356/csvtk/csvtk@latest
 
 #### Method 5: For ArchLinux AUR users (may be not the latest)
 
