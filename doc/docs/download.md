@@ -63,27 +63,28 @@ And then:
 
 1. **For windows**, just copy `csvtk.exe` to `C:\WINDOWS\system32`.
 
-#### Method 2: Install via conda (latest stable version)  [![Anaconda Cloud](https://anaconda.org/conda-forge/csvtk/badges/version.svg)](https://anaconda.org/conda-forge/csvtk)
+#### Method 2: Install via conda or pixi (latest stable version)  [![Anaconda Cloud](https://anaconda.org/conda-forge/csvtk/badges/version.svg)](https://anaconda.org/conda-forge/csvtk)
 
     # >= v0.31.0
     conda install -c conda-forge csvtk
 
     # <= v0.31.0
     conda install -c bioconda csvtk
+    
+    
+    # pixi
+    
+    pixi global install csvtk
 
-#### Method 3: Install via homebrew (may be not the latest)
+#### Method 3: Install via homebrew
 
     brew install csvtk
 
-#### Method 4: For Go developer (latest stable/dev version)
-
-    go install github.com/shenwei356/csvtk/csvtk@latest
-
-#### Method 5: For ArchLinux AUR users (may be not the latest)
+#### Method 4: For ArchLinux AUR users (may be not the latest)
 
     yaourt -S csvtk
 
-#### Method 6: Compiling from source (latest stable/dev version)
+#### Method 5: Compiling from source (latest stable/dev version)
 
     # ------------------- install golang -----------------
 
@@ -112,7 +113,11 @@ And then:
 
     git clone https://github.com/shenwei356/csvtk
     cd csvtk/csvtk/
-    go build
+    
+    # optionally choose a release
+    # git check v0.30.0
+    
+    go build -trimpath -ldflags="-s -w" -tags netgo
 
     # The executable binary file is located in:
     #   ./csvtk
