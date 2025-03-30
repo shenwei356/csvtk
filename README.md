@@ -175,7 +175,11 @@ And then:
 
 1. **For windows**, just copy `csvtk.exe` to `C:\WINDOWS\system32`.
 
-#### Method 2: Install via conda (latest stable version)  [![Anaconda Cloud](https://anaconda.org/conda-forge/csvtk/badges/version.svg)](https://anaconda.org/conda-forge/csvtk)
+#### Method 2: Install via Pixi
+
+    pixi global install csvtk
+
+#### Method 3: Install via conda (latest stable version)  [![Anaconda Cloud](https://anaconda.org/conda-forge/csvtk/badges/version.svg)](https://anaconda.org/conda-forge/csvtk)
 
     # >= v0.31.0
     conda install -c conda-forge csvtk
@@ -183,15 +187,15 @@ And then:
     # <= v0.31.0
     conda install -c bioconda csvtk
 
-#### Method 3: Install via homebrew
+#### Method 4: Install via homebrew
 
     brew install csvtk
 
-#### Method 4: For Go developer (latest stable/dev version)
+#### Method 5: For Go developer (latest stable/dev version)
 
     go install github.com/shenwei356/csvtk/csvtk@latest
 
-#### Method 5: For ArchLinux AUR users (may be not the latest)
+#### Method 6: For ArchLinux AUR users (may be not the latest)
 
     yaourt -S csvtk
 
