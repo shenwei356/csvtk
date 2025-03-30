@@ -326,36 +326,29 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#method-2-install-via-conda-latest-stable-version" class="md-nav__link">
-    Method 2: Install via conda (latest stable version)
+  <a href="#method-2-install-via-conda-or-pixi-latest-stable-version" class="md-nav__link">
+    Method 2: Install via conda or pixi (latest stable version)
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#method-3-install-via-homebrew-may-be-not-the-latest" class="md-nav__link">
-    Method 3: Install via homebrew (may be not the latest)
+  <a href="#method-3-install-via-homebrew" class="md-nav__link">
+    Method 3: Install via homebrew
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#method-4-for-go-developer-latest-stabledev-version" class="md-nav__link">
-    Method 4: For Go developer (latest stable/dev version)
+  <a href="#method-4-for-archlinux-aur-users-may-be-not-the-latest" class="md-nav__link">
+    Method 4: For ArchLinux AUR users (may be not the latest)
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#method-5-for-archlinux-aur-users-may-be-not-the-latest" class="md-nav__link">
-    Method 5: For ArchLinux AUR users (may be not the latest)
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#method-6-compiling-from-source-latest-stabledev-version" class="md-nav__link">
-    Method 6: Compiling from source (latest stable/dev version)
+  <a href="#method-5-compiling-from-source-latest-stabledev-version" class="md-nav__link">
+    Method 5: Compiling from source (latest stable/dev version)
   </a>
   
 </li>
@@ -544,36 +537,29 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#method-2-install-via-conda-latest-stable-version" class="md-nav__link">
-    Method 2: Install via conda (latest stable version)
+  <a href="#method-2-install-via-conda-or-pixi-latest-stable-version" class="md-nav__link">
+    Method 2: Install via conda or pixi (latest stable version)
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#method-3-install-via-homebrew-may-be-not-the-latest" class="md-nav__link">
-    Method 3: Install via homebrew (may be not the latest)
+  <a href="#method-3-install-via-homebrew" class="md-nav__link">
+    Method 3: Install via homebrew
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#method-4-for-go-developer-latest-stabledev-version" class="md-nav__link">
-    Method 4: For Go developer (latest stable/dev version)
+  <a href="#method-4-for-archlinux-aur-users-may-be-not-the-latest" class="md-nav__link">
+    Method 4: For ArchLinux AUR users (may be not the latest)
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#method-5-for-archlinux-aur-users-may-be-not-the-latest" class="md-nav__link">
-    Method 5: For ArchLinux AUR users (may be not the latest)
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#method-6-compiling-from-source-latest-stabledev-version" class="md-nav__link">
-    Method 6: Compiling from source (latest stable/dev version)
+  <a href="#method-5-compiling-from-source-latest-stabledev-version" class="md-nav__link">
+    Method 5: Compiling from source (latest stable/dev version)
   </a>
   
 </li>
@@ -733,23 +719,25 @@ And then:</p>
 <p><strong>For windows</strong>, just copy <code>csvtk.exe</code> to <code>C:\WINDOWS\system32</code>.</p>
 </li>
 </ol>
-<h4 id="method-2-install-via-conda-latest-stable-version">Method 2: Install via conda (latest stable version)  <a href="https://anaconda.org/conda-forge/csvtk"><img alt="Anaconda Cloud" src="https://anaconda.org/conda-forge/csvtk/badges/version.svg" /></a></h4>
+<h4 id="method-2-install-via-conda-or-pixi-latest-stable-version">Method 2: Install via conda or pixi (latest stable version)  <a href="https://anaconda.org/conda-forge/csvtk"><img alt="Anaconda Cloud" src="https://anaconda.org/conda-forge/csvtk/badges/version.svg" /></a></h4>
 <pre><code># &gt;= v0.31.0
 conda install -c conda-forge csvtk
 
 # &lt;= v0.31.0
 conda install -c bioconda csvtk
+
+
+# pixi
+
+pixi global install csvtk
 </code></pre>
-<h4 id="method-3-install-via-homebrew-may-be-not-the-latest">Method 3: Install via homebrew (may be not the latest)</h4>
+<h4 id="method-3-install-via-homebrew">Method 3: Install via homebrew</h4>
 <pre><code>brew install csvtk
 </code></pre>
-<h4 id="method-4-for-go-developer-latest-stabledev-version">Method 4: For Go developer (latest stable/dev version)</h4>
-<pre><code>go get -u github.com/shenwei356/csvtk/csvtk
-</code></pre>
-<h4 id="method-5-for-archlinux-aur-users-may-be-not-the-latest">Method 5: For ArchLinux AUR users (may be not the latest)</h4>
+<h4 id="method-4-for-archlinux-aur-users-may-be-not-the-latest">Method 4: For ArchLinux AUR users (may be not the latest)</h4>
 <pre><code>yaourt -S csvtk
 </code></pre>
-<h4 id="method-6-compiling-from-source-latest-stabledev-version">Method 6: Compiling from source (latest stable/dev version)</h4>
+<h4 id="method-5-compiling-from-source-latest-stabledev-version">Method 5: Compiling from source (latest stable/dev version)</h4>
 <pre><code># ------------------- install golang -----------------
 
 # download Go from https://go.dev/dl
@@ -765,7 +753,7 @@ export PATH=$PATH:$HOME/go/bin
 
 # ------------- the latest stable version -------------
 
-go get -v -u github.com/shenwei356/csvtk/csvtk
+go install github.com/shenwei356/csvtk/csvtk@latest
 
 # The executable binary file is located in:
 #   ~/go/bin/csvtk
@@ -777,7 +765,11 @@ cp ~/go/bin/csvtk $HOME/bin/
 
 git clone https://github.com/shenwei356/csvtk
 cd csvtk/csvtk/
-go build
+
+# optionally choose a release
+# git check v0.30.0
+
+go build -trimpath -ldflags="-s -w" -tags netgo
 
 # The executable binary file is located in:
 #   ./csvtk

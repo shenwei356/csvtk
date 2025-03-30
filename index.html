@@ -313,29 +313,36 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#method-2-install-via-conda-latest-stable-version" class="md-nav__link">
-    Method 2: Install via conda (latest stable version)
+  <a href="#method-2-install-via-pixi" class="md-nav__link">
+    Method 2: Install via Pixi
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#method-3-install-via-homebrew" class="md-nav__link">
-    Method 3: Install via homebrew
+  <a href="#method-3-install-via-conda-latest-stable-version" class="md-nav__link">
+    Method 3: Install via conda (latest stable version)
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#method-4-for-go-developer-latest-stabledev-version" class="md-nav__link">
-    Method 4: For Go developer (latest stable/dev version)
+  <a href="#method-4-install-via-homebrew" class="md-nav__link">
+    Method 4: Install via homebrew
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#method-5-for-archlinux-aur-users-may-be-not-the-latest" class="md-nav__link">
-    Method 5: For ArchLinux AUR users (may be not the latest)
+  <a href="#method-5-for-go-developer-latest-stabledev-version" class="md-nav__link">
+    Method 5: For Go developer (latest stable/dev version)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#method-6-for-archlinux-aur-users-may-be-not-the-latest" class="md-nav__link">
+    Method 6: For ArchLinux AUR users (may be not the latest)
   </a>
   
 </li>
@@ -586,29 +593,36 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#method-2-install-via-conda-latest-stable-version" class="md-nav__link">
-    Method 2: Install via conda (latest stable version)
+  <a href="#method-2-install-via-pixi" class="md-nav__link">
+    Method 2: Install via Pixi
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#method-3-install-via-homebrew" class="md-nav__link">
-    Method 3: Install via homebrew
+  <a href="#method-3-install-via-conda-latest-stable-version" class="md-nav__link">
+    Method 3: Install via conda (latest stable version)
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#method-4-for-go-developer-latest-stabledev-version" class="md-nav__link">
-    Method 4: For Go developer (latest stable/dev version)
+  <a href="#method-4-install-via-homebrew" class="md-nav__link">
+    Method 4: Install via homebrew
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#method-5-for-archlinux-aur-users-may-be-not-the-latest" class="md-nav__link">
-    Method 5: For ArchLinux AUR users (may be not the latest)
+  <a href="#method-5-for-go-developer-latest-stabledev-version" class="md-nav__link">
+    Method 5: For Go developer (latest stable/dev version)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#method-6-for-archlinux-aur-users-may-be-not-the-latest" class="md-nav__link">
+    Method 6: For ArchLinux AUR users (may be not the latest)
   </a>
   
 </li>
@@ -857,20 +871,23 @@ And then:</p>
 <p><strong>For windows</strong>, just copy <code>csvtk.exe</code> to <code>C:\WINDOWS\system32</code>.</p>
 </li>
 </ol>
-<h4 id="method-2-install-via-conda-latest-stable-version">Method 2: Install via conda (latest stable version)  <a href="https://anaconda.org/conda-forge/csvtk"><img alt="Anaconda Cloud" src="https://anaconda.org/conda-forge/csvtk/badges/version.svg" /></a></h4>
+<h4 id="method-2-install-via-pixi">Method 2: Install via Pixi</h4>
+<pre><code>pixi global install csvtk
+</code></pre>
+<h4 id="method-3-install-via-conda-latest-stable-version">Method 3: Install via conda (latest stable version)  <a href="https://anaconda.org/conda-forge/csvtk"><img alt="Anaconda Cloud" src="https://anaconda.org/conda-forge/csvtk/badges/version.svg" /></a></h4>
 <pre><code># &gt;= v0.31.0
 conda install -c conda-forge csvtk
 
 # &lt;= v0.31.0
 conda install -c bioconda csvtk
 </code></pre>
-<h4 id="method-3-install-via-homebrew">Method 3: Install via homebrew</h4>
+<h4 id="method-4-install-via-homebrew">Method 4: Install via homebrew</h4>
 <pre><code>brew install csvtk
 </code></pre>
-<h4 id="method-4-for-go-developer-latest-stabledev-version">Method 4: For Go developer (latest stable/dev version)</h4>
-<pre><code>go get -u github.com/shenwei356/csvtk/csvtk
+<h4 id="method-5-for-go-developer-latest-stabledev-version">Method 5: For Go developer (latest stable/dev version)</h4>
+<pre><code>go install github.com/shenwei356/csvtk/csvtk@latest
 </code></pre>
-<h4 id="method-5-for-archlinux-aur-users-may-be-not-the-latest">Method 5: For ArchLinux AUR users (may be not the latest)</h4>
+<h4 id="method-6-for-archlinux-aur-users-may-be-not-the-latest">Method 6: For ArchLinux AUR users (may be not the latest)</h4>
 <pre><code>yaourt -S csvtk
 </code></pre>
 <h2 id="command-line-completion">Command-line completion</h2>
@@ -1198,6 +1215,15 @@ group information is the "Group" column.<pre><code>csvtk -t plot box testdata/gr
 </li>
 </ul>
 <p><img alt="lineplot.png" src="testdata/figures/lineplot.png" /></p>
+<ul>
+<li>plot line plot with X-Y data (where X values are dates or other sortable values)<pre><code>cat testdata/date2value.csv \
+    | csvtk gather -f 2- -k type -v count \
+    | csvtk plot line --group-field type -x date -y count --data-field-x-nominal \
+        -o testdata/figures/line_plot_date.png
+</code></pre>
+</li>
+</ul>
+<p><img alt="line_plot_date.png" src="testdata/figures/line_plot_date.png" /></p>
 <ul>
 <li>plot scatter plot with X-Y data<pre><code>csvtk -t plot line testdata/xy.tsv -x X -y Y -g Group --scatter | display
 </code></pre>
