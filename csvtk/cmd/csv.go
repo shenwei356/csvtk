@@ -531,6 +531,9 @@ func parseFields(
 	var parseHeaderRow bool
 	var negativeFields bool
 	var x2ends map[int]int // [2]int{index of x in fields, x}
+	if strings.Split(fieldsStr, fieldsStrSep)[0] == "" {
+		checkError(fmt.Errorf("the first field should not be empty: %s", fieldsStr))
+	}
 	firstField := reFields.FindAllStringSubmatch(strings.Split(fieldsStr, fieldsStrSep)[0], -1)[0][1]
 	if reIntegers.MatchString(firstField) {
 		fields = []int{}
