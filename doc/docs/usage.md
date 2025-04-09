@@ -4418,7 +4418,7 @@ Flags:
                              operations: argmax, argmin, collapse, count, countn, countuniq,
                              countunique, entropy, first, last, max, mean, median, min, prod, q1, q2,
                              q3, rand, stdev, sum, uniq, unique, variance
-  -g, --groups string        group via fields. e.g -f 1,2 or -f columnA,columnB
+  -g, --groups string        group via fields. e.g -g 1,2 or -g columnA,columnB
   -h, --help                 help for summary
   -i, --ignore-non-numbers   ignore non-numeric values like "NA" or "N/A"
   -S, --rand-seed int        rand seed for operation "rand" (default 11)
