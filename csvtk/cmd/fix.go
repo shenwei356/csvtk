@@ -55,6 +55,7 @@ How to:
 		runtime.GOMAXPROCS(config.NumCPUs)
 
 		bufRows := getFlagNonNegativeInt(cmd, "buf-rows")
+		na := getFlagString(cmd, "na")
 
 		var buf [][]string
 		var readAll bool
@@ -113,6 +114,7 @@ How to:
 		var row []string
 		var ncol int
 		var empty []string
+		var i int
 		for record := range csvReader.Ch {
 			if record.Err != nil {
 				checkError(record.Err)
@@ -159,6 +161,9 @@ How to:
 		if readAll || !checkedMaxNcols {
 			maxN = maxNcols(buf)
 			empty = make([]string, maxN)
+			for i = range empty {
+				empty[i] = na
+			}
 
 			if config.Verbose {
 				log.Infof("the maximum number of columns in all %d rows: %d", len(buf), maxN)
@@ -193,4 +198,5 @@ func init() {
 	RootCmd.AddCommand(fixCmd)
 
 	fixCmd.Flags().IntP("buf-rows", "n", 0, "the number of rows to determine the maximum number of columns. 0 for all rows.")
+	fixCmd.Flags().StringP("na", "", "", "content for filling missing (NA) data")
 }
