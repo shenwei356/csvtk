@@ -120,6 +120,9 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 		uniqColumn := opt.UniqColumn
 		allowMissingColumn := opt.AllowMissingColumn
 		blankMissingColumn := opt.BlankMissingColumn
+		if blankMissingColumn && !allowMissingColumn {
+			allowMissingColumn = true
+		}
 		showRowNumber := opt.ShowRowNumber
 		doNotAllowDuplicatedColumnName := opt.DoNotAllowDuplicatedColumnName
 
@@ -308,7 +311,11 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 								if ignoreFieldCase {
 									col = strings.ToLower(col)
 								}
-								fields = append(fields, colnames2fileds[col]...)
+								if len(colnames2fileds[col]) > 0 {
+									fields = append(fields, colnames2fileds[col]...)
+								} else if blankMissingColumn {
+									fields = append(fields, -1)
+								}
 							}
 						}
 					}
@@ -446,7 +453,7 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 			if allowMissingColumn {
 				for i, f = range fields {
 					if needParseHeaderRow { // using column
-						if f == 0 || f > len(record) {
+						if f == 0 || f > len(record) || f < 0 {
 							if blankMissingColumn {
 								if handleHeaderRow {
 									items = append(items, colnames[i])
@@ -463,8 +470,11 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 								items = append(items, "")
 							}
 							continue
+						} else {
+
 						}
 					}
+
 					items = append(items, record[f-1])
 				}
 
