@@ -120,7 +120,7 @@ Notes:
 			}
 			if len(d) > 1 {
 				groupName = d[1]
-			} else {
+			} else { // no group, only given a field
 				if len(headerRow) > 0 {
 					groupName = headerRow[0]
 				} else {
@@ -188,28 +188,23 @@ Notes:
 			p.NominalY(groupNames...)
 			// p.HideY()
 		}
-		if !horiz {
-			if plotConfig.ylab == "" {
-				if len(headerRow) > 0 {
-					plotConfig.ylab = headerRow[0]
-				} else {
-					plotConfig.ylab = "Values"
-				}
-			}
-			if plotConfig.xlab == "" {
-				if len(headerRow) > 1 {
-					plotConfig.xlab = headerRow[1]
-				} else {
-					plotConfig.xlab = "Groups"
-				}
-			}
-		} else {
-			if plotConfig.xlab == "" {
-				plotConfig.xlab = "Values"
-			}
-			if plotConfig.ylab == "" && plotConfig.groupFieldStr != "" && len(headerRow) > 0 {
+
+		if plotConfig.ylab == "" {
+			if len(headerRow) > 0 {
 				plotConfig.ylab = headerRow[0]
+			} else {
+				plotConfig.ylab = "Values"
 			}
+		}
+		if plotConfig.xlab == "" {
+			if len(headerRow) > 1 {
+				plotConfig.xlab = headerRow[1]
+			} else {
+				plotConfig.xlab = "Groups"
+			}
+		}
+		if horiz {
+			plotConfig.xlab, plotConfig.ylab = plotConfig.ylab, plotConfig.xlab
 		}
 
 		p.Title.Text = plotConfig.title
