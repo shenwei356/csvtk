@@ -32,3 +32,5 @@ doc/site
 .vscode
 .brename_detail.txt
 csvtk/t.*
+csvtk/*.csv
+csvtk/*.tsv

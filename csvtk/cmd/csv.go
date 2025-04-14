@@ -214,6 +214,9 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 					// colnames
 					colnames2fileds = make(map[string][]int, len(record))
 					for i, col = range record {
+						if ignoreFieldCase {
+							col = strings.ToLower(col)
+						}
 						if _, ok = colnames2fileds[col]; !ok {
 							colnames2fileds[col] = []int{i + 1}
 						} else {
