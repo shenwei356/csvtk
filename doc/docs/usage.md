@@ -3676,16 +3676,18 @@ more on: http://shenwei356.github.io/csvtk/usage/#replace
 Special replacement symbols:
 
   {nr}    Record number, starting from 1
+  {gnr}   Record number within a group (value of field -g/--gnr-field), starting from 1
   {kv}    Corresponding value of the key (captured variable $n) by key-value file,
           n can be specified by flag --key-capt-idx (default: 1)
 
 Usage:
-  csvtk replace [flags]
+  csvtk replace [flags] 
 
 Flags:
   -f, --fields string                       select only these fields. e.g -f 1,2 or -f columnA,columnB
                                             (default "1")
   -F, --fuzzy-fields                        using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
+  -g, --gnr-field string                    select a field for a group-specific record number {gnr}
   -h, --help                                help for replace
   -i, --ignore-case                         ignore case
   -K, --keep-key                            keep the key as value when no value found for the key
@@ -3703,6 +3705,7 @@ Flags:
                                             *nix OS, use SINGLE quote NOT double quotes or use the \
                                             escape character. Record number is also supported by
                                             "{nr}".use ${1} instead of $1 when {kv} given!
+  -n, --start-num int                       starting number when using {nr} in replacement (default 1)
 ```
 
 Examples

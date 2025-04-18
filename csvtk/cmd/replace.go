@@ -56,6 +56,7 @@ more on: http://shenwei356.github.io/csvtk/usage/#replace
 Special replacement symbols:
 
   {nr}    Record number, starting from 1
+  {gnr}   Record number within a group (value of field -g/--gnr-field), starting from 1
   {kv}    Corresponding value of the key (captured variable $n) by key-value file,
           n can be specified by flag --key-capt-idx (default: 1)
 
@@ -135,6 +136,18 @@ Special replacement symbols:
 		if fieldStr == "" {
 			checkError(fmt.Errorf("flag -f (--fields) needed"))
 		}
+		gnrFieldStr := getFlagString(cmd, "gnr-field")
+		if reGNR.MatchString(replacement) {
+			if gnrFieldStr == "" {
+				checkError(fmt.Errorf(`flag -g (--gnr-field) needed for using "{gnr}" or "{NGR}"`))
+			}
+		} else if gnrFieldStr != "" {
+			checkError(fmt.Errorf(`flag -g (--gnr-field) given, but "{gnr}" or "{NGR}" not found in -r/--replacement: %s`, replacement))
+		}
+		if gnrFieldStr != "" && strings.Contains(gnrFieldStr, ",") {
+			checkError(fmt.Errorf(`only one field should be given in flag -g (--gnr-field): %s`, gnrFieldStr))
+		}
+		replaceWithGNR := reGNR.MatchString(replacement) && gnrFieldStr != ""
 
 		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
 
@@ -170,8 +183,12 @@ Special replacement symbols:
 				checkError(err)
 			}
 
+			_fieldStr := fieldStr
+			if replaceWithGNR {
+				_fieldStr += "," + gnrFieldStr
+			}
 			csvReader.Read(ReadOption{
-				FieldStr:    fieldStr,
+				FieldStr:    _fieldStr,
 				FuzzyFields: fuzzyFields,
 
 				DoNotAllowDuplicatedColumnName: true,
@@ -183,9 +200,16 @@ Special replacement symbols:
 			var found []string
 			var founds [][]string
 			var k string
-			var nr int
+			nr := startNum
 
-			nr = startNum
+			var m map[string]int
+			if replaceWithGNR {
+				m = make(map[string]int)
+			}
+			var gnr int
+			var group string
+
+			var fields []int
 
 			checkFirstLine := true
 			for record := range csvReader.Ch {
@@ -205,13 +229,26 @@ Special replacement symbols:
 					}
 				}
 
-				for _, i = range record.Fields {
+				if replaceWithGNR {
+					fields = record.Fields[:len(record.Fields)-1]
+					group = record.All[len(record.Fields)-1]
+					m[group]++
+					gnr = m[group]
+				} else {
+					fields = record.Fields
+				}
+
+				for _, i = range fields {
 					i--
 
 					r = replacement
 
 					if replaceWithNR {
 						r = reNR.ReplaceAllString(r, fmt.Sprintf(nrFormat, nr))
+					}
+
+					if replaceWithGNR {
+						r = reGNR.ReplaceAllString(r, fmt.Sprintf(nrFormat, gnr))
 					}
 
 					if replaceWithKV {
@@ -253,6 +290,7 @@ Special replacement symbols:
 func init() {
 	RootCmd.AddCommand(replaceCmd)
 	replaceCmd.Flags().StringP("fields", "f", "1", `select only these fields. e.g -f 1,2 or -f columnA,columnB`)
+	replaceCmd.Flags().StringP("gnr-field", "g", "", `select a field for a group-specific record number {gnr}`)
 	replaceCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
 	replaceCmd.Flags().StringP("pattern", "p", "", "search regular expression")
 	replaceCmd.Flags().StringP("replacement", "r", "",
@@ -273,4 +311,5 @@ func init() {
 }
 
 var reNR = regexp.MustCompile(`\{(NR|nr)\}`)
+var reGNR = regexp.MustCompile(`\{(GNR|gnr)\}`)
 var reKV = regexp.MustCompile(`\{(KV|kv)\}`)
