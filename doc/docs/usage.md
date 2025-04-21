@@ -3676,7 +3676,19 @@ more on: http://shenwei356.github.io/csvtk/usage/#replace
 Special replacement symbols:
 
   {nr}    Record number, starting from 1
-  {gnr}   Record number within a group (value of field -g/--gnr-field), starting from 1
+  {gnr}   Record number within a group,    defined by value(s) of field(s) via -g/--group
+  {enr}   Enumeration numbering of groups, defined by value(s) of field(s) via -g/--group
+  {rnr}   Running numbering of groups,     defined by value(s) of field(s) via -g/--group
+
+          Examples:
+            group   {nr}   {gnr}   {enr}   {rnr}
+            A        1       1       1       1
+            A        2       2       1       1
+            B        3       1       2       2
+            B        4       2       2       2
+            A        5       3       1       3
+            C        6       1       3       4
+
   {kv}    Corresponding value of the key (captured variable $n) by key-value file,
           n can be specified by flag --key-capt-idx (default: 1)
 
@@ -3687,9 +3699,14 @@ Flags:
   -f, --fields string                       select only these fields. e.g -f 1,2 or -f columnA,columnB
                                             (default "1")
   -F, --fuzzy-fields                        using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
-  -g, --gnr-field string                    select a field for a group-specific record number {gnr}
+  -g, --group strings                       select field(s) for group-specific record numbering,
+                                            including {gnr}, {enr}, {rnr}. Please use the same field
+                                            type (field number or column name) with the value of -f/--fields
   -h, --help                                help for replace
   -i, --ignore-case                         ignore case
+      --incr-enr int                        increment number when using {enr} in replacement (default 1)
+      --incr-gnr int                        increment number when using {gnr} in replacement (default 1)
+      --incr-rnr int                        increment number when using {rnr} in replacement (default 1)
   -K, --keep-key                            keep the key as value when no value found for the key
       --key-capt-idx int                    capture variable index of key (1-based) (default 1)
       --key-miss-repl string                replacement for key with no corresponding value
@@ -3697,15 +3714,20 @@ Flags:
                                             when using "{kv}" in -r (--replacement)
   -A, --kv-file-all-left-columns-as-value   treat all columns except 1th one as value for kv-file with
                                             more than 2 columns
-      --nr-width int                        minimum width for {nr} in flag -r/--replacement. e.g.,
-                                            formating "1" to "001" by --nr-width 3 (default 1)
-  -p, --pattern string                      search regular expression
+      --nr-width int                        minimum width for {nr}, {gnr}, {enr}, {rnr} in flag
+                                            -r/--replacement. e.g., formating "1" to "001" by --nr-width
+                                            3 (default 1)
+  -p, --pattern string                      search regular expression (default ".*")
   -r, --replacement string                  replacement. supporting capture variables.  e.g. $1
                                             represents the text of the first submatch. ATTENTION: for
                                             *nix OS, use SINGLE quote NOT double quotes or use the \
                                             escape character. Record number is also supported by
                                             "{nr}".use ${1} instead of $1 when {kv} given!
+      --start-enr int                       starting number when using {enr} in replacement (default 1)
+      --start-gnr int                       starting number when using {gnr} in replacement (default 1)
   -n, --start-num int                       starting number when using {nr} in replacement (default 1)
+      --start-rnr int                       starting number when using {rnr} in replacement (default 1)
+
 ```
 
 Examples

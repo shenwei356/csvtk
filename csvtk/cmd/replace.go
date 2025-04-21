@@ -56,7 +56,19 @@ more on: http://shenwei356.github.io/csvtk/usage/#replace
 Special replacement symbols:
 
   {nr}    Record number, starting from 1
-  {gnr}   Record number within a group (value of field -g/--gnr-field), starting from 1
+  {gnr}   Record number within a group,    defined by value(s) of field(s) via -g/--group
+  {enr}   Enumeration numbering of groups, defined by value(s) of field(s) via -g/--group
+  {rnr}   Running numbering of groups,     defined by value(s) of field(s) via -g/--group
+
+          Examples:
+            group   {nr}   {gnr}   {enr}   {rnr}
+            A        1       1       1       1
+            A        2       2       1       1
+            B        3       1       2       2
+            B        4       2       2       2
+            A        5       3       1       3
+            C        6       1       3       4
+
   {kv}    Corresponding value of the key (captured variable $n) by key-value file,
           n can be specified by flag --key-capt-idx (default: 1)
 
@@ -90,6 +102,13 @@ Special replacement symbols:
 		nrWidth := getFlagPositiveInt(cmd, "nr-width")
 		nrFormat := fmt.Sprintf("%%0%dd", nrWidth)
 		startNum := getFlagNonNegativeInt(cmd, "start-num")
+		startGNR := getFlagNonNegativeInt(cmd, "start-gnr")
+		startENR := getFlagNonNegativeInt(cmd, "start-enr")
+		startRNR := getFlagNonNegativeInt(cmd, "start-rnr")
+		incrGNR := getFlagPositiveInt(cmd, "incr-gnr")
+		incrENR := getFlagPositiveInt(cmd, "incr-enr")
+		incrRNR := getFlagPositiveInt(cmd, "incr-rnr")
+
 		kvFileAllLeftColumnsAsValue := getFlagBool(cmd, "kv-file-all-left-columns-as-value")
 
 		var replaceWithNR bool
@@ -136,18 +155,22 @@ Special replacement symbols:
 		if fieldStr == "" {
 			checkError(fmt.Errorf("flag -f (--fields) needed"))
 		}
-		gnrFieldStr := getFlagString(cmd, "gnr-field")
-		if reGNR.MatchString(replacement) {
-			if gnrFieldStr == "" {
-				checkError(fmt.Errorf(`flag -g (--gnr-field) needed for using "{gnr}" or "{NGR}"`))
+		groups := getFlagStringSlice(cmd, "group")
+		setGroup := len(groups) > 0
+		groupCols := len(groups)
+
+		if reGNR.MatchString(replacement) || reENR.MatchString(replacement) || reRNR.MatchString(replacement) {
+			if !setGroup {
+				checkError(fmt.Errorf(`flag -g (--group) needed for using "{gnr}", "{enr}", and "{rnr}"`))
 			}
-		} else if gnrFieldStr != "" {
-			checkError(fmt.Errorf(`flag -g (--gnr-field) given, but "{gnr}" or "{NGR}" not found in -r/--replacement: %s`, replacement))
+		} else if setGroup {
+			checkError(fmt.Errorf(`flag -g (--group) given, but "{gnr}", "{enr}", "{rnr}" not found in -r/--replacement: %s`, replacement))
 		}
-		if gnrFieldStr != "" && strings.Contains(gnrFieldStr, ",") {
-			checkError(fmt.Errorf(`only one field should be given in flag -g (--gnr-field): %s`, gnrFieldStr))
-		}
-		replaceWithGNR := reGNR.MatchString(replacement) && gnrFieldStr != ""
+
+		replaceWithGNR := reGNR.MatchString(replacement) && setGroup
+		replaceWithENR := reENR.MatchString(replacement) && setGroup
+		replaceWithRNR := reRNR.MatchString(replacement) && setGroup
+		_replaceWithXNR := replaceWithGNR || replaceWithENR || replaceWithRNR
 
 		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
 
@@ -184,9 +207,10 @@ Special replacement symbols:
 			}
 
 			_fieldStr := fieldStr
-			if replaceWithGNR {
-				_fieldStr += "," + gnrFieldStr
+			if _replaceWithXNR {
+				_fieldStr += "," + strings.Join(groups, ",")
 			}
+
 			csvReader.Read(ReadOption{
 				FieldStr:    _fieldStr,
 				FuzzyFields: fuzzyFields,
@@ -202,12 +226,21 @@ Special replacement symbols:
 			var k string
 			nr := startNum
 
-			var m map[string]int
-			if replaceWithGNR {
-				m = make(map[string]int)
-			}
-			var gnr int
 			var group string
+			groupColData := make([]string, groupCols)
+			var mg map[string]int
+			if replaceWithGNR {
+				mg = make(map[string]int)
+			}
+			var me map[string]int
+			if replaceWithENR {
+				me = make(map[string]int)
+			}
+
+			var iGroup, gnr, enr, rnr int
+			iGroup = startENR - incrENR
+			rnr = startRNR - incrRNR
+			groupPre := "_shenwei356__"
 
 			var fields []int
 
@@ -229,11 +262,33 @@ Special replacement symbols:
 					}
 				}
 
-				if replaceWithGNR {
-					fields = record.Fields[:len(record.Fields)-1]
-					group = record.All[len(record.Fields)-1]
-					m[group]++
-					gnr = m[group]
+				if _replaceWithXNR {
+					fields = record.Fields[:len(record.Fields)-groupCols]
+					for i := 0; i < groupCols; i++ {
+						groupColData[i] = record.All[record.Fields[len(record.Fields)-groupCols+i]-1]
+					}
+					group = strings.Join(groupColData, "_shenwei356_")
+
+					if replaceWithGNR {
+						if _, ok = mg[group]; !ok {
+							mg[group] = startGNR - incrGNR
+						}
+						mg[group] += incrGNR
+						gnr = mg[group]
+					}
+					if replaceWithENR {
+						if _, ok = me[group]; !ok {
+							iGroup += incrENR
+							me[group] = iGroup
+						}
+						enr = me[group]
+					}
+					if replaceWithRNR {
+						if group != groupPre {
+							rnr += incrRNR
+						}
+						groupPre = group
+					}
 				} else {
 					fields = record.Fields
 				}
@@ -243,12 +298,22 @@ Special replacement symbols:
 
 					r = replacement
 
+					r = reTab.ReplaceAllString(r, "\t")
+
 					if replaceWithNR {
 						r = reNR.ReplaceAllString(r, fmt.Sprintf(nrFormat, nr))
 					}
 
 					if replaceWithGNR {
 						r = reGNR.ReplaceAllString(r, fmt.Sprintf(nrFormat, gnr))
+					}
+
+					if replaceWithENR {
+						r = reENR.ReplaceAllString(r, fmt.Sprintf(nrFormat, enr))
+					}
+
+					if replaceWithRNR {
+						r = reRNR.ReplaceAllString(r, fmt.Sprintf(nrFormat, rnr))
 					}
 
 					if replaceWithKV {
@@ -290,9 +355,9 @@ Special replacement symbols:
 func init() {
 	RootCmd.AddCommand(replaceCmd)
 	replaceCmd.Flags().StringP("fields", "f", "1", `select only these fields. e.g -f 1,2 or -f columnA,columnB`)
-	replaceCmd.Flags().StringP("gnr-field", "g", "", `select a field for a group-specific record number {gnr}`)
+	replaceCmd.Flags().StringSliceP("group", "g", []string{}, `select field(s) for group-specific record numbering, including {gnr}, {enr}, {rnr}. Please use the same field type (field number or column name) with the value of -f/--fields`)
 	replaceCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
-	replaceCmd.Flags().StringP("pattern", "p", "", "search regular expression")
+	replaceCmd.Flags().StringP("pattern", "p", ".*", "search regular expression")
 	replaceCmd.Flags().StringP("replacement", "r", "",
 		"replacement. supporting capture variables. "+
 			" e.g. $1 represents the text of the first submatch. "+
@@ -305,11 +370,21 @@ func init() {
 	replaceCmd.Flags().BoolP("keep-key", "K", false, "keep the key as value when no value found for the key")
 	replaceCmd.Flags().IntP("key-capt-idx", "", 1, "capture variable index of key (1-based)")
 	replaceCmd.Flags().StringP("key-miss-repl", "", "", "replacement for key with no corresponding value")
-	replaceCmd.Flags().IntP("nr-width", "", 1, `minimum width for {nr} in flag -r/--replacement. e.g., formating "1" to "001" by --nr-width 3`)
+	replaceCmd.Flags().IntP("nr-width", "", 1, `minimum width for {nr}, {gnr}, {enr}, {rnr} in flag -r/--replacement. e.g., formating "1" to "001" by --nr-width 3`)
 	replaceCmd.Flags().IntP("start-num", "n", 1, `starting number when using {nr} in replacement`)
+	replaceCmd.Flags().IntP("start-gnr", "", 1, `starting number when using {gnr} in replacement`)
+	replaceCmd.Flags().IntP("start-enr", "", 1, `starting number when using {enr} in replacement`)
+	replaceCmd.Flags().IntP("start-rnr", "", 1, `starting number when using {rnr} in replacement`)
+	replaceCmd.Flags().IntP("incr-gnr", "", 1, `increment number when using {gnr} in replacement`)
+	replaceCmd.Flags().IntP("incr-enr", "", 1, `increment number when using {enr} in replacement`)
+	replaceCmd.Flags().IntP("incr-rnr", "", 1, `increment number when using {rnr} in replacement`)
+
 	replaceCmd.Flags().BoolP("kv-file-all-left-columns-as-value", "A", false, "treat all columns except 1th one as value for kv-file with more than 2 columns")
 }
 
 var reNR = regexp.MustCompile(`\{(NR|nr)\}`)
 var reGNR = regexp.MustCompile(`\{(GNR|gnr)\}`)
+var reENR = regexp.MustCompile(`\{(ENR|enr)\}`)
+var reRNR = regexp.MustCompile(`\{(RNR|rnr)\}`)
 var reKV = regexp.MustCompile(`\{(KV|kv)\}`)
+var reTab = regexp.MustCompile(`\\t`)
