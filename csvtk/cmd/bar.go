@@ -216,8 +216,10 @@ Notes:
 			checkError(err)
 			bars.LineStyle.Width = vg.Length(0)
 			bars.Color = plotutil.Color(colorIndex - 1 + i)
-			bars.Offset = barWidth * vg.Length(i)
 			bars.Horizontal = horizontal
+
+			// Calculate offset to center the bars
+			bars.Offset = barWidth * vg.Length(float64(i)-(float64(len(groupOrders)-1)/2))
 
 			p.Add(bars)
 			if addLegend {
