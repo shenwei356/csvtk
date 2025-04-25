@@ -225,9 +225,9 @@ Notes:
 			}
 		}
 
-		p.Legend.Padding = barWidth
 		p.Legend.Top = getFlagBool(cmd, "legend-top")
 		p.Legend.Left = getFlagBool(cmd, "legend-left")
+		p.Legend.Padding = 1.5
 
 		if horizontal {
 			p.X.Width = plotConfig.axisWidth
