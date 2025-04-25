@@ -3924,8 +3924,8 @@ Flags:
   -h, --help             help for sort
   -i, --ignore-case      ignore-case
   -k, --keys strings     keys (multiple values supported). sort type supported, "N" for natural order,
-                         "n" for number, "u" for user-defined order and "r" for reverse. e.g., "-k 1" or
-                         "-k A:r" or ""-k 1:nr -k 2" (default [1])
+                         "n" for number, "d" for date/time, "u" for user-defined order and "r" for
+                         reverse. e.g., "-k 1" or "-k A:r" or ""-k 1:nr -k 2" (default [1])
   -L, --levels strings   user-defined level file (one level per line, multiple values supported).
                          format: <field>:<level-file>.  e.g., "-k name:u -L name:level.txt
 ```

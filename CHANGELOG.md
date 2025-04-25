@@ -14,6 +14,8 @@
         - add a new flag `--na` to set content to fill. [#316](https://github.com/shenwei356/csvtk/issues/316)
     - `csvtk replace`:
         - add new replacements symbol/placeholder for group-specific numbering: `{gnr}`, `{enr}`, `{rnr`}. [#322](https://github.com/shenwei356/csvtk/issues/322)
+    - `csvtk sort`:
+        - add support of sorting by date/time. [#278](https://github.com/shenwei356/csvtk/issues/278)
 - [csvtk v0.33.0](https://github.com/shenwei356/csvtk/releases/tag/v0.33.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.33.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.33.0)
     - new command `csvtk comma`: make numbers more readable by adding commas. [#300](https://github.com/shenwei356/csvtk/issues/300)

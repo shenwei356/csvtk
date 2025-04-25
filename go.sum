@@ -135,8 +135,8 @@ github.com/shenwei356/natsort v0.0.0-20220117010048-580176ad49fb h1:pb0RhpaADsFr
 github.com/shenwei356/natsort v0.0.0-20220117010048-580176ad49fb/go.mod h1:SiiGiRFyRtV7S9RamOrmQR5gpGIRhWJM1w0EtmuQ1io=
 github.com/shenwei356/stable v0.2.0 h1:z7DQOi2BF3/ZT25IZ10/AmESi3xraFx7nqN6N9xLBds=
 github.com/shenwei356/stable v0.2.0/go.mod h1:uHDrUAEDKmB6eIFvFXXOl5zI5EqPnNRhfXOYpsZGtp0=
-github.com/shenwei356/util v0.5.3 h1:Yf9+rB3Kngnb4+K3xCo7Dg2d+C1CzGsWmv6L9aDFORg=
-github.com/shenwei356/util v0.5.3/go.mod h1:3tRAOfreWdgl/Zh1gE008h2lWocf5/YAxVSjgLKvd4k=
+github.com/shenwei356/util v0.5.4 h1:zZpLhiz1P5x7ylQvNRWU6weR42l+BaWXXcl0JYeaBvs=
+github.com/shenwei356/util v0.5.4/go.mod h1:9T+P2I2xGv98Y+KdtNyTJ99p8spXyLuSFmXQLU1dlmk=
 github.com/shenwei356/xopen v0.3.1 h1:3pju0hVeRRnlpXC7s3aE/RVOhFB1S3qRJGN+eV85r3s=
 github.com/shenwei356/xopen v0.3.1/go.mod h1:6EQUa6I7Zsl2GQKqcL9qGLrTzVE+oZyly+uhzovQYSk=
 github.com/spf13/cobra v1.8.0 h1:7aJaZx1B85qltLMc546zn58BxxfZdR/W22ej9CFoEf0=

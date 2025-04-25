@@ -118,6 +118,10 @@ var sortCmd = &cobra.Command{
 					sortTypes = append(sortTypes, sortType{FieldStr: _key, Number: false, Reverse: true})
 				case "nr", "rn":
 					sortTypes = append(sortTypes, sortType{FieldStr: _key, Number: true, Reverse: true})
+				case "d":
+					sortTypes = append(sortTypes, sortType{FieldStr: _key, Date: true, Reverse: false})
+				case "dr":
+					sortTypes = append(sortTypes, sortType{FieldStr: _key, Date: true, Reverse: true})
 				case "u":
 					if _, ok := levelsMap[_key]; !ok {
 						checkError(fmt.Errorf("level file not provided for field: %s", _key))
@@ -225,6 +229,7 @@ var sortCmd = &cobra.Command{
 				IgnoreCase:  ignoreCase,
 				Natural:     t.Natural,
 				Number:      t.Number,
+				Date:        t.Date,
 				Reverse:     t.Reverse,
 				UserDefined: t.UserDefined,
 				Levels:      t.Levels,
@@ -251,6 +256,7 @@ type sortType struct {
 	FieldStr    string
 	Natural     bool
 	Number      bool
+	Date        bool
 	Reverse     bool
 	UserDefined bool
 	Levels      map[string]int
@@ -258,7 +264,7 @@ type sortType struct {
 
 func init() {
 	RootCmd.AddCommand(sortCmd)
-	sortCmd.Flags().StringSliceP("keys", "k", []string{"1"}, `keys (multiple values supported). sort type supported, "N" for natural order, "n" for number, "u" for user-defined order and "r" for reverse. e.g., "-k 1" or "-k A:r" or ""-k 1:nr -k 2"`)
+	sortCmd.Flags().StringSliceP("keys", "k", []string{"1"}, `keys (multiple values supported). sort type supported, "N" for natural order, "n" for number, "d" for date/time, "u" for user-defined order and "r" for reverse. e.g., "-k 1" or "-k A:r" or ""-k 1:nr -k 2"`)
 	sortCmd.Flags().StringSliceP("levels", "L", []string{}, `user-defined level file (one level per line, multiple values supported). format: <field>:<level-file>.  e.g., "-k name:u -L name:level.txt"`)
 	sortCmd.Flags().BoolP("ignore-case", "i", false, "ignore-case")
 }
