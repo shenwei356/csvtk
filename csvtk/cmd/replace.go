@@ -102,12 +102,7 @@ Special replacement symbols:
 		nrWidth := getFlagPositiveInt(cmd, "nr-width")
 		nrFormat := fmt.Sprintf("%%0%dd", nrWidth)
 		startNum := getFlagNonNegativeInt(cmd, "start-num")
-		startGNR := getFlagNonNegativeInt(cmd, "start-gnr")
-		startENR := getFlagNonNegativeInt(cmd, "start-enr")
-		startRNR := getFlagNonNegativeInt(cmd, "start-rnr")
-		incrGNR := getFlagPositiveInt(cmd, "incr-gnr")
-		incrENR := getFlagPositiveInt(cmd, "incr-enr")
-		incrRNR := getFlagPositiveInt(cmd, "incr-rnr")
+		incrNum := getFlagPositiveInt(cmd, "incr-num")
 
 		kvFileAllLeftColumnsAsValue := getFlagBool(cmd, "kv-file-all-left-columns-as-value")
 
@@ -238,8 +233,8 @@ Special replacement symbols:
 			}
 
 			var iGroup, gnr, enr, rnr int
-			iGroup = startENR - incrENR
-			rnr = startRNR - incrRNR
+			iGroup = startNum - incrNum
+			rnr = startNum - incrNum
 			groupPre := "_shenwei356__"
 
 			var fields []int
@@ -271,21 +266,21 @@ Special replacement symbols:
 
 					if replaceWithGNR {
 						if _, ok = mg[group]; !ok {
-							mg[group] = startGNR - incrGNR
+							mg[group] = startNum - incrNum
 						}
-						mg[group] += incrGNR
+						mg[group] += incrNum
 						gnr = mg[group]
 					}
 					if replaceWithENR {
 						if _, ok = me[group]; !ok {
-							iGroup += incrENR
+							iGroup += incrNum
 							me[group] = iGroup
 						}
 						enr = me[group]
 					}
 					if replaceWithRNR {
 						if group != groupPre {
-							rnr += incrRNR
+							rnr += incrNum
 						}
 						groupPre = group
 					}
@@ -371,13 +366,8 @@ func init() {
 	replaceCmd.Flags().IntP("key-capt-idx", "", 1, "capture variable index of key (1-based)")
 	replaceCmd.Flags().StringP("key-miss-repl", "", "", "replacement for key with no corresponding value")
 	replaceCmd.Flags().IntP("nr-width", "", 1, `minimum width for {nr}, {gnr}, {enr}, {rnr} in flag -r/--replacement. e.g., formating "1" to "001" by --nr-width 3`)
-	replaceCmd.Flags().IntP("start-num", "n", 1, `starting number when using {nr} in replacement`)
-	replaceCmd.Flags().IntP("start-gnr", "", 1, `starting number when using {gnr} in replacement`)
-	replaceCmd.Flags().IntP("start-enr", "", 1, `starting number when using {enr} in replacement`)
-	replaceCmd.Flags().IntP("start-rnr", "", 1, `starting number when using {rnr} in replacement`)
-	replaceCmd.Flags().IntP("incr-gnr", "", 1, `increment number when using {gnr} in replacement`)
-	replaceCmd.Flags().IntP("incr-enr", "", 1, `increment number when using {enr} in replacement`)
-	replaceCmd.Flags().IntP("incr-rnr", "", 1, `increment number when using {rnr} in replacement`)
+	replaceCmd.Flags().IntP("start-num", "n", 1, `starting number when using {nr}, {gnr}, {enr}, {rnr} in replacement`)
+	replaceCmd.Flags().IntP("incr-num", "", 1, `increment number when using  {nr}, {gnr}, {enr}, {rnr} in replacement`)
 
 	replaceCmd.Flags().BoolP("kv-file-all-left-columns-as-value", "A", false, "treat all columns except 1th one as value for kv-file with more than 2 columns")
 }

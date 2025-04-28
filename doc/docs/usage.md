@@ -3704,9 +3704,8 @@ Flags:
                                             type (field number or column name) with the value of -f/--fields
   -h, --help                                help for replace
   -i, --ignore-case                         ignore case
-      --incr-enr int                        increment number when using {enr} in replacement (default 1)
-      --incr-gnr int                        increment number when using {gnr} in replacement (default 1)
-      --incr-rnr int                        increment number when using {rnr} in replacement (default 1)
+      --incr-num int                        increment number when using  {nr}, {gnr}, {enr}, {rnr} in
+                                            replacement (default 1)
   -K, --keep-key                            keep the key as value when no value found for the key
       --key-capt-idx int                    capture variable index of key (1-based) (default 1)
       --key-miss-repl string                replacement for key with no corresponding value
@@ -3723,10 +3722,8 @@ Flags:
                                             *nix OS, use SINGLE quote NOT double quotes or use the \
                                             escape character. Record number is also supported by
                                             "{nr}".use ${1} instead of $1 when {kv} given!
-      --start-enr int                       starting number when using {enr} in replacement (default 1)
-      --start-gnr int                       starting number when using {gnr} in replacement (default 1)
-  -n, --start-num int                       starting number when using {nr} in replacement (default 1)
-      --start-rnr int                       starting number when using {rnr} in replacement (default 1)
+  -n, --start-num int                       starting number when using {nr}, {gnr}, {enr}, {rnr} in
+                                            replacement (default 1)
 
 ```
 
