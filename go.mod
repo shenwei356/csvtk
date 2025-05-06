@@ -1,8 +1,6 @@
 module github.com/shenwei356/csvtk
 
-go 1.23.0
-
-toolchain go1.24.2
+go 1.24.2
 
 require (
 	github.com/Knetic/govaluate v3.0.0+incompatible
@@ -21,7 +19,7 @@ require (
 	github.com/shenwei356/natsort v0.0.0-20220117010048-580176ad49fb
 	github.com/shenwei356/stable v0.2.0
 	github.com/shenwei356/util v0.5.4
-	github.com/shenwei356/xopen v0.3.1
+	github.com/shenwei356/xopen v0.3.2
 	github.com/spf13/cobra v1.8.0
 	github.com/tatsushid/go-prettytable v0.0.0-20141013043238-ed2d14c29939
 	github.com/twotwotwo/sorts v0.0.0-20160814051341-bf5c1f2b8553
@@ -42,7 +40,7 @@ require (
 	github.com/go-pdf/fpdf v0.8.0 // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
-	github.com/klauspost/compress v1.15.12 // indirect
+	github.com/klauspost/compress v1.18.0 // indirect
 	github.com/klauspost/pgzip v1.2.6 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/mattn/go-isatty v0.0.16 // indirect
@@ -53,7 +51,7 @@ require (
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/rogpeppe/go-internal v1.9.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	github.com/ulikunitz/xz v0.5.10 // indirect
+	github.com/ulikunitz/xz v0.5.12 // indirect
 	github.com/xuri/efp v0.0.0-20230802181842-ad255f2331ca // indirect
 	github.com/xuri/nfp v0.0.0-20230819163627-dc951e3ffe1a // indirect
 	golang.org/x/crypto v0.36.0 // indirect
