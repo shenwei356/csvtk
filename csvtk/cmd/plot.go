@@ -71,8 +71,11 @@ func init() {
 	plotCmd.PersistentFlags().IntP("label-size", "", 14, "label font size")
 	plotCmd.PersistentFlags().Float64P("axis-width", "", 1.5, "axis width")
 	plotCmd.PersistentFlags().Float64P("tick-width", "", 1.5, "axis tick width")
-	plotCmd.PersistentFlags().IntP("tick-label-size", "", 12, "tick label font size")
+	plotCmd.PersistentFlags().Float64P("tick-label-size", "", 12, "tick label font size")
 	plotCmd.PersistentFlags().Float64P("scale", "", 1, "scale the image width/height, tick, axes, line/point and font sizes proportionally")
+
+	plotCmd.PersistentFlags().BoolP("hide-x-labs", "", false, "hide X axis, ticks, and tick labels")
+	plotCmd.PersistentFlags().BoolP("hide-y-labs", "", false, "hide Y axis, ticks, and tick labels")
 
 	plotCmd.PersistentFlags().BoolP("x-scale-ln", "", false, "scale the X axis by the natural log")
 	plotCmd.PersistentFlags().BoolP("y-scale-ln", "", false, "scale the Y axis by the natural log")
@@ -117,9 +120,11 @@ func getPlotConfigs(cmd *cobra.Command) *plotConfigs {
 	config.labelSize = vg.Length(int(float64(getFlagPositiveInt(cmd, "label-size")) * scale))
 	config.width = vg.Length(getFlagPositiveFloat64(cmd, "width") * scale)
 	config.height = vg.Length(getFlagPositiveFloat64(cmd, "height") * scale)
-	config.axisWidth = vg.Length(getFlagPositiveFloat64(cmd, "axis-width") * scale)
-	config.tickWidth = vg.Length(getFlagPositiveFloat64(cmd, "tick-width") * scale)
-	config.tickLabelSize = vg.Length(int(float64(getFlagPositiveInt(cmd, "tick-label-size")) * scale))
+	config.axisWidth = vg.Length(getFlagNonNegativeFloat64(cmd, "axis-width") * scale)
+	config.tickWidth = vg.Length(getFlagNonNegativeFloat64(cmd, "tick-width") * scale)
+	config.tickLabelSize = vg.Length(int(float64(getFlagNonNegativeFloat64(cmd, "tick-label-size")) * scale))
+	config.hideXlabs = getFlagBool(cmd, "hide-x-labs")
+	config.hideYlabs = getFlagBool(cmd, "hide-y-labs")
 
 	config.xlab = getFlagString(cmd, "xlab")
 	config.ylab = getFlagString(cmd, "ylab")
@@ -173,6 +178,7 @@ type plotConfigs struct {
 	title, xlab, ylab                     string
 	titleSize, labelSize, tickLabelSize   vg.Length
 	width, height, axisWidth, tickWidth   vg.Length
+	hideXlabs, hideYlabs                  bool
 	scale                                 float64
 	scaleLnX, scaleLnY                    bool
 	xmin, xmax, ymin, ymax                float64

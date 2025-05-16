@@ -1,15 +1,18 @@
 - [csvtk v0.34.0](https://github.com/shenwei356/csvtk/releases/tag/v0.34.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.34.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.34.0)
+    - new command `csvtk plot bar`. Contributed by @lovromazgon [#323](https://github.com/shenwei356/csvtk/pull/323)
     - `csvtk`:
         - fix panic when the first field is empty, e.g., `-f ,2,3`.
-    - `csvtk plot box`:
-        - fix `--horiz` does not swap axes labels. [#314](https://github.com/shenwei356/csvtk/issues/314)
     - `csvtk cut`:
         - fix `-b`. [#156](https://github.com/shenwei356/csvtk/issues/156)
         - fix `-i`. [#317](https://github.com/shenwei356/csvtk/issues/317)
-    - `csvtk line`:
+    - `csvtk plot box`:
+        - fix `--horiz` does not swap axes labels. [#314](https://github.com/shenwei356/csvtk/issues/314)
+    - `csvtk plot line`:
         - add a new flag `--data-field-x-nominal` to plot line with sortable nominal X axis values, such as date.
         [#308](https://github.com/shenwei356/csvtk/pull/308) by @lovromazgon
+    - `csvtk plot`:
+        - add two new flags `--hide-x-labs` and `--hide-y-labs`, for hiding X/Y axis, ticks, and tick labels. [#326](https://github.com/shenwei356/csvtk/issues/326)
     - `csvtk fix`:
         - add a new flag `--na` to set content to fill. [#316](https://github.com/shenwei356/csvtk/issues/316)
     - `csvtk replace`:

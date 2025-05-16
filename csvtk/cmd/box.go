@@ -211,14 +211,27 @@ Notes:
 		p.Title.TextStyle.Font.Size = plotConfig.titleSize
 		p.X.Label.Text = plotConfig.xlab
 		p.Y.Label.Text = plotConfig.ylab
-		p.X.Label.TextStyle.Font.Size = plotConfig.labelSize
-		p.Y.Label.TextStyle.Font.Size = plotConfig.labelSize
-		p.X.Width = plotConfig.axisWidth
-		p.Y.Width = plotConfig.axisWidth
-		p.X.Tick.Width = plotConfig.tickWidth
-		p.Y.Tick.Width = plotConfig.tickWidth
-		p.X.Tick.Label.Font.Size = plotConfig.tickLabelSize
-		p.Y.Tick.Label.Font.Size = plotConfig.tickLabelSize
+		if plotConfig.hideXlabs {
+			p.X.Width = vg.Length(0)
+			p.X.Tick.Width = vg.Length(0.01) // 0 would remove the space between axis and label
+			p.X.Tick.Label.Font.Size = vg.Length(0)
+		} else {
+			p.X.Width = plotConfig.axisWidth
+			p.X.Label.TextStyle.Font.Size = plotConfig.labelSize
+			p.X.Tick.Width = plotConfig.tickWidth
+			p.X.Tick.Label.Font.Size = plotConfig.tickLabelSize
+		}
+		if plotConfig.hideYlabs {
+			p.Y.Tick.Width = vg.Length(0.01) // 0 would remove the space between axis and label
+			p.Y.Tick.Label.Font.Size = vg.Length(0)
+			p.Y.Width = vg.Length(0)
+		} else {
+			p.Y.Width = plotConfig.axisWidth
+			p.Y.Label.TextStyle.Font.Size = plotConfig.labelSize
+			p.Y.Tick.Width = plotConfig.tickWidth
+			p.Y.Tick.Label.Font.Size = plotConfig.tickLabelSize
+		}
+
 		if plotConfig.scaleLnX {
 			p.X.Scale = plot.LogScale{}
 			p.X.Tick.Marker = plot.LogTicks{Prec: -1}
