@@ -98,18 +98,7 @@ And then:
     #   source ~/.bashrc
     export PATH=$PATH:$HOME/go/bin
     
-
-    # ------------- the latest stable version -------------
-
-    go install github.com/shenwei356/csvtk/csvtk@latest
-
-    # The executable binary file is located in:
-    #   ~/go/bin/csvtk
-    # You can also move it to anywhere in the $PATH
-    mkdir -p $HOME/bin
-    cp ~/go/bin/csvtk $HOME/bin/
-
-    # --------------- the development version --------------
+    # ------------------- compile csvtk ------------------
 
     git clone https://github.com/shenwei356/csvtk
     cd csvtk/csvtk/
