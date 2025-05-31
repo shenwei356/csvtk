@@ -116,6 +116,7 @@
 - [plot hist](#plot-hist)
 - [plot box](#plot-box)
 - [plot line](#plot-line)
+- [plot bar](#plot-bar)
 
 **Misc**
 
@@ -132,7 +133,7 @@ Usage
 ```text
 csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.33.0
+Version: 0.34.0
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -2971,39 +2972,66 @@ Notes:
      or just redirect to file.
 
 Usage:
-  csvtk plot [command]
+  csvtk plot [command] 
 
 Available Commands:
+  bar         plot bar chart
   box         plot boxplot
   hist        plot histogram
   line        line plot and scatter plot
 
 Flags:
-      --axis-width float      axis width (default 1.5)
-  -f, --data-field string     column index or column name of data (default "1")
-      --format string         image format for stdout when flag -o/--out-file not given. available
-                              values: eps, jpg|jpeg, pdf, png, svg, and tif|tiff. (default "png")
-  -g, --group-field string    column index or column name of group
-      --height float          Figure height (default 4.5)
-  -h, --help                  help for plot
-      --label-size int        label font size (default 14)
-      --na-values strings     NA values, case ignored (default [,NA,N/A])
-      --scale float           scale the image width/height, tick, axes, line/point and font sizes
-                              proportionally (default 1)
-      --skip-na               skip NA values in --na-values
-      --tick-label-size int   tick label font size (default 12)
-      --tick-width float      axis tick width (default 1.5)
-      --title string          Figure title
-      --title-size int        title font size (default 16)
-      --width float           Figure width (default 6)
-      --x-max string          maximum value of X axis
-      --x-min string          minimum value of X axis
-      --xlab string           x label text
-      --y-max string          maximum value of Y axis
-      --y-min string          minimum value of Y axis
-      --ylab string           y label text
-      --x-scale-ln            scale the X axis with natural log
-      --y-scale-ln            scale the Y axis with natural log
+      --axis-width float        axis width (default 1.5)
+  -f, --data-field string       column index or column name of data (default "1")
+      --format string           image format for stdout when flag -o/--out-file not given. available
+                                values: eps, jpg|jpeg, pdf, png, svg, and tif|tiff. (default "png")
+  -g, --group-field string      column index or column name of group
+      --height float            Figure height (default 4.5)
+  -h, --help                    help for plot
+      --hide-x-labs             hide X axis, ticks, and tick labels
+      --hide-y-labs             hide Y axis, ticks, and tick labels
+      --label-size int          label font size (default 14)
+      --na-values strings       NA values, case ignored (default [,NA,N/A])
+      --scale float             scale the image width/height, tick, axes, line/point and font sizes
+                                proportionally (default 1)
+      --skip-na                 skip NA values in --na-values
+      --tick-label-size float   tick label font size (default 12)
+      --tick-width float        axis tick width (default 1.5)
+      --title string            Figure title
+      --title-size int          title font size (default 16)
+      --width float             Figure width (default 6)
+      --x-max string            maximum value of X axis
+      --x-min string            minimum value of X axis
+      --x-scale-ln              scale the X axis by the natural log
+      --xlab string             x label text
+      --y-max string            maximum value of Y axis
+      --y-min string            minimum value of Y axis
+      --y-scale-ln              scale the Y axis by the natural log
+      --ylab string             y label text
+
+Global Flags:
+  -C, --comment-char string    lines starting with commment-character will be ignored. if your header
+                               row starts with '#', please assign "-C" another rare symbol, e.g. '$'
+                               (default "#")
+  -U, --delete-header          do not output header row
+  -d, --delimiter string       delimiting character of the input CSV file (default ",")
+  -E, --ignore-empty-row       ignore empty rows
+  -I, --ignore-illegal-row     ignore illegal rows. You can also use 'csvtk fix' to fix files with
+                               different numbers of columns in rows
+  -X, --infile-list string     file of input files list (one file per line), if given, they are appended
+                               to files from cli arguments
+  -l, --lazy-quotes            if given, a quote may appear in an unquoted field and a non-doubled quote
+                               may appear in a quoted field
+  -H, --no-header-row          specifies that the input CSV file does not have header row
+  -j, --num-cpus int           number of CPUs to use (default 4)
+  -D, --out-delimiter string   delimiting character of the output CSV file, e.g., -D $'\t' for tab
+                               (default ",")
+  -o, --out-file string        out file ("-" for stdout, suffix .gz for gzipped out) (default "-")
+  -T, --out-tabs               specifies that the output is delimited with tabs. Overrides "-D"
+      --quiet                  be quiet and do not show extra information and warnings
+  -Z, --show-row-number        show row number as the first column, with header row skipped
+  -t, --tabs                   specifies that the input CSV file is delimited with tabs. Overrides "-d"
+  -V, --version                print version information
 
 ```
 
@@ -3199,7 +3227,39 @@ Examples
             > testdata/figures/line_plot_date.png 
 
     ![line_plot_date.png](testdata/figures/line_plot_date.png)
-            
+
+## plot bar
+
+Usage
+
+```text
+plot bar chart
+
+Notes:
+
+  1. Output file can be set by flag -o/--out-file.
+  2. File format is determined by the out file suffix.
+     Supported formats: eps, jpg|jpeg, pdf, png, svg, and tif|tiff
+  3. If flag -o/--out-file not set (default), image is written to stdout,
+     you can display the image by pipping to "display" command of Imagemagic
+     or just redirect to file.
+
+Usage:
+  csvtk plot bar [flags] 
+
+Flags:
+      --bar-width float       bar width (0 for auto)
+      --color-index int       color index, 1-7 (default 1)
+  -x, --data-field-x string   column index or column name of X for command bar
+  -y, --data-field-y string   column index or column name of Y for command bar
+  -h, --help                  help for bar
+      --horizontal            horizontal bar chart
+      --legend-left           locate legend along the left edge of the plot
+      --legend-top            locate legend along the top edge of the plot
+
+
+```
+    
 ## pretty
 
 Usage

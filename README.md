@@ -64,7 +64,7 @@ It could save you lots of time in (not) writing Python/R scripts.
 
 ## Subcommands
 
-55 subcommands in total.
+56 subcommands in total.
 
 **Information**
 
@@ -141,6 +141,8 @@ It could save you lots of time in (not) writing Python/R scripts.
     - [`plot hist`](https://bioinf.shenwei.me/csvtk/usage/#hist) histogram
     - [`plot box`](https://bioinf.shenwei.me/csvtk/usage/#box) boxplot
     - [`plot line`](https://bioinf.shenwei.me/csvtk/usage/#line) line plot and scatter plot
+    - [`plot bar`](https://bioinf.shenwei.me/csvtk/usage/bar) plot bar chart
+
 
 **Misc**
 
