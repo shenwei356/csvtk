@@ -35,9 +35,17 @@ It could save you lots of time in (not) writing Python/R scripts.
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+- [Introduction](#introduction)
+- [Table of Contents](#table-of-contents)
 - [Features](#features)
 - [Subcommands](#subcommands)
 - [Installation](#installation)
+    - [Method 1: Download binaries (latest stable/dev version)](#method-1-download-binaries-latest-stabledev-version)
+    - [Method 2: Install via Pixi](#method-2-install-via-pixi)
+    - [Method 3: Install via conda (latest stable version)  ](#method-3-install-via-conda-latest-stable-version--)
+    - [Method 4: Install via homebrew](#method-4-install-via-homebrew)
+    - [Method 5: For Go developer (latest stable/dev version)](#method-5-for-go-developer-latest-stabledev-version)
+    - [Method 6: For ArchLinux AUR users (may be not the latest)](#method-6-for-archlinux-aur-users-may-be-not-the-latest)
 - [Command-line completion](#command-line-completion)
 - [Compared to `csvkit`](#compared-to-csvkit)
 - [Examples](#examples)
@@ -138,9 +146,9 @@ It could save you lots of time in (not) writing Python/R scripts.
 **Ploting**
 
 - [`plot`](https://bioinf.shenwei.me/csvtk/usage/#plot) see [usage](http://bioinf.shenwei.me/csvtk/usage/#plot)
-    - [`plot hist`](https://bioinf.shenwei.me/csvtk/usage/#hist) histogram
-    - [`plot box`](https://bioinf.shenwei.me/csvtk/usage/#box) boxplot
-    - [`plot line`](https://bioinf.shenwei.me/csvtk/usage/#line) line plot and scatter plot
+    - [`plot hist`](https://bioinf.shenwei.me/csvtk/usage/#plot-hist) histogram
+    - [`plot box`](https://bioinf.shenwei.me/csvtk/usage/#plot-box) boxplot
+    - [`plot line`](https://bioinf.shenwei.me/csvtk/usage/#plot-line) line plot and scatter plot
     - [`plot bar`](https://bioinf.shenwei.me/csvtk/usage/#plot-bar) plot bar chart
 
 
