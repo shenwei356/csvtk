@@ -253,6 +253,12 @@ Custom functions:
 
 						colnamesMap = make(map[string]*regexp.Regexp, len(record.Selected))
 						for i, col = range record.Selected {
+							if showRowNumber {
+								if i == 0 {
+									continue
+								}
+								i--
+							}
 							if _, ok = colnames2fileds[col]; !ok {
 								colnames2fileds[col] = []int{record.Fields[i]}
 							} else {
