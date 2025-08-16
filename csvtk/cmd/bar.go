@@ -24,7 +24,6 @@ import (
 	"fmt"
 	"os"
 	"runtime"
-	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -126,17 +125,10 @@ Notes:
 			checkError(err)
 		}
 
-		var xNominalValues []string
-		// Collect unique values
-		xNominalValues = make([]string, 0, len(data)/4) // Assume a quarter of the data is unique
+		var xValues []string
+		xValues = make([]string, 0, len(data))
 		for _, d := range data {
-			i, found := slices.BinarySearch(xNominalValues, d[0])
-			if !found {
-				// 0 alloc insert slice trick https://go.dev/wiki/SliceTricks#insert
-				xNominalValues = append(xNominalValues, "")
-				copy(xNominalValues[i+1:], xNominalValues[i:])
-				xNominalValues[i] = d[0]
-			}
+			xValues = append(xValues, d[0])
 		}
 
 		// =======================================
@@ -195,7 +187,7 @@ Notes:
 			fullWidth -= plotConfig.axisWidth * vg.Inch // leave space for axis
 
 			barWidth = vg.Points(
-				(float64(fullWidth) / float64(len(groups)*len(xNominalValues))),
+				(float64(fullWidth) / float64(len(groups)*len(xValues))),
 			)
 		}
 
@@ -240,7 +232,7 @@ Notes:
 					plotConfig.xlab = "Values"
 				}
 			}
-			p.NominalY(xNominalValues...)
+			p.NominalY(xValues...)
 		} else {
 			p.Y.Width = plotConfig.axisWidth
 			if plotConfig.ylab == "" {
@@ -250,7 +242,7 @@ Notes:
 					plotConfig.ylab = "Values"
 				}
 			}
-			p.NominalX(xNominalValues...)
+			p.NominalX(xValues...)
 		}
 
 		p.Title.Text = plotConfig.title
