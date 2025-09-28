@@ -3974,7 +3974,7 @@ Usage
 ```text
 sort by selected fields
 
-Fields types:
+Field types:
   - Column name                  : -k name
   - Nth field                    : -k 1
   - field range:
@@ -3986,7 +3986,7 @@ Fields types:
 Sort types:
   - Default: alphabetical order  : -k 1-
   - n      : numeric order       : -k 1:n
-  - N      : natrual order       : -k 1:N   (e.g., "a9" should be in front of "a10")
+  - N      : natural order       : -k 1:N   (e.g., "a9" should be in front of "a10")
   - d      : sort by date        : -k 1:d   (support multiple formats of date and time)
   - u      : custom levels       : -k 1:u -L levels.txt
 
