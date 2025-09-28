@@ -1,5 +1,7 @@
 - [csvtk v0.35.0](https://github.com/shenwei356/csvtk/releases/tag/v0.35.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.35.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.35.0)
+    - `csvtk`:
+        - do not support i386 architecture anymore.
     - `csvtk sort`:
         - **sort on all columns by default**, with a similar way with GNU sort (but the results might be different).  [#337](https://github.com/shenwei356/csvtk/issues/337)
         - fix sort inconsistency for rows with the same key(s). [#337](https://github.com/shenwei356/csvtk/issues/337)
