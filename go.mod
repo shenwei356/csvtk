@@ -1,6 +1,6 @@
 module github.com/shenwei356/csvtk
 
-go 1.24.3
+go 1.24.7
 
 require (
 	github.com/Knetic/govaluate v3.0.0+incompatible
@@ -18,7 +18,7 @@ require (
 	github.com/shenwei356/go-logging v0.0.0-20171012171522-c6b9702d88ba
 	github.com/shenwei356/natsort v0.0.0-20220117010048-580176ad49fb
 	github.com/shenwei356/stable v0.2.0
-	github.com/shenwei356/util v0.5.4
+	github.com/shenwei356/util v0.5.5
 	github.com/shenwei356/xopen v0.3.2
 	github.com/spf13/cobra v1.8.0
 	github.com/tatsushid/go-prettytable v0.0.0-20141013043238-ed2d14c29939

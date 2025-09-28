@@ -43,6 +43,26 @@ var sortCmd = &cobra.Command{
 	Short: "sort by selected fields",
 	Long: `sort by selected fields
 
+Fields types:
+  - Column name                  : -k name
+  - Nth field                    : -k 1
+  - field range:
+     - All fields                : -k 1-
+     - From 3rd to 5th column    : -k 3-5
+     - Fields except for the 4th : -k -4
+     - Fields except for 3rd-5th : -k -3--5
+
+Sort types:
+  - Default: alphabetical order  : -k 1-
+  - n      : numeric order       : -k 1:n
+  - N      : natrual order       : -k 1:N   (e.g., "a9" should be in front of "a10")
+  - d      : sort by date        : -k 1:d   (support multiple formats of date and time)
+  - u      : custom levels       : -k 1:u -L levels.txt
+
+Combinations:
+  - All sort types can be used with "r" for reversing the order, e.g., -k 1:nr
+  - Multiple fields can be used, e.g., -k year:n -k name
+
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
@@ -194,45 +214,117 @@ var sortCmd = &cobra.Command{
 		for _, f := range colnames {
 			_m[f] = struct{}{}
 		}
-		for _, f := range fieldsStrs {
-			if _, ok := _m[f]; !ok {
-				checkError(fmt.Errorf("filed %s not matched in file: %s", f, file))
-			}
-		}
 
 		var list []stringutil.MultiKeyStringSlice // data
 
-		sortTypes2 := make([]stringutil.SortType, len(sortTypes))
+		sortTypes2 := make([]stringutil.SortType, 0, len(sortTypes))
 		var field int
-		for i, t := range sortTypes {
-			if len(headerRow) > 0 {
-				if reDigitals.MatchString(t.FieldStr) {
-					field, err = strconv.Atoi(t.FieldStr)
-					checkError(err)
-					field--
+		ncols := len(data[0])
+		_fields := make([]int, 0, ncols)
+		var start, end int
+		var found [][]string
+		var ok bool
+		var col string
+		for _, t := range sortTypes {
+			_fields = _fields[:0]
+
+			if reIntegerRange.MatchString(t.FieldStr) { // field range
+				found = reIntegerRange.FindAllStringSubmatch(t.FieldStr, -1)
+				start, err = strconv.Atoi(found[0][1])
+				if err != nil {
+					checkError(fmt.Errorf("fail to parse field range: %s. it should be an integer", found[0][1]))
+				}
+
+				if found[0][2] == "" {
+					end = ncols
 				} else {
-					for f, col := range headerRow {
-						if col == t.FieldStr {
-							field = f
-							break
-						}
+					end, err = strconv.Atoi(found[0][2])
+					if err != nil {
+						checkError(fmt.Errorf("fail to parse field range: %s. it should be an integer", found[0][2]))
 					}
 				}
-			} else {
-				field, err = strconv.Atoi(t.FieldStr)
-				checkError(err)
-				field--
+				if start == 0 || end == 0 {
+					checkError(fmt.Errorf("no 0 allowed in field range: %s", t.FieldStr))
+				}
+
+				if start < 0 && end < 0 {
+					if start < end {
+						for i = 1; i <= ncols; i++ {
+							if i < -end || i > -start {
+								_fields = append(_fields, i-1)
+							}
+						}
+					} else {
+						for i = 1; i <= ncols; i++ {
+							if i < -start || i > -end {
+								_fields = append(_fields, i-1)
+							}
+						}
+					}
+				} else if start > 0 && end > 0 {
+					if start >= end {
+						checkError(fmt.Errorf("invalid field range: %s. start (%d) should be less than end (%d)", t.FieldStr, start, end))
+					}
+					for i = start; i <= end; i++ {
+						_fields = append(_fields, i-1)
+					}
+				} else {
+					checkError(fmt.Errorf("invalid field range: %s. start (%d) and end (%d) should be both > 0 or < 0", t.FieldStr, start, end))
+				}
+
+			} else { // a single field
+				if reDigitals.MatchString(t.FieldStr) { // field number, might be negative
+					field, _ = strconv.Atoi(t.FieldStr)
+					if field > 0 {
+						_fields = append(_fields, field-1)
+					} else {
+						for i = 1; i <= ncols; i++ {
+							if i != -field {
+								_fields = append(_fields, i-1)
+							}
+						}
+					}
+				} else {
+					if _, ok = _m[t.FieldStr]; !ok {
+						checkError(fmt.Errorf("filed %s not matched in file: %s", t.FieldStr, file))
+					}
+
+					if len(headerRow) > 0 {
+						if reDigitals.MatchString(t.FieldStr) {
+							field, err = strconv.Atoi(t.FieldStr)
+							checkError(err)
+							field--
+						} else {
+							for i, col = range headerRow {
+								if col == t.FieldStr {
+									field = i
+									break
+								}
+							}
+						}
+					} else {
+						field, err = strconv.Atoi(t.FieldStr)
+						checkError(err)
+						field--
+					}
+
+					_fields = append(_fields, field)
+				}
 			}
 
-			sortTypes2[i] = stringutil.SortType{
-				Index:       field,
-				IgnoreCase:  ignoreCase,
-				Natural:     t.Natural,
-				Number:      t.Number,
-				Date:        t.Date,
-				Reverse:     t.Reverse,
-				UserDefined: t.UserDefined,
-				Levels:      t.Levels,
+			for _, field = range _fields { // multiple values if given a field range such as 1-
+				sortTypes2 = append(sortTypes2,
+					stringutil.SortType{
+						Index:       field,
+						IgnoreCase:  ignoreCase,
+						Natural:     t.Natural,
+						Number:      t.Number,
+						Date:        t.Date,
+						Reverse:     t.Reverse,
+						UserDefined: t.UserDefined,
+						Levels:      t.Levels,
+					})
+				// fmt.Println(sortTypes2[len(sortTypes2)-1])
 			}
 		}
 
@@ -264,7 +356,7 @@ type sortType struct {
 
 func init() {
 	RootCmd.AddCommand(sortCmd)
-	sortCmd.Flags().StringSliceP("keys", "k", []string{"1"}, `keys (multiple values supported). sort type supported, "N" for natural order, "n" for number, "d" for date/time, "u" for user-defined order and "r" for reverse. e.g., "-k 1" or "-k A:r" or ""-k 1:nr -k 2"`)
+	sortCmd.Flags().StringSliceP("keys", "k", []string{"1-"}, `keys (multiple values supported). sort type supported, "N" for natural order, "n" for number, "d" for date/time, "u" for user-defined order and "r" for reverse. e.g., "-k 1", "-k 2-", "-k 3-5:nr", "-k A:r", "-k 1:nr -k 2"`)
 	sortCmd.Flags().StringSliceP("levels", "L", []string{}, `user-defined level file (one level per line, multiple values supported). format: <field>:<level-file>.  e.g., "-k name:u -L name:level.txt"`)
 	sortCmd.Flags().BoolP("ignore-case", "i", false, "ignore-case")
 }

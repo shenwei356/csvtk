@@ -1,8 +1,12 @@
-- [csvtk v0.34.1](https://github.com/shenwei356/csvtk/releases/tag/v0.34.1)
-[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.34.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.34.1)
-    - `filter2`:
+- [csvtk v0.35.0](https://github.com/shenwei356/csvtk/releases/tag/v0.35.0)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.35.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.35.0)
+    - `csvtk sort`:
+        - **sort on all columns by default**, with a similar way with GNU sort (but the results might be different).  [#337](https://github.com/shenwei356/csvtk/issues/337)
+        - fix sort inconsistency for rows with the same key(s). [#337](https://github.com/shenwei356/csvtk/issues/337)
+        - **support field ranges**, e.g., `-k 1-3:N`.
+    - `csvtk filter2`:
         - fix the panic when using `-Z`. [#332](https://github.com/shenwei356/csvtk/issues/332)
-    - `plot bar`:
+    - `csvtk plot bar`:
         - fix labels orders [#335](https://github.com/shenwei356/csvtk/issues/335).
 - [csvtk v0.34.0](https://github.com/shenwei356/csvtk/releases/tag/v0.34.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.34.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.34.0)
