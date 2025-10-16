@@ -34,6 +34,10 @@
 
     Please use `csvtk fix-quotes` to fix it, and use `csvtk del-quotes` to reset to the
     original format as needed.
+    
+9. csvtk writes gzip files very fast, much faster than the multi-threaded pigz,
+   therefore there's no need to pipe the result to gzip/pigz.
+   csvtk also supports reading and writing xz (.xz), zstd (.zst) and Bzip2 (.bz2) formats.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -163,6 +167,9 @@ Attention:
          extraneous or missing " in quoted-field
      Please use "csvtk fix-quotes" to fix it, and use "csvtk del-quotes" to reset to the
      original format as needed.
+  9. csvtk writes gzip files very fast, much faster than the multi-threaded pigz,
+     therefore there's no need to pipe the result to gzip/pigz.
+     csvtk also supports reading and writing xz (.xz), zstd (.zst) and Bzip2 (.bz2) formats.
 
 Environment variables for frequently used global flags:
 
@@ -170,7 +177,7 @@ Environment variables for frequently used global flags:
   - "CSVTK_H" for flag "-H/--no-header-row"
   - "CSVTK_QUIET" for flag "--quiet"
 
-You can also create a soft link named "tsvtk" for "csvtk", 
+You can also create a soft link named "tsvtk" for "csvtk",
 which sets "-t/--tabs" by default.
 
 Usage:

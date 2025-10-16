@@ -29,7 +29,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/Knetic/govaluate"
+	"github.com/casbin/govaluate"
 	"github.com/mattn/go-runewidth"
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
@@ -45,7 +45,7 @@ var mutate2Cmd = &cobra.Command{
 
 The arithmetic/string expression is supported by:
 
-  https://github.com/Knetic/govaluate
+  https://github.com/casbin/govaluate
 
 Variables formats:
   $1 or ${1}                        The first field/column

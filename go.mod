@@ -3,9 +3,9 @@ module github.com/shenwei356/csvtk
 go 1.24.7
 
 require (
-	github.com/Knetic/govaluate v3.0.0+incompatible
 	github.com/araddon/dateparse v0.0.0-20210429162001-6b43995a97de
 	github.com/botond-sipos/thist v1.1.0
+	github.com/casbin/govaluate v1.10.0
 	github.com/cheggaaa/pb/v3 v3.1.0
 	github.com/dustin/go-humanize v1.0.1
 	github.com/expr-lang/expr v1.17.0

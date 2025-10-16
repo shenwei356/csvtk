@@ -4,8 +4,10 @@
         - do not support i386 architecture anymore.
     - `csvtk sort`:
         - **sort on all columns by default**, with a similar way with GNU sort (but the results might be different).  [#337](https://github.com/shenwei356/csvtk/issues/337)
-        - fix sort inconsistency for rows with the same key(s). [#337](https://github.com/shenwei356/csvtk/issues/337)
         - **support field ranges**, e.g., `-k 1-3:N`.
+        - fix sort inconsistency for rows with the same key(s). [#337](https://github.com/shenwei356/csvtk/issues/337)
+    - `csvtk mutate2/filter2`:
+        - use a new fork of expression evaluation package. [#172](https://github.com/shenwei356/csvtk/issues/172)
     - `csvtk filter2`:
         - fix the panic when using `-Z`. [#332](https://github.com/shenwei356/csvtk/issues/332)
     - `csvtk plot bar`:
