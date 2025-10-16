@@ -4575,28 +4575,29 @@ summary statistics of selected numeric or text fields (groupby group fields)
 Attention:
 
   1. Do not mix use field (column) numbers and names.
+  2. Field range is supported, e.g., "-f 2-5:sum".
 
 Available operations:
-
+ 
   # numeric/statistical operations
   # provided by github.com/gonum/stat and github.com/gonum/floats
   countn (count numeric values), min, max, sum, argmin, argmax,
   mean, stdev, variance, median, q1, q2, q3,
-  entropy (Shannon entropy),
+  entropy (Shannon entropy), 
   prod (product of the elements)
 
   # textual/numeric operations
   count, first, last, rand, unique/uniq, collapse, countunique
 
 Usage:
-  csvtk summary [flags]
+  csvtk summary [flags] 
 
 Flags:
   -w, --decimal-width int    limit floats to N decimal points (default 2)
-  -f, --fields strings       operations on these fields. e.g -f 1:count,1:sum or -f colA:mean. available
-                             operations: argmax, argmin, collapse, count, countn, countuniq,
-                             countunique, entropy, first, last, max, mean, median, min, prod, q1, q2,
-                             q3, rand, stdev, sum, uniq, unique, variance
+  -f, --fields strings       operations on these fields. e.g "-f 1:count,1:sum", "-f 2-5:sum", or "-f
+                             colA:mean". available operations: argmax, argmin, collapse, count, countn,
+                             countuniq, countunique, entropy, first, last, max, mean, median, min, prod,
+                             q1, q2, q3, rand, stdev, sum, uniq, unique, variance
   -g, --groups string        group via fields. e.g -g 1,2 or -g columnA,columnB
   -h, --help                 help for summary
   -i, --ignore-non-numbers   ignore non-numeric values like "NA" or "N/A"
@@ -4646,6 +4647,13 @@ Examples
 
         $ cat testdata/digitals2.csv \
             | csvtk summary -f 4:sum,5:sum -i
+        f4:sum,f5:sum
+        21.50,118.00
+        
+    and the field range is supported.
+    
+        $ cat testdata/digitals2.csv \
+            | csvtk summary -f 4-5:sum -i
         f4:sum,f5:sum
         21.50,118.00
 

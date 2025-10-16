@@ -20,6 +20,8 @@
         - fix the panic when using `-Z`. [#332](https://github.com/shenwei356/csvtk/issues/332)
     - `csvtk plot bar`:
         - fix labels orders [#335](https://github.com/shenwei356/csvtk/issues/335), [#339](https://github.com/shenwei356/csvtk/issues/339).
+    - `csvtk summary`:
+        - support field range, e.g., `-f 2-5:sum` [#143](https://github.com/shenwei356/csvtk/issues/143)
 
 ### Links
 

@@ -412,6 +412,8 @@ var reFields = regexp.MustCompile(`([^,]+)(,[^,]+)*,?`)
 var reDigitals = regexp.MustCompile(`^[\-\+]?[\d\.,]+$|^[\-\+]?[\d\.,]+[eE][\-\+\d]+$`)
 var reIntegers = regexp.MustCompile(`^[\-\+\d]+$`)
 var reIntegerRange = regexp.MustCompile(`^([\-\d]+?)\-([\-\d]*?)$`)
+var reIntegerRange2 = regexp.MustCompile(`^(\d+)\-(\d+)$`)
+var reIntegerRangeOnlyStart = regexp.MustCompile(`^(\d+)\-$`)
 
 func getFlagFields(cmd *cobra.Command, flag string) string {
 	fieldsStr, err := cmd.Flags().GetString(flag)

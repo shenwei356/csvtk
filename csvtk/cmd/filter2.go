@@ -45,7 +45,7 @@ var filter2Cmd = &cobra.Command{
 
 The arithmetic/string expression is supported by:
 
-  https://github.com/Knetic/govaluate
+  https://github.com/casbin/govaluate
 
 Variables formats:
   $1 or ${1}                        The first field/column

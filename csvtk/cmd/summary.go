@@ -49,6 +49,7 @@ var summaryCmd = &cobra.Command{
 Attention:
 
   1. Do not mix use field (column) numbers and names.
+  2. Field range is supported, e.g., "-f 2-5:sum".
 
 Available operations:
  
@@ -123,18 +124,41 @@ Available operations:
 				if items[0] == "" {
 					checkError(fmt.Errorf(`invalid field: %s`, key))
 				}
-				fieldsStrsD = append(fieldsStrsD, items[0])
+
+				_fields := make([]string, 0, 8)
+
+				if reIntegerRange2.MatchString(items[0]) {
+					tmp := strings.Split(items[0], "-")
+					start, _ := strconv.Atoi(tmp[0])
+					end, _ := strconv.Atoi(tmp[1])
+					if start > end {
+						checkError(fmt.Errorf(`invalid field range: %s, start should be <= end`, items[0]))
+					}
+
+					for i := start; i <= end; i++ {
+						_fields = append(_fields, strconv.Itoa(i))
+					}
+				} else if reIntegerRangeOnlyStart.MatchString(items[0]) {
+					checkError(fmt.Errorf(`invalid field range: %s, end field is needed, e.g.i 1-2`, items[0]))
+				} else {
+					_fields = append(_fields, items[0])
+				}
 
 				_, ok1 := allStats[items[1]]  // for numbers
 				_, ok2 := allStats2[items[1]] // for strings
 				if !(ok1 || ok2) {
 					checkError(fmt.Errorf(`invalid operation: %s. run "csvtk summary --help" for help`, items[1]))
 				}
-				if _, ok := stats[items[0]]; !ok {
-					stats[items[0]] = make([]string, 0, 1)
+
+				for _, f := range _fields {
+					fieldsStrsD = append(fieldsStrsD, f)
+
+					if _, ok := stats[f]; !ok {
+						stats[f] = make([]string, 0, 1)
+					}
+					stats[f] = append(stats[f], items[1])
+					statsList = append(statsList, []string{f, items[1]})
 				}
-				stats[items[0]] = append(stats[items[0]], items[1])
-				statsList = append(statsList, []string{items[0], items[1]})
 			} else {
 				checkError(fmt.Errorf(`invalid value of flag --fields: %s`, key))
 			}
@@ -475,7 +499,7 @@ func init() {
 
 	RootCmd.AddCommand(summaryCmd)
 	summaryCmd.Flags().StringP("groups", "g", "", `group via fields. e.g -g 1,2 or -g columnA,columnB`)
-	summaryCmd.Flags().StringSliceP("fields", "f", []string{}, fmt.Sprintf(`operations on these fields. e.g -f 1:count,1:sum or -f colA:mean. available operations: %s`, strings.Join(allStatsList, ", ")))
+	summaryCmd.Flags().StringSliceP("fields", "f", []string{}, fmt.Sprintf(`operations on these fields. e.g "-f 1:count,1:sum", "-f 2-5:sum", or "-f colA:mean". available operations: %s`, strings.Join(allStatsList, ", ")))
 	summaryCmd.Flags().BoolP("ignore-non-numbers", "i", false, `ignore non-numeric values like "NA" or "N/A"`)
 	summaryCmd.Flags().IntP("decimal-width", "w", 2, "limit floats to N decimal points")
 	summaryCmd.Flags().StringP("separater", "s", "; ", "separater for collapsed data")
