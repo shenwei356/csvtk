@@ -6,39 +6,30 @@
 
 ## Current Version
 
-- [csvtk v0.34.0](https://github.com/shenwei356/csvtk/releases/tag/v0.34.0)
-[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.34.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.34.0)
-    - new command `csvtk plot bar`. Contributed by @lovromazgon [#323](https://github.com/shenwei356/csvtk/pull/323)
+- [csvtk v0.35.0](https://github.com/shenwei356/csvtk/releases/tag/v0.35.0)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.35.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.35.0)
     - `csvtk`:
-        - fix panic when the first field is empty, e.g., `-f ,2,3`.
-    - `csvtk cut`:
-        - fix `-b`. [#156](https://github.com/shenwei356/csvtk/issues/156)
-        - fix `-i`. [#317](https://github.com/shenwei356/csvtk/issues/317)
-    - `csvtk plot box`:
-        - fix `--horiz` does not swap axes labels. [#314](https://github.com/shenwei356/csvtk/issues/314)
-    - `csvtk plot line`:
-        - add a new flag `--data-field-x-nominal` to plot line with sortable nominal X axis values, such as date.
-        [#308](https://github.com/shenwei356/csvtk/pull/308) by @lovromazgon
-    - `csvtk plot`:
-        - add two new flags `--hide-x-labs` and `--hide-y-labs`, for hiding X/Y axis, ticks, and tick labels. [#326](https://github.com/shenwei356/csvtk/issues/326)
-    - `csvtk fix`:
-        - add a new flag `--na` to set content to fill. [#316](https://github.com/shenwei356/csvtk/issues/316)
-    - `csvtk replace`:
-        - add new replacements symbol/placeholder for group-specific numbering: `{gnr}`, `{enr}`, `{rnr}`. [#322](https://github.com/shenwei356/csvtk/issues/322)
+        - do not support i386 architecture anymore.
     - `csvtk sort`:
-        - add support for sorting by date/time. [#278](https://github.com/shenwei356/csvtk/issues/278)
+        - **sort on all columns by default**, with a similar way with GNU sort (but the results might be different).  [#337](https://github.com/shenwei356/csvtk/issues/337)
+        - fix sort inconsistency for rows with the same key(s). [#337](https://github.com/shenwei356/csvtk/issues/337)
+        - **support field ranges**, e.g., `-k 1-3:N`.
+    - `csvtk filter2`:
+        - fix the panic when using `-Z`. [#332](https://github.com/shenwei356/csvtk/issues/332)
+    - `csvtk plot bar`:
+        - fix labels orders [#335](https://github.com/shenwei356/csvtk/issues/335), [#339](https://github.com/shenwei356/csvtk/issues/339).
 
 
 ### Links
 
 OS     |Arch      |File, 中国镜像                                                                                                                                                                              |Download Count
 :------|:---------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-Linux  |**64-bit**|[**csvtk_linux_amd64.tar.gz**](https://github.com/shenwei356/csvtk/releases/download/v0.34.0/csvtk_linux_amd64.tar.gz),<br/> [中国镜像](http://app.shenwei.me/data/csvtk/csvtk_linux_amd64.tar.gz)                  |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_amd64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.34.0/csvtk_linux_amd64.tar.gz)
-Linux  |**arm64** |[**csvtk_linux_arm64.tar.gz**](https://github.com/shenwei356/csvtk/releases/download/v0.34.0/csvtk_linux_arm64.tar.gz),<br/> [中国镜像](http://app.shenwei.me/data/csvtk/csvtk_linux_arm64.tar.gz)                  |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_arm64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.34.0/csvtk_linux_arm64.tar.gz)
-macOS  |**64-bit**|[**csvtk_darwin_amd64.tar.gz**](https://github.com/shenwei356/csvtk/releases/download/v0.34.0/csvtk_darwin_amd64.tar.gz),<br/> [中国镜像](http://app.shenwei.me/data/csvtk/csvtk_darwin_amd64.tar.gz)               |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_darwin_amd64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.34.0/csvtk_darwin_amd64.tar.gz)
-macOS  |**arm64** |[**csvtk_darwin_arm64.tar.gz**](https://github.com/shenwei356/csvtk/releases/download/v0.34.0/csvtk_darwin_arm64.tar.gz),<br/> [中国镜像](http://app.shenwei.me/data/csvtk/csvtk_darwin_arm64.tar.gz)               |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_darwin_arm64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.34.0/csvtk_darwin_arm64.tar.gz)
-Windows|**64-bit**|[**csvtk_windows_amd64.exe.tar.gz**](https://github.com/shenwei356/csvtk/releases/download/v0.34.0/csvtk_windows_amd64.exe.tar.gz),<br/> [中国镜像](http://app.shenwei.me/data/csvtk/csvtk_windows_amd64.exe.tar.gz)|[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_windows_amd64.exe.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.34.0/csvtk_windows_amd64.exe.tar.gz)
-FreeBSD|**64-bit**|[**csvtk_freebsd_amd64.exe.tar.gz**](https://github.com/shenwei356/csvtk/releases/download/v0.34.0/csvtk_freebsd_amd64.exe.tar.gz),<br/> [中国镜像](http://app.shenwei.me/data/csvtk/csvtk_freebsd_amd64.exe.tar.gz)|[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_freebsd_amd64.exe.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.34.0/csvtk_freebsd_amd64.exe.tar.gz)
+Linux  |**64-bit**|[**csvtk_linux_amd64.tar.gz**](https://github.com/shenwei356/csvtk/releases/download/v0.35.0/csvtk_linux_amd64.tar.gz),<br/> [中国镜像](http://app.shenwei.me/data/csvtk/csvtk_linux_amd64.tar.gz)                  |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_amd64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.35.0/csvtk_linux_amd64.tar.gz)
+Linux  |**arm64** |[**csvtk_linux_arm64.tar.gz**](https://github.com/shenwei356/csvtk/releases/download/v0.35.0/csvtk_linux_arm64.tar.gz),<br/> [中国镜像](http://app.shenwei.me/data/csvtk/csvtk_linux_arm64.tar.gz)                  |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_arm64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.35.0/csvtk_linux_arm64.tar.gz)
+macOS  |**64-bit**|[**csvtk_darwin_amd64.tar.gz**](https://github.com/shenwei356/csvtk/releases/download/v0.35.0/csvtk_darwin_amd64.tar.gz),<br/> [中国镜像](http://app.shenwei.me/data/csvtk/csvtk_darwin_amd64.tar.gz)               |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_darwin_amd64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.35.0/csvtk_darwin_amd64.tar.gz)
+macOS  |**arm64** |[**csvtk_darwin_arm64.tar.gz**](https://github.com/shenwei356/csvtk/releases/download/v0.35.0/csvtk_darwin_arm64.tar.gz),<br/> [中国镜像](http://app.shenwei.me/data/csvtk/csvtk_darwin_arm64.tar.gz)               |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_darwin_arm64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.35.0/csvtk_darwin_arm64.tar.gz)
+Windows|**64-bit**|[**csvtk_windows_amd64.exe.tar.gz**](https://github.com/shenwei356/csvtk/releases/download/v0.35.0/csvtk_windows_amd64.exe.tar.gz),<br/> [中国镜像](http://app.shenwei.me/data/csvtk/csvtk_windows_amd64.exe.tar.gz)|[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_windows_amd64.exe.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.35.0/csvtk_windows_amd64.exe.tar.gz)
+FreeBSD|**64-bit**|[**csvtk_freebsd_amd64.exe.tar.gz**](https://github.com/shenwei356/csvtk/releases/download/v0.35.0/csvtk_freebsd_amd64.exe.tar.gz),<br/> [中国镜像](http://app.shenwei.me/data/csvtk/csvtk_freebsd_amd64.exe.tar.gz)|[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_freebsd_amd64.exe.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.35.0/csvtk_freebsd_amd64.exe.tar.gz)
 
 **Notes**
 
@@ -98,9 +89,9 @@ And then:
     # ------------------- install golang -----------------
 
     # download Go from https://go.dev/dl
-    wget https://go.dev/dl/go1.24.3.linux-amd64.tar.gz
+    wget https://go.dev/dl/go1.25.3.linux-amd64.tar.gz
     
-    tar -zxf go1.24.3.linux-amd64.tar.gz -C $HOME/
+    tar -zxf go1.25.3.linux-amd64.tar.gz -C $HOME/
     
     # or 
     #   echo "export PATH=$PATH:$HOME/go/bin" >> ~/.bashrc
@@ -151,6 +142,27 @@ fish:
 
 ## Release history
 
+- [csvtk v0.34.0](https://github.com/shenwei356/csvtk/releases/tag/v0.34.0)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.34.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.34.0)
+    - new command `csvtk plot bar`. Contributed by @lovromazgon [#323](https://github.com/shenwei356/csvtk/pull/323)
+    - `csvtk`:
+        - fix panic when the first field is empty, e.g., `-f ,2,3`.
+    - `csvtk cut`:
+        - fix `-b`. [#156](https://github.com/shenwei356/csvtk/issues/156)
+        - fix `-i`. [#317](https://github.com/shenwei356/csvtk/issues/317)
+    - `csvtk plot box`:
+        - fix `--horiz` does not swap axes labels. [#314](https://github.com/shenwei356/csvtk/issues/314)
+    - `csvtk plot line`:
+        - add a new flag `--data-field-x-nominal` to plot line with sortable nominal X axis values, such as date.
+        [#308](https://github.com/shenwei356/csvtk/pull/308) by @lovromazgon
+    - `csvtk plot`:
+        - add two new flags `--hide-x-labs` and `--hide-y-labs`, for hiding X/Y axis, ticks, and tick labels. [#326](https://github.com/shenwei356/csvtk/issues/326)
+    - `csvtk fix`:
+        - add a new flag `--na` to set content to fill. [#316](https://github.com/shenwei356/csvtk/issues/316)
+    - `csvtk replace`:
+        - add new replacements symbol/placeholder for group-specific numbering: `{gnr}`, `{enr}`, `{rnr}`. [#322](https://github.com/shenwei356/csvtk/issues/322)
+    - `csvtk sort`:
+        - add support for sorting by date/time. [#278](https://github.com/shenwei356/csvtk/issues/278)
 - [csvtk v0.33.0](https://github.com/shenwei356/csvtk/releases/tag/v0.33.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.33.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.33.0)
     - new command `csvtk comma`: make numbers more readable by adding commas. [#300](https://github.com/shenwei356/csvtk/issues/300)

@@ -9,7 +9,7 @@
     - `csvtk filter2`:
         - fix the panic when using `-Z`. [#332](https://github.com/shenwei356/csvtk/issues/332)
     - `csvtk plot bar`:
-        - fix labels orders [#335](https://github.com/shenwei356/csvtk/issues/335).
+        - fix labels orders [#335](https://github.com/shenwei356/csvtk/issues/335), [#339](https://github.com/shenwei356/csvtk/issues/339).
 - [csvtk v0.34.0](https://github.com/shenwei356/csvtk/releases/tag/v0.34.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.34.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.34.0)
     - new command `csvtk plot bar`. Contributed by @lovromazgon [#323](https://github.com/shenwei356/csvtk/pull/323)

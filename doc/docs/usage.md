@@ -133,7 +133,7 @@ Usage
 ```text
 csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.34.0
+Version: 0.35.0
 
 Author: Wei Shen <shenwei356@gmail.com>
 
