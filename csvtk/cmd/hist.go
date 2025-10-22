@@ -146,6 +146,7 @@ Notes:
 		p.Title.TextStyle.Font.Size = plotConfig.titleSize
 		p.X.Label.Text = plotConfig.xlab
 		p.Y.Label.Text = plotConfig.ylab
+		p.Legend.TextStyle.Font.Size = plotConfig.labelSize
 		if plotConfig.hideXlabs {
 			p.X.Width = vg.Length(0)
 			p.X.Tick.Width = vg.Length(0.01) // 0 would remove the space between axis and label

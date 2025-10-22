@@ -1,3 +1,7 @@
+- [csvtk v0.35.1](https://github.com/shenwei356/csvtk/releases/tag/v0.35.1)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.35.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.35.1)
+    - `csvtk plot line/hist/bar/box`
+        - forgot to scale the font size of legend keys.
 - [csvtk v0.35.0](https://github.com/shenwei356/csvtk/releases/tag/v0.35.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.35.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.35.0)
     - `csvtk`:
