@@ -73,7 +73,7 @@ It could save you lots of time in (not) writing Python/R scripts.
 
 ## Subcommands
 
-56 subcommands in total.
+57 subcommands in total.
 
 **Information**
 
@@ -143,6 +143,7 @@ It could save you lots of time in (not) writing Python/R scripts.
 **Ordering**
 
 - [`sort`](https://bioinf.shenwei.me/csvtk/usage/#sort): sorts by selected fields
+- [`shuf`](https://bioinf.shenwei.me/csvtk/usage/#shuf): shuffle rows
 
 **Ploting**
 

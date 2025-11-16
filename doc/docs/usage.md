@@ -113,6 +113,7 @@
 **Ordering**
 
 - [sort](#sort)
+- [shuf](#shuf)
 
 **Ploting**
 
@@ -4215,6 +4216,53 @@ Examples
       Oct. 1    a10
       Dec. 25   b11
 
+# shuf
+
+Usage
+
+```text
+shuffle rows
+
+Usage:
+  csvtk shuf [flags] 
+
+Flags:
+  -h, --help            help for shuf
+  -s, --rand-seed int   rand seed (default 11)
+  -n, --rows int        print first N rows, 0 for all
+
+```
+
+Examples:
+
+1. Default
+
+        $ csvtk shuf testdata/names.csv | csvtk pretty 
+        id   first_name   last_name   username
+        --   ----------   ---------   --------
+        NA   Robert       Abel        123     
+        2    Ken          Thompson    ken     
+        4    Robert       Griesemer   gri     
+        1    Robert       Thompson    abc     
+        11   Rob          Pike        rob
+
+1. Change order with a different random seed.
+
+        $ csvtk shuf testdata/names.csv -s 1 | csvtk pretty 
+        id   first_name   last_name   username
+        --   ----------   ---------   --------
+        4    Robert       Griesemer   gri     
+        11   Rob          Pike        rob     
+        2    Ken          Thompson    ken     
+        NA   Robert       Abel        123     
+        1    Robert       Thompson    abc
+        
+1. Only print the first N rows.
+
+        $ csvtk shuf testdata/names.csv -n 1 | csvtk pretty 
+        id   first_name   last_name   username
+        --   ----------   ---------   --------
+        NA   Robert       Abel        123  
 
 ## space2tab
 

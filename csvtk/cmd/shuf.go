@@ -1,4 +1,4 @@
-// Copyright © 2016-2023 Wei Shen <shenwei356@gmail.com>
+// Copyright © 2016-2025 Wei Shen <shenwei356@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -30,31 +30,24 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// sampleCmd represents the seq command
-var sampleCmd = &cobra.Command{
-	GroupID: "set",
+// shufCmd represents the sort command
+var shufCmd = &cobra.Command{
+	GroupID: "order",
 
-	Use:   "sample",
-	Short: "sampling by proportion",
-	Long: `sampling by proportion
+	Use:   "shuf",
+	Short: "shuffle rows",
+	Long: `shuffle rows
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
 		files := getFileListFromArgsAndFile(cmd, args, true, "infile-list", true)
+		if len(files) > 1 {
+			checkError(fmt.Errorf("no more than one file should be given"))
+		}
 		runtime.GOMAXPROCS(config.NumCPUs)
 
-		proportion := getFlagFloat64(cmd, "proportion")
-		printLineNumber := getFlagBool(cmd, "line-number")
-
-		if proportion == 0 {
-			checkError(fmt.Errorf("flag -p (--proportion) needed"))
-		}
-		if proportion <= 0 || proportion > 1 {
-			checkError(fmt.Errorf("value of -p (--proportion) (%f) should be in range of (0, 1]", proportion))
-		}
-
-		outAll := proportion == 1
+		number := getFlagNonNegativeInt(cmd, "rows")
 
 		seed := getFlagInt64(cmd, "rand-seed")
 		_rand := rand.New(rand.NewSource(seed))
@@ -78,56 +71,53 @@ var sampleCmd = &cobra.Command{
 			checkError(writer.Error())
 		}()
 
-		for _, file := range files {
-			csvReader, err := newCSVReaderByConfig(config, file)
-
-			if err != nil {
-				if err == xopen.ErrNoContent {
-					if config.Verbose {
-						log.Warningf("csvtk sample: skipping empty input file: %s", file)
-					}
-					continue
+		file := files[0]
+		_, _, _, headerRow, data, err := parseCSVfile(cmd, config,
+			file, "1-", false, false, true)
+		if err != nil {
+			if err == xopen.ErrNoContent {
+				if config.Verbose {
+					log.Warningf("csvtk sort: skipping empty input file: %s", file)
 				}
-				checkError(err)
+				return
 			}
+			checkError(err)
+		}
 
-			csvReader.Read(ReadOption{
-				FieldStr:      "1-",
-				ShowRowNumber: printLineNumber || config.ShowRowNumber,
-			})
+		if len(headerRow) > 0 && !config.NoOutHeader {
+			checkError(writer.Write(headerRow))
+		}
 
-			checkFirstLine := true
-			for record := range csvReader.Ch {
-				if record.Err != nil {
-					checkError(record.Err)
-				}
+		if len(data) == 0 {
+			log.Warningf("no data to sort from file: %s", file)
+			return
+		}
 
-				if checkFirstLine {
-					checkFirstLine = false
+		_rand.Shuffle(len(data), func(i, j int) {
+			data[i], data[j] = data[j], data[i]
+		})
 
-					if !config.NoHeaderRow || record.IsHeaderRow { // do not replace head line
-						if config.NoOutHeader {
-							continue
-						}
-						checkError(writer.Write(record.Selected))
-						continue
-					}
-				}
+		if number > 0 {
+			var i int
+			for _, row := range data {
+				i++
+				checkError(writer.Write(row))
 
-				if outAll || _rand.Float64() <= proportion {
-					checkError(writer.Write(record.Selected))
+				if i == number {
+					break
 				}
 			}
-
-			readerReport(&config, csvReader, file)
+		} else {
+			for _, row := range data {
+				checkError(writer.Write(row))
+			}
 		}
 	},
 }
 
 func init() {
-	RootCmd.AddCommand(sampleCmd)
+	RootCmd.AddCommand(shufCmd)
 
-	sampleCmd.Flags().Int64P("rand-seed", "s", 11, "rand seed")
-	sampleCmd.Flags().Float64P("proportion", "p", 0, "sample by proportion")
-	sampleCmd.Flags().BoolP("line-number", "n", false, `print line number as the first column ("row")`)
+	shufCmd.Flags().Int64P("rand-seed", "s", 11, "rand seed")
+	shufCmd.Flags().IntP("rows", "n", 0, "print first N rows, 0 for all")
 }

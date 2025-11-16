@@ -1,5 +1,6 @@
-- [csvtk v0.35.1](https://github.com/shenwei356/csvtk/releases/tag/v0.35.1)
-[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.35.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.35.1)
+- [csvtk v0.36.0](https://github.com/shenwei356/csvtk/releases/tag/v0.36.0)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.36.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.36.0)
+    - new command `csvtk shuf`: shuffle rows. [#151](https://github.com/shenwei356/csvtk/issues/151)
     - `csvtk plot line/hist/bar/box`
         - forgot to scale the font size of legend keys.
     - `csvtk pretty`
