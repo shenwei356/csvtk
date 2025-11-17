@@ -76,3 +76,13 @@ Use [del-quotes](https://bioinf.shenwei.me/csvtk/usage/#del-quotes) if you need 
 
     $ echo 'a,"abc" xyz,d' | csvtk fix-quotes | csvtk cut -f 1- | csvtk del-quotes
     a,"abc" xyz,d
+
+## Environment variables
+
+Environment variables for frequently used global flags:
+
+  - "CSVTK_T" for flag "-t/--tabs"
+  - "CSVTK_H" for flag "-H/--no-header-row"
+  - "CSVTK_QUIET" for flag "--quiet"
+
+You can also create a soft link named "tsvtk" for "csvtk", which sets "-t/--tabs" by default.
