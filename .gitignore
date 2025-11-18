@@ -26,6 +26,7 @@ _testmain.go
 doc/site/*
 *.Rhistory
 csvtk/csvtk*
+csvtk/tsvtk
 csvtk/binaries*
 doc/site
 *ssshtest

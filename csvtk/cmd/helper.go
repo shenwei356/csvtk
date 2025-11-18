@@ -305,7 +305,7 @@ func getConfigs(cmd *cobra.Command) Config {
 	var tabs bool
 	if val = os.Getenv("CSVTK_T"); val != "" {
 		tabs = isTrue(val)
-	} else if os.Args[0] == "tsvtk" {
+	} else if filepath.Base(os.Args[0]) == "tsvtk" {
 		tabs = true
 	} else {
 		tabs = getFlagBool(cmd, "tabs")

@@ -175,6 +175,10 @@ Environment variables for frequently used global flags:
   - "CSVTK_T" for flag "-t/--tabs"
   - "CSVTK_H" for flag "-H/--no-header-row"
   - "CSVTK_QUIET" for flag "--quiet"
+  
+You can also create a symbolic link named "tsvtk" to csvtk, or simply create a copy
+of the executable called "tsvtk". When invoked as "tsvtk", csvtk will automatically
+enable the "-t/--tabs" flag.
 
 Usage:
   csvtk [flags]
