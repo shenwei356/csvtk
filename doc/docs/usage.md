@@ -39,8 +39,7 @@
    therefore there's no need to pipe the result to gzip/pigz.
    csvtk also supports reading and writing xz (.xz), zstd (.zst) and Bzip2 (.bz2) formats.
 
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
 ## Table of Contents
 
 - [csvtk](#csvtk)
@@ -129,7 +128,6 @@
 - [genautocomplete](#genautocomplete)
 - [version](#version)
 
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## csvtk
 
@@ -138,7 +136,7 @@ Usage
 ```text
 csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.35.0
+Version: 0.36.0
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -177,9 +175,6 @@ Environment variables for frequently used global flags:
   - "CSVTK_T" for flag "-t/--tabs"
   - "CSVTK_H" for flag "-H/--no-header-row"
   - "CSVTK_QUIET" for flag "--quiet"
-
-You can also create a soft link named "tsvtk" for "csvtk",
-which sets "-t/--tabs" by default.
 
 Usage:
   csvtk [flags]
@@ -246,6 +241,7 @@ Commands for Data Transformation:
   unfold          unfold multiple values in cells of a field
 
 Commands for Ordering:
+  shuf            shuffle rows
   sort            sort by selected fields
 
 Commands for Ploting:
@@ -4216,7 +4212,7 @@ Examples
       Oct. 1    a10
       Dec. 25   b11
 
-# shuf
+## shuf
 
 Usage
 

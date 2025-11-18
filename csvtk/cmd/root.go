@@ -74,9 +74,6 @@ Environment variables for frequently used global flags:
   - "CSVTK_H" for flag "-H/--no-header-row"
   - "CSVTK_QUIET" for flag "--quiet"
 
-You can also create a soft link named "tsvtk" for "csvtk",
-which sets "-t/--tabs" by default.
-
 `, VERSION),
 
 	Run: func(cmd *cobra.Command, args []string) {
