@@ -6,33 +6,24 @@
 
 ## Current Version
 
-- [csvtk v0.35.0](https://github.com/shenwei356/csvtk/releases/tag/v0.35.0)
-[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.35.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.35.0)
-    - `csvtk`:
-        - do not support i386 architecture anymore.
-    - `csvtk sort`:
-        - **sort on all columns by default**, with a similar way with GNU sort (but the results might be different).  [#337](https://github.com/shenwei356/csvtk/issues/337)
-        - **support field ranges**, e.g., `-k 1-3:N`.
-        - fix sort inconsistency for rows with the same key(s). [#337](https://github.com/shenwei356/csvtk/issues/337)
-    - `csvtk mutate2/filter2`:
-        - use a new fork of expression evaluation package. [#172](https://github.com/shenwei356/csvtk/issues/172)
-    - `csvtk filter2`:
-        - fix the panic when using `-Z`. [#332](https://github.com/shenwei356/csvtk/issues/332)
-    - `csvtk plot bar`:
-        - fix labels orders [#335](https://github.com/shenwei356/csvtk/issues/335), [#339](https://github.com/shenwei356/csvtk/issues/339).
-    - `csvtk summary`:
-        - support field range, e.g., `-f 2-5:sum` [#143](https://github.com/shenwei356/csvtk/issues/143)
+- [csvtk v0.36.0](https://github.com/shenwei356/csvtk/releases/tag/v0.36.0)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.36.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.36.0)
+    - new command `csvtk shuf`: shuffle rows. [#151](https://github.com/shenwei356/csvtk/issues/151)
+    - `csvtk plot line/hist/bar/box`
+        - forgot to scale the font size of legend keys.
+    - `csvtk pretty`
+        - fix formatting unicode text.
 
 ### Links
 
-OS     |Arch      |File, 中国镜像                                                                                                                                                                              |Download Count
-:------|:---------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-Linux  |**64-bit**|[**csvtk_linux_amd64.tar.gz**](https://github.com/shenwei356/csvtk/releases/download/v0.35.0/csvtk_linux_amd64.tar.gz),<br/> [中国镜像](http://app.shenwei.me/data/csvtk/csvtk_linux_amd64.tar.gz)                  |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_amd64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.35.0/csvtk_linux_amd64.tar.gz)
-Linux  |**arm64** |[**csvtk_linux_arm64.tar.gz**](https://github.com/shenwei356/csvtk/releases/download/v0.35.0/csvtk_linux_arm64.tar.gz),<br/> [中国镜像](http://app.shenwei.me/data/csvtk/csvtk_linux_arm64.tar.gz)                  |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_arm64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.35.0/csvtk_linux_arm64.tar.gz)
-macOS  |**64-bit**|[**csvtk_darwin_amd64.tar.gz**](https://github.com/shenwei356/csvtk/releases/download/v0.35.0/csvtk_darwin_amd64.tar.gz),<br/> [中国镜像](http://app.shenwei.me/data/csvtk/csvtk_darwin_amd64.tar.gz)               |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_darwin_amd64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.35.0/csvtk_darwin_amd64.tar.gz)
-macOS  |**arm64** |[**csvtk_darwin_arm64.tar.gz**](https://github.com/shenwei356/csvtk/releases/download/v0.35.0/csvtk_darwin_arm64.tar.gz),<br/> [中国镜像](http://app.shenwei.me/data/csvtk/csvtk_darwin_arm64.tar.gz)               |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_darwin_arm64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.35.0/csvtk_darwin_arm64.tar.gz)
-Windows|**64-bit**|[**csvtk_windows_amd64.exe.tar.gz**](https://github.com/shenwei356/csvtk/releases/download/v0.35.0/csvtk_windows_amd64.exe.tar.gz),<br/> [中国镜像](http://app.shenwei.me/data/csvtk/csvtk_windows_amd64.exe.tar.gz)|[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_windows_amd64.exe.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.35.0/csvtk_windows_amd64.exe.tar.gz)
-FreeBSD|**64-bit**|[**csvtk_freebsd_amd64.exe.tar.gz**](https://github.com/shenwei356/csvtk/releases/download/v0.35.0/csvtk_freebsd_amd64.exe.tar.gz),<br/> [中国镜像](http://app.shenwei.me/data/csvtk/csvtk_freebsd_amd64.exe.tar.gz)|[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_freebsd_amd64.exe.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.35.0/csvtk_freebsd_amd64.exe.tar.gz)
+OS     |Arch  |File                                                                                                                           |Download Count
+:------|:-----|:------------------------------------------------------------------------------------------------------------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Linux  |64-bit|[csvtk_linux_amd64.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.36.0/csvtk_linux_amd64.tar.gz)             |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_amd64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.36.0/csvtk_linux_amd64.tar.gz)
+Linux  |arm64 |[csvtk_linux_arm64.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.36.0/csvtk_linux_arm64.tar.gz)             |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_arm64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.36.0/csvtk_linux_arm64.tar.gz)
+macOS  |64-bit|[csvtk_darwin_amd64.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.36.0/csvtk_darwin_amd64.tar.gz)           |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_darwin_amd64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.36.0/csvtk_darwin_amd64.tar.gz)
+macOS  |arm64 |[csvtk_darwin_arm64.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.36.0/csvtk_darwin_arm64.tar.gz)           |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_darwin_arm64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.36.0/csvtk_darwin_arm64.tar.gz)
+Windows|64-bit|[csvtk_windows_amd64.exe.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.36.0/csvtk_windows_amd64.exe.tar.gz) |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_windows_amd64.exe.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.36.0/csvtk_windows_amd64.exe.tar.gz)
+FreeBSD|64-bit|[csvtk_freebsd_amd64.exe.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.36.0/csvtk_freebsd_amd64.exe.tar.gz) |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_freebsd_amd64.exe.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.36.0/csvtk_freebsd_amd64.exe.tar.gz)
 
 **Notes**
 
@@ -92,9 +83,9 @@ And then:
     # ------------------- install golang -----------------
 
     # download Go from https://go.dev/dl
-    wget https://go.dev/dl/go1.25.3.linux-amd64.tar.gz
+    wget https://go.dev/dl/go1.25.4.linux-amd64.tar.gz
     
-    tar -zxf go1.25.3.linux-amd64.tar.gz -C $HOME/
+    tar -zxf go1.25.4.linux-amd64.tar.gz -C $HOME/
     
     # or 
     #   echo "export PATH=$PATH:$HOME/go/bin" >> ~/.bashrc
@@ -145,6 +136,22 @@ fish:
 
 ## Release history
 
+- [csvtk v0.35.0](https://github.com/shenwei356/csvtk/releases/tag/v0.35.0)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.35.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.35.0)
+    - `csvtk`:
+        - do not support i386 architecture anymore.
+    - `csvtk sort`:
+        - **sort on all columns by default**, with a similar way with GNU sort (but the results might be different).  [#337](https://github.com/shenwei356/csvtk/issues/337)
+        - **support field ranges**, e.g., `-k 1-3:N`.
+        - fix sort inconsistency for rows with the same key(s). [#337](https://github.com/shenwei356/csvtk/issues/337)
+    - `csvtk mutate2/filter2`:
+        - use a new fork of expression evaluation package. [#172](https://github.com/shenwei356/csvtk/issues/172)
+    - `csvtk filter2`:
+        - fix the panic when using `-Z`. [#332](https://github.com/shenwei356/csvtk/issues/332)
+    - `csvtk plot bar`:
+        - fix labels orders [#335](https://github.com/shenwei356/csvtk/issues/335), [#339](https://github.com/shenwei356/csvtk/issues/339).
+    - `csvtk summary`:
+        - support field range, e.g., `-f 2-5:sum` [#143](https://github.com/shenwei356/csvtk/issues/143)
 - [csvtk v0.34.0](https://github.com/shenwei356/csvtk/releases/tag/v0.34.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.34.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.34.0)
     - new command `csvtk plot bar`. Contributed by @lovromazgon [#323](https://github.com/shenwei356/csvtk/pull/323)
