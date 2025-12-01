@@ -37,6 +37,10 @@ var headCmd = &cobra.Command{
 	Short: "print first N records",
 	Long: `print first N records
 
+Tips:
+  - If you want to keep the first N records for each group, use
+       csvtk uniq -n 3
+
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)

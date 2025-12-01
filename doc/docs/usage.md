@@ -2250,6 +2250,10 @@ Usage
 ```text
 print first N records
 
+Tips:
+  - If you want to keep the first N records for each group, use
+       csvtk uniq -n 3
+
 Usage:
   csvtk head [flags]
 
