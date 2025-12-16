@@ -8,7 +8,7 @@ require (
 	github.com/casbin/govaluate v1.10.0
 	github.com/cheggaaa/pb/v3 v3.1.0
 	github.com/dustin/go-humanize v1.0.1
-	github.com/expr-lang/expr v1.17.0
+	github.com/expr-lang/expr v1.17.7
 	github.com/fatih/color v1.13.0
 	github.com/mattn/go-colorable v0.1.13
 	github.com/mattn/go-runewidth v0.0.16
