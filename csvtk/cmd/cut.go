@@ -24,6 +24,7 @@ import (
 	"encoding/csv"
 	"fmt"
 	"runtime"
+	"strings"
 
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
@@ -65,10 +66,11 @@ Examples:
 		}
 		runtime.GOMAXPROCS(config.NumCPUs)
 
-		fieldStr := getFlagString(cmd, "fields")
-		if fieldStr == "" {
+		fieldStrs := getFlagStringSlice(cmd, "fields")
+		if len(fieldStrs) == 0 {
 			checkError(fmt.Errorf("flag -f (--fields) needed"))
 		}
+		fieldStr := strings.Join(fieldStrs, ",")
 
 		uniqColumn := getFlagBool(cmd, "uniq-column")
 
@@ -146,7 +148,7 @@ Examples:
 
 func init() {
 	RootCmd.AddCommand(cutCmd)
-	cutCmd.Flags().StringP("fields", "f", "", `select only these fields. type "csvtk cut -h" for examples`)
+	cutCmd.Flags().StringSliceP("fields", "f", []string{""}, `select only these fields. type "csvtk cut -h" for examples`)
 	cutCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
 	cutCmd.Flags().BoolP("ignore-case", "i", false, `ignore case (column name)`)
 	cutCmd.Flags().BoolP("uniq-column", "u", false, `deduplicate columns matched by multiple fuzzy column names`)
