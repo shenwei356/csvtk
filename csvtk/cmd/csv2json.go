@@ -84,6 +84,10 @@ var csv2jsonCmd = &cobra.Command{
 		}
 
 		fieldStr := getFlagString(cmd, "key")
+		if strings.Contains(fieldStr, ",") {
+			checkError(fmt.Errorf("multiple values not allowed for -k/--key"))
+		}
+		skipKey := getFlagBool(cmd, "skip-key")
 
 		keyed := fieldStr != ""
 
@@ -180,6 +184,10 @@ var csv2jsonCmd = &cobra.Command{
 					outfh.WriteString(indent + `{` + LF)
 				}
 				for i, col = range HeaderRow {
+					if skipKey && i+1 == record.Fields[0] {
+						continue
+					}
+
 					if parseNumAll {
 						parseNum = true
 					} else if parseNum0 {
@@ -205,6 +213,10 @@ var csv2jsonCmd = &cobra.Command{
 				}
 
 				for i, col = range record.All {
+					if skipKey && i+1 == record.Fields[0] {
+						continue
+					}
+
 					if parseNumAll {
 						parseNum = true
 					} else if parseNum0 {
@@ -214,9 +226,9 @@ var csv2jsonCmd = &cobra.Command{
 					}
 
 					if i < len(record.All)-1 {
-						outfh.WriteString(indent + indent + `"` + unescapeJSONField(col) + `"` + "," + LF)
+						outfh.WriteString(indent + indent + processJSONValue(col, blanks, parseNum) + "," + LF)
 					} else {
-						outfh.WriteString(indent + indent + `"` + unescapeJSONField(col) + `"` + LF)
+						outfh.WriteString(indent + indent + processJSONValue(col, blanks, parseNum) + LF)
 					}
 
 					parseNum = false
@@ -240,6 +252,7 @@ func init() {
 	RootCmd.AddCommand(csv2jsonCmd)
 	csv2jsonCmd.Flags().StringP("indent", "i", "  ", `indent. if given blank, output json in one line.`)
 	csv2jsonCmd.Flags().StringP("key", "k", "", "output json as an array of objects keyed by a given field rather than as a list. e.g -k 1 or -k columnA")
+	csv2jsonCmd.Flags().BoolP("skip-key", "K", false, `do not put KEY in the data when using -k KEY`)
 	csv2jsonCmd.Flags().BoolP("blanks", "b", false, `do not convert "", "na", "n/a", "none", "null", "." to null`)
 	csv2jsonCmd.Flags().StringSliceP("parse-num", "n", []string{}, `parse numeric values for nth column, multiple values are supported and "a"/"all" for all columns`)
 }
@@ -268,7 +281,7 @@ func processJSONValue(val string, blanks bool, parseNum bool) string {
 		return "null"
 	}
 	if parseNum && reDigitals.MatchString(val) {
-		return val
+		return reDigitalsLeadingSymbols.ReplaceAllString(val, `$1$2`)
 	}
 
 	val = reEscape.ReplaceAllString(val, `\$1`)
@@ -280,3 +293,5 @@ func processJSONValue(val string, blanks bool, parseNum bool) string {
 
 var reEscape = regexp.MustCompile(`(["\\])`)
 var reEscapeNewLine = regexp.MustCompile(`\r?\n`)
+
+var reDigitalsLeadingSymbols = regexp.MustCompile(`^[+]?0+([1-9])|^\+(\d|\.)`)

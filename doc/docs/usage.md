@@ -647,16 +647,17 @@ Usage
 convert CSV to JSON format
 
 Usage:
-  csvtk csv2json [flags]
+  csvtk csv2json [flags] 
 
 Flags:
   -b, --blanks              do not convert "", "na", "n/a", "none", "null", "." to null
   -h, --help                help for csv2json
   -i, --indent string       indent. if given blank, output json in one line. (default "  ")
-  -k, --key string          output json as an array of objects keyed by a given filed rather than as a
+  -k, --key string          output json as an array of objects keyed by a given field rather than as a
                             list. e.g -k 1 or -k columnA
   -n, --parse-num strings   parse numeric values for nth column, multiple values are supported and
                             "a"/"all" for all columns
+  -K, --skip-key            do not put KEY in the data when using -k KEY
 
 ```
 
@@ -723,6 +724,30 @@ Examples
           }
         }
 
+        
+        # do not output the key column
+        $ cat testdata/data4json.csv | csvtk csv2json -k ID --skip-key
+        {
+          "3": {
+            "room": "G13",
+            "name": "Simon",
+            "status": true
+          },
+          "5": {
+            "room": "103",
+            "name": "Anna",
+            "status": true
+          },
+          "1e-3": {
+            "room": "2",
+            "name": null,
+            "status": null
+          }
+        }
+        
+        
+        
+
 - for CSV without header row
 
         $ cat testdata/data4json.csv | csvtk csv2json -H
@@ -737,21 +762,22 @@ Examples
             "3",
             "G13",
             "Simon",
-            "true"
+            true
           ],
           [
             "5",
             "103",
             "Anna",
-            "TRUE"
+            true
           ],
           [
             "1e-3",
             "2",
-            "",
-            "N/A"
+            null,
+            null
           ]
         ]
+        
 
 - parse numeric values.
 
