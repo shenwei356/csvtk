@@ -42,7 +42,7 @@ var collapseCmd = &cobra.Command{
 
 Attention:
 
-    Only grouping fields and value filed are outputted.
+    Only grouping field and value fields are outputted.
 
 Example:
 
@@ -53,14 +53,14 @@ Example:
     1    b       34
     2    c       56
     2    d       78
-    
+
     $ echo -ne "id,value,meta\n1,a,12\n1,b,34\n2,c,56\n2,d,78\n" \
         | csvtk fold -f id -v value -s ";" \
         | csvtk pretty
     id   value
     1    a;b
     2    c;d
-    
+
     $ echo -ne "id,value,meta\n1,a,12\n1,b,34\n2,c,56\n2,d,78\n" \
         | csvtk fold -f id -v value -s ";" \
         | csvtk unfold -f value -s ";" \

@@ -67,6 +67,7 @@ Attention:
   9. csvtk writes gzip files very fast, much faster than the multi-threaded pigz,
      therefore there's no need to pipe the result to gzip/pigz.
      csvtk also supports reading and writing xz (.xz), zstd (.zst) and Bzip2 (.bz2) formats.
+ 10. Less than half of the subcommands support >1 file.
 
 Environment variables for frequently used global flags:
 
@@ -160,7 +161,7 @@ func init() {
 
 	RootCmd.PersistentFlags().BoolP("ignore-empty-row", "E", false, `ignore empty rows`)
 	RootCmd.PersistentFlags().BoolP("ignore-illegal-row", "I", false, `ignore illegal rows. You can also use 'csvtk fix' to fix files with different numbers of columns in rows`)
-	RootCmd.PersistentFlags().StringP("infile-list", "X", "", "file of input files list (one file per line), if given, they are appended to files from cli arguments")
+	RootCmd.PersistentFlags().StringP("infile-list", "X", "", "file of input files list (one file per line), if given, they are appended to files from cli arguments. Note that less than half of the subcommands support >1 file.")
 
 	RootCmd.PersistentFlags().BoolP("version", "V", false, "print version information")
 

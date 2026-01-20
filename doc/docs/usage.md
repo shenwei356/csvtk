@@ -38,6 +38,8 @@
 9. csvtk writes gzip files very fast, much faster than the multi-threaded pigz,
    therefore there's no need to pipe the result to gzip/pigz.
    csvtk also supports reading and writing xz (.xz), zstd (.zst) and Bzip2 (.bz2) formats.
+   
+10. Less than half of the subcommands support >1 file.
 
 
 ## Table of Contents
@@ -136,7 +138,7 @@ Usage
 ```text
 csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.36.0
+Version: 0.37.0
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -169,13 +171,14 @@ Attention:
   9. csvtk writes gzip files very fast, much faster than the multi-threaded pigz,
      therefore there's no need to pipe the result to gzip/pigz.
      csvtk also supports reading and writing xz (.xz), zstd (.zst) and Bzip2 (.bz2) formats.
+ 10. Less than half of the subcommands support >1 file.
 
 Environment variables for frequently used global flags:
 
   - "CSVTK_T" for flag "-t/--tabs"
   - "CSVTK_H" for flag "-H/--no-header-row"
   - "CSVTK_QUIET" for flag "--quiet"
-  
+
 You can also create a symbolic link named "tsvtk" to csvtk, or simply create a copy
 of the executable called "tsvtk". When invoked as "tsvtk", csvtk will automatically
 enable the "-t/--tabs" flag.
@@ -269,7 +272,8 @@ Flags:
   -I, --ignore-illegal-row     ignore illegal rows. You can also use 'csvtk fix' to fix files with
                                different numbers of columns in rows
   -X, --infile-list string     file of input files list (one file per line), if given, they are appended
-                               to files from cli arguments
+                               to files from cli arguments. Note that less than half of the subcommands
+                               support >1 file.
   -l, --lazy-quotes            if given, a quote may appear in an unquoted field and a non-doubled quote
                                may appear in a quoted field
   -H, --no-header-row          specifies that the input CSV file does not have header row
@@ -1882,7 +1886,7 @@ fold multiple values of a field into cells of groups
 
 Attention:
 
-    Only grouping fields and value filed are outputted.
+    Only grouping field and value fields are outputted.
 
 Example:
 
