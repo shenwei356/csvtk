@@ -57,7 +57,7 @@ How to:
          field indexes or ranges.
         Examples:
           -m A,B       # column A and B
-          -m 1,2       # 1st and 2nd column          
+          -m 1,2       # 1st and 2nd column
           -m -1        # the last column (it's not unselecting in other commands)
           -m 1,3-5     # 1st, from 3rd to 5th column
           -m 1-        # 1st and later columns (all columns)
@@ -65,7 +65,7 @@ How to:
           -m -3--2     # the 2nd and 3rd to last columns
           -m 1- -r -1  # all columns are center-aligned, except the last column
                        # which is right-aligned. -r overides -m.
-         
+
   2. Remaining rows are read and immediately outputted, one by one, till the end.
 
 Styles:
@@ -98,7 +98,7 @@ Styles:
 
         ━━━━━━━━━━━
          id   size
-        -----------
+        ───────────
          1    Huge
          2    Tiny
         ━━━━━━━━━━━
@@ -123,15 +123,25 @@ Styles:
         | 2  | Tiny |
         └----┴------┘
 
+    regular:
+
+        ┌────┬──────┐
+        │ id │ size │
+        ├────┼──────┤
+        │ 1  │ Huge │
+        ├────┼──────┤
+        │ 2  │ Tiny │
+        └────┴──────┘
+
     round:
 
-        ╭----┬------╮
-        | id | size |
-        ├====┼======┤
-        | 1  | Huge |
-        ├----┼------┤
-        | 2  | Tiny |
-        ╰----┴------╯
+        ╭────┬──────╮
+        │ id │ size │
+        ├────┼──────┤
+        │ 1  │ Huge │
+        ├────┼──────┤
+        │ 2  │ Tiny │
+        ╰────┴──────╯
 
     bold:
 
@@ -209,14 +219,15 @@ Styles:
 				DataRow:   stable.RowStyle{"", separator, ""},
 				Padding:   "",
 			},
-			"plain":  stable.StylePlain,
-			"simple": stable.StyleSimple,
-			"3line":  stable.StyleThreeLine,
-			"grid":   stable.StyleGrid,
-			"light":  stable.StyleLight,
-			"round":  stable.StyleRound,
-			"bold":   stable.StyleBold,
-			"double": stable.StyleDouble,
+			"plain":   stable.StylePlain,
+			"simple":  stable.StyleSimple,
+			"3line":   stable.StyleThreeLine,
+			"grid":    stable.StyleGrid,
+			"light":   stable.StyleLight,
+			"regular": stable.StyleRegular,
+			"round":   stable.StyleRound,
+			"bold":    stable.StyleBold,
+			"double":  stable.StyleDouble,
 		}
 
 		if style == "" {
@@ -230,7 +241,7 @@ Styles:
 		if _style, ok := styles[strings.ToLower(style)]; ok {
 			tbl.Style(_style)
 		} else {
-			checkError(fmt.Errorf("style not available: %s. available vaules: default, plain, simple, 3line, grid, light, bold, double", style))
+			checkError(fmt.Errorf("style not available: %s. available vaules: default, plain, simple, 3line, grid, light, regular, bold, double", style))
 		}
 
 		if len(minWidths) == 1 {

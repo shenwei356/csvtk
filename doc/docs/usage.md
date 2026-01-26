@@ -3325,7 +3325,7 @@ How to:
          field indexes or ranges.
         Examples:
           -m A,B       # column A and B
-          -m 1,2       # 1st and 2nd column          
+          -m 1,2       # 1st and 2nd column
           -m -1        # the last column (it's not unselecting in other commands)
           -m 1,3-5     # 1st, from 3rd to 5th column
           -m 1-        # 1st and later columns (all columns)
@@ -3333,7 +3333,7 @@ How to:
           -m -3--2     # the 2nd and 3rd to last columns
           -m 1- -r -1  # all columns are center-aligned, except the last column
                        # which is right-aligned. -r overides -m.
-         
+
   2. Remaining rows are read and immediately outputted, one by one, till the end.
 
 Styles:
@@ -3366,7 +3366,7 @@ Styles:
 
         ━━━━━━━━━━━
          id   size
-        -----------
+        ───────────
          1    Huge
          2    Tiny
         ━━━━━━━━━━━
@@ -3391,15 +3391,25 @@ Styles:
         | 2  | Tiny |
         └----┴------┘
 
+    regular:
+
+        ┌────┬──────┐
+        │ id │ size │
+        ├────┼──────┤
+        │ 1  │ Huge │
+        ├────┼──────┤
+        │ 2  │ Tiny │
+        └────┴──────┘
+
     round:
 
-        ╭----┬------╮
-        | id | size |
-        ├====┼======┤
-        | 1  | Huge |
-        ├----┼------┤
-        | 2  | Tiny |
-        ╰----┴------╯
+        ╭────┬──────╮
+        │ id │ size │
+        ├────┼──────┤
+        │ 1  │ Huge │
+        ├────┼──────┤
+        │ 2  │ Tiny │
+        ╰────┴──────╯
 
     bold:
 
@@ -3472,13 +3482,13 @@ Examples:
 
         $ cat testdata/names.csv  | csvtk pretty -S 3line
         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-         id   first_name   last_name   username
-        ----------------------------------------
-         11   Rob          Pike        rob
-         2    Ken          Thompson    ken
-         4    Robert       Griesemer   gri
-         1    Robert       Thompson    abc
-         NA   Robert       Abel        123
+         id   first_name   last_name   username 
+        ────────────────────────────────────────
+         11   Rob          Pike        rob      
+         2    Ken          Thompson    ken      
+         4    Robert       Griesemer   gri      
+         1    Robert       Thompson    abc      
+         NA   Robert       Abel        123      
         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
         $ cat testdata/names.csv  | csvtk pretty -S 3line -H
@@ -3493,20 +3503,20 @@ Examples:
 
 2. align right/center for some columns
 
-        $ csvtk pretty testdata/names.csv -w 6 -S bold -r 1,username -m first_name 
-        ┏━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┓
-        ┃     id ┃ first_name ┃ last_name ┃ username ┃
-        ┣━━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
-        ┃     11 ┃    Rob     ┃ Pike      ┃      rob ┃
-        ┣━━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
-        ┃      2 ┃    Ken     ┃ Thompson  ┃      ken ┃
-        ┣━━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
-        ┃      4 ┃   Robert   ┃ Griesemer ┃      gri ┃
-        ┣━━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
-        ┃      1 ┃   Robert   ┃ Thompson  ┃      abc ┃
-        ┣━━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
-        ┃     NA ┃   Robert   ┃ Abel      ┃      123 ┃
-        ┗━━━━━━━━┻━━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━┛
+        $ csvtk pretty testdata/names.csv -w 6 -S regular -r 1,username -m first_name 
+        ┌────────┬────────────┬───────────┬──────────┐
+        │     id │ first_name │ last_name │ username │
+        ├────────┼────────────┼───────────┼──────────┤
+        │     11 │    Rob     │ Pike      │      rob │
+        ├────────┼────────────┼───────────┼──────────┤
+        │      2 │    Ken     │ Thompson  │      ken │
+        ├────────┼────────────┼───────────┼──────────┤
+        │      4 │   Robert   │ Griesemer │      gri │
+        ├────────┼────────────┼───────────┼──────────┤
+        │      1 │   Robert   │ Thompson  │      abc │
+        ├────────┼────────────┼───────────┼──────────┤
+        │     NA │   Robert   │ Abel      │      123 │
+        └────────┴────────────┴───────────┴──────────┘
         
         $ csvtk pretty testdata/names.csv -w 6 -S bold -m 1- -r -1
         ┏━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┓
@@ -3575,20 +3585,20 @@ Examples:
 
 1. Change the output style
 
-        $ csvtk pretty testdata/long.csv -W 40 -S grid
-        +----+--------------------+------------------------------------------+
-        | id | name               | message                                  |
-        +====+====================+==========================================+
-        | 1  | Donec Vitae        | Quis autem vel eum iure reprehenderit    |
-        |    |                    | qui in ea voluptate velit esse.          |
-        +----+--------------------+------------------------------------------+
-        | 2  | Quaerat Voluptatem | At vero eos et accusamus et iusto odio.  |
-        +----+--------------------+------------------------------------------+
-        | 3  | Aliquam lorem      | Curabitur ullamcorper ultricies nisi.    |
-        |    |                    | Nam eget dui. Etiam rhoncus. Maecenas    |
-        |    |                    | tempus, tellus eget condimentum          |
-        |    |                    | rhoncus, sem quam semper libero.         |
-        +----+--------------------+------------------------------------------+
+        $ csvtk pretty testdata/long.csv -W 40 -S round
+        ╭────┬────────────────────┬──────────────────────────────────────────╮
+        │ id │ name               │ message                                  │
+        ├────┼────────────────────┼──────────────────────────────────────────┤
+        │ 1  │ Donec Vitae        │ Quis autem vel eum iure reprehenderit    │
+        │    │                    │ qui in ea voluptate velit esse.          │
+        ├────┼────────────────────┼──────────────────────────────────────────┤
+        │ 2  │ Quaerat Voluptatem │ At vero eos et accusamus et iusto odio.  │
+        ├────┼────────────────────┼──────────────────────────────────────────┤
+        │ 3  │ Aliquam lorem      │ Curabitur ullamcorper ultricies nisi.    │
+        │    │                    │ Nam eget dui. Etiam rhoncus. Maecenas    │
+        │    │                    │ tempus, tellus eget condimentum          │
+        │    │                    │ rhoncus, sem quam semper libero.         │
+        ╰────┴────────────────────┴──────────────────────────────────────────╯
 
 1. Custom delimiter for wrapping
 
