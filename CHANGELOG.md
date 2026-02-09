@@ -1,5 +1,7 @@
 - [csvtk v0.37.0](https://github.com/shenwei356/csvtk/releases/tag/v0.37.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.37.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.37.0)
+    - `csvtk`:
+        - add support of reading and writing LZ4 compression format. [#353](https://github.com/shenwei356/csvtk/issues/353)
     - `csvtk cut`:
         - allow setting `-f/--fields` multiple times, useful for selecting a long column list.
     - `csvtk csv2jon`:

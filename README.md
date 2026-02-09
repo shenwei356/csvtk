@@ -64,7 +64,7 @@ It could save you lots of time in (not) writing Python/R scripts.
 - **Fast**,  **multiple-CPUs supported** (some commands)
 - **Practical functions provided by N subcommands**
 - **Support STDIN and gzipped input/output file, easy being used in pipe**
-- **Seamless support for xz (.xz), zstd (.zst) and Bzip2 (.bz2) formats**
+- **Seamless support for xz (.xz), zstd (.zst), Bzip2 (.bz2), LZ4 (.lz4) formats**
 - Most of the subcommands support ***unselecting fields*** and ***fuzzy fields***,
   e.g. `-f "-id,-name"` for all fields except "id" and "name",
   `-F -f "a.*"` for all fields with prefix "a.".
