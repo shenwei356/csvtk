@@ -49,7 +49,7 @@
 **Information**
 
 - [corr](#corr)
-- [dim/nrow/ncol](#dim/nrow/ncol)
+- [dim/nrow/ncol](#dimnrowncol)
 - [headers](#headers)
 - [summary](#summary)
 - [watch](#watch)
