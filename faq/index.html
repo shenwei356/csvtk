@@ -349,6 +349,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#environment-variables" class="md-nav__link">
+    Environment variables
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -461,6 +468,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#environment-variables" class="md-nav__link">
+    Environment variables
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -546,6 +560,16 @@ file  num_cols  num_rows
 <pre><code>$ echo 'a,"abc" xyz,d' | csvtk fix-quotes | csvtk cut -f 1- | csvtk del-quotes
 a,"abc" xyz,d
 </code></pre>
+<h2 id="environment-variables">Environment variables</h2>
+<p>Environment variables for frequently used global flags:</p>
+<ul>
+<li><code>CSVTK_T</code> for flag <code>-t/--tabs</code></li>
+<li><code>CSVTK_H</code> for flag <code>-H/--no-header-row</code></li>
+<li><code>CSVTK_QUIET</code> for flag <code>--quiet</code></li>
+</ul>
+<p>You can also create a symbolic link named <code>tsvtk</code> to <code>csvtk</code>, or simply create a copy
+of the executable called <code>tsvtk</code>. When invoked as <code>tsvtk</code>, <code>csvtk</code> will automatically
+enable the <code>-t/--tabs</code> flag.</p>
 
 
 

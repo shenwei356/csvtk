@@ -43,6 +43,7 @@ replace
 round
 sample
 sep
+shuf
 sort
 space2tab
 split

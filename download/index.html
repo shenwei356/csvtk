@@ -607,41 +607,24 @@
   in <a href="https://github.com/shenwei356/csvtk/releases">release</a> page.</p>
 <h2 id="current-version">Current Version</h2>
 <ul>
-<li><a href="https://github.com/shenwei356/csvtk/releases/tag/v0.34.0">csvtk v0.34.0</a>
-<a href="https://github.com/shenwei356/csvtk/releases/tag/v0.34.0"><img alt="Github Releases (by Release)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/v0.34.0/total.svg" /></a><ul>
-<li>new command <code>csvtk plot bar</code>. Contributed by @lovromazgon <a href="https://github.com/shenwei356/csvtk/pull/323">#323</a></li>
+<li><a href="https://github.com/shenwei356/csvtk/releases/tag/v0.37.0">csvtk v0.37.0</a>
+<a href="https://github.com/shenwei356/csvtk/releases/tag/v0.37.0"><img alt="Github Releases (by Release)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/v0.37.0/total.svg" /></a><ul>
 <li><code>csvtk</code>:<ul>
-<li>fix panic when the first field is empty, e.g., <code>-f ,2,3</code>.</li>
+<li>add support of reading and writing LZ4 compression format. <a href="https://github.com/shenwei356/csvtk/issues/353">#353</a></li>
 </ul>
 </li>
 <li><code>csvtk cut</code>:<ul>
-<li>fix <code>-b</code>. <a href="https://github.com/shenwei356/csvtk/issues/156">#156</a></li>
-<li>fix <code>-i</code>. <a href="https://github.com/shenwei356/csvtk/issues/317">#317</a></li>
+<li>allow setting <code>-f/--fields</code> multiple times, useful for selecting a long column list.</li>
 </ul>
 </li>
-<li><code>csvtk plot box</code>:<ul>
-<li>fix <code>--horiz</code> does not swap axes labels. <a href="https://github.com/shenwei356/csvtk/issues/314">#314</a></li>
+<li><code>csvtk csv2jon</code>:<ul>
+<li>fix <code>-b/--blanks</code> and <code>-n/--parse-num</code>. <a href="https://github.com/shenwei356/csvtk/issues/352">#352</a></li>
+<li>add a new flag <code>-K/--skip-key</code> to skip putting KEY in the data when using -k KEY. <a href="https://github.com/shenwei356/csvtk/issues/351">#351</a></li>
 </ul>
 </li>
-<li><code>csvtk plot line</code>:<ul>
-<li>add a new flag <code>--data-field-x-nominal</code> to plot line with sortable nominal X axis values, such as date.
-<a href="https://github.com/shenwei356/csvtk/pull/308">#308</a> by @lovromazgon</li>
-</ul>
-</li>
-<li><code>csvtk plot</code>:<ul>
-<li>add two new flags <code>--hide-x-labs</code> and <code>--hide-y-labs</code>, for hiding X/Y axis, ticks, and tick labels. <a href="https://github.com/shenwei356/csvtk/issues/326">#326</a></li>
-</ul>
-</li>
-<li><code>csvtk fix</code>:<ul>
-<li>add a new flag <code>--na</code> to set content to fill. <a href="https://github.com/shenwei356/csvtk/issues/316">#316</a></li>
-</ul>
-</li>
-<li><code>csvtk replace</code>:<ul>
-<li>add new replacements symbol/placeholder for group-specific numbering: <code>{gnr}</code>, <code>{enr}</code>, <code>{rnr}</code>. <a href="https://github.com/shenwei356/csvtk/issues/322">#322</a></li>
-</ul>
-</li>
-<li><code>csvtk sort</code>:<ul>
-<li>add support for sorting by date/time. <a href="https://github.com/shenwei356/csvtk/issues/278">#278</a></li>
+<li><code>csvtk pretty</code>:<ul>
+<li>add a new style <code>regular</code>.</li>
+<li>adjust styles <code>3line</code> and <code>round</code>.</li>
 </ul>
 </li>
 </ul>
@@ -653,52 +636,46 @@
 <tr>
 <th style="text-align: left;">OS</th>
 <th style="text-align: left;">Arch</th>
-<th style="text-align: left;">File, 中国镜像</th>
+<th style="text-align: left;">File</th>
 <th style="text-align: left;">Download Count</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td style="text-align: left;">Linux</td>
-<td style="text-align: left;">32-bit</td>
-<td style="text-align: left;"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.34.0/csvtk_linux_386.tar.gz">csvtk_linux_386.tar.gz</a>,<br/> <a href="http://app.shenwei.me/data/csvtk/csvtk_linux_386.tar.gz">中国镜像</a></td>
-<td style="text-align: left;"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.34.0/csvtk_linux_386.tar.gz"><img alt="Github Releases (by Asset)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_386.tar.gz.svg?maxAge=3600" /></a></td>
+<td style="text-align: left;">64-bit</td>
+<td style="text-align: left;"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.37.0/csvtk_linux_amd64.tar.gz">csvtk_linux_amd64.tar.gz</a></td>
+<td style="text-align: left;"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.37.0/csvtk_linux_amd64.tar.gz"><img alt="Github Releases (by Asset)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_amd64.tar.gz.svg?maxAge=3600" /></a></td>
 </tr>
 <tr>
 <td style="text-align: left;">Linux</td>
-<td style="text-align: left;"><strong>64-bit</strong></td>
-<td style="text-align: left;"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.34.0/csvtk_linux_amd64.tar.gz"><strong>csvtk_linux_amd64.tar.gz</strong></a>,<br/> <a href="http://app.shenwei.me/data/csvtk/csvtk_linux_amd64.tar.gz">中国镜像</a></td>
-<td style="text-align: left;"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.34.0/csvtk_linux_amd64.tar.gz"><img alt="Github Releases (by Asset)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_amd64.tar.gz.svg?maxAge=3600" /></a></td>
-</tr>
-<tr>
-<td style="text-align: left;">Linux</td>
-<td style="text-align: left;"><strong>64-bit</strong></td>
-<td style="text-align: left;"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.34.0/csvtk_linux_arm64.tar.gz"><strong>csvtk_linux_arm64.tar.gz</strong></a>,<br/> <a href="http://app.shenwei.me/data/csvtk/csvtk_linux_arm64.tar.gz">中国镜像</a></td>
-<td style="text-align: left;"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.34.0/csvtk_linux_arm64.tar.gz"><img alt="Github Releases (by Asset)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_arm64.tar.gz.svg?maxAge=3600" /></a></td>
+<td style="text-align: left;">arm64</td>
+<td style="text-align: left;"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.37.0/csvtk_linux_arm64.tar.gz">csvtk_linux_arm64.tar.gz</a></td>
+<td style="text-align: left;"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.37.0/csvtk_linux_arm64.tar.gz"><img alt="Github Releases (by Asset)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_linux_arm64.tar.gz.svg?maxAge=3600" /></a></td>
 </tr>
 <tr>
 <td style="text-align: left;">macOS</td>
-<td style="text-align: left;"><strong>64-bit</strong></td>
-<td style="text-align: left;"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.34.0/csvtk_darwin_amd64.tar.gz"><strong>csvtk_darwin_amd64.tar.gz</strong></a>,<br/> <a href="http://app.shenwei.me/data/csvtk/csvtk_darwin_amd64.tar.gz">中国镜像</a></td>
-<td style="text-align: left;"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.34.0/csvtk_darwin_amd64.tar.gz"><img alt="Github Releases (by Asset)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_darwin_amd64.tar.gz.svg?maxAge=3600" /></a></td>
+<td style="text-align: left;">64-bit</td>
+<td style="text-align: left;"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.37.0/csvtk_darwin_amd64.tar.gz">csvtk_darwin_amd64.tar.gz</a></td>
+<td style="text-align: left;"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.37.0/csvtk_darwin_amd64.tar.gz"><img alt="Github Releases (by Asset)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_darwin_amd64.tar.gz.svg?maxAge=3600" /></a></td>
 </tr>
 <tr>
 <td style="text-align: left;">macOS</td>
-<td style="text-align: left;"><strong>arm64</strong></td>
-<td style="text-align: left;"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.34.0/csvtk_darwin_arm64.tar.gz"><strong>csvtk_darwin_arm64.tar.gz</strong></a>,<br/> <a href="http://app.shenwei.me/data/csvtk/csvtk_darwin_arm64.tar.gz">中国镜像</a></td>
-<td style="text-align: left;"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.34.0/csvtk_darwin_arm64.tar.gz"><img alt="Github Releases (by Asset)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_darwin_arm64.tar.gz.svg?maxAge=3600" /></a></td>
+<td style="text-align: left;">arm64</td>
+<td style="text-align: left;"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.37.0/csvtk_darwin_arm64.tar.gz">csvtk_darwin_arm64.tar.gz</a></td>
+<td style="text-align: left;"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.37.0/csvtk_darwin_arm64.tar.gz"><img alt="Github Releases (by Asset)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_darwin_arm64.tar.gz.svg?maxAge=3600" /></a></td>
 </tr>
 <tr>
 <td style="text-align: left;">Windows</td>
-<td style="text-align: left;">32-bit</td>
-<td style="text-align: left;"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.34.0/csvtk_windows_386.exe.tar.gz">csvtk_windows_386.exe.tar.gz</a>,<br/> <a href="http://app.shenwei.me/data/csvtk/csvtk_windows_386.exe.tar.gz">中国镜像</a></td>
-<td style="text-align: left;"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.34.0/csvtk_windows_386.exe.tar.gz"><img alt="Github Releases (by Asset)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_windows_386.exe.tar.gz.svg?maxAge=3600" /></a></td>
+<td style="text-align: left;">64-bit</td>
+<td style="text-align: left;"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.37.0/csvtk_windows_amd64.exe.tar.gz">csvtk_windows_amd64.exe.tar.gz</a></td>
+<td style="text-align: left;"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.37.0/csvtk_windows_amd64.exe.tar.gz"><img alt="Github Releases (by Asset)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_windows_amd64.exe.tar.gz.svg?maxAge=3600" /></a></td>
 </tr>
 <tr>
-<td style="text-align: left;">Windows</td>
-<td style="text-align: left;"><strong>64-bit</strong></td>
-<td style="text-align: left;"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.34.0/csvtk_windows_amd64.exe.tar.gz"><strong>csvtk_windows_amd64.exe.tar.gz</strong></a>,<br/> <a href="http://app.shenwei.me/data/csvtk/csvtk_windows_amd64.exe.tar.gz">中国镜像</a></td>
-<td style="text-align: left;"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.34.0/csvtk_windows_amd64.exe.tar.gz"><img alt="Github Releases (by Asset)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_windows_amd64.exe.tar.gz.svg?maxAge=3600" /></a></td>
+<td style="text-align: left;">FreeBSD</td>
+<td style="text-align: left;">64-bit</td>
+<td style="text-align: left;"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.37.0/csvtk_freebsd_amd64.exe.tar.gz">csvtk_freebsd_amd64.exe.tar.gz</a></td>
+<td style="text-align: left;"><a href="https://github.com/shenwei356/csvtk/releases/download/v0.37.0/csvtk_freebsd_amd64.exe.tar.gz"><img alt="Github Releases (by Asset)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_freebsd_amd64.exe.tar.gz.svg?maxAge=3600" /></a></td>
 </tr>
 </tbody>
 </table>
@@ -759,9 +736,9 @@ pixi global install csvtk
 <pre><code># ------------------- install golang -----------------
 
 # download Go from https://go.dev/dl
-wget https://go.dev/dl/go1.24.3.linux-amd64.tar.gz
+wget https://go.dev/dl/go1.26.2.linux-amd64.tar.gz
 
-tar -zxf go1.24.3.linux-amd64.tar.gz -C $HOME/
+tar -zxf go1.26.2.linux-amd64.tar.gz -C $HOME/
 
 # or 
 #   echo "export PATH=$PATH:$HOME/go/bin" &gt;&gt; ~/.bashrc
@@ -807,6 +784,88 @@ echo "autoload -U compinit; compinit" &gt;&gt; ~/.zshrc
 </code></pre>
 <h2 id="release-history">Release history</h2>
 <ul>
+<li><a href="https://github.com/shenwei356/csvtk/releases/tag/v0.36.0">csvtk v0.36.0</a>
+<a href="https://github.com/shenwei356/csvtk/releases/tag/v0.36.0"><img alt="Github Releases (by Release)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/v0.36.0/total.svg" /></a><ul>
+<li>new command <code>csvtk shuf</code>: shuffle rows. <a href="https://github.com/shenwei356/csvtk/issues/151">#151</a></li>
+<li><code>csvtk plot line/hist/bar/box</code><ul>
+<li>forgot to scale the font size of legend keys.</li>
+</ul>
+</li>
+<li><code>csvtk pretty</code><ul>
+<li>fix formatting unicode text.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="https://github.com/shenwei356/csvtk/releases/tag/v0.35.0">csvtk v0.35.0</a>
+<a href="https://github.com/shenwei356/csvtk/releases/tag/v0.35.0"><img alt="Github Releases (by Release)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/v0.35.0/total.svg" /></a><ul>
+<li><code>csvtk</code>:<ul>
+<li>do not support i386 architecture anymore.</li>
+</ul>
+</li>
+<li><code>csvtk sort</code>:<ul>
+<li><strong>sort on all columns by default</strong>, with a similar way with GNU sort (but the results might be different).  <a href="https://github.com/shenwei356/csvtk/issues/337">#337</a></li>
+<li><strong>support field ranges</strong>, e.g., <code>-k 1-3:N</code>.</li>
+<li>fix sort inconsistency for rows with the same key(s). <a href="https://github.com/shenwei356/csvtk/issues/337">#337</a></li>
+</ul>
+</li>
+<li><code>csvtk mutate2/filter2</code>:<ul>
+<li>use a new fork of expression evaluation package. <a href="https://github.com/shenwei356/csvtk/issues/172">#172</a></li>
+</ul>
+</li>
+<li><code>csvtk filter2</code>:<ul>
+<li>fix the panic when using <code>-Z</code>. <a href="https://github.com/shenwei356/csvtk/issues/332">#332</a></li>
+</ul>
+</li>
+<li><code>csvtk plot bar</code>:<ul>
+<li>fix labels orders <a href="https://github.com/shenwei356/csvtk/issues/335">#335</a>, <a href="https://github.com/shenwei356/csvtk/issues/339">#339</a>.</li>
+</ul>
+</li>
+<li><code>csvtk summary</code>:<ul>
+<li>support field range, e.g., <code>-f 2-5:sum</code> <a href="https://github.com/shenwei356/csvtk/issues/143">#143</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="https://github.com/shenwei356/csvtk/releases/tag/v0.34.0">csvtk v0.34.0</a>
+<a href="https://github.com/shenwei356/csvtk/releases/tag/v0.34.0"><img alt="Github Releases (by Release)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/v0.34.0/total.svg" /></a><ul>
+<li>new command <code>csvtk plot bar</code>. Contributed by @lovromazgon <a href="https://github.com/shenwei356/csvtk/pull/323">#323</a></li>
+<li><code>csvtk</code>:<ul>
+<li>fix panic when the first field is empty, e.g., <code>-f ,2,3</code>.</li>
+</ul>
+</li>
+<li><code>csvtk cut</code>:<ul>
+<li>fix <code>-b</code>. <a href="https://github.com/shenwei356/csvtk/issues/156">#156</a></li>
+<li>fix <code>-i</code>. <a href="https://github.com/shenwei356/csvtk/issues/317">#317</a></li>
+</ul>
+</li>
+<li><code>csvtk plot box</code>:<ul>
+<li>fix <code>--horiz</code> does not swap axes labels. <a href="https://github.com/shenwei356/csvtk/issues/314">#314</a></li>
+</ul>
+</li>
+<li><code>csvtk plot line</code>:<ul>
+<li>add a new flag <code>--data-field-x-nominal</code> to plot line with sortable nominal X axis values, such as date.
+<a href="https://github.com/shenwei356/csvtk/pull/308">#308</a> by @lovromazgon</li>
+</ul>
+</li>
+<li><code>csvtk plot</code>:<ul>
+<li>add two new flags <code>--hide-x-labs</code> and <code>--hide-y-labs</code>, for hiding X/Y axis, ticks, and tick labels. <a href="https://github.com/shenwei356/csvtk/issues/326">#326</a></li>
+</ul>
+</li>
+<li><code>csvtk fix</code>:<ul>
+<li>add a new flag <code>--na</code> to set content to fill. <a href="https://github.com/shenwei356/csvtk/issues/316">#316</a></li>
+</ul>
+</li>
+<li><code>csvtk replace</code>:<ul>
+<li>add new replacements symbol/placeholder for group-specific numbering: <code>{gnr}</code>, <code>{enr}</code>, <code>{rnr}</code>. <a href="https://github.com/shenwei356/csvtk/issues/322">#322</a></li>
+</ul>
+</li>
+<li><code>csvtk sort</code>:<ul>
+<li>add support for sorting by date/time. <a href="https://github.com/shenwei356/csvtk/issues/278">#278</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li><a href="https://github.com/shenwei356/csvtk/releases/tag/v0.33.0">csvtk v0.33.0</a>
 <a href="https://github.com/shenwei356/csvtk/releases/tag/v0.33.0"><img alt="Github Releases (by Release)" src="https://img.shields.io/github/downloads/shenwei356/csvtk/v0.33.0/total.svg" /></a><ul>
 <li>new command <code>csvtk comma</code>: make numbers more readable by adding commas. <a href="https://github.com/shenwei356/csvtk/issues/300">#300</a></li>

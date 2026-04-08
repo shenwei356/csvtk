@@ -646,6 +646,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#shuf" class="md-nav__link">
+    shuf
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#space2tab" class="md-nav__link">
     space2tab
   </a>
@@ -1176,6 +1183,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#shuf" class="md-nav__link">
+    shuf
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#space2tab" class="md-nav__link">
     space2tab
   </a>
@@ -1310,9 +1324,15 @@
 <p>Please use <code>csvtk fix-quotes</code> to fix it, and use <code>csvtk del-quotes</code> to reset to the
 original format as needed.</p>
 </li>
+<li>
+<p>csvtk writes gzip files very fast, much faster than the multi-threaded pigz,
+   therefore there's no need to pipe the result to gzip/pigz.
+   csvtk also supports reading and writing xz (.xz), zstd (.zst) and Bzip2 (.bz2) formats.</p>
+</li>
+<li>
+<p>Less than half of the subcommands support &gt;1 file.</p>
+</li>
 </ol>
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 <h2 id="table-of-contents">Table of Contents</h2>
 <ul>
 <li><a href="#csvtk">csvtk</a></li>
@@ -1320,7 +1340,7 @@ original format as needed.</p>
 <p><strong>Information</strong></p>
 <ul>
 <li><a href="#corr">corr</a></li>
-<li><a href="#dim/nrow/ncol">dim/nrow/ncol</a></li>
+<li><a href="#dimnrowncol">dim/nrow/ncol</a></li>
 <li><a href="#headers">headers</a></li>
 <li><a href="#summary">summary</a></li>
 <li><a href="#watch">watch</a></li>
@@ -1384,6 +1404,7 @@ original format as needed.</p>
 <p><strong>Ordering</strong></p>
 <ul>
 <li><a href="#sort">sort</a></li>
+<li><a href="#shuf">shuf</a></li>
 </ul>
 <p><strong>Ploting</strong></p>
 <ul>
@@ -1399,13 +1420,11 @@ original format as needed.</p>
 <li><a href="#genautocomplete">genautocomplete</a></li>
 <li><a href="#version">version</a></li>
 </ul>
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 <h2 id="csvtk">csvtk</h2>
 <p>Usage</p>
 <pre><code class="language-text">csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.34.0
+Version: 0.37.0
 
 Author: Wei Shen &lt;shenwei356@gmail.com&gt;
 
@@ -1435,6 +1454,10 @@ Attention:
          extraneous or missing &quot; in quoted-field
      Please use &quot;csvtk fix-quotes&quot; to fix it, and use &quot;csvtk del-quotes&quot; to reset to the
      original format as needed.
+  9. csvtk writes gzip files very fast, much faster than the multi-threaded pigz,
+     therefore there's no need to pipe the result to gzip/pigz.
+     csvtk also supports reading and writing xz (.xz), zstd (.zst) and Bzip2 (.bz2) formats.
+ 10. Less than half of the subcommands support &gt;1 file.
 
 Environment variables for frequently used global flags:
 
@@ -1442,8 +1465,9 @@ Environment variables for frequently used global flags:
   - &quot;CSVTK_H&quot; for flag &quot;-H/--no-header-row&quot;
   - &quot;CSVTK_QUIET&quot; for flag &quot;--quiet&quot;
 
-You can also create a soft link named &quot;tsvtk&quot; for &quot;csvtk&quot;, 
-which sets &quot;-t/--tabs&quot; by default.
+You can also create a symbolic link named &quot;tsvtk&quot; to csvtk, or simply create a copy
+of the executable called &quot;tsvtk&quot;. When invoked as &quot;tsvtk&quot;, csvtk will automatically
+enable the &quot;-t/--tabs&quot; flag.
 
 Usage:
   csvtk [flags]
@@ -1510,6 +1534,7 @@ Commands for Data Transformation:
   unfold          unfold multiple values in cells of a field
 
 Commands for Ordering:
+  shuf            shuffle rows
   sort            sort by selected fields
 
 Commands for Ploting:
@@ -1533,7 +1558,8 @@ Flags:
   -I, --ignore-illegal-row     ignore illegal rows. You can also use 'csvtk fix' to fix files with
                                different numbers of columns in rows
   -X, --infile-list string     file of input files list (one file per line), if given, they are appended
-                               to files from cli arguments
+                               to files from cli arguments. Note that less than half of the subcommands
+                               support &gt;1 file.
   -l, --lazy-quotes            if given, a quote may appear in an unquoted field and a non-doubled quote
                                may appear in a quoted field
   -H, --no-header-row          specifies that the input CSV file does not have header row
@@ -1884,16 +1910,17 @@ Flags:
 <pre><code class="language-text">convert CSV to JSON format
 
 Usage:
-  csvtk csv2json [flags]
+  csvtk csv2json [flags] 
 
 Flags:
   -b, --blanks              do not convert &quot;&quot;, &quot;na&quot;, &quot;n/a&quot;, &quot;none&quot;, &quot;null&quot;, &quot;.&quot; to null
   -h, --help                help for csv2json
   -i, --indent string       indent. if given blank, output json in one line. (default &quot;  &quot;)
-  -k, --key string          output json as an array of objects keyed by a given filed rather than as a
+  -k, --key string          output json as an array of objects keyed by a given field rather than as a
                             list. e.g -k 1 or -k columnA
   -n, --parse-num strings   parse numeric values for nth column, multiple values are supported and
                             &quot;a&quot;/&quot;all&quot; for all columns
+  -K, --skip-key            do not put KEY in the data when using -k KEY
 
 </code></pre>
 <p>Examples</p>
@@ -1961,6 +1988,26 @@ ID,room,name,status
     "status": null
   }
 }
+
+# do not output the key column
+$ cat testdata/data4json.csv | csvtk csv2json -k ID --skip-key
+{
+  "3": {
+    "room": "G13",
+    "name": "Simon",
+    "status": true
+  },
+  "5": {
+    "room": "103",
+    "name": "Anna",
+    "status": true
+  },
+  "1e-3": {
+    "room": "2",
+    "name": null,
+    "status": null
+  }
+}
 </code></pre>
 </li>
 <li>
@@ -1977,19 +2024,19 @@ ID,room,name,status
     "3",
     "G13",
     "Simon",
-    "true"
+    true
   ],
   [
     "5",
     "103",
     "Anna",
-    "TRUE"
+    true
   ],
   [
     "1e-3",
     "2",
-    "",
-    "N/A"
+    null,
+    null
   ]
 ]
 </code></pre>
@@ -3130,7 +3177,7 @@ NA                    3
 
 Attention:
 
-    Only grouping fields and value filed are outputted.
+    Only grouping field and value fields are outputted.
 
 Example:
 
@@ -3491,6 +3538,10 @@ row   id   first_name   last_name   username
 <h2 id="head">head</h2>
 <p>Usage</p>
 <pre><code class="language-text">print first N records
+
+Tips:
+  - If you want to keep the first N records for each group, use
+       csvtk uniq -n 3
 
 Usage:
   csvtk head [flags]
@@ -4510,7 +4561,7 @@ How to:
          field indexes or ranges.
         Examples:
           -m A,B       # column A and B
-          -m 1,2       # 1st and 2nd column          
+          -m 1,2       # 1st and 2nd column
           -m -1        # the last column (it's not unselecting in other commands)
           -m 1,3-5     # 1st, from 3rd to 5th column
           -m 1-        # 1st and later columns (all columns)
@@ -4551,7 +4602,7 @@ Styles:
 
         ━━━━━━━━━━━
          id   size
-        -----------
+        ───────────
          1    Huge
          2    Tiny
         ━━━━━━━━━━━
@@ -4576,15 +4627,25 @@ Styles:
         | 2  | Tiny |
         └----┴------┘
 
+    regular:
+
+        ┌────┬──────┐
+        │ id │ size │
+        ├────┼──────┤
+        │ 1  │ Huge │
+        ├────┼──────┤
+        │ 2  │ Tiny │
+        └────┴──────┘
+
     round:
 
-        ╭----┬------╮
-        | id | size |
-        ├====┼======┤
-        | 1  | Huge |
-        ├----┼------┤
-        | 2  | Tiny |
-        ╰----┴------╯
+        ╭────┬──────╮
+        │ id │ size │
+        ├────┼──────┤
+        │ 1  │ Huge │
+        ├────┼──────┤
+        │ 2  │ Tiny │
+        ╰────┴──────╯
 
     bold:
 
@@ -4657,13 +4718,13 @@ NA   Robert       Abel        123
 <p>tree-line table</p>
 <pre><code>$ cat testdata/names.csv  | csvtk pretty -S 3line
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- id   first_name   last_name   username
-----------------------------------------
- 11   Rob          Pike        rob
- 2    Ken          Thompson    ken
- 4    Robert       Griesemer   gri
- 1    Robert       Thompson    abc
- NA   Robert       Abel        123
+ id   first_name   last_name   username 
+────────────────────────────────────────
+ 11   Rob          Pike        rob      
+ 2    Ken          Thompson    ken      
+ 4    Robert       Griesemer   gri      
+ 1    Robert       Thompson    abc      
+ NA   Robert       Abel        123      
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 $ cat testdata/names.csv  | csvtk pretty -S 3line -H
@@ -4679,20 +4740,20 @@ $ cat testdata/names.csv  | csvtk pretty -S 3line -H
 </li>
 <li>
 <p>align right/center for some columns</p>
-<pre><code>$ csvtk pretty testdata/names.csv -w 6 -S bold -r 1,username -m first_name 
-┏━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┓
-┃     id ┃ first_name ┃ last_name ┃ username ┃
-┣━━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
-┃     11 ┃    Rob     ┃ Pike      ┃      rob ┃
-┣━━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
-┃      2 ┃    Ken     ┃ Thompson  ┃      ken ┃
-┣━━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
-┃      4 ┃   Robert   ┃ Griesemer ┃      gri ┃
-┣━━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
-┃      1 ┃   Robert   ┃ Thompson  ┃      abc ┃
-┣━━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
-┃     NA ┃   Robert   ┃ Abel      ┃      123 ┃
-┗━━━━━━━━┻━━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━┛
+<pre><code>$ csvtk pretty testdata/names.csv -w 6 -S regular -r 1,username -m first_name 
+┌────────┬────────────┬───────────┬──────────┐
+│     id │ first_name │ last_name │ username │
+├────────┼────────────┼───────────┼──────────┤
+│     11 │    Rob     │ Pike      │      rob │
+├────────┼────────────┼───────────┼──────────┤
+│      2 │    Ken     │ Thompson  │      ken │
+├────────┼────────────┼───────────┼──────────┤
+│      4 │   Robert   │ Griesemer │      gri │
+├────────┼────────────┼───────────┼──────────┤
+│      1 │   Robert   │ Thompson  │      abc │
+├────────┼────────────┼───────────┼──────────┤
+│     NA │   Robert   │ Abel      │      123 │
+└────────┴────────────┴───────────┴──────────┘
 
 $ csvtk pretty testdata/names.csv -w 6 -S bold -m 1- -r -1
 ┏━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┓
@@ -4766,20 +4827,20 @@ id      name                 message
 </li>
 <li>
 <p>Change the output style</p>
-<pre><code>$ csvtk pretty testdata/long.csv -W 40 -S grid
-+----+--------------------+------------------------------------------+
-| id | name               | message                                  |
-+====+====================+==========================================+
-| 1  | Donec Vitae        | Quis autem vel eum iure reprehenderit    |
-|    |                    | qui in ea voluptate velit esse.          |
-+----+--------------------+------------------------------------------+
-| 2  | Quaerat Voluptatem | At vero eos et accusamus et iusto odio.  |
-+----+--------------------+------------------------------------------+
-| 3  | Aliquam lorem      | Curabitur ullamcorper ultricies nisi.    |
-|    |                    | Nam eget dui. Etiam rhoncus. Maecenas    |
-|    |                    | tempus, tellus eget condimentum          |
-|    |                    | rhoncus, sem quam semper libero.         |
-+----+--------------------+------------------------------------------+
+<pre><code>$ csvtk pretty testdata/long.csv -W 40 -S round
+╭────┬────────────────────┬──────────────────────────────────────────╮
+│ id │ name               │ message                                  │
+├────┼────────────────────┼──────────────────────────────────────────┤
+│ 1  │ Donec Vitae        │ Quis autem vel eum iure reprehenderit    │
+│    │                    │ qui in ea voluptate velit esse.          │
+├────┼────────────────────┼──────────────────────────────────────────┤
+│ 2  │ Quaerat Voluptatem │ At vero eos et accusamus et iusto odio.  │
+├────┼────────────────────┼──────────────────────────────────────────┤
+│ 3  │ Aliquam lorem      │ Curabitur ullamcorper ultricies nisi.    │
+│    │                    │ Nam eget dui. Etiam rhoncus. Maecenas    │
+│    │                    │ tempus, tellus eget condimentum          │
+│    │                    │ rhoncus, sem quam semper libero.         │
+╰────┴────────────────────┴──────────────────────────────────────────╯
 </code></pre>
 </li>
 <li>
@@ -5185,17 +5246,37 @@ taxid   kindom      phylum     class      order      family      genus   species
 <p>Usage</p>
 <pre><code class="language-text">sort by selected fields
 
+Field types:
+  - Column name                  : -k name
+  - Nth field                    : -k 1
+  - field range:
+     - All fields                : -k 1-
+     - From 3rd to 5th column    : -k 3-5
+     - Fields except for the 4th : -k -4
+     - Fields except for 3rd-5th : -k -3--5
+
+Sort types:
+  - Default: alphabetical order  : -k 1-
+  - n      : numeric order       : -k 1:n
+  - N      : natural order       : -k 1:N   (e.g., &quot;a9&quot; should be in front of &quot;a10&quot;)
+  - d      : sort by date        : -k 1:d   (support multiple formats of date and time)
+  - u      : custom levels       : -k 1:u -L levels.txt
+
+Combinations:
+  - All sort types can be used with &quot;r&quot; for reversing the order, e.g., -k 1:nr
+  - Multiple fields can be used, e.g., -k year:n -k name
+
 Usage:
-  csvtk sort [flags]
+  csvtk sort [flags] 
 
 Flags:
   -h, --help             help for sort
   -i, --ignore-case      ignore-case
   -k, --keys strings     keys (multiple values supported). sort type supported, &quot;N&quot; for natural order,
                          &quot;n&quot; for number, &quot;d&quot; for date/time, &quot;u&quot; for user-defined order and &quot;r&quot; for
-                         reverse. e.g., &quot;-k 1&quot; or &quot;-k A:r&quot; or &quot;&quot;-k 1:nr -k 2&quot; (default [1])
+                         reverse. e.g., &quot;-k 1&quot;, &quot;-k 2-&quot;, &quot;-k 3-5:nr&quot;, &quot;-k A:r&quot;, &quot;-k 1:nr -k 2&quot; (default [1-])
   -L, --levels strings   user-defined level file (one level per line, multiple values supported).
-                         format: &lt;field&gt;:&lt;level-file&gt;.  e.g., &quot;-k name:u -L name:level.txt
+                         format: &lt;field&gt;:&lt;level-file&gt;.  e.g., &quot;-k name:u -L name:level.txt&quot;
 </code></pre>
 <p>Examples</p>
 <ul>
@@ -5313,6 +5394,39 @@ NA,Robert,Abel,123
 </code></pre>
 </li>
 <li>
+<p>By a range of columns: <code>csvtk sort -k 1-</code>, <code>csvtk sort -k 3-5</code>, <code>csvtk sort -k -3--5</code>.</p>
+<p>$ csvtk pretty testdata/digitals2.csv 
+  f1    f2     f3     f4    f5 
+  ---   ----   ----   ---   ---
+  foo   bar    xyz    1     0<br />
+  foo   bar2   xyz    1.5   -1 
+  foo   bar2   xyz    3     2<br />
+  foo   bar    xyz    5     3<br />
+  foo   bar2   xyz    N/A   4<br />
+  bar   xyz    abc    NA    2<br />
+  bar   xyz    abc2   1     -1 
+  bar   xyz    abc    2     0<br />
+  bar   xyz    abc    1     5<br />
+  bar   xyz    abc    3     100
+  bar   xyz2   abc3   2     3<br />
+  bar   xyz2   abc3   2     1</p>
+<p>$ csvtk sort testdata/digitals2.csv -k 1-3:N -k 4:n | csvtk pretty 
+  f1    f2     f3     f4    f5 
+  ---   ----   ----   ---   ---
+  bar   xyz    abc    1     5<br />
+  bar   xyz    abc    2     0<br />
+  bar   xyz    abc    3     100
+  bar   xyz    abc    NA    2<br />
+  bar   xyz    abc2   1     -1 
+  bar   xyz2   abc3   2     3<br />
+  bar   xyz2   abc3   2     1<br />
+  foo   bar    xyz    1     0<br />
+  foo   bar    xyz    5     3<br />
+  foo   bar2   xyz    1.5   -1 
+  foo   bar2   xyz    3     2<br />
+  foo   bar2   xyz    N/A   4</p>
+</li>
+<li>
 <p>By <strong><em>user-defined order</em></strong></p>
 <pre><code># user-defined order/level
 $ cat testdata/size_level.txt
@@ -5340,7 +5454,86 @@ id,size
 1,Huge
 </code></pre>
 </li>
+<li>
+<p><strong>By date</strong></p>
+<p>$ csvtk pretty testdata/datesub.csv 
+  ID   Name    In                    Out              <br />
+  --   -----   -------------------   -------------------
+  1    Tom     2023-08-25 11:24:00   2023-08-27 08:33:02
+  2    Sally   2023-08-25 11:28:00   2023-08-26 14:17:35
+  3    Alf     2023-08-26 11:29:00   2023-08-29 20:43:00</p>
+<p>$ cat testdata/datesub.csv  | csvtk sort -k In:d -k Out:dr | csvtk pretty
+  ID   Name    In                    Out              <br />
+  --   -----   -------------------   -------------------
+  1    Tom     2023-08-25 11:24:00   2023-08-27 08:33:02
+  2    Sally   2023-08-25 11:28:00   2023-08-26 14:17:35
+  3    Alf     2023-08-26 11:29:00   2023-08-29 20:43:00</p>
+<p>$ csvtk pretty testdata/date3.csv 
+  day       id 
+  -------   ---
+  Oct. 1    a10
+  Jul. 14   b1 
+  Jun. 12   a9 
+  Jul. 4    b2 
+  Dec. 25   b11</p>
+<p>$ cat testdata/date3.csv | csvtk sort -k 1:d | csvtk pretty 
+  day       id 
+  -------   ---
+  Jun. 12   a9 
+  Jul. 4    b2 
+  Jul. 14   b1 
+  Oct. 1    a10
+  Dec. 25   b11</p>
+</li>
 </ul>
+<h2 id="shuf">shuf</h2>
+<p>Usage</p>
+<pre><code class="language-text">shuffle rows
+
+Usage:
+  csvtk shuf [flags] 
+
+Flags:
+  -h, --help            help for shuf
+  -s, --rand-seed int   rand seed (default 11)
+  -n, --rows int        print first N rows, 0 for all
+
+</code></pre>
+<p>Examples:</p>
+<ol>
+<li>
+<p>Default</p>
+<pre><code>$ csvtk shuf testdata/names.csv | csvtk pretty 
+id   first_name   last_name   username
+--   ----------   ---------   --------
+NA   Robert       Abel        123     
+2    Ken          Thompson    ken     
+4    Robert       Griesemer   gri     
+1    Robert       Thompson    abc     
+11   Rob          Pike        rob
+</code></pre>
+</li>
+<li>
+<p>Change order with a different random seed.</p>
+<pre><code>$ csvtk shuf testdata/names.csv -s 1 | csvtk pretty 
+id   first_name   last_name   username
+--   ----------   ---------   --------
+4    Robert       Griesemer   gri     
+11   Rob          Pike        rob     
+2    Ken          Thompson    ken     
+NA   Robert       Abel        123     
+1    Robert       Thompson    abc
+</code></pre>
+</li>
+<li>
+<p>Only print the first N rows.</p>
+<pre><code>$ csvtk shuf testdata/names.csv -n 1 | csvtk pretty 
+id   first_name   last_name   username
+--   ----------   ---------   --------
+NA   Robert       Abel        123
+</code></pre>
+</li>
+</ol>
 <h2 id="space2tab">space2tab</h2>
 <p>Usage</p>
 <pre><code class="language-text">convert space delimited format to TSV
@@ -5679,6 +5872,7 @@ $ echo -ne "a,a,0\nb,b,0\nc,c,0\na,b,1\na,c,2\nb,c,3\n" \
 Attention:
 
   1. Do not mix use field (column) numbers and names.
+  2. Field range is supported, e.g., &quot;-f 2-5:sum&quot;.
 
 Available operations:
 
@@ -5686,21 +5880,21 @@ Available operations:
   # provided by github.com/gonum/stat and github.com/gonum/floats
   countn (count numeric values), min, max, sum, argmin, argmax,
   mean, stdev, variance, median, q1, q2, q3,
-  entropy (Shannon entropy),
+  entropy (Shannon entropy), 
   prod (product of the elements)
 
   # textual/numeric operations
   count, first, last, rand, unique/uniq, collapse, countunique
 
 Usage:
-  csvtk summary [flags]
+  csvtk summary [flags] 
 
 Flags:
   -w, --decimal-width int    limit floats to N decimal points (default 2)
-  -f, --fields strings       operations on these fields. e.g -f 1:count,1:sum or -f colA:mean. available
-                             operations: argmax, argmin, collapse, count, countn, countuniq,
-                             countunique, entropy, first, last, max, mean, median, min, prod, q1, q2,
-                             q3, rand, stdev, sum, uniq, unique, variance
+  -f, --fields strings       operations on these fields. e.g &quot;-f 1:count,1:sum&quot;, &quot;-f 2-5:sum&quot;, or &quot;-f
+                             colA:mean&quot;. available operations: argmax, argmin, collapse, count, countn,
+                             countuniq, countunique, entropy, first, last, max, mean, median, min, prod,
+                             q1, q2, q3, rand, stdev, sum, uniq, unique, variance
   -g, --groups string        group via fields. e.g -g 1,2 or -g columnA,columnB
   -h, --help                 help for summary
   -i, --ignore-non-numbers   ignore non-numeric values like &quot;NA&quot; or &quot;N/A&quot;
@@ -5752,6 +5946,12 @@ f4:sum,f5:sum
 <p>using fields instead of colname is still supported</p>
 <pre><code>$ cat testdata/digitals2.csv \
     | csvtk summary -f 4:sum,5:sum -i
+f4:sum,f5:sum
+21.50,118.00
+</code></pre>
+<p>and the field range is supported.</p>
+<pre><code>$ cat testdata/digitals2.csv \
+    | csvtk summary -f 4-5:sum -i
 f4:sum,f5:sum
 21.50,118.00
 </code></pre>

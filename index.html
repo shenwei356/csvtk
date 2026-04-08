@@ -759,6 +759,7 @@ It could save you lots of time in (not) writing Python/R scripts.</p>
 <li><strong>Fast</strong>,  <strong>multiple-CPUs supported</strong> (some commands)</li>
 <li><strong>Practical functions provided by N subcommands</strong></li>
 <li><strong>Support STDIN and gzipped input/output file, easy being used in pipe</strong></li>
+<li><strong>Seamless support for xz (.xz), zstd (.zst), Bzip2 (.bz2), LZ4 (.lz4) formats</strong></li>
 <li>Most of the subcommands support <strong><em>unselecting fields</em></strong> and <strong><em>fuzzy fields</em></strong>,
   e.g. <code>-f "-id,-name"</code> for all fields except "id" and "name",
   <code>-F -f "a.*"</code> for all fields with prefix "a.".</li>
@@ -766,7 +767,7 @@ It could save you lots of time in (not) writing Python/R scripts.</p>
 <li><del>Seamless support for data with meta line (e.g., <code>sep=,</code>) of separator declaration used by MS Excel</del></li>
 </ul>
 <h2 id="subcommands">Subcommands</h2>
-<p>56 subcommands in total.</p>
+<p>57 subcommands in total.</p>
 <p><strong>Information</strong></p>
 <ul>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#headers"><code>headers</code></a>: prints headers</li>
@@ -835,6 +836,7 @@ It could save you lots of time in (not) writing Python/R scripts.</p>
 <p><strong>Ordering</strong></p>
 <ul>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#sort"><code>sort</code></a>: sorts by selected fields</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#shuf"><code>shuf</code></a>: shuffle rows</li>
 </ul>
 <p><strong>Ploting</strong></p>
 <ul>
@@ -1083,29 +1085,29 @@ NA   Robert       Abel        123
 
 $ csvtk pretty names.csv -S 3line
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- id   first_name   last_name   username
-----------------------------------------
- 11   Rob          Pike        rob
- 2    Ken          Thompson    ken
- 4    Robert       Griesemer   gri
- 1    Robert       Thompson    abc
- NA   Robert       Abel        123
+ id   first_name   last_name   username 
+────────────────────────────────────────
+ 11   Rob          Pike        rob      
+ 2    Ken          Thompson    ken      
+ 4    Robert       Griesemer   gri      
+ 1    Robert       Thompson    abc      
+ NA   Robert       Abel        123      
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-$ csvtk pretty names.csv -S bold -w 5 -m 1-
-┏━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┓
-┃  id   ┃ first_name ┃ last_name ┃ username ┃
-┣━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
-┃  11   ┃    Rob     ┃   Pike    ┃   rob    ┃
-┣━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
-┃   2   ┃    Ken     ┃ Thompson  ┃   ken    ┃
-┣━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
-┃   4   ┃   Robert   ┃ Griesemer ┃   gri    ┃
-┣━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
-┃   1   ┃   Robert   ┃ Thompson  ┃   abc    ┃
-┣━━━━━━━╋━━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━┫
-┃  NA   ┃   Robert   ┃   Abel    ┃   123    ┃
-┗━━━━━━━┻━━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━┛
+$ csvtk pretty names.csv -S round -w 5 -m 1-
+╭───────┬────────────┬───────────┬──────────╮
+│  id   │ first_name │ last_name │ username │
+├───────┼────────────┼───────────┼──────────┤
+│  11   │    Rob     │   Pike    │   rob    │
+├───────┼────────────┼───────────┼──────────┤
+│   2   │    Ken     │ Thompson  │   ken    │
+├───────┼────────────┼───────────┼──────────┤
+│   4   │   Robert   │ Griesemer │   gri    │
+├───────┼────────────┼───────────┼──────────┤
+│   1   │   Robert   │ Thompson  │   abc    │
+├───────┼────────────┼───────────┼──────────┤
+│  NA   │   Robert   │   Abel    │   123    │
+╰───────┴────────────┴───────────┴──────────╯
 </code></pre>
 </li>
 <li>
