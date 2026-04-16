@@ -409,7 +409,8 @@ func NewCSVWriterChanByConfig(config Config) (chan []string, error) {
 }
 
 var reFields = regexp.MustCompile(`([^,]+)(,[^,]+)*,?`)
-var reDigitals = regexp.MustCompile(`^[\-\+]?[\d\.,]+$|^[\-\+]?[\d\.,]+[eE][\-\+\d]+$`)
+var reDigitals = regexp.MustCompile(`^[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?$`)
+var reDigitalsCapt = regexp.MustCompile(`^([+-]?(\d+(\.\d*)?|\.\d+))([eE][+-]?\d+)?$`)
 var reIntegers = regexp.MustCompile(`^[\-\+\d]+$`)
 var reIntegerRange = regexp.MustCompile(`^([\-\d]+?)\-([\-\d]*?)$`)
 var reIntegerRange2 = regexp.MustCompile(`^(\d+)\-(\d+)$`)

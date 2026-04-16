@@ -23,7 +23,6 @@ package cmd
 import (
 	"encoding/csv"
 	"fmt"
-	"regexp"
 	"runtime"
 	"strconv"
 
@@ -152,5 +151,3 @@ func init() {
 	roundCmd.Flags().IntP("decimal-width", "n", 2, "limit floats to N decimal points")
 
 }
-
-var reDigitalsCapt = regexp.MustCompile(`^([\-\+\d\.,]*)([eE][\-\+\d]+)?$`)

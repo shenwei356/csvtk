@@ -1,3 +1,7 @@
+- [csvtk v0.37.1](https://github.com/shenwei356/csvtk/releases/tag/v0.37.1)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.37.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.37.1)
+    - `csvtk filter/filter2/mutate2/mutate3/sort/summary/round`:
+        - fix wrongly converting `.` to the number zero. [#359](https://github.com/shenwei356/csvtk/issues/359)
 - [csvtk v0.37.0](https://github.com/shenwei356/csvtk/releases/tag/v0.37.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.37.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.37.0)
     - `csvtk`:
