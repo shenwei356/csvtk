@@ -104,7 +104,7 @@ It could save you lots of time in (not) writing Python/R scripts.
 - [`sample`](https://bioinf.shenwei.me/csvtk/usage/#sample): sampling by proportion
 - [`cut`](https://bioinf.shenwei.me/csvtk/usage/#cut): select and arrange fields
 - [`grep`](https://bioinf.shenwei.me/csvtk/usage/#grep): greps data by selected fields with patterns/regular expressions
-- [`uniq`](https://bioinf.shenwei.me/csvtk/usage/#uniq): unique data without sorting
+- [`uniq`](https://bioinf.shenwei.me/csvtk/usage/#uniq): deduplicate records by selected fields without sorting
 - [`freq`](https://bioinf.shenwei.me/csvtk/usage/#freq): frequencies of selected fields
 - [`inter`](https://bioinf.shenwei.me/csvtk/usage/#inter): intersection of multiple files
 - [`filter`](https://bioinf.shenwei.me/csvtk/usage/#filter): filters rows by values of selected fields with arithmetic expression

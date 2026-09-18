@@ -223,7 +223,7 @@ Commands for Set Operation:
   join            join files by selected fields (inner, left and outer join)
   sample          sampling by proportion
   split           split CSV/TSV into multiple files according to column values
-  uniq            unique data without sorting
+  uniq            deduplicate records by selected fields without sorting
 
 Commands for Edit:
   add-header      add column names
@@ -5176,17 +5176,27 @@ cat testdata/pairwise-data.matrix.tsv \
 Usage
 
 ```text
-unique data without sorting
+Deduplicate records by selected fields without sorting.
+
+By default, keep the first record for each key; -n keeps the first N records.
+-d prints the first record for each key occurring more than once; -u prints
+records whose keys occur exactly once. Keys are compared across the entire
+input, including non-adjacent records (unlike GNU uniq).
+
+For this command, -d means --repeated; use --delimiter to set the input delimiter.
 
 Usage:
   csvtk uniq [flags]
 
 Flags:
-  -f, --fields string   select these fields as keys. e.g -f 1,2 or -f columnA,columnB (default "1")
-  -F, --fuzzy-fields    using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
-  -h, --help            help for uniq
-  -i, --ignore-case     ignore case
-  -n, --keep-n int      keep at most N records for a key (default 1)
+      --delimiter string   delimiting character of the input CSV file (default ",")
+  -d, --repeated           only print repeated keys, one first record per key
+  -f, --fields string      select these fields as keys. e.g -f 1,2 or -f columnA,columnB (default "1")
+  -F, --fuzzy-fields       using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
+  -h, --help               help for uniq
+  -i, --ignore-case        ignore case
+  -n, --keep-n int         keep at most N records for a key (default 1)
+  -u, --unique             only print records whose keys occur exactly once
 
 ```
 
@@ -5202,7 +5212,7 @@ Examples:
         1,"Robert","Thompson","abc"
         NA,"Robert","Abel","123"
 
-- unique first_name (it removes rows with duplicated first_name)
+- keep the first record for each first_name
 
         $ cat testdata/names.csv \
             | csvtk uniq -f first_name
@@ -5220,6 +5230,17 @@ Examples:
         Rob
         Ken
         Robert
+
+- select repeated or truly unique first_name values (modes -d and -u cannot be combined with -n)
+
+        $ csvtk uniq -f first_name -d testdata/names.csv
+        id,first_name,last_name,username
+        4,Robert,Griesemer,gri
+
+        $ csvtk uniq -f first_name -u testdata/names.csv
+        id,first_name,last_name,username
+        11,Rob,Pike,rob
+        2,Ken,Thompson,ken
 
 - keep top 2 items for every group.
 

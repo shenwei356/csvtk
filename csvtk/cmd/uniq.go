@@ -33,8 +33,15 @@ var uniqCmd = &cobra.Command{
 	GroupID: "set",
 
 	Use:   "uniq",
-	Short: "unique data without sorting",
-	Long: `unique data without sorting
+	Short: "deduplicate records by selected fields without sorting",
+	Long: `Deduplicate records by selected fields without sorting.
+
+By default, keep the first record for each key; -n keeps the first N records.
+-d prints the first record for each key occurring more than once; -u prints
+records whose keys occur exactly once. Keys are compared across the entire
+input, including non-adjacent records (unlike GNU uniq).
+
+For this command, -d means --repeated; use --delimiter to set the input delimiter.
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -54,13 +61,14 @@ var uniqCmd = &cobra.Command{
 		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
 		ignoreCase := getFlagBool(cmd, "ignore-case")
 		keepN := getFlagPositiveInt(cmd, "keep-n")
+		repeated := getFlagBool(cmd, "repeated")
+		unique := getFlagBool(cmd, "unique")
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
 		defer outfh.Close()
 
 		outOpt := csvOutputOption{QuoteAll: config.QuoteAll}
-
 
 		writer := newCSVOutputWriter(outfh, outOpt)
 		if config.OutTabs || config.Tabs {
@@ -78,6 +86,12 @@ var uniqCmd = &cobra.Command{
 		}()
 
 		keysMaps := make(map[string]int, 10000)
+		type group struct {
+			first []string
+			count int
+		}
+		groups := make(map[string]*group)
+		var keyOrder []string
 
 		file := files[0]
 		csvReader, err := newCSVReaderByConfig(config, file)
@@ -126,6 +140,15 @@ var uniqCmd = &cobra.Command{
 			}
 
 			key = encodeFields(record.Selected, ignoreCase)
+			if repeated || unique {
+				if g, found := groups[key]; found {
+					g.count++
+				} else {
+					groups[key] = &group{first: append([]string(nil), record.All...), count: 1}
+					keyOrder = append(keyOrder, key)
+				}
+				continue
+			}
 			if n, ok = keysMaps[key]; ok {
 				if n >= keepN {
 					continue
@@ -135,6 +158,12 @@ var uniqCmd = &cobra.Command{
 				keysMaps[key] = 1
 			}
 			checkError(writer.Write(record.All))
+		}
+		for _, key = range keyOrder {
+			g := groups[key]
+			if (repeated && g.count > 1) || (unique && g.count == 1) {
+				checkError(writer.Write(g.first))
+			}
 		}
 
 		readerReport(&config, csvReader, file)
@@ -147,5 +176,13 @@ func init() {
 	uniqCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
 	uniqCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
 	uniqCmd.Flags().IntP("keep-n", "n", 1, `keep at most N records for a key`)
+	// Shadow the inherited -d shorthand, but share its --delimiter value so
+	// either position of the long flag still configures the input delimiter.
+	delimiter := *RootCmd.PersistentFlags().Lookup("delimiter")
+	delimiter.Shorthand = ""
+	uniqCmd.Flags().AddFlag(&delimiter)
+	uniqCmd.Flags().BoolP("repeated", "d", false, `only print repeated keys, one first record per key`)
+	uniqCmd.Flags().BoolP("unique", "u", false, `only print records whose keys occur exactly once`)
+	uniqCmd.MarkFlagsMutuallyExclusive("repeated", "unique", "keep-n")
 
 }
