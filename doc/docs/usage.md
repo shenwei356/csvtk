@@ -140,7 +140,7 @@ Usage
 ```text
 csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.37.0
+Version: 0.38.0
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -244,6 +244,8 @@ Commands for Edit:
 Commands for Data Transformation:
   fold            fold multiple values of a field into cells of groups
   gather          gather columns into key-value pairs, like tidyr::gather/pivot_longer
+  long2matrix     convert the long format to a matrix
+  matrix2long     convert a matrix to the long format
   sep             separate column into multiple columns
   spread          spread a key-value pair across multiple columns, like tidyr::spread/pivot_wider
   transpose       transpose CSV data
@@ -264,8 +266,8 @@ Additional Commands:
   version         print version information and check for update
 
 Flags:
-  -C, --comment-char string    lines starting with comment-character will be ignored. if your header
-                               row starts with '#', please assign "-C" another rare symbol, e.g. '$'
+  -C, --comment-char string    lines starting with comment-character will be ignored. if your header row
+                               starts with '#', please assign "-C" another rare symbol, e.g. '$'
                                (default "#")
   -U, --delete-header          do not output header row
   -d, --delimiter string       delimiting character of the input CSV file (default ",")
@@ -285,6 +287,7 @@ Flags:
   -o, --out-file string        out file ("-" for stdout, suffix .gz for gzipped out) (default "-")
   -T, --out-tabs               specifies that the output is delimited with tabs. Overrides "-D"
       --quiet                  be quiet and do not show extra information and warnings
+      --quote-all              quote all output fields, even when not necessary
   -Z, --show-row-number        show row number as the first column, with header row skipped
   -t, --tabs                   specifies that the input CSV file is delimited with tabs. Overrides "-d"
   -V, --version                print version information

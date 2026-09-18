@@ -35,3 +35,6 @@ doc/site
 csvtk/t.*
 csvtk/*.csv
 csvtk/*.tsv
+
+.claude
+.codex

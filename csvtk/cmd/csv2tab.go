@@ -21,7 +21,6 @@
 package cmd
 
 import (
-	"encoding/csv"
 	"runtime"
 
 	"github.com/shenwei356/xopen"
@@ -46,7 +45,10 @@ var csv2tabCmd = &cobra.Command{
 		checkError(err)
 		defer outfh.Close()
 
-		writer := csv.NewWriter(outfh)
+		outOpt := csvOutputOption{QuoteAll: config.QuoteAll}
+
+
+		writer := newCSVOutputWriter(outfh, outOpt)
 		writer.Comma = '\t'
 
 		for _, file := range files {

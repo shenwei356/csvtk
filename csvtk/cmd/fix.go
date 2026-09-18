@@ -21,7 +21,6 @@
 package cmd
 
 import (
-	"encoding/csv"
 	"fmt"
 	"runtime"
 
@@ -70,7 +69,10 @@ How to:
 		checkError(err)
 		defer outfh.Close()
 
-		writer := csv.NewWriter(outfh)
+		outOpt := csvOutputOption{QuoteAll: config.QuoteAll}
+
+
+		writer := newCSVOutputWriter(outfh, outOpt)
 		if config.OutTabs || config.Tabs {
 			if config.OutDelimiter == ',' { // default value, no other value given
 				writer.Comma = '\t'

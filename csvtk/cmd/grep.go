@@ -22,7 +22,6 @@ package cmd
 
 import (
 	"bytes"
-	"encoding/csv"
 	"fmt"
 	"io"
 	"regexp"
@@ -139,20 +138,21 @@ Attentions:
 
 		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
 
-		var writer *csv.Writer
+		var writer *csvOutputWriter
 		var outfhStd io.Writer
 		var outfhFile *xopen.Writer
 		var err error
 		isstdin := isStdin(config.OutFile)
+		outOpt := csvOutputOption{QuoteAll: config.QuoteAll}
 		if isstdin {
 			outfhStd = colorable.NewColorableStdout()
-			writer = csv.NewWriter(outfhStd)
+			writer = newCSVOutputWriter(outfhStd, outOpt)
 		} else {
 			noHighlight = true
 			outfhFile, err = xopen.Wopen(config.OutFile)
 			checkError(err)
 			defer outfhFile.Close()
-			writer = csv.NewWriter(outfhFile)
+			writer = newCSVOutputWriter(outfhFile, outOpt)
 		}
 
 		if config.OutTabs || config.Tabs {

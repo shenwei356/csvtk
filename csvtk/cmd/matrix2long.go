@@ -21,7 +21,6 @@
 package cmd
 
 import (
-	"encoding/csv"
 	"fmt"
 	"math"
 	"runtime"
@@ -93,7 +92,10 @@ Output: a three-column table. E.g.,
 		checkError(err)
 		defer outfh.Close()
 
-		writer := csv.NewWriter(outfh)
+		outOpt := csvOutputOption{QuoteAll: config.QuoteAll}
+
+
+		writer := newCSVOutputWriter(outfh, outOpt)
 		if config.OutTabs || config.Tabs {
 			if config.OutDelimiter == ',' {
 				writer.Comma = '\t'

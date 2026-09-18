@@ -21,7 +21,6 @@
 package cmd
 
 import (
-	"encoding/csv"
 	"fmt"
 	"runtime"
 
@@ -95,7 +94,10 @@ var transposeCmd = &cobra.Command{
 			readerReport(&config, csvReader, file)
 		}
 
-		writer := csv.NewWriter(outfh)
+		outOpt := csvOutputOption{QuoteAll: config.QuoteAll}
+
+
+		writer := newCSVOutputWriter(outfh, outOpt)
 		if config.OutTabs || config.Tabs {
 			if config.OutDelimiter == ',' {
 				writer.Comma = '\t'

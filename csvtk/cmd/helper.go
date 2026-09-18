@@ -22,7 +22,6 @@ package cmd
 
 import (
 	"bufio"
-	"encoding/csv"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -360,6 +359,8 @@ type Config struct {
 	IgnoreEmptyRow   bool
 	IgnoreIllegalRow bool
 
+	QuoteAll bool
+
 	Version bool
 }
 
@@ -430,6 +431,8 @@ func getConfigs(cmd *cobra.Command) Config {
 
 		IgnoreEmptyRow:   getFlagBool(cmd, "ignore-empty-row"),
 		IgnoreIllegalRow: getFlagBool(cmd, "ignore-illegal-row"),
+
+		QuoteAll: getFlagBool(cmd, "quote-all"),
 	}
 }
 
@@ -462,7 +465,10 @@ func NewCSVWriterChanByConfig(config Config) (chan []string, error) {
 
 	ch := make(chan []string, config.NumCPUs)
 
-	writer := csv.NewWriter(outfh)
+	outOpt := csvOutputOption{QuoteAll: config.QuoteAll}
+
+
+	writer := newCSVOutputWriter(outfh, outOpt)
 	if config.OutTabs {
 		writer.Comma = '\t'
 	} else {

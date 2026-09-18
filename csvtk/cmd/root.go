@@ -156,6 +156,7 @@ func init() {
 	RootCmd.PersistentFlags().BoolP("no-header-row", "H", false, `specifies that the input CSV file does not have header row`)
 	RootCmd.PersistentFlags().BoolP("delete-header", "U", false, `do not output header row`)
 	RootCmd.PersistentFlags().StringP("out-file", "o", "-", `out file ("-" for stdout, suffix .gz for gzipped out)`)
+	RootCmd.PersistentFlags().BoolP("quote-all", "", false, `quote all output fields, even when not necessary`)
 
 	RootCmd.PersistentFlags().BoolP("show-row-number", "Z", false, `show row number as the first column, with header row skipped`)
 
