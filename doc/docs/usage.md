@@ -247,7 +247,7 @@ Commands for Data Transformation:
   sep             separate column into multiple columns
   spread          spread a key-value pair across multiple columns, like tidyr::spread/pivot_wider
   transpose       transpose CSV data
-  unfold          unfold multiple values in cells of a field
+  unfold          unfold multiple values in cells of one or more fields
 
 Commands for Ordering:
   shuf            shuffle rows
@@ -4923,7 +4923,10 @@ Examples
 Usage
 
 ```text
-unfold multiple values in cells of a field
+unfold multiple values in cells of one or more fields
+
+When multiple fields are selected, their values are unfolded in parallel.
+Each selected field must have the same number of values in every row.
 
 Example:
 
@@ -4946,11 +4949,18 @@ Example:
     3    e        34
     3    f        34
 
+    $ echo -ne "key,en,es\nfoo,one;two,uno;due\n" \
+        | csvtk unfold -f en,es -s ";" \
+        | csvtk pretty
+    key   en    es
+    foo   one   uno
+    foo   two   due
+
 Usage:
   csvtk unfold [flags]
 
 Flags:
-  -f, --fields string      field to expand, only one field is allowed. type "csvtk unfold -h" for examples
+  -f, --fields string      fields to expand in parallel. type "csvtk unfold -h" for examples
   -h, --help               help for unfold
   -s, --separater string   separater for folded values (default "; ")
 ```

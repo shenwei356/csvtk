@@ -35,8 +35,11 @@ var unfoldCmd = &cobra.Command{
 	GroupID: "transform",
 
 	Use:   "unfold",
-	Short: "unfold multiple values in cells of a field",
-	Long: `unfold multiple values in cells of a field
+	Short: "unfold multiple values in cells of one or more fields",
+	Long: `unfold multiple values in cells of one or more fields
+
+When multiple fields are selected, their values are unfolded in parallel.
+Each selected field must have the same number of values in every row.
 
 Example:
 
@@ -58,6 +61,13 @@ Example:
     3    d        34
     3    e        34
     3    f        34
+
+    $ echo -ne "key,en,es\nfoo,one;two,uno;due\n" \
+        | csvtk unfold -f en,es -s ";" \
+        | csvtk pretty
+    key   en    es
+    foo   one   uno
+    foo   two   due
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -124,10 +134,6 @@ Example:
 
 				if checkFirstLine {
 					checkFirstLine = false
-					if len(record.Fields) > 1 {
-						checkError(fmt.Errorf("should no choosing more than one field"))
-					}
-
 					if !config.NoHeaderRow || record.IsHeaderRow { // do not replace head line
 						if config.NoOutHeader {
 							continue
@@ -137,8 +143,18 @@ Example:
 					}
 				}
 
-				for _, v := range strings.Split(record.Selected[0], separater) {
-					record.All[record.Fields[0]-1] = v
+				values := make([][]string, len(record.Selected))
+				for i, selected := range record.Selected {
+					values[i] = strings.Split(selected, separater)
+					if i > 0 && len(values[i]) != len(values[0]) {
+						checkError(fmt.Errorf("row %d: selected fields have different numbers of values (field %d: %d, field %d: %d)", record.Row, record.Fields[0], len(values[0]), record.Fields[i], len(values[i])))
+					}
+				}
+
+				for j := range values[0] {
+					for i, field := range record.Fields {
+						record.All[field-1] = values[i][j]
+					}
 					checkError(writer.Write(record.All))
 				}
 			}
@@ -151,6 +167,6 @@ Example:
 func init() {
 	RootCmd.AddCommand(unfoldCmd)
 
-	unfoldCmd.Flags().StringP("fields", "f", "", `field to expand, only one field is allowed. type "csvtk unfold -h" for examples`)
+	unfoldCmd.Flags().StringP("fields", "f", "", `fields to expand in parallel. type "csvtk unfold -h" for examples`)
 	unfoldCmd.Flags().StringP("separater", "s", "; ", "separater for folded values")
 }

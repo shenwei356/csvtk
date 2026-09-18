@@ -10,6 +10,8 @@
     - `csvtk cut`:
         - support `-Z/--show-row-number`. [#360](https://github.com/shenwei356/csvtk/issues/360)
         - if there's only one input file, it will be directly outputted.
+    - `csvtk unfold`:
+        - support unfolding multiple fields in parallel. [#363](https://github.com/shenwei356/csvtk/issues/363)
     - `csvtk mutate2`:
         - fix the function `len` for Unicode strings. [#368](https://github.com/shenwei356/csvtk/issues/368)
     - `csvtk join/freq/inter/uniq/summary/fold/spread/replace`:
