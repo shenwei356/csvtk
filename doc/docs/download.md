@@ -576,7 +576,7 @@ All relevant commands have been fixed.
     - fix highlight bug of `csvtk grep`: if the pattern matches multiple parts,
     the text will be wrongly edited.
     - changes: disable highlight when pattern file given.
-    - change the default output of all ploting commands to STDOUT, now you can
+    - change the default output of all plotting commands to STDOUT, now you can
     pipe the image to "display" command of Imagemagic.
 - [csvtk v0.4.1](https://github.com/shenwei356/csvtk/releases/tag/v0.4.1)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.4.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.4.1)

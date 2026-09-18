@@ -74,7 +74,7 @@ Output: a matrix with the same column and row names. E.g.,
 		minValue := getFlagFloat64(cmd, "min-value")
 		maxValue := getFlagFloat64(cmd, "max-value")
 		filterByValue := cmd.Flags().Lookup("min-value").Changed || cmd.Flags().Lookup("max-value").Changed
-		keepNonNumeric := getFlagBool(cmd, "keep-non-numberic")
+		keepNonNumeric := getFlagBool(cmd, "keep-non-numeric")
 		clearBadValues := getFlagBool(cmd, "clear-bad-value")
 
 		na := getFlagString(cmd, "na")
@@ -117,7 +117,7 @@ Output: a matrix with the same column and row names. E.g.,
 		}
 
 		if len(data[0]) != 3 {
-			checkError(fmt.Errorf("three column required, but given %d", len(data[0])))
+			checkError(fmt.Errorf("three columns required, but got %d", len(data[0])))
 		}
 
 		m := make(map[string]map[string]string, 1024)
@@ -131,15 +131,7 @@ Output: a matrix with the same column and row names. E.g.,
 
 			if filterByValue {
 				v1, err = strconv.ParseFloat(v, 64)
-				if err != nil && !keepNonNumeric { // not a number
-					if clearBadValues {
-						v = na
-					} else {
-						continue
-					}
-				}
-
-				if v1 < minValue || v1 > maxValue { // out of range
+				if (err != nil && !keepNonNumeric) || (err == nil && (v1 < minValue || v1 > maxValue)) {
 					if clearBadValues {
 						v = na
 					} else {
@@ -155,6 +147,7 @@ Output: a matrix with the same column and row names. E.g.,
 			} else {
 				if _, ok = m[a][b]; ok {
 					log.Warningf("skip duplicated records: %s", row)
+					continue
 				}
 			}
 			m[a][b] = v
@@ -207,7 +200,7 @@ func init() {
 
 	long2matrix.Flags().Float64P("min-value", "m", -math.MaxFloat64, "only save records with values >= this value")
 	long2matrix.Flags().Float64P("max-value", "M", math.MaxFloat64, "only save records with values <= this value")
-	long2matrix.Flags().BoolP("keep-non-numberic", "N", false, "keep non-numeric values when filter by --min-value or --max-value")
+	long2matrix.Flags().BoolP("keep-non-numeric", "N", false, "keep non-numeric values when filtering by --min-value or --max-value")
 	long2matrix.Flags().BoolP("clear-bad-value", "B", false, "keep records failing to pass the filter but clear the value")
 
 	long2matrix.Flags().StringP("na", "", "", "content for filling NA data")

@@ -24,9 +24,9 @@ import (
 	"encoding/csv"
 	"fmt"
 	"runtime"
+	"slices"
 	"sort"
 	"strconv"
-	"strings"
 
 	"github.com/shenwei356/util/stringutil"
 	"github.com/shenwei356/xopen"
@@ -60,6 +60,7 @@ var freqCmd = &cobra.Command{
 		}
 
 		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
+		ignoreCase := getFlagBool(cmd, "ignore-case")
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
@@ -129,12 +130,19 @@ var freqCmd = &cobra.Command{
 
 			N++
 
-			key = strings.Join(record.Selected, "_shenwei356_")
+			key = encodeFields(record.Selected, ignoreCase)
 			counter[key]++
 			orders[key] = N
 		}
 
 		var items []string
+		var keyFields map[string][]string
+		if sortByFreq || sortByKey {
+			keyFields = make(map[string][]string, len(counter))
+			for key := range counter {
+				keyFields[key] = decodeFields(key)
+			}
+		}
 		if sortByFreq {
 			counts := make([]stringutil.StringCount, len(counter))
 			i := 0
@@ -142,13 +150,17 @@ var freqCmd = &cobra.Command{
 				counts[i] = stringutil.StringCount{Key: key, Count: count}
 				i++
 			}
-			if reverse {
-				sort.Sort(stringutil.ReversedStringCountList{counts})
-			} else {
-				sort.Sort(stringutil.StringCountList(counts))
-			}
+			sort.Slice(counts, func(i, j int) bool {
+				if counts[i].Count != counts[j].Count {
+					if reverse {
+						return counts[i].Count > counts[j].Count
+					}
+					return counts[i].Count < counts[j].Count
+				}
+				return slices.Compare(keyFields[counts[i].Key], keyFields[counts[j].Key]) < 0
+			})
 			for _, count := range counts {
-				items = strings.Split(count.Key, "_shenwei356_")
+				items = slices.Clone(keyFields[count.Key])
 				items = append(items, strconv.Itoa(counter[count.Key]))
 				checkError(writer.Write(items))
 			}
@@ -160,20 +172,22 @@ var freqCmd = &cobra.Command{
 				i++
 			}
 
-			sort.Strings(keys)
+			sort.Slice(keys, func(i, j int) bool {
+				return slices.Compare(keyFields[keys[i]], keyFields[keys[j]]) < 0
+			})
 			if reverse {
 				stringutil.ReverseStringSliceInplace(keys)
 			}
 
 			for _, key := range keys {
-				items = strings.Split(key, "_shenwei356_")
+				items = slices.Clone(keyFields[key])
 				items = append(items, strconv.Itoa(counter[key]))
 				checkError(writer.Write(items))
 			}
 		} else {
 			orderedKey := stringutil.SortCountOfString(orders, false)
 			for _, o := range orderedKey {
-				items = strings.Split(o.Key, "_shenwei356_")
+				items = decodeFields(o.Key)
 				items = append(items, strconv.Itoa(counter[o.Key]))
 				checkError(writer.Write(items))
 			}

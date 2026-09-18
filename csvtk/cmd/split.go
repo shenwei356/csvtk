@@ -21,6 +21,7 @@
 package cmd
 
 import (
+	"crypto/sha256"
 	"encoding/csv"
 	"fmt"
 	"os"
@@ -43,9 +44,11 @@ var splitCmd = &cobra.Command{
 
 Notes:
 
-  1. flag -o/--out-file can specify out directory for splitted files.
+  1. flag -o/--out-file can specify the output directory for split files.
   2. flag -s/--prefix-as-subdir can create subdirectories with prefixes of
      keys of length X, to avoid writing too many files in the output directory.
+  3. Special characters in key values are percent-encoded in output file names.
+     Long encoded names use a hash.
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -89,7 +92,7 @@ Notes:
 				outFilePrefix, outFileSuffix = "stdin", ".csv"
 			}
 		} else {
-			outFilePrefix, outFileSuffix = filepathTrimExtension(file)
+			outFilePrefix, outFileSuffix = filepathTrimExtension(filepath.Base(file))
 		}
 		if gzipped &&
 			!strings.HasSuffix(strings.ToLower(outFileSuffix), ".gz") {
@@ -108,16 +111,20 @@ Notes:
 			outFilePrefix += "-"
 		}
 
+		groupFilenames := make(map[string]string)
+		usedFilenames := make(map[string]struct{})
+		maxKeyLength := 255 - len(outFilePrefix) - len(outFileSuffix)
 		outfile := func(key string) string {
+			name := groupFilenames[key]
 			if subdirLen == 0 {
-				return filepath.Join(outdir, outFilePrefix+key+outFileSuffix)
+				return filepath.Join(outdir, outFilePrefix+name+outFileSuffix)
 			}
 			var subdir string
-			if len(key) > subdirLen {
-				subdir = key[:subdirLen]
-				return filepath.Join(outdir, subdir, outFilePrefix+key+outFileSuffix)
+			if len(name) > subdirLen {
+				subdir = name[:subdirLen]
+				return filepath.Join(outdir, subdir, outFilePrefix+name+outFileSuffix)
 			}
-			return filepath.Join(outdir, outFilePrefix+key+outFileSuffix)
+			return filepath.Join(outdir, outFilePrefix+name+outFileSuffix)
 		}
 
 		var key string
@@ -141,9 +148,35 @@ Notes:
 				}
 			}
 
-			key = strings.Join(record.Selected, "-")
-			if ignoreCase {
-				key = strings.ToLower(key)
+			key = encodeFields(record.Selected, ignoreCase)
+			if _, exists := groupFilenames[key]; !exists {
+				base := encodeFilenameFields(record.Selected, ignoreCase)
+				if len(base) > maxKeyLength {
+					if maxKeyLength < 2 {
+						checkError(fmt.Errorf("output file prefix is too long for encoded key values"))
+					}
+					base = fmt.Sprintf("~%x", sha256.Sum256([]byte(key)))
+					if len(base) > maxKeyLength {
+						base = base[:maxKeyLength]
+					}
+				}
+				name := base
+				for n := 2; ; n++ {
+					if _, used := usedFilenames[strings.ToLower(name)]; !used {
+						break
+					}
+					suffix := fmt.Sprintf("~%d", n)
+					if len(suffix) >= maxKeyLength {
+						checkError(fmt.Errorf("too many output file names for the available key length"))
+					}
+					if len(base)+len(suffix) > maxKeyLength {
+						name = base[:maxKeyLength-len(suffix)] + suffix
+					} else {
+						name = base + suffix
+					}
+				}
+				groupFilenames[key] = name
+				usedFilenames[strings.ToLower(name)] = struct{}{}
 			}
 
 			row := make([]string, len(record.All))
@@ -229,7 +262,7 @@ func init() {
 	splitCmd.Flags().BoolP("out-gzip", "G", false, `force output gzipped file`)
 	splitCmd.Flags().IntP("buf-rows", "b", 100000, `buffering N rows for every group before writing to file`)
 	splitCmd.Flags().IntP("buf-groups", "g", 100, `buffering N groups before writing to file`)
-	splitCmd.Flags().StringP("out-prefix", "p", "", `output file prefix, the default value is the input file. use -p "" to disable outputting prefix`)
+	splitCmd.Flags().StringP("out-prefix", "p", "", `output file prefix, the default value is the input file's base name. use -p "" to disable outputting prefix`)
 	splitCmd.Flags().IntP("prefix-as-subdir", "s", 0, `create subdirectories with prefixes of keys of length X, to avoid writing too many files in the output directory`)
 	splitCmd.Flags().BoolP("force", "", false, `overwrite existing output directory (given by -o).`)
 }

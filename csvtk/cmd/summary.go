@@ -26,6 +26,7 @@ import (
 	"math"
 	"math/rand"
 	"runtime"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -271,7 +272,7 @@ Available operations:
 				}
 			}
 
-			group = strings.Join(record.Selected[numFieldsD:], "_shenwei356_")
+			group = encodeFields(record.Selected[numFieldsD:], false)
 			if _, ok = data[group]; !ok {
 				data[group] = make(map[int][]float64, 1024)
 				scientifc[group] = make(map[int]byte)
@@ -338,49 +339,61 @@ Available operations:
 		}
 
 		groups := make([]string, 0, len(data)+len(data2))
+		groupFields := make(map[string][]string, len(data))
 		for group := range data {
 			groups = append(groups, group)
+			groupFields[group] = decodeFields(group)
 		}
-		sort.Strings(groups)
+		sort.Slice(groups, func(i, j int) bool {
+			return slices.Compare(groupFields[groups[i]], groupFields[groups[j]]) < 0
+		})
 
 		var fu func([]float64) float64
 		var fu2 func([]string) string
+		needOriginalOrder := make(map[int]bool)
+		for f, operations := range statsI {
+			for _, operation := range operations {
+				if operation == "argmin" || operation == "argmax" {
+					needOriginalOrder[f] = true
+				}
+			}
+		}
 		for _, group := range groups {
+			sortedFields := make(map[int][]float64)
 			record := make([]string, 0, colsOut)
 			if len(fieldsG) > 0 {
-				record = append(record, strings.Split(group, "_shenwei356_")...)
+				record = append(record, groupFields[group]...)
 			}
 
 			for i, ss := range statsList {
 				s := ss[1]
 				f := fieldsD[i]
 
-				sorted := false
 				if _, ok = allStats[s]; !ok {
 					fu2 = allStats2[s]
 					record = append(record, fu2(data2[group][f]))
 				} else {
-					needSort := false
-					for _, s := range statsI[f] {
-						if s == "q1" || s == "q2" || s == "q3" || s == "median" {
-							needSort = true
-							break
+					values := data[group][f]
+					if s == "q1" || s == "q2" || s == "q3" || s == "median" {
+						if _, found := sortedFields[f]; !found {
+							if needOriginalOrder[f] {
+								sortedFields[f] = slices.Clone(values)
+							} else {
+								sortedFields[f] = values
+							}
+							sort.Float64s(sortedFields[f])
 						}
+						values = sortedFields[f]
 					}
-					if needSort && !sorted {
-						sort.Float64s(data[group][f])
-						sorted = true
-					}
-
 					fu = allStats[s]
 					if s == "countn" {
-						record = append(record, fmt.Sprintf("%.0f", fu(data[group][f])))
+						record = append(record, fmt.Sprintf("%.0f", fu(values)))
 					} else if scientifc[group][f] == 'E' {
-						record = append(record, fmt.Sprintf(decimalFormatScientificE, fu(data[group][f])))
+						record = append(record, fmt.Sprintf(decimalFormatScientificE, fu(values)))
 					} else if scientifc[group][f] == 'e' {
-						record = append(record, fmt.Sprintf(decimalFormatScientifice, fu(data[group][f])))
+						record = append(record, fmt.Sprintf(decimalFormatScientifice, fu(values)))
 					} else {
-						record = append(record, fmt.Sprintf(decimalFormat, fu(data[group][f])))
+						record = append(record, fmt.Sprintf(decimalFormat, fu(values)))
 					}
 				}
 			}

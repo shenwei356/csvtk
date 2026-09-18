@@ -25,7 +25,6 @@ import (
 	"fmt"
 	"path/filepath"
 	"runtime"
-	"strings"
 
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
@@ -75,7 +74,7 @@ Attention:
 
 		addSuffix := len(suffixes) > 0
 		if addSuffix && len(suffixes) != len(files) {
-			checkError(fmt.Errorf("number of suffxes (%d) should be equal to number of files (%d)", len(suffixes), len(files)))
+			checkError(fmt.Errorf("number of suffixes (%d) should be equal to number of files (%d)", len(suffixes), len(files)))
 		}
 		if filenameAsPrefix && addSuffix {
 			checkError(fmt.Errorf("the flag -p/--prefix-filename and -s/--suffix are incompatible"))
@@ -89,7 +88,7 @@ Attention:
 		ignoreNull := getFlagBool(cmd, "ignore-null")
 
 		if outerJoin && leftJoin {
-			checkError(fmt.Errorf("flag -O/--out-join and -L/--left-join are exclusive"))
+			checkError(fmt.Errorf("flag -O/--outer-join and -L/--left-join are exclusive"))
 		}
 
 		if outerJoin {
@@ -144,6 +143,7 @@ Attention:
 		var keys map[string]bool
 		if outerJoin {
 			keys = make(map[string]bool)
+			expectedKeyFields := 0
 			for i, file := range files {
 				_, fields, _, _, data, err := parseCSVfile(cmd, config,
 					file, allFields[i], fuzzyFields, false, true)
@@ -157,6 +157,14 @@ Attention:
 					}
 					checkError(err)
 				}
+				if len(data) == 0 {
+					continue
+				}
+				if expectedKeyFields == 0 {
+					expectedKeyFields = len(fields)
+				} else if len(fields) != expectedKeyFields {
+					checkError(fmt.Errorf("number of join key fields differs between files: %d and %d", expectedKeyFields, len(fields)))
+				}
 
 				var ok bool
 				for _, record := range data {
@@ -164,13 +172,10 @@ Attention:
 					for i, f := range fields {
 						items[i] = record[f-1]
 					}
-					key = strings.Join(items, "_shenwei356_")
-					if ignoreNull && key == "" { // skip empty cell
+					if ignoreNull && hasEmptyField(items) {
 						continue
 					}
-					if ignoreCase {
-						key = strings.ToLower(key)
-					}
+					key = encodeFields(items, ignoreCase)
 					if _, ok = keys[key]; ok {
 						continue
 					}
@@ -339,13 +344,10 @@ Attention:
 					for i, f := range fields {
 						items[i] = record[f-1]
 					}
-					key = strings.Join(items, "_shenwei356_")
-					if ignoreNull && key == "" { // skip empty cell
+					if ignoreNull && hasEmptyField(items) {
 						continue
 					}
-					if ignoreCase {
-						key = strings.ToLower(key)
-					}
+					key = encodeFields(items, ignoreCase)
 					keys[key] = true
 				}
 
@@ -356,7 +358,7 @@ Attention:
 				for key, ok = range keys {
 					if !ok {
 						record := make([]string, nCols)
-						items2 := strings.Split(key, "_shenwei356_")
+						items2 := decodeFields(key)
 						j := 0
 						for i = range record {
 							if _, ok = fieldsMap[i+1]; ok {
@@ -373,6 +375,10 @@ Attention:
 				continue
 			}
 
+			if len(fields) != len(Fields) {
+				checkError(fmt.Errorf("number of join key fields differs between files: %d and %d", len(Fields), len(fields)))
+			}
+
 			// fieldsMap
 			fieldsMap := make(map[int]struct{}, len(fields))
 			for _, f := range fields {
@@ -385,13 +391,10 @@ Attention:
 				for i, f := range fields {
 					items[i] = record[f-1]
 				}
-				key = strings.Join(items, "_shenwei356_")
-				if ignoreNull && key == "" { // skip empty cell
+				if ignoreNull && hasEmptyField(items) {
 					continue
 				}
-				if ignoreCase {
-					key = strings.ToLower(key)
-				}
+				key = encodeFields(items, ignoreCase)
 				if _, ok = keysMaps[key]; !ok {
 					keysMaps[key] = [][]string{}
 				}
@@ -498,14 +501,13 @@ Attention:
 				for i, f := range Fields {
 					items[i] = record0[f-1]
 				}
-				key = strings.Join(items, "_shenwei356_")
-				if ignoreNull && key == "" { // skip empty cell
-					continue
+				if ignoreNull && hasEmptyField(items) {
+					ok = false
+				} else {
+					key = encodeFields(items, ignoreCase)
+					records, ok = keysMaps[key]
 				}
-				if ignoreCase {
-					key = strings.ToLower(key)
-				}
-				if records, ok = keysMaps[key]; ok {
+				if ok {
 					for _, record2 = range records {
 						record := make([]string, len(record0))
 						copy(record, record0)
@@ -525,6 +527,29 @@ Attention:
 						}
 						Data2 = append(Data2, record)
 					}
+				}
+			}
+			if outerJoin && ignoreNull {
+				for _, source := range data {
+					for j, f := range fields {
+						items[j] = source[f-1]
+					}
+					if !hasEmptyField(items) {
+						continue
+					}
+					record := make([]string, len(Data[0]))
+					for j := range record {
+						record[j] = na
+					}
+					for j, f := range Fields {
+						record[f-1] = source[fields[j]-1]
+					}
+					for f, v := range source {
+						if _, isKey := fieldsMap[f+1]; !isKey {
+							record = append(record, v)
+						}
+					}
+					Data2 = append(Data2, record)
 				}
 			}
 			Data = Data2
@@ -563,7 +588,7 @@ func init() {
 	joinCmd.Flags().BoolP("left-join", "L", false, `left join, equals to -k/--keep-unmatched, exclusive with --outer-join`)
 	joinCmd.Flags().BoolP("outer-join", "O", false, `outer join, exclusive with --left-join`)
 	joinCmd.Flags().StringP("na", "", "", "content for filling NA data")
-	joinCmd.Flags().BoolP("ignore-null", "n", false, "do not match NULL values")
+	joinCmd.Flags().BoolP("ignore-null", "n", false, "do not match rows with an empty key field")
 	joinCmd.Flags().BoolP("prefix-filename", "p", false, "add each filename as a prefix to each colname. if there's no header row, we'll add one")
 	joinCmd.Flags().BoolP("prefix-trim-ext", "e", false, "trim extension when adding filename as colname prefix")
 	joinCmd.Flags().BoolP("only-duplicates", "P", false, "add filenames as colname prefixes or add custom suffixes only for duplicated colnames")

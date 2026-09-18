@@ -24,7 +24,6 @@ import (
 	"encoding/csv"
 	"fmt"
 	"runtime"
-	"strings"
 
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
@@ -127,10 +126,7 @@ Attention:
 					}
 				}
 
-				key = strings.Join(record.Selected, "_shenwei356_")
-				if ignoreCase {
-					key = strings.ToLower(key)
-				}
+				key = encodeFields(record.Selected, ignoreCase)
 
 				if firstFile {
 					keysMaps[key] = false

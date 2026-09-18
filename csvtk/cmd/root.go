@@ -51,14 +51,14 @@ Attention:
   5. Do not mix use field (column) numbers and names to specify columns to operate.
   6. The CSV parser requires all the lines have same numbers of fields/columns.
      Even lines with spaces will cause error.
-     Use '-I/--ignore-illegal-row' to skip these lines if neccessary.
+     Use '-I/--ignore-illegal-row' to skip these lines if necessary.
      You can also use "csvtk fix" to fix files with different numbers of columns in rows.
   7. If double-quotes exist in fields not enclosed with double-quotes, e.g.,
          x,a "b" c,1
      It would report error:
          bare " in non-quoted-field.
      Please switch on the flag "-l" or use "csvtk fix-quotes" to fix it.
-  8. If somes fields have only a double-quote eighter in the beginning or in the end, e.g.,
+  8. If some fields have a double-quote only at the beginning or end, e.g.,
          x,d "e","a" b c,1
      It would report error:
          extraneous or missing " in quoted-field
@@ -128,7 +128,7 @@ func init() {
 		},
 		&cobra.Group{
 			ID:    "plot",
-			Title: "Commands for Ploting:",
+			Title: "Commands for Plotting:",
 		},
 		&cobra.Group{
 			ID:    "misc",
@@ -147,7 +147,7 @@ func init() {
 	RootCmd.PersistentFlags().StringP("delimiter", "d", ",", `delimiting character of the input CSV file`)
 	RootCmd.PersistentFlags().StringP("out-delimiter", "D", ",", `delimiting character of the output CSV file, e.g., -D $'\t' for tab`)
 	// RootCmd.PersistentFlags().StringP("quote-char", "q", `"`, `character used to quote strings in the input CSV file`)
-	RootCmd.PersistentFlags().StringP("comment-char", "C", `#`, "lines starting with commment-character will be ignored. "+
+	RootCmd.PersistentFlags().StringP("comment-char", "C", `#`, "lines starting with comment-character will be ignored. "+
 		`if your header row starts with '#', please assign "-C" another rare symbol, e.g. '$'`)
 	RootCmd.PersistentFlags().BoolP("lazy-quotes", "l", false, `if given, a quote may appear in an unquoted field and a non-doubled quote may appear in a quoted field`)
 

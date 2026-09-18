@@ -235,7 +235,8 @@ Special replacement symbols:
 			var iGroup, gnr, enr, rnr int
 			iGroup = startNum - incrNum
 			rnr = startNum - incrNum
-			groupPre := "_shenwei356__"
+			var groupPre string
+			var hasGroupPre bool
 
 			var fields []int
 
@@ -262,7 +263,7 @@ Special replacement symbols:
 					for i := 0; i < groupCols; i++ {
 						groupColData[i] = record.All[record.Fields[len(record.Fields)-groupCols+i]-1]
 					}
-					group = strings.Join(groupColData, "_shenwei356_")
+					group = encodeFields(groupColData, false)
 
 					if replaceWithGNR {
 						if _, ok = mg[group]; !ok {
@@ -279,10 +280,11 @@ Special replacement symbols:
 						enr = me[group]
 					}
 					if replaceWithRNR {
-						if group != groupPre {
+						if !hasGroupPre || group != groupPre {
 							rnr += incrNum
 						}
 						groupPre = group
+						hasGroupPre = true
 					}
 				} else {
 					fields = record.Fields

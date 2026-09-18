@@ -47,6 +47,83 @@ func checkError(err error) {
 	}
 }
 
+// encodeFields keeps field boundaries unambiguous even when values contain the
+// separator text previously used by commands that group on multiple fields.
+func encodeFields(fields []string, ignoreCase bool) string {
+	var b strings.Builder
+	for _, field := range fields {
+		if ignoreCase {
+			field = strings.ToLower(field)
+		}
+		b.WriteString(strconv.Itoa(len(field)))
+		b.WriteByte(':')
+		b.WriteString(field)
+	}
+	return b.String()
+}
+
+// decodeFields is only called with keys produced by encodeFields.
+func decodeFields(key string) []string {
+	fields := make([]string, 0, 2)
+	for len(key) > 0 {
+		sep := strings.IndexByte(key, ':')
+		if sep < 0 {
+			panic("invalid encoded fields")
+		}
+		n, err := strconv.Atoi(key[:sep])
+		key = key[sep+1:]
+		if err != nil || n < 0 || n > len(key) {
+			panic("invalid encoded fields")
+		}
+		fields = append(fields, key[:n])
+		key = key[n:]
+	}
+	return fields
+}
+
+func hasEmptyField(fields []string) bool {
+	for _, field := range fields {
+		if field == "" {
+			return true
+		}
+	}
+	return false
+}
+
+// encodeFilenameFields escapes bytes that could make field boundaries
+// ambiguous or turn data into path components. Common alphanumeric names stay
+// readable; percent escapes are themselves escaped.
+func encodeFilenameFields(fields []string, ignoreCase bool) string {
+	const hex = "0123456789ABCDEF"
+	var b strings.Builder
+	for i, field := range fields {
+		if i > 0 {
+			b.WriteByte('-')
+		}
+		if ignoreCase {
+			field = strings.ToLower(field)
+		}
+		for j := 0; j < len(field); j++ {
+			c := field[j]
+			if c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || c >= '0' && c <= '9' || c == '_' {
+				b.WriteByte(c)
+			} else {
+				b.WriteByte('%')
+				b.WriteByte(hex[c>>4])
+				b.WriteByte(hex[c&15])
+			}
+		}
+	}
+	name := b.String()
+	// Windows reserves these names even when a file extension is present.
+	upper := strings.ToUpper(name)
+	if upper == "CON" || upper == "PRN" || upper == "AUX" || upper == "NUL" ||
+		len(upper) == 4 && (strings.HasPrefix(upper, "COM") || strings.HasPrefix(upper, "LPT")) && upper[3] >= '1' && upper[3] <= '9' {
+		return "%" + name
+	}
+	return name
+}
+
 func getFileList(args []string, checkFile bool) []string {
 	files := make([]string, 0, 1000)
 	if len(args) == 0 {

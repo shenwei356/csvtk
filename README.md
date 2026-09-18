@@ -147,7 +147,7 @@ It could save you lots of time in (not) writing Python/R scripts.
 - [`sort`](https://bioinf.shenwei.me/csvtk/usage/#sort): sorts by selected fields
 - [`shuf`](https://bioinf.shenwei.me/csvtk/usage/#shuf): shuffle rows
 
-**Ploting**
+**Plotting**
 
 - [`plot`](https://bioinf.shenwei.me/csvtk/usage/#plot) see [usage](http://bioinf.shenwei.me/csvtk/usage/#plot)
     - [`plot hist`](https://bioinf.shenwei.me/csvtk/usage/#plot-hist) histogram
@@ -283,7 +283,7 @@ More [examples](http://shenwei356.github.io/csvtk/usage/) and [tutorial](http://
 5. Do not mix use field (column) numbers and names to specify columns to operate.
 6. The CSV parser requires all the lines have same numbers of fields/columns.
     Even lines with spaces will cause error.
-    Use `-I/--ignore-illegal-row` to skip these lines if neccessary.
+    Use `-I/--ignore-illegal-row` to skip these lines if necessary.
     You can also use "csvtk fix" to fix files with different numbers of columns in rows.
 7. If double-quotes exist in fields not enclosed with double-quotes, e.g.,
 
@@ -295,7 +295,7 @@ More [examples](http://shenwei356.github.io/csvtk/usage/) and [tutorial](http://
 
     Please switch on the flag `-l` or use `csvtk fix-quotes` to fix it.
 
-8. If somes fields have only a double-quote either in the beginning or in the end, e.g.,
+8. If some fields have a double-quote only at the beginning or end, e.g.,
 
         x,d "e","a" b c,1
 

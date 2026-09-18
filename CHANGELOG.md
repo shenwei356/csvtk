@@ -1,5 +1,7 @@
 - [csvtk v0.38.0](https://github.com/shenwei356/csvtk/releases/tag/v0.38.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.38.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.38.0)
+    - `csvtk`:
+        - correct help text, documentation examples, and spelling.
     - new commands:
         - `csvtk long2matrix`: convert the long format to a matrix. [#91](https://github.com/shenwei356/csvtk/issues/91)
         - `csvtk matrix2long`: convert a matrix to the long format.
@@ -8,8 +10,20 @@
     - `csvtk cut`:
         - support `-Z/--show-row-number`. [#360](https://github.com/shenwei356/csvtk/issues/360)
         - if there's only one input file, it will be directly outputted.
-      - `csvtk mutate2`:
+    - `csvtk mutate2`:
         - fix the function `len` for Unicode strings. [#368](https://github.com/shenwei356/csvtk/issues/368)
+    - `csvtk join/freq/inter/uniq/summary/fold/spread/replace`:
+        - fix rare collisions between multi-column keys, when a field contains `_shenwei356_`.
+    - `csvtk join`:
+        - fix `-n` for empty fields in multi-column keys and retain unmatched rows in left and outer joins.
+    - `csvtk freq`:
+        - make `-i` ignore case.
+    - `csvtk summary`:
+        - preserve input row positions for `argmin` and `argmax` when used with quantiles.
+    - `csvtk split`:
+        - encode key values in output filenames to prevent collisions and invalid paths.
+    - `csvtk splitxlsx`:
+        - generate distinct, valid sheet names for keys that produce the same name.
 - [csvtk v0.37.0](https://github.com/shenwei356/csvtk/releases/tag/v0.37.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.37.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.37.0)
     - `csvtk`:

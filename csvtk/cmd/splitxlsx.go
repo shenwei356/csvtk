@@ -26,6 +26,7 @@ import (
 	"runtime"
 	"sort"
 	"strings"
+	"unicode/utf16"
 
 	"github.com/spf13/cobra"
 	"github.com/xuri/excelize/v2"
@@ -39,10 +40,12 @@ var splitXlsxCmd = &cobra.Command{
 	Short: "split XLSX sheet into multiple sheets according to column values",
 	Long: `split XLSX sheet into multiple sheets according to column values
 
-Strengths: Sheet properties are remained unchanged.
-Weakness : Complicated sheet structures are not well supported, e.g.,
+Strength: Sheet properties are preserved.
+Limitation: Complex sheet structures are not fully supported, such as
   1. merged cells
   2. more than one header row
+
+Groups that would have the same sheet name receive distinct numeric suffixes.
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -142,6 +145,11 @@ Weakness : Complicated sheet structures are not well supported, e.g.,
 
 		keysMap := make(map[string]struct{}, 10)
 		keysList := make([]string, 0, 10)
+		keySheetNames := make(map[string]string, 10)
+		usedSheetNames := make(map[string]struct{}, len(sheets))
+		for _, name := range sheets {
+			usedSheetNames[name] = struct{}{}
+		}
 		Keys2RowIndex := make(map[string]map[int]struct{}, 10)
 		rows, err := xlsx.GetRows(sheetName)
 		checkError(err)
@@ -242,18 +250,16 @@ Weakness : Complicated sheet structures are not well supported, e.g.,
 				continue
 			}
 
-			key = strings.Join(items, "-")
-			if ignoreCase {
-				key = strings.ToLower(key)
-			}
-
-			if key == "" {
-				key = "NA"
-			}
+			key = encodeFields(items, ignoreCase)
 
 			if _, ok = keysMap[key]; !ok {
 				keysList = append(keysList, key)
 				keysMap[key] = struct{}{}
+				label := strings.Join(items, "-")
+				if ignoreCase {
+					label = strings.ToLower(label)
+				}
+				keySheetNames[key] = uniqueSheetName(label, usedSheetNames)
 			}
 
 			if _, ok = Keys2RowIndex[key]; !ok {
@@ -266,8 +272,9 @@ Weakness : Complicated sheet structures are not well supported, e.g.,
 		checkError(err)
 
 		for _, key := range keysList {
+			name := keySheetNames[key]
 			// https://github.com/qax-os/excelize/issues/1617
-			to, err := xlsx.NewSheet(key)
+			to, err := xlsx.NewSheet(name)
 			checkError(err)
 			checkError(xlsx.CopySheet(from, to))
 
@@ -276,7 +283,7 @@ Weakness : Complicated sheet structures are not well supported, e.g.,
 					continue
 				}
 				if _, ok = Keys2RowIndex[key][i]; !ok {
-					xlsx.RemoveRow(key, i+1)
+					xlsx.RemoveRow(name, i+1)
 				}
 			}
 		}
@@ -291,6 +298,49 @@ Weakness : Complicated sheet structures are not well supported, e.g.,
 		}
 		checkError(xlsx.SaveAs(config.OutFile))
 	},
+}
+
+func uniqueSheetName(label string, used map[string]struct{}) string {
+	label = strings.Map(func(r rune) rune {
+		if strings.ContainsRune(":\\/?*[]", r) {
+			return '_'
+		}
+		return r
+	}, label)
+	label = strings.Trim(label, "'")
+	if label == "" {
+		label = "NA"
+	}
+	for n := 1; ; n++ {
+		suffix := ""
+		if n > 1 {
+			suffix = fmt.Sprintf("-%d", n)
+		}
+		name := strings.Trim(truncateSheetName(label, 31-len(suffix)), "'") + suffix
+		exists := false
+		for previous := range used {
+			if strings.EqualFold(previous, name) {
+				exists = true
+				break
+			}
+		}
+		if !exists {
+			used[name] = struct{}{}
+			return name
+		}
+	}
+}
+
+func truncateSheetName(name string, limit int) string {
+	units := 0
+	for i, r := range name {
+		n := utf16.RuneLen(r)
+		if units+n > limit {
+			return name[:i]
+		}
+		units += n
+	}
+	return name
 }
 
 func init() {

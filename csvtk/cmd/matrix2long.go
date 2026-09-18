@@ -59,7 +59,7 @@ Output: a three-column table. E.g.,
 		config := getConfigs(cmd)
 
 		if config.NoHeaderRow {
-			checkError(fmt.Errorf("header row should be given needed"))
+			checkError(fmt.Errorf("matrix2long requires a header row"))
 		}
 
 		files := getFileListFromArgsAndFile(cmd, args, true, "infile-list", true)
@@ -79,7 +79,7 @@ Output: a three-column table. E.g.,
 		}
 		minValue := getFlagFloat64(cmd, "min-value")
 		maxValue := getFlagFloat64(cmd, "max-value")
-		keepNonNumeric := getFlagBool(cmd, "keep-non-numberic")
+		keepNonNumeric := getFlagBool(cmd, "keep-non-numeric")
 		filterByValue := cmd.Flags().Lookup("min-value").Changed || cmd.Flags().Lookup("max-value").Changed
 
 		blanks := getFlagStringSlice(cmd, "blanks")
@@ -173,7 +173,7 @@ Output: a three-column table. E.g.,
 						continue
 					}
 
-					if v1 < minValue || v1 > maxValue { // out of range
+					if err == nil && (v1 < minValue || v1 > maxValue) { // out of range
 						continue
 					}
 				}
@@ -195,5 +195,5 @@ func init() {
 
 	matrix2long.Flags().Float64P("min-value", "m", -math.MaxFloat64, "only show records with values >= this value")
 	matrix2long.Flags().Float64P("max-value", "M", math.MaxFloat64, "only show records with values <= this value")
-	matrix2long.Flags().BoolP("keep-non-numberic", "N", false, "keep non-numeric values when filter by --min-value or --max-value")
+	matrix2long.Flags().BoolP("keep-non-numeric", "N", false, "keep non-numeric values when filtering by --min-value or --max-value")
 }

@@ -173,7 +173,7 @@ Example:
 
 			items = record.Selected
 
-			key = strings.Join(items[0:len(items)-1], "_shenwei356_")
+			key = encodeFields(items[0:len(items)-1], false)
 			if _, ok = key2data[key]; !ok {
 				key2data[key] = make([]string, 0, 1)
 			}
@@ -183,7 +183,7 @@ Example:
 
 		orderedKey := stringutil.SortCountOfString(orders, false)
 		for _, o := range orderedKey {
-			items = strings.Split(o.Key, "_shenwei356_")
+			items = decodeFields(o.Key)
 			items = append(items, strings.Join(key2data[o.Key], separater))
 			checkError(writer.Write(items))
 		}

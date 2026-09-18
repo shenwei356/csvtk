@@ -173,7 +173,7 @@ var spreadCmd = &cobra.Command{
 				continue
 			}
 
-			left = strings.Join(items, "_shenwei356_")
+			left = encodeFields(items, false)
 
 			if _, ok = groupOrder[left]; !ok {
 				groupOrder[left] = record.Row
@@ -213,7 +213,7 @@ var spreadCmd = &cobra.Command{
 		var m map[string][]string
 
 		for _, o := range stringutil.SortCountOfString(groupOrder, false) {
-			items = strings.Split(o.Key, "_shenwei356_")
+			items = decodeFields(o.Key)
 			m = data[o.Key]
 
 			for _, key = range keys {

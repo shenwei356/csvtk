@@ -213,10 +213,10 @@ Styles:
 		styles := map[string]*stable.TableStyle{
 			"default": &stable.TableStyle{
 				Name:            "default",
-				LineBelowHeader: stable.LineStyle{"", "-", separator, ""},
+				LineBelowHeader: stable.LineStyle{Begin: "", Hline: "-", Sep: separator, End: ""},
 
-				HeaderRow: stable.RowStyle{"", separator, ""},
-				DataRow:   stable.RowStyle{"", separator, ""},
+				HeaderRow: stable.RowStyle{Begin: "", Sep: separator, End: ""},
+				DataRow:   stable.RowStyle{Begin: "", Sep: separator, End: ""},
 				Padding:   "",
 			},
 			"plain":   stable.StylePlain,
@@ -241,7 +241,7 @@ Styles:
 		if _style, ok := styles[strings.ToLower(style)]; ok {
 			tbl.Style(_style)
 		} else {
-			checkError(fmt.Errorf("style not available: %s. available vaules: default, plain, simple, 3line, grid, light, regular, bold, double", style))
+			checkError(fmt.Errorf("style not available: %s. available values: default, plain, simple, 3line, grid, light, round, regular, bold, double", style))
 		}
 
 		if len(minWidths) == 1 {
@@ -404,7 +404,7 @@ func init() {
 
 	prettyCmd.Flags().StringP("wrap-delimiter", "x", " ", "delimiter for wrapping cells")
 	prettyCmd.Flags().IntP("buf-rows", "n", 1024, "the number of rows to determine the min and max widths (0 for all rows)")
-	prettyCmd.Flags().StringP("style", "S", "", "output syle. available vaules: default, plain, simple, 3line, grid, light, round, bold, double. check https://github.com/shenwei356/stable")
+	prettyCmd.Flags().StringP("style", "S", "", "output style. available values: default, plain, simple, 3line, grid, light, round, regular, bold, double. check https://github.com/shenwei356/stable")
 	prettyCmd.Flags().BoolP("clip", "", false, "clip longer cell instead of wrapping")
 	prettyCmd.Flags().StringP("clip-mark", "", "...", "clip mark")
 }

@@ -24,7 +24,6 @@ import (
 	"encoding/csv"
 	"fmt"
 	"runtime"
-	"strings"
 
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
@@ -124,10 +123,7 @@ var uniqCmd = &cobra.Command{
 				}
 			}
 
-			key = strings.Join(record.Selected, "_shenwei356_")
-			if ignoreCase {
-				key = strings.ToLower(key)
-			}
+			key = encodeFields(record.Selected, ignoreCase)
 			if n, ok = keysMaps[key]; ok {
 				if n >= keepN {
 					continue

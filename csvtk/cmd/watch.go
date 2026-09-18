@@ -204,5 +204,5 @@ func init() {
 	watchCmd.Flags().BoolP("log", "L", false, "log10(x+1) transform numeric values")
 	watchCmd.Flags().BoolP("reset", "R", false, "reset histogram after every report")
 	watchCmd.Flags().BoolP("pass", "x", false, "passthrough mode (forward input to output)")
-	watchCmd.Flags().BoolP("quiet", "Q", false, "supress all plotting to stderr")
+	watchCmd.Flags().BoolP("quiet", "Q", false, "suppress all plotting to stderr")
 }

@@ -46,13 +46,15 @@ for n in $N; do                 # scales
                 headrow=-H
             fi
             tab=""
+            format=csv
             if [ $d == "\t" ]; then
                 tab=-t
+                format=tsv
             fi
             fn() {
-                matrix $(($n*2)) $n $d $h | $app $tab $headrow headers 
+                matrix $(($n*2)) $n $d $h 2>/dev/null | $app $tab $headrow headers
             }
-            run "headers $tab $headrow (n=$n)" fn
+            run "headers_n${n}_${format}_header${h}" fn
             
             if [ $h = true ]; then
                 assert_no_stderr
@@ -77,13 +79,15 @@ for n in $N; do                 # scales
                 headrow=-H
             fi
             tab=""
+            format=csv
             if [ $d == "\t" ]; then
                 tab=-t
+                format=tsv
             fi
             fn() {
                 matrix $(($n*2)) $n $d $h | $app $tab $headrow dim
             }
-            run "dim $tab $headrow (n=$n)" fn
+            run "dim_n${n}_${format}_header${h}" fn
             
             if [ $h = true ]; then
                 assert_no_stderr
@@ -111,13 +115,15 @@ for n in $N; do                 # scales
                     headrow=-H
                 fi
                 tab=""
+                format=csv
                 if [ $d == "\t" ]; then
                     tab=-t
+                    format=tsv
                 fi
                 fn() {
                     matrix $(($n*2)) $n $d $h | $app $tab $headrow cut -f $c
                 }
-                run "cut -f $c $tab $headrow (n=$n)" fn
+                run "cut_fields${c//,/_}_n${n}_${format}_header${h}" fn
                 
                 if [ $n -lt $(echo $c | cut -d "," -f 1) ]; then
                     assert_in_stderr "out of range"
@@ -139,7 +145,7 @@ done
 fn() {
     cat testdata/names.csv | $app cut -f id
 }
-run "cat testdata/names.csv | $app cut -f id" fn
+run cut_names_id fn
 assert_no_stderr
 assert_equal $(cat $STDOUT_FILE | md5sum | cut -d " " -f 1) $(cat testdata/names.csv | $app cut -f 1 | md5sum | cut -d " " -f 1)
 

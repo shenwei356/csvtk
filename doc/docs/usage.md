@@ -12,7 +12,7 @@
 5. Do not mix use field (column) numbers and names to specify columns to operate.
 6. The CSV parser requires all the lines have same numbers of fields/columns.
     Even lines with spaces will cause error.
-    Use `-I/--ignore-illegal-row` to skip these lines if neccessary.
+    Use `-I/--ignore-illegal-row` to skip these lines if necessary.
     You can also use "csvtk fix" to fix files with different numbers of columns in rows.
 7. If double-quotes exist in fields not enclosed with double-quotes, e.g.,
 
@@ -24,7 +24,7 @@
 
     Please switch on the flag `-l` or use `csvtk fix-quotes` to fix it.
 
-8. If somes fields have only a double-quote eighter in the beginning or in the end, e.g.,
+8. If some fields have a double-quote only at the beginning or end, e.g.,
 
         x,d "e","a" b c,1
 
@@ -118,7 +118,7 @@
 - [sort](#sort)
 - [shuf](#shuf)
 
-**Ploting**
+**Plotting**
 
 - [plot](#plot)
 - [plot hist](#plot-hist)
@@ -157,14 +157,14 @@ Attention:
   5. Do not mix use field (column) numbers and names to specify columns to operate.
   6. The CSV parser requires all the lines have same numbers of fields/columns.
      Even lines with spaces will cause error.
-     Use '-I/--ignore-illegal-row' to skip these lines if neccessary.
+     Use '-I/--ignore-illegal-row' to skip these lines if necessary.
      You can also use "csvtk fix" to fix files with different numbers of columns in rows.
   7. If double-quotes exist in fields not enclosed with double-quotes, e.g.,
          x,a "b" c,1
      It would report error:
          bare " in non-quoted-field.
      Please switch on the flag "-l" or use "csvtk fix-quotes" to fix it.
-  8. If somes fields have only a double-quote eighter in the beginning or in the end, e.g.,
+  8. If some fields have a double-quote only at the beginning or end, e.g.,
          x,d "e","a" b c,1
      It would report error:
          extraneous or missing " in quoted-field
@@ -253,7 +253,7 @@ Commands for Ordering:
   shuf            shuffle rows
   sort            sort by selected fields
 
-Commands for Ploting:
+Commands for Plotting:
   plot            plot common figures
 
 Commands for Miscellaneous Functions:
@@ -264,7 +264,7 @@ Additional Commands:
   version         print version information and check for update
 
 Flags:
-  -C, --comment-char string    lines starting with commment-character will be ignored. if your header
+  -C, --comment-char string    lines starting with comment-character will be ignored. if your header
                                row starts with '#', please assign "-C" another rare symbol, e.g. '$'
                                (default "#")
   -U, --delete-header          do not output header row
@@ -2445,7 +2445,7 @@ Flags:
   -F, --fuzzy-fields      using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
   -h, --help              help for join
   -i, --ignore-case       ignore case
-  -n, --ignore-null       do not match NULL values
+  -n, --ignore-null       do not match rows with an empty key field
   -k, --keep-unmatched    keep unmatched data of the first file (left join)
   -L, --left-join         left join, equals to -k/--keep-unmatched, exclusive with --outer-join
       --na string         content for filling NA data
@@ -3091,7 +3091,7 @@ Flags:
       --ylab string             y label text
 
 Global Flags:
-  -C, --comment-char string    lines starting with commment-character will be ignored. if your header
+  -C, --comment-char string    lines starting with comment-character will be ignored. if your header
                                row starts with '#', please assign "-C" another rare symbol, e.g. '$'
                                (default "#")
   -U, --delete-header          do not output header row
@@ -3490,8 +3490,8 @@ Flags:
                                 should be separated by commas. E.g., -w 0,10,10 limits the min widths of
                                 2nd and 3rd columns
   -s, --separator string        fields/columns separator (default "   ")
-  -S, --style string            output syle. available vaules: default, plain, simple, 3line, grid,
-                                light, round, bold, double. check https://github.com/shenwei356/stable
+  -S, --style string            output style. available values: default, plain, simple, 3line, grid,
+                                light, round, regular, bold, double. check https://github.com/shenwei356/stable
   -x, --wrap-delimiter string   delimiter for wrapping cells (default " ")
 
 ```
@@ -4379,9 +4379,11 @@ split CSV/TSV into multiple files according to column values
 
 Notes:
 
-  1. flag -o/--out-file can specify out directory for splitted files.
+  1. flag -o/--out-file can specify the output directory for split files.
   2. flag -s/--prefix-as-subdir can create subdirectories with prefixes of
      keys of length X, to avoid writing too many files in the output directory.
+  3. Special characters in key values are percent-encoded in output file names.
+     Long encoded names use a hash.
 
 Usage:
   csvtk split [flags]
@@ -4396,7 +4398,7 @@ Flags:
   -h, --help                   help for split
   -i, --ignore-case            ignore case
   -G, --out-gzip               force output gzipped file
-  -p, --out-prefix string      output file prefix, the default value is the input file. use -p "" to
+  -p, --out-prefix string      output file prefix, the default value is the input file's base name. use -p "" to
                                disable outputting prefix
   -s, --prefix-as-subdir int   create subdirectories with prefixes of keys of length X, to avoid writing
                                too many files in the output directory
@@ -4442,7 +4444,7 @@ Examples
         names.csv               names-Robert-Abel.csv       names-Robert-Thompson.csv
         names-Ken-Thompson.csv  names-Robert-Griesemer.csv  names-Rob-Pike.csv
 
-1.  flag `-o/--out-file` can specify out directory for splitted files
+1.  flag `-o/--out-file` can specify the output directory for split files
 
         $ seq 10000 | csvtk split -H -o result
         $ ls result/*.csv | wc -l
@@ -4549,10 +4551,12 @@ Usage
 ```text
 split XLSX sheet into multiple sheets according to column values
 
-Strengths: Sheet properties are remained unchanged.
-Weakness : Complicated sheet structures are not well supported, e.g.,
+Strength: Sheet properties are preserved.
+Limitation: Complex sheet structures are not fully supported, such as
   1. merged cells
   2. more than one header row
+
+Groups that would have the same sheet name receive distinct numeric suffixes.
 
 Usage:
   csvtk splitxlsx [flags]
@@ -4956,7 +4960,7 @@ Flags:
 Usage
 
 ```text
-convert a long format to a matrix
+convert the long format to matrix
 
 Input: a three-column table. E.g.,
 
@@ -4976,17 +4980,17 @@ Usage:
   csvtk long2matrix [flags] 
 
 Flags:
-  -B, --clear-bad-value     keep records failing to pass the filter but clear the value
-  -f, --fields strings      the three fields/column to use. e.g., -f 1,2,3 or -f a,b,v (default [1-3])
-  -h, --help                help for long2matrix
-  -N, --keep-non-numberic   keep non-numeric values when filter by --min-value or --max-value
-  -M, --max-value float     only save records with values <= this value (default 1.7976931348623157e+308)
-  -m, --min-value float     only save records with values >= this value (default -1.7976931348623157e+308)
-      --na string           content for filling NA data
+  -B, --clear-bad-value    keep records failing to pass the filter but clear the value
+  -f, --fields strings     the three fields/column to use. e.g., -f 1,2,3 or -f a,b,v (default [1-3])
+  -h, --help               help for long2matrix
+  -N, --keep-non-numeric   keep non-numeric values when filtering by --min-value or --max-value
+  -M, --max-value float    only save records with values <= this value (default 1.7976931348623157e+308)
+  -m, --min-value float    only save records with values >= this value (default -1.7976931348623157e+308)
+      --na string          content for filling NA data
 
 ```
 
-Examles
+Examples
 
 ```
 $ cat testdata/pairwise-data.tsv 
@@ -5016,7 +5020,7 @@ $ cat testdata/pairwise-data.tsv | csvtk long2matrix -Ht \
 │ D1 │      │      │      │ 0.90 │
 ╰────┴──────┴──────┴──────┴──────╯
 
-# keep records failing to pass the filter but clear the value
+# discard records below the minimum; use "." for missing matrix cells
 $ cat testdata/pairwise-data.tsv | csvtk long2matrix -t --min-value 0.9 --na . \
   | csvtk pretty -t -S round
 ╭────┬────┬──────┬──────╮
@@ -5029,7 +5033,7 @@ $ cat testdata/pairwise-data.tsv | csvtk long2matrix -t --min-value 0.9 --na . \
 │ D1 │ .  │ .    │ 0.90 │
 ╰────┴────┴──────┴──────╯
 
-# keep records even for those failed to pass the filter
+# keep records that fail the filter, but clear their values
 $ cat testdata/pairwise-data.tsv | csvtk long2matrix -t --min-value 0.9 --clear-bad-value \
   | csvtk pretty -t -S round
 ╭────┬────┬──────┬────┬──────╮
@@ -5071,16 +5075,16 @@ Usage:
   csvtk matrix2long [flags] 
 
 Flags:
-  -B, --blanks strings      blank values, case ignored (default [,na,n/a,none,null,.])
-  -n, --colnames strings    column names of the output (3 values required). e.g -n a,b,v (default
-                            [col1,col2,value])
-  -h, --help                help for matrix2long
-  -N, --keep-non-numberic   keep non-numeric values when filter by --min-value or --max-value
-  -S, --keep-same-keys      keep records with the same key names
-  -M, --max-value float     only show records with values <= this value (default 1.7976931348623157e+308)
-  -m, --min-value float     only show records with values >= this value (default -1.7976931348623157e+308)
-  -b, --skip-blanks         skip records with blank values (defined by --blanks)
-  -s, --skip-same-keys      skip records with the same key names
+  -B, --blanks strings     blank values, case ignored (default [,na,n/a,none,null,.])
+  -n, --colnames strings   column names of the output (3 values required). e.g -n a,b,v (default
+                           [col1,col2,value])
+  -h, --help               help for matrix2long
+  -N, --keep-non-numeric   keep non-numeric values when filtering by --min-value or --max-value
+  -S, --keep-same-keys     keep records with the same key names
+  -M, --max-value float    only show records with values <= this value (default 1.7976931348623157e+308)
+  -m, --min-value float    only show records with values >= this value (default -1.7976931348623157e+308)
+  -b, --skip-blanks        skip records with blank values (defined by --blanks)
+  -s, --skip-same-keys     skip records with the same key names
 ```
 
 Examples
@@ -5252,7 +5256,7 @@ Flags:
   -L, --log              log10(x+1) transform numeric values
   -x, --pass             passthrough mode (forward input to output)
   -p, --print-freq int   print/report after this many records (-1 for print after EOF) (default -1)
-  -Q, --quiet            supress all plotting to stderr
+  -Q, --quiet            suppress all plotting to stderr
   -R, --reset            reset histogram after every report
 ```
 
