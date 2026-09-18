@@ -22,8 +22,11 @@ package cmd
 
 import (
 	"encoding/csv"
+	"fmt"
+	"path/filepath"
 	"runtime"
 	"strconv"
+	"strings"
 
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
@@ -39,6 +42,9 @@ var concatCmd = &cobra.Command{
 
 If there's only one input file, it will be directly outputted.
 
+With --original-file, append an original_file column containing the basename
+of each input file. Standard input is labeled "-".
+
 If multiple input files are provided, the second and subsequent files will be
 concatenated to the first one by rows. And only columns matching those of the
 first file are kept.
@@ -53,6 +59,7 @@ first file are kept.
 		keepUnmatched := getFlagBool(cmd, "keep-unmatched")
 		UnmatchedRepl := getFlagString(cmd, "unmatched-repl")
 		printLineNumber := config.ShowRowNumber
+		originalFile := getFlagBool(cmd, "original-file")
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
@@ -102,16 +109,29 @@ first file are kept.
 
 				if isHeaderLine {
 					isHeaderLine = false
+					if originalFile {
+						for _, col := range record.All {
+							if strings.EqualFold(col, "original_file") {
+								checkError(fmt.Errorf("input already has an original_file column: %s", file))
+							}
+						}
+					}
 					if config.NoOutHeader {
 						continue
 					}
 					if printLineNumber {
 						unshift(&record.All, "row")
 					}
+					if originalFile {
+						record.All = append(record.All, "original_file")
+					}
 				} else {
 					i++
 					if printLineNumber {
 						unshift(&record.All, strconv.Itoa(record.Row))
+					}
+					if originalFile {
+						record.All = append(record.All, filepath.Base(file))
 					}
 				}
 
@@ -126,6 +146,7 @@ first file are kept.
 		var COLNAMES []string
 		var COLNAME2OLDNAME map[string]string
 		var DF map[string][]string
+		var sourceFiles []string
 		var col string
 		var ok bool
 		var j int
@@ -154,6 +175,16 @@ first file are kept.
 			flag++
 			if flag == 1 {
 				COLNAMES, COLNAME2OLDNAME, DF = colnames, colname2OldName, df
+				if originalFile {
+					for _, col := range COLNAMES {
+						if strings.EqualFold(COLNAME2OLDNAME[col], "original_file") {
+							checkError(fmt.Errorf("input already has an original_file column: %s", file))
+						}
+					}
+					for range DF[COLNAMES[0]] {
+						sourceFiles = append(sourceFiles, filepath.Base(file))
+					}
+				}
 				continue
 			}
 
@@ -168,6 +199,11 @@ first file are kept.
 
 			if !anyMatches && !keepUnmatched {
 				continue
+			}
+			if originalFile {
+				for range df[colnames[0]] {
+					sourceFiles = append(sourceFiles, filepath.Base(file))
+				}
 			}
 
 			for col = range DF {
@@ -196,6 +232,9 @@ first file are kept.
 			if printLineNumber {
 				unshift(&colnames, "row")
 			}
+			if originalFile {
+				colnames = append(colnames, "original_file")
+			}
 
 			checkError(writer.Write(colnames))
 		}
@@ -204,6 +243,9 @@ first file are kept.
 		nrows := len(DF[COLNAMES[0]])
 
 		if printLineNumber {
+			ncols++
+		}
+		if originalFile {
 			ncols++
 		}
 		row := make([]string, ncols)
@@ -218,6 +260,9 @@ first file are kept.
 				row[j] = DF[col][i]
 				j++
 			}
+			if originalFile {
+				row[j] = sourceFiles[i]
+			}
 
 			checkError(writer.Write(row))
 		}
@@ -231,4 +276,5 @@ func init() {
 	concatCmd.Flags().BoolP("ignore-case", "i", false, `ignore case (column name)`)
 	concatCmd.Flags().BoolP("keep-unmatched", "k", false, `keep blanks even if no any data of a file matches`)
 	concatCmd.Flags().StringP("unmatched-repl", "u", "", "replacement for unmatched data")
+	concatCmd.Flags().Bool("original-file", false, "append an original_file column with each input file's basename")
 }

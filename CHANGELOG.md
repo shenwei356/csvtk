@@ -10,6 +10,8 @@
     - `csvtk cut`:
         - support `-Z/--show-row-number`. [#360](https://github.com/shenwei356/csvtk/issues/360)
         - if there's only one input file, it will be directly outputted.
+    - `csvtk concat`:
+        - add `--original-file` to append each row's input filename. [#369](https://github.com/shenwei356/csvtk/issues/369)
     - `csvtk unfold`:
         - support unfolding multiple fields in parallel. [#363](https://github.com/shenwei356/csvtk/issues/363)
     - `csvtk mutate2`:

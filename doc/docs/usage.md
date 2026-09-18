@@ -515,6 +515,9 @@ concatenate CSV/TSV files by rows
 
 If there's only one input file, it will be directly outputted.
 
+With --original-file, append an original_file column containing the basename
+of each input file. Standard input is labeled "-".
+
 If multiple input files are provided, the second and subsequent files will be
 concatenated to the first one by rows. And only columns matching those of the
 first file are kept.
@@ -526,6 +529,7 @@ Flags:
   -h, --help                    help for concat
   -i, --ignore-case             ignore case (column name)
   -k, --keep-unmatched          keep blanks even if no any data of a file matches
+      --original-file           append an original_file column with each input file's basename
   -u, --unmatched-repl string   replacement for unmatched data
 
 ```
@@ -573,6 +577,12 @@ Examples
         3,4,Robert,Griesemer,gri
         4,1,Robert,Thompson,abc
         5,NA,Robert,Abel,123
+
+        # append the input file name to each row
+        $ csvtk concat --original-file names.csv | csvtk head -n 2
+        id,first_name,last_name,username,original_file
+        11,Rob,Pike,rob,names.csv
+        2,Ken,Thompson,ken,names.csv
         
 1. simple one
 
