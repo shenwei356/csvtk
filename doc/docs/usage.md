@@ -4826,6 +4826,7 @@ Flags:
   -g, --groups string        group via fields. e.g -g 1,2 or -g columnA,columnB
   -h, --help                 help for summary
   -i, --ignore-non-numbers   ignore non-numeric values like "NA" or "N/A"
+  -n, --names strings        new names for the summary columns
   -S, --rand-seed int        rand seed for operation "rand" (default 11)
   -s, --separater string     separater for collapsed data (default "; ")
 
@@ -4867,6 +4868,14 @@ Examples
             | csvtk summary -f f4:sum,f5:sum -i
         f4:sum,f5:sum
         21.50,118.00
+
+1. rename summary columns; group columns keep their original names
+
+        $ cat testdata/digitals2.csv \
+            | csvtk summary -g f1 -f f4:sum,f5:mean -n total,average -i
+        f1,total,average
+        bar,11.00,15.71
+        foo,10.50,1.60
 
 1. using fields instead of colname is still supported
 

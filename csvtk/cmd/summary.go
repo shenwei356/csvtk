@@ -89,6 +89,7 @@ Available operations:
 		if len(ops) == 0 {
 			checkError(fmt.Errorf("flag -f (--fields) needed"))
 		}
+		names := getFlagStringSlice(cmd, "names")
 
 		stats := make(map[string][]string)         //  colname -> [stats]
 		statsList := make([][]string, 0, len(ops)) // [ [stats] ]
@@ -164,6 +165,7 @@ Available operations:
 			}
 			numFieldsD = len(fieldsStrsD)
 		}
+		checkError(validateSummaryNames(names, len(statsList)))
 
 		fieldsStrsDMap := make(map[string]struct{}, len(fieldsStrsD))
 		for _, k := range fieldsStrsD {
@@ -184,7 +186,6 @@ Available operations:
 		defer outfh.Close()
 
 		outOpt := csvOutputOption{QuoteAll: config.QuoteAll}
-
 
 		writer := newCSVOutputWriter(outfh, outOpt)
 		if config.OutTabs || config.Tabs {
@@ -334,7 +335,11 @@ Available operations:
 			}
 
 			for i, ss := range statsList {
-				record = append(record, HeaderRow[fieldsD[i]-1]+":"+ss[1])
+				if len(names) > 0 {
+					record = append(record, names[i])
+				} else {
+					record = append(record, HeaderRow[fieldsD[i]-1]+":"+ss[1])
+				}
 			}
 
 			writer.Write(record)
@@ -515,10 +520,18 @@ func init() {
 	RootCmd.AddCommand(summaryCmd)
 	summaryCmd.Flags().StringP("groups", "g", "", `group via fields. e.g -g 1,2 or -g columnA,columnB`)
 	summaryCmd.Flags().StringSliceP("fields", "f", []string{}, fmt.Sprintf(`operations on these fields. e.g "-f 1:count,1:sum", "-f 2-5:sum", or "-f colA:mean". available operations: %s`, strings.Join(allStatsList, ", ")))
+	summaryCmd.Flags().StringSliceP("names", "n", []string{}, "new names for the summary columns")
 	summaryCmd.Flags().BoolP("ignore-non-numbers", "i", false, `ignore non-numeric values like "NA" or "N/A"`)
 	summaryCmd.Flags().IntP("decimal-width", "w", 2, "limit floats to N decimal points")
 	summaryCmd.Flags().StringP("separater", "s", "; ", "separater for collapsed data")
 	summaryCmd.Flags().Int64P("rand-seed", "S", 11, `rand seed for operation "rand"`)
+}
+
+func validateSummaryNames(names []string, n int) error {
+	if len(names) > 0 && len(names) != n {
+		return fmt.Errorf("number of names (%d) should be equal to number of summary columns (%d)", len(names), n)
+	}
+	return nil
 }
 
 func median(sorted []float64) float64 {

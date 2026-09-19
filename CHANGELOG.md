@@ -28,6 +28,7 @@
     - `csvtk freq`:
         - make `-i` ignore case.
     - `csvtk summary`:
+        - add `-n/--names` to rename summary columns. [#273](https://github.com/shenwei356/csvtk/issues/273)
         - preserve input row positions for `argmin` and `argmax` when used with quantiles.
     - `csvtk split`:
         - add `-n/--nlines` to split input into chunks containing up to N records, and `-c/--nchunks` to distribute records among N chunks in a round-robin manner. An input header row is repeated in every chunk. [#122](https://github.com/shenwei356/csvtk/issues/122)

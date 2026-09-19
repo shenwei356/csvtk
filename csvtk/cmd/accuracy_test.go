@@ -277,6 +277,29 @@ func TestSummaryIndexAndMatrixFilters(t *testing.T) {
 	}
 }
 
+func TestSummaryColumnNames(t *testing.T) {
+	input := writeAccuracyInput(t, "summary-names.csv", "group,a,b\nx,1,2\nx,3,4\n")
+	out, _ := runAccuracyCLI(t, "summary", "-g", "1", "-f", "2-3:sum", "-n", "total_a,total_b", input)
+	rows := parseAccuracyCSV(t, out)
+	want := [][]string{{"group", "total_a", "total_b"}, {"x", "4.00", "6.00"}}
+	if !reflect.DeepEqual(rows, want) {
+		t.Fatalf("renamed summary columns: got %q, want %q", rows, want)
+	}
+
+	out, _ = runAccuracyCLI(t, "summary", "-g", "1", "-f", "2-3:sum", input)
+	rows = parseAccuracyCSV(t, out)
+	if !reflect.DeepEqual(rows[0], []string{"group", "a:sum", "b:sum"}) {
+		t.Fatalf("default summary columns changed: %q", rows[0])
+	}
+
+	cmd := exec.Command(os.Args[0], "-test.run=^TestCLIAccuracyHelper$", "--", "summary", "-g", "1", "-f", "2-3:sum", "-n", "only-one", input)
+	cmd.Env = append(os.Environ(), "CSVTK_ACCURACY_HELPER=1")
+	output, err := cmd.CombinedOutput()
+	if err == nil || !strings.Contains(string(output), "number of names (1) should be equal to number of summary columns (2)") {
+		t.Fatalf("expected a summary-name count error, got %v: %s", err, output)
+	}
+}
+
 func TestJoinIgnoreNullInCompositeKey(t *testing.T) {
 	left := writeAccuracyInput(t, "left.csv", "a,b,l\n,x,L\n")
 	right := writeAccuracyInput(t, "right.csv", "a,b,r\n,x,R\n")
