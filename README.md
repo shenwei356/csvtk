@@ -91,6 +91,7 @@ It could save you lots of time in (not) writing Python/R scripts.
 - [`csv2tab`](https://bioinf.shenwei.me/csvtk/usage/#csv2tab): converts CSV to tabular format
 - [`tab2csv`](https://bioinf.shenwei.me/csvtk/usage/#tab2csv): converts tabular format to CSV
 - [`space2tab`](https://bioinf.shenwei.me/csvtk/usage/#space2tab): converts space delimited format to TSV
+- [`csv2html`](https://bioinf.shenwei.me/csvtk/usage/#csv2html): converts CSV/TSV to a standalone responsive HTML table
 - [`csv2md`](https://bioinf.shenwei.me/csvtk/usage/#csv2md): converts CSV to markdown format
 - [`csv2rst`](https://bioinf.shenwei.me/csvtk/usage/#csv2rst): converts CSV to reStructuredText format
 - [`csv2json`](https://bioinf.shenwei.me/csvtk/usage/#csv2json): converts CSV to JSON format

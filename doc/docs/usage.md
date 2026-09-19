@@ -56,6 +56,7 @@
 
 **Format conversion**
 
+- [csv2html](#csv2html)
 - [csv2json](#csv2json)
 - [csv2md](#csv2md)
 - [csv2rst](#csv2rst)
@@ -199,6 +200,7 @@ Commands for Information:
   watch           monitor the specified fields
 
 Format Conversion:
+  csv2html        convert CSV/TSV to a standalone HTML table
   csv2json        convert CSV to JSON format
   csv2md          convert CSV to markdown format
   csv2rst         convert CSV to reStructuredText format
@@ -684,6 +686,46 @@ Examples
 1. Calculate pairwise correlations between field, ignore non-numeric values
 
         csvtk -t corr -i -f Foo,Bar input.tsv
+
+## csv2html
+
+Usage
+
+```text
+convert CSV/TSV to a standalone HTML table
+
+The output contains all CSS needed to display the table. The table uses its
+natural content width and is limited by --table-width.
+
+The value of --table-width can be a number in pixels or a CSS length using
+px, %, em, rem, vw, vh, or ch, for example: 1200, 90%, or 70rem. Percentage
+values greater than 100% are allowed.
+
+Usage:
+  csvtk csv2html [flags]
+
+Flags:
+      --caption string       table caption
+  -h, --help                 help for csv2html
+  -W, --max-width strings    maximum cell width in characters; one value for all columns or comma-separated values for each column (0 for no limit)
+  -w, --min-width strings    minimum cell width in characters; one value for all columns or comma-separated values for each column (0 for no limit)
+      --table-class string   CSS class of the table (default "csvtk-table")
+      --table-width string   maximum table width (a number in pixels or a CSS length with px, %, em, rem, vw, vh, or ch) (default "100%")
+```
+
+Examples
+
+1. Generate a responsive, standalone HTML file:
+
+        csvtk csv2html -o table.html testdata/names.csv
+
+2. Limit the table to 960 pixels and wrap cell contents at 30 characters:
+
+        csvtk csv2html --table-width 960 -W 30 -o table.html testdata/names.csv
+
+3. Set column-specific minimum and maximum widths:
+
+        csvtk csv2html -w 8,15,15,10 -W 12,30,30,20 -o table.html testdata/names.csv
 
 ## csv2json
 

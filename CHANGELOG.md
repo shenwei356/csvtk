@@ -4,6 +4,7 @@
         - correct help text, documentation examples, and spelling.
         - added a new flag `--quote-all` to quote all output fields, even when not necessary. [#297](https://github.com/shenwei356/csvtk/issues/297)
     - new commands:
+        - `csvtk csv2html`: convert CSV/TSV to a standalone responsive HTML table. [#132](https://github.com/shenwei356/csvtk/issues/132)
         - `csvtk long2matrix`: convert the long format to a matrix. [#91](https://github.com/shenwei356/csvtk/issues/91)
         - `csvtk matrix2long`: convert a matrix to the long format.
     - `csvtk filter/filter2/mutate2/mutate3/sort/summary/round`:
