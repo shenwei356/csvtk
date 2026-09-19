@@ -29,6 +29,7 @@
     - `csvtk summary`:
         - preserve input row positions for `argmin` and `argmax` when used with quantiles.
     - `csvtk split`:
+        - add `-n/--nlines` to split input into chunks containing up to N records, and `-c/--nchunks` to distribute records among N chunks in a round-robin manner. An input header row is repeated in every chunk. [#122](https://github.com/shenwei356/csvtk/issues/122)
         - encode key values in output filenames to prevent collisions and invalid paths.
     - `csvtk splitxlsx`:
         - generate distinct, valid sheet names for keys that produce the same name.

@@ -110,7 +110,7 @@ It could save you lots of time in (not) writing Python/R scripts.
 - [`filter`](https://bioinf.shenwei.me/csvtk/usage/#filter): filters rows by values of selected fields with arithmetic expression
 - [`filter2`](https://bioinf.shenwei.me/csvtk/usage/#filter2): filters rows by awk-like arithmetic/string expressions
 - [`join`](https://bioinf.shenwei.me/csvtk/usage/#join): join files by selected fields (inner, left and outer join)
-- [`split`](https://bioinf.shenwei.me/csvtk/usage/#split) splits CSV/TSV into multiple files according to column values
+- [`split`](https://bioinf.shenwei.me/csvtk/usage/#split): splits CSV/TSV by column values, rows per chunk, or number of chunks
 - [`splitxlsx`](https://bioinf.shenwei.me/csvtk/usage/#splitxlsx): splits XLSX sheet into multiple sheets according to column values
 - [`comb`](https://bioinf.shenwei.me/csvtk/usage/#comb): compute combinations of items at every row
 

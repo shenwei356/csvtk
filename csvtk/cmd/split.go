@@ -38,8 +38,8 @@ var splitCmd = &cobra.Command{
 	GroupID: "set",
 
 	Use:   "split",
-	Short: "split CSV/TSV into multiple files according to column values",
-	Long: `split CSV/TSV into multiple files according to column values
+	Short: "split CSV/TSV by column values, rows per chunk, or number of chunks",
+	Long: `split CSV/TSV by column values, rows per chunk, or number of chunks
 
 Notes:
 
@@ -48,6 +48,9 @@ Notes:
      keys of length X, to avoid writing too many files in the output directory.
   3. Special characters in key values are percent-encoded in output file names.
      Long encoded names use a hash.
+  4. flag -n/--nlines splits the input into chunks of up to N records instead of
+     splitting by key values. The header row, when present, is written to every chunk.
+  5. flag -c/--nchunks splits the input into N chunks in a round-robin manner.
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -58,8 +61,17 @@ Notes:
 		}
 		runtime.GOMAXPROCS(config.NumCPUs)
 
+		nlines := getFlagInt(cmd, "nlines")
+		if nlines < 0 || (cmd.Flags().Lookup("nlines").Changed && nlines == 0) {
+			checkError(fmt.Errorf("value of flag --nlines should be greater than 0"))
+		}
+		nchunks := getFlagInt(cmd, "nchunks")
+		if nchunks < 0 || (cmd.Flags().Lookup("nchunks").Changed && nchunks == 0) {
+			checkError(fmt.Errorf("value of flag --nchunks should be greater than 0"))
+		}
+
 		fieldStr := getFlagString(cmd, "fields")
-		if fieldStr == "" {
+		if nlines == 0 && nchunks == 0 && fieldStr == "" {
 			checkError(fmt.Errorf("flag -f (--fields) needed"))
 		}
 
@@ -76,12 +88,16 @@ Notes:
 		csvReader, err := newCSVReaderByConfig(config, file)
 		checkError(err)
 
-		csvReader.Read(ReadOption{
-			FieldStr:    fieldStr,
-			FuzzyFields: fuzzyFields,
+		if nlines > 0 || nchunks > 0 {
+			csvReader.Read(ReadOption{FieldStr: "1-"})
+		} else {
+			csvReader.Read(ReadOption{
+				FieldStr:    fieldStr,
+				FuzzyFields: fuzzyFields,
 
-			DoNotAllowDuplicatedColumnName: true,
-		})
+				DoNotAllowDuplicatedColumnName: true,
+			})
+		}
 
 		var outFilePrefix, outFileSuffix string
 		if isStdin(file) {
@@ -108,6 +124,20 @@ Notes:
 			outFilePrefix = outPrefix
 		} else {
 			outFilePrefix += "-"
+		}
+
+		chunkFile := func(chunk int) string {
+			return filepath.Join(outdir, fmt.Sprintf("%s%d%s", outFilePrefix, chunk, outFileSuffix))
+		}
+		if nlines > 0 {
+			splitByNLines(config, csvReader, nlines, chunkFile)
+			readerReport(&config, csvReader, file)
+			return
+		}
+		if nchunks > 0 {
+			splitByNChunks(config, csvReader, nchunks, chunkFile)
+			readerReport(&config, csvReader, file)
+			return
 		}
 
 		groupFilenames := make(map[string]string)
@@ -264,6 +294,126 @@ func init() {
 	splitCmd.Flags().StringP("out-prefix", "p", "", `output file prefix, the default value is the input file's base name. use -p "" to disable outputting prefix`)
 	splitCmd.Flags().IntP("prefix-as-subdir", "s", 0, `create subdirectories with prefixes of keys of length X, to avoid writing too many files in the output directory`)
 	splitCmd.Flags().BoolP("force", "", false, `overwrite existing output directory (given by -o).`)
+	splitCmd.Flags().IntP("nlines", "n", 0, `split into chunks of up to N records; incompatible with field-grouping options`)
+	splitCmd.Flags().IntP("nchunks", "c", 0, `split into N chunks in a round-robin manner; incompatible with field-grouping options`)
+	splitCmd.MarkFlagsMutuallyExclusive("nlines", "nchunks")
+	for _, flag := range []string{"fields", "fuzzy-fields", "ignore-case", "buf-rows", "buf-groups", "prefix-as-subdir"} {
+		splitCmd.MarkFlagsMutuallyExclusive("nlines", flag)
+		splitCmd.MarkFlagsMutuallyExclusive("nchunks", flag)
+	}
+}
+
+func splitByNLines(config Config, csvReader *CSVReader, nlines int, outfile func(int) string) {
+	var headerRow []string
+	chunk := 1
+	rows := 0
+	checkFirstLine := true
+	var output *splitOutput
+
+	closeChunk := func() {
+		output.close()
+		output = nil
+		chunk++
+		rows = 0
+	}
+
+	for record := range csvReader.Ch {
+		if record.Err != nil {
+			checkError(record.Err)
+		}
+
+		if checkFirstLine {
+			checkFirstLine = false
+			if !config.NoHeaderRow || record.IsHeaderRow {
+				headerRow = append([]string(nil), record.All...)
+				continue
+			}
+		}
+
+		if output == nil {
+			output = newSplitOutput(config, outfile(chunk), headerRow)
+		}
+		checkError(output.writer.Write(record.All))
+		rows++
+		if rows == nlines {
+			closeChunk()
+		}
+	}
+	if output != nil {
+		closeChunk()
+	}
+}
+
+func splitByNChunks(config Config, csvReader *CSVReader, nchunks int, outfile func(int) string) {
+	var headerRow []string
+	outputs := make([]*splitOutput, nchunks)
+	opened := false
+	openOutputs := func() {
+		for i := range outputs {
+			outputs[i] = newSplitOutput(config, outfile(i+1), headerRow)
+		}
+		opened = true
+	}
+
+	row := 0
+	checkFirstLine := true
+	for record := range csvReader.Ch {
+		if record.Err != nil {
+			checkError(record.Err)
+		}
+
+		if checkFirstLine {
+			checkFirstLine = false
+			if !config.NoHeaderRow || record.IsHeaderRow {
+				headerRow = append([]string(nil), record.All...)
+				openOutputs()
+				continue
+			}
+		}
+
+		if !opened {
+			openOutputs()
+		}
+		checkError(outputs[row%nchunks].writer.Write(record.All))
+		row++
+	}
+
+	if !opened {
+		openOutputs()
+	}
+	for _, output := range outputs {
+		output.close()
+	}
+}
+
+type splitOutput struct {
+	fh     *xopen.Writer
+	writer *csvOutputWriter
+}
+
+func newSplitOutput(config Config, outfile string, headerRow []string) *splitOutput {
+	fh, err := xopen.Wopen(outfile)
+	checkError(err)
+	writer := newCSVOutputWriter(fh, csvOutputOption{QuoteAll: config.QuoteAll})
+	if config.OutTabs || config.Tabs {
+		if config.OutDelimiter == ',' {
+			writer.Comma = '\t'
+		} else {
+			writer.Comma = config.OutDelimiter
+		}
+	} else {
+		writer.Comma = config.OutDelimiter
+	}
+	if headerRow != nil {
+		checkError(writer.Write(headerRow))
+	}
+	return &splitOutput{fh: fh, writer: writer}
+}
+
+func (output *splitOutput) close() {
+	output.writer.Flush()
+	checkError(output.writer.Error())
+	checkError(output.fh.Close())
 }
 
 var writtenFiles sync.Map

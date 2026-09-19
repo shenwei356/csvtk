@@ -222,7 +222,7 @@ Commands for Set Operation:
   inter           intersection of multiple files
   join            join files by selected fields (inner, left and outer join)
   sample          sampling by proportion
-  split           split CSV/TSV into multiple files according to column values
+  split           split CSV/TSV by column values, rows per chunk, or number of chunks
   uniq            deduplicate records by selected fields without sorting
 
 Commands for Edit:
@@ -4388,7 +4388,7 @@ Exapmles
 Usage
 
 ```text
-split CSV/TSV into multiple files according to column values
+split CSV/TSV by column values, rows per chunk, or number of chunks
 
 Notes:
 
@@ -4397,6 +4397,9 @@ Notes:
      keys of length X, to avoid writing too many files in the output directory.
   3. Special characters in key values are percent-encoded in output file names.
      Long encoded names use a hash.
+  4. flag -n/--nlines splits the input into chunks of up to N records instead of
+     splitting by key values. The header row, when present, is written to every chunk.
+  5. flag -c/--nchunks splits the input into N chunks in a round-robin manner.
 
 Usage:
   csvtk split [flags]
@@ -4410,6 +4413,9 @@ Flags:
   -F, --fuzzy-fields           using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
   -h, --help                   help for split
   -i, --ignore-case            ignore case
+  -c, --nchunks int            split into N chunks in a round-robin manner; incompatible with
+                               field-grouping options
+  -n, --nlines int             split into chunks of up to N records; incompatible with field-grouping options
   -G, --out-gzip               force output gzipped file
   -p, --out-prefix string      output file prefix, the default value is the input file's base name. use -p "" to
                                disable outputting prefix
@@ -4456,6 +4462,35 @@ Examples
         $ ls *.csv
         names.csv               names-Robert-Abel.csv       names-Robert-Thompson.csv
         names-Ken-Thompson.csv  names-Robert-Griesemer.csv  names-Rob-Pike.csv
+
+1. split into chunks of at most 2 data records. The header row is written to every chunk.
+
+        $ csvtk split names.csv --nlines 2 -o chunks
+        $ ls chunks
+        names-1.csv  names-2.csv  names-3.csv
+
+        $ cat chunks/names-1.csv
+        id,first_name,last_name,username
+        11,Rob,Pike,rob
+        2,Ken,Thompson,ken
+
+        $ cat chunks/names-3.csv
+        id,first_name,last_name,username
+        NA,Robert,Abel,123
+
+1. distribute records among 3 chunks in a round-robin manner.
+
+        $ csvtk split names.csv --nchunks 3 -o chunks
+
+        $ cat chunks/names-1.csv
+        id,first_name,last_name,username
+        11,Rob,Pike,rob
+        1,Robert,Thompson,abc
+
+        $ cat chunks/names-2.csv
+        id,first_name,last_name,username
+        2,Ken,Thompson,ken
+        NA,Robert,Abel,123
 
 1.  flag `-o/--out-file` can specify the output directory for split files
 
