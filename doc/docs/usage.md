@@ -698,7 +698,10 @@ field1,field2,field3,field4
 Usage
 
 ```text
-calculate Pearson correlation between two columns
+calculate Pearson correlation between two columns.
+
+By default, correlations are written to stdout. With --pass, input rows are
+forwarded to stdout and correlations are written to stderr.
 
 Usage:
   csvtk corr [flags]
@@ -708,7 +711,7 @@ Flags:
   -h, --help            help for corr
   -i, --ignore_nan      Ignore non-numeric fields to avoid returning NaN
   -L, --log             Calcute correlations on Log10 transformed data
-  -x, --pass            passthrough mode (forward input to output)
+  -x, --pass            forward input to output and print correlations to stderr
 ``` 
 
 Examples

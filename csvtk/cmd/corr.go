@@ -22,6 +22,7 @@ package cmd
 
 import (
 	"fmt"
+	"io"
 	"math"
 	"os"
 	"runtime"
@@ -38,7 +39,10 @@ var corrCmd = &cobra.Command{
 
 	Use:   "corr",
 	Short: "calculate Pearson correlation between two columns",
-	Long:  "calculate Pearson correlation between two columns",
+	Long: `calculate Pearson correlation between two columns.
+
+By default, correlations are written to stdout. With --pass, input rows are
+forwarded to stdout and correlations are written to stderr.`,
 
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
@@ -53,9 +57,12 @@ var corrCmd = &cobra.Command{
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
 		defer outfh.Close()
+		var reportOut io.Writer = outfh
+		if printPass {
+			reportOut = os.Stderr
+		}
 
 		outOpt := csvOutputOption{QuoteAll: config.QuoteAll}
-
 
 		writer := newCSVOutputWriter(outfh, outOpt)
 		if config.OutTabs || config.Tabs {
@@ -163,10 +170,11 @@ var corrCmd = &cobra.Command{
 				pearsonr := stat.Correlation(d1, d2, nil)
 
 				if hasHeaderRow {
-					fmt.Fprintf(os.Stderr, "%s\t%s\t%.4f\n", HeaderRow[field1-1], HeaderRow[field2-1], pearsonr)
+					_, err = fmt.Fprintf(reportOut, "%s\t%s\t%.4f\n", HeaderRow[field1-1], HeaderRow[field2-1], pearsonr)
 				} else {
-					fmt.Fprintf(os.Stderr, "%d\t%d\t%.4f\n", field1, field2, pearsonr)
+					_, err = fmt.Fprintf(reportOut, "%d\t%d\t%.4f\n", field1, field2, pearsonr)
 				}
+				checkError(err)
 
 			}
 		}
@@ -194,5 +202,5 @@ func init() {
 	corrCmd.Flags().StringP("fields", "f", "", "comma separated fields")
 	corrCmd.Flags().BoolP("ignore_nan", "i", false, "Ignore non-numeric fields to avoid returning NaN")
 	corrCmd.Flags().BoolP("log", "L", false, "Calcute correlations on Log10 transformed data")
-	corrCmd.Flags().BoolP("pass", "x", false, "passthrough mode (forward input to output)")
+	corrCmd.Flags().BoolP("pass", "x", false, "forward input to output and print correlations to stderr")
 }

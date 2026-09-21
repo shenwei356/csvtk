@@ -13,6 +13,8 @@
     - `csvtk cut`:
         - support `-Z/--show-row-number`. [#360](https://github.com/shenwei356/csvtk/issues/360)
         - if there's only one input file, it will be directly outputted.
+    - `csvtk corr`:
+        - write correlations to stdout or `-o` by default; with `--pass`, keep forwarding input to output and writing correlations to stderr. [#370](https://github.com/shenwei356/csvtk/issues/370)
     - `csvtk concat`:
         - add `--original-file` to append each row's input filename. [#369](https://github.com/shenwei356/csvtk/issues/369)
     - `csvtk unfold`:
