@@ -7,6 +7,7 @@
         - `csvtk csv2html`: convert CSV/TSV to a standalone responsive HTML table. [#132](https://github.com/shenwei356/csvtk/issues/132)
         - `csvtk long2matrix`: convert the long format to a matrix. [#91](https://github.com/shenwei356/csvtk/issues/91)
         - `csvtk matrix2long`: convert a matrix to the long format.
+        - `csvtk paste`: paste CSV/TSV files by columns. [#139](https://github.com/shenwei356/csvtk/issues/139)
     - `csvtk filter/filter2/mutate2/mutate3/sort/summary/round`:
         - fix wrongly converting `.` to the number zero. [#359](https://github.com/shenwei356/csvtk/issues/359)
     - `csvtk cut`:

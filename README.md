@@ -102,6 +102,7 @@ It could save you lots of time in (not) writing Python/R scripts.
 
 - [`head`](https://bioinf.shenwei.me/csvtk/usage/#head): prints first N records
 - [`concat`](https://bioinf.shenwei.me/csvtk/usage/#concat): concatenates CSV/TSV files by rows
+- [`paste`](https://bioinf.shenwei.me/csvtk/usage/#paste): pastes CSV/TSV files by columns
 - [`sample`](https://bioinf.shenwei.me/csvtk/usage/#sample): sampling by proportion
 - [`cut`](https://bioinf.shenwei.me/csvtk/usage/#cut): select and arrange fields
 - [`grep`](https://bioinf.shenwei.me/csvtk/usage/#grep): greps data by selected fields with patterns/regular expressions

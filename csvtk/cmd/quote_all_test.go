@@ -30,6 +30,7 @@ func TestQuoteAllAcrossCSVCommands(t *testing.T) {
 	}{
 		{"head", []string{"head", "--quote-all", "-n", "1", input}, "\"a\",\"b\"\n\"1\",\"2\"\n"},
 		{"concat", []string{"concat", "--quote-all", input, input}, "\"a\",\"b\"\n\"1\",\"2\"\n\"1\",\"2\"\n"},
+		{"paste", []string{"paste", "--quote-all", input, input}, "\"a\",\"b\",\"a\",\"b\"\n\"1\",\"2\",\"1\",\"2\"\n"},
 		{"custom delimiter", []string{"-D", ";", "head", "--quote-all", "-n", "1", input}, "\"a\";\"b\"\n\"1\";\"2\"\n"},
 		{"tab output", []string{"-T", "head", "--quote-all", "-n", "1", input}, "\"a\"\t\"b\"\n\"1\"\t\"2\"\n"},
 	}

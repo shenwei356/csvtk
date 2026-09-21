@@ -73,6 +73,7 @@
 
 - [comb](#comb)
 - [concat](#concat)
+- [paste](#paste)
 - [cut](#cut)
 - [filter](#filter)
 - [filter2](#filter2)
@@ -223,6 +224,7 @@ Commands for Set Operation:
   head            print first N records
   inter           intersection of multiple files
   join            join files by selected fields (inner, left and outer join)
+  paste           paste CSV/TSV files by columns
   sample          sampling by proportion
   split           split CSV/TSV by column values, rows per chunk, or number of chunks
   uniq            deduplicate records by selected fields without sorting
@@ -662,6 +664,34 @@ Examples
         NA    NA           NA           NA         NA
         NA    NA           NA           NA         NA
         NA    NA           NA           NA         NA
+
+## paste
+
+Usage
+
+```text
+paste CSV/TSV files by columns
+
+Rows are combined by their position in each file. Shorter inputs are padded
+with empty fields to match the longest input. Only one input file may be read
+from stdin.
+
+Usage:
+  csvtk paste [flags]
+
+Flags:
+  -h, --help   help for paste
+```
+
+Example
+
+```text
+$ csvtk paste file1.csv file2.csv
+field1,field2,field3,field4
+0,a,0,a
+1,b,1,b
+3,a,3,a
+```
 
 ## corr
 
