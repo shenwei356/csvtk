@@ -15,6 +15,8 @@
         - if there's only one input file, it will be directly outputted.
     - `csvtk corr`:
         - write correlations to stdout or `-o` by default; with `--pass`, keep forwarding input to output and writing correlations to stderr. [#370](https://github.com/shenwei356/csvtk/issues/370)
+    - `csvtk sort`:
+        - support sorting by Unicode text length with `-k field:l` and reverse order with `-k field:lr`. [#357](https://github.com/shenwei356/csvtk/issues/357)
     - `csvtk concat`:
         - add `--original-file` to append each row's input filename. [#369](https://github.com/shenwei356/csvtk/issues/369)
     - `csvtk unfold`:

@@ -135,6 +135,8 @@ github.com/shenwei356/stable v0.3.0 h1:xdhOjC4dljGgOehEyaA/+RkieDGQgQeT0Hw/MCI4W
 github.com/shenwei356/stable v0.3.0/go.mod h1:kuH6vvTNoopJVPCFQSYhw13WHB3xhRaekIZOp4IcQ1Y=
 github.com/shenwei356/util v0.5.5 h1:Po1sn2umqYquemD5g28OCZGauhamizBEAPgn5I0fh6I=
 github.com/shenwei356/util v0.5.5/go.mod h1:qwkts4z04AWdUHy2hHiLDKixYmx5kfMV9qWHeYwY/lg=
+github.com/shenwei356/util v0.5.7 h1:86BsS2cOr86wO6Cahu//TBsfUoKWYwOMiUfvMc6J0RQ=
+github.com/shenwei356/util v0.5.7/go.mod h1:srQnMZk3ntd9AidKyEdsROEazlEn+dI8ZI0/5EQznw4=
 github.com/shenwei356/xopen v0.4.0 h1:5B9+DmHw6bbJjYg8upFVD3S7t0AekGnat3pxo03weY4=
 github.com/shenwei356/xopen v0.4.0/go.mod h1:nD6QKJWJHO66R7KRa5hvgDETkOiR4/GhsM0Qsp83qVM=
 github.com/spf13/cobra v1.8.0 h1:7aJaZx1B85qltLMc546zn58BxxfZdR/W22ej9CFoEf0=

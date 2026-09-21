@@ -56,6 +56,7 @@ Sort types:
   - n      : numeric order       : -k 1:n
   - N      : natural order       : -k 1:N   (e.g., "a9" should be in front of "a10")
   - d      : sort by date        : -k 1:d   (support multiple formats of date and time)
+  - l      : Unicode text length : -k 1:l
   - u      : custom levels       : -k 1:u -L levels.txt
 
 Combinations:
@@ -141,6 +142,10 @@ Combinations:
 					sortTypes = append(sortTypes, sortType{FieldStr: _key, Date: true, Reverse: false})
 				case "dr":
 					sortTypes = append(sortTypes, sortType{FieldStr: _key, Date: true, Reverse: true})
+				case "l":
+					sortTypes = append(sortTypes, sortType{FieldStr: _key, Length: true})
+				case "lr", "rl":
+					sortTypes = append(sortTypes, sortType{FieldStr: _key, Length: true, Reverse: true})
 				case "u":
 					if _, ok := levelsMap[_key]; !ok {
 						checkError(fmt.Errorf("level file not provided for field: %s", _key))
@@ -169,7 +174,6 @@ Combinations:
 		defer outfh.Close()
 
 		outOpt := csvOutputOption{QuoteAll: config.QuoteAll}
-
 
 		writer := newCSVOutputWriter(outfh, outOpt)
 		if config.OutTabs || config.Tabs {
@@ -322,6 +326,7 @@ Combinations:
 						Natural:     t.Natural,
 						Number:      t.Number,
 						Date:        t.Date,
+						Length:      t.Length,
 						Reverse:     t.Reverse,
 						UserDefined: t.UserDefined,
 						Levels:      t.Levels,
@@ -351,6 +356,7 @@ type sortType struct {
 	Natural     bool
 	Number      bool
 	Date        bool
+	Length      bool
 	Reverse     bool
 	UserDefined bool
 	Levels      map[string]int
@@ -358,7 +364,7 @@ type sortType struct {
 
 func init() {
 	RootCmd.AddCommand(sortCmd)
-	sortCmd.Flags().StringSliceP("keys", "k", []string{"1-"}, `keys (multiple values supported). sort type supported, "N" for natural order, "n" for number, "d" for date/time, "u" for user-defined order and "r" for reverse. e.g., "-k 1", "-k 2-", "-k 3-5:nr", "-k A:r", "-k 1:nr -k 2"`)
+	sortCmd.Flags().StringSliceP("keys", "k", []string{"1-"}, `keys (multiple values supported). sort type supported, "N" for natural order, "n" for number, "d" for date/time, "l" for Unicode text length, "u" for user-defined order and "r" for reverse. e.g., "-k 1", "-k 2-", "-k 3-5:nr", "-k A:lr", "-k 1:nr -k 2"`)
 	sortCmd.Flags().StringSliceP("levels", "L", []string{}, `user-defined level file (one level per line, multiple values supported). format: <field>:<level-file>.  e.g., "-k name:u -L name:level.txt"`)
 	sortCmd.Flags().BoolP("ignore-case", "i", false, "ignore-case")
 }

@@ -4167,6 +4167,7 @@ Sort types:
   - n      : numeric order       : -k 1:n
   - N      : natural order       : -k 1:N   (e.g., "a9" should be in front of "a10")
   - d      : sort by date        : -k 1:d   (support multiple formats of date and time)
+  - l      : Unicode text length : -k 1:l
   - u      : custom levels       : -k 1:u -L levels.txt
 
 Combinations:
@@ -4180,13 +4181,19 @@ Flags:
   -h, --help             help for sort
   -i, --ignore-case      ignore-case
   -k, --keys strings     keys (multiple values supported). sort type supported, "N" for natural order,
-                         "n" for number, "d" for date/time, "u" for user-defined order and "r" for
-                         reverse. e.g., "-k 1", "-k 2-", "-k 3-5:nr", "-k A:r", "-k 1:nr -k 2" (default [1-])
+                         "n" for number, "d" for date/time, "l" for Unicode text length, "u" for
+                         user-defined order and "r" for reverse. e.g., "-k 1", "-k 2-", "-k 3-5:nr",
+                         "-k A:lr", "-k 1:nr -k 2" (default [1-])
   -L, --levels strings   user-defined level file (one level per line, multiple values supported).
                          format: <field>:<level-file>.  e.g., "-k name:u -L name:level.txt"
 ```
 
 Examples
+
+- To inspect the longest values in one column, sort by Unicode text length in
+  reverse order, then keep the first three records:
+
+        csvtk sort -k last_name:lr testdata/names.csv | csvtk head -n 3
 
 - data
 

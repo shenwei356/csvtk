@@ -1,6 +1,6 @@
 module github.com/shenwei356/csvtk
 
-go 1.25.5
+go 1.25.14
 
 require (
 	github.com/araddon/dateparse v0.0.0-20210429162001-6b43995a97de
@@ -18,7 +18,7 @@ require (
 	github.com/shenwei356/go-logging v0.0.0-20171012171522-c6b9702d88ba
 	github.com/shenwei356/natsort v0.0.0-20220117010048-580176ad49fb
 	github.com/shenwei356/stable v0.3.0
-	github.com/shenwei356/util v0.5.5
+	github.com/shenwei356/util v0.5.7
 	github.com/shenwei356/xopen v0.4.0
 	github.com/spf13/cobra v1.8.0
 	github.com/tatsushid/go-prettytable v0.0.0-20141013043238-ed2d14c29939
