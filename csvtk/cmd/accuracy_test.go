@@ -318,3 +318,42 @@ func TestJoinIgnoreNullInCompositeKey(t *testing.T) {
 		t.Fatalf("outer join lost an unmatched empty-key row: %q", rows)
 	}
 }
+
+func TestJoinKeepsColumnsFromHeaderOnlyInput(t *testing.T) {
+	left := writeAccuracyInput(t, "left.csv", "f,c1\n1,2\n")
+	right := writeAccuracyInput(t, "right.csv", "f,c2\n3,4\n")
+	empty := writeAccuracyInput(t, "empty.csv", "f,c3\n")
+
+	out, _ := runAccuracyCLI(t, "join", "-O", "-f", "f", "--na", "NA", left, right, empty)
+	rows := parseAccuracyCSV(t, out)
+	want := [][]string{
+		{"f", "c1", "c2", "c3"},
+		{"1", "2", "NA", "NA"},
+		{"3", "NA", "4", "NA"},
+	}
+	if !reflect.DeepEqual(rows, want) {
+		t.Fatalf("outer join dropped columns from header-only input: got %q, want %q", rows, want)
+	}
+
+	out, _ = runAccuracyCLI(t, "join", "-O", "-f", "f", "--na", "NA", empty, left)
+	rows = parseAccuracyCSV(t, out)
+	want = [][]string{
+		{"f", "c3", "c1"},
+		{"1", "NA", "2"},
+	}
+	if !reflect.DeepEqual(rows, want) {
+		t.Fatalf("outer join mishandled a leading header-only input: got %q, want %q", rows, want)
+	}
+
+	emptyComposite := writeAccuracyInput(t, "empty-composite.csv", "a,b,c0\n")
+	nullKey := writeAccuracyInput(t, "null-key.csv", "a,b,c1\n,x,R\n")
+	out, _ = runAccuracyCLI(t, "join", "-O", "-n", "-f", "a,b", "--na", "NA", emptyComposite, nullKey)
+	rows = parseAccuracyCSV(t, out)
+	want = [][]string{
+		{"a", "b", "c0", "c1"},
+		{"", "x", "NA", "R"},
+	}
+	if !reflect.DeepEqual(rows, want) {
+		t.Fatalf("outer join lost a null-key row after a header-only input: got %q, want %q", rows, want)
+	}
+}

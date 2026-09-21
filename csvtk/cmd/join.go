@@ -108,7 +108,6 @@ Attention:
 
 		outOpt := csvOutputOption{QuoteAll: config.QuoteAll}
 
-
 		writer := newCSVOutputWriter(outfh, outOpt)
 		if config.OutTabs || config.Tabs {
 			if config.OutDelimiter == ',' {
@@ -147,7 +146,7 @@ Attention:
 			keys = make(map[string]bool)
 			expectedKeyFields := 0
 			for i, file := range files {
-				_, fields, _, _, data, err := parseCSVfile(cmd, config,
+				_, fields, _, headerRow, data, err := parseCSVfile(cmd, config,
 					file, allFields[i], fuzzyFields, false, true)
 
 				if err != nil {
@@ -159,7 +158,7 @@ Attention:
 					}
 					checkError(err)
 				}
-				if len(data) == 0 {
+				if len(data) == 0 && len(headerRow) == 0 {
 					continue
 				}
 				if expectedKeyFields == 0 {
@@ -207,7 +206,13 @@ Attention:
 				if config.Verbose {
 					log.Warningf("no data found in file: %s", file)
 				}
-				continue
+				if len(headerRow) == 0 || !outerJoin {
+					continue
+				}
+			}
+			nCols := len(headerRow)
+			if len(data) > 0 {
+				nCols = len(data[0])
 			}
 			if firstFile {
 				HeaderRow, Data, Fields = headerRow, data, fields
@@ -339,10 +344,8 @@ Attention:
 					continue
 				}
 
-				var nCols int
 				items = make([]string, len(fields))
 				for _, record := range Data {
-					nCols = len(record)
 					for i, f := range fields {
 						items[i] = record[f-1]
 					}
@@ -403,6 +406,10 @@ Attention:
 				keysMaps[key] = append(keysMaps[key], record)
 			}
 
+			leftCols := len(HeaderRow)
+			if len(Data) > 0 {
+				leftCols = len(Data[0])
+			}
 			Data2 := [][]string{}
 			var colname string
 			if withHeaderRow {
@@ -524,7 +531,7 @@ Attention:
 					if keepUnmatched {
 						record := make([]string, len(record0))
 						copy(record, record0)
-						for i = 1; i <= len(data[0])-len(fieldsMap); i++ {
+						for i = 1; i <= nCols-len(fieldsMap); i++ {
 							record = append(record, na)
 						}
 						Data2 = append(Data2, record)
@@ -539,7 +546,7 @@ Attention:
 					if !hasEmptyField(items) {
 						continue
 					}
-					record := make([]string, len(Data[0]))
+					record := make([]string, leftCols)
 					for j := range record {
 						record[j] = na
 					}

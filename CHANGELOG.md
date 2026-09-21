@@ -22,6 +22,7 @@
         - fix rare collisions between multi-column keys, when a field contains `_shenwei356_`.
     - `csvtk join`:
         - fix `-n` for empty fields in multi-column keys and retain unmatched rows in left and outer joins.
+        - retain columns from header-only input files in outer joins. [#266](https://github.com/shenwei356/csvtk/issues/266)
     - `csvtk uniq`:
         - add `-d/--repeated` to print one record per repeated key and `-u/--unique` to print records whose keys occur exactly once. [#133](https://github.com/shenwei356/csvtk/issues/133)
         - use `--delimiter` instead of `-d` to set the input delimiter for this command.
