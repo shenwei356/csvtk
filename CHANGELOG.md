@@ -21,6 +21,8 @@
         - add `--original-file` to append each row's input filename. [#369](https://github.com/shenwei356/csvtk/issues/369)
     - `csvtk unfold`:
         - support unfolding multiple fields in parallel. [#363](https://github.com/shenwei356/csvtk/issues/363)
+    - `csvtk fold`:
+        - support folding multiple value fields in parallel. [#320](https://github.com/shenwei356/csvtk/issues/320) [#363](https://github.com/shenwei356/csvtk/issues/363)
     - `csvtk mutate2`:
         - fix the function `len` for Unicode strings. [#368](https://github.com/shenwei356/csvtk/issues/368)
     - `csvtk join/freq/inter/uniq/summary/fold/spread/replace`:

@@ -98,7 +98,6 @@ var sepCmd = &cobra.Command{
 
 		outOpt := csvOutputOption{QuoteAll: config.QuoteAll}
 
-
 		writer := newCSVOutputWriter(outfh, outOpt)
 		if config.OutTabs || config.Tabs {
 			if config.OutDelimiter == ',' {
@@ -251,7 +250,7 @@ var sepCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(sepCmd)
-	sepCmd.Flags().StringP("fields", "f", "1", `select only these fields. e.g -f 1,2 or -f columnA,columnB`)
+	sepCmd.Flags().StringP("fields", "f", "1", `field to separate, e.g. -f 1 or -f columnA`)
 	sepCmd.Flags().StringP("sep", "s", "", `separator`)
 	sepCmd.Flags().BoolP("use-regexp", "r", false, `separator is a regular expression`)
 	sepCmd.Flags().BoolP("ignore-case", "i", false, "ignore case")

@@ -36,17 +36,18 @@ var collapseCmd = &cobra.Command{
 
 	Use:     "fold",
 	Aliases: []string{"collapse"},
-	Short:   "fold multiple values of a field into cells of groups",
-	Long: `fold multiple values of a field into cells of groups
+	Short:   "fold multiple values of one or more fields into cells of groups",
+	Long: `fold multiple values of one or more fields into cells of groups
 
 Attention:
 
     Only grouping field and value fields are outputted.
+    Multiple value fields are folded in parallel, preserving their row alignment.
 
 Example:
 
     $ echo -ne "id,value,meta\n1,a,12\n1,b,34\n2,c,56\n2,d,78\n" \
-        | csvtk pretty
+        | csvtk pretty -S plain
     id   value   meta
     1    a       12
     1    b       34
@@ -55,7 +56,7 @@ Example:
 
     $ echo -ne "id,value,meta\n1,a,12\n1,b,34\n2,c,56\n2,d,78\n" \
         | csvtk fold -f id -v value -s ";" \
-        | csvtk pretty
+        | csvtk pretty -S plain
     id   value
     1    a;b
     2    c;d
@@ -63,12 +64,25 @@ Example:
     $ echo -ne "id,value,meta\n1,a,12\n1,b,34\n2,c,56\n2,d,78\n" \
         | csvtk fold -f id -v value -s ";" \
         | csvtk unfold -f value -s ";" \
-        | csvtk pretty
+        | csvtk pretty -S plain
     id   value
     1    a
     1    b
     2    c
     2    d
+
+    # fold multiple value fields in parallel
+    $ echo -ne "id,en,es\n1,one,uno\n1,two,due\n" \
+        | csvtk pretty -S plain
+    id   en    es
+    1    one   uno
+    1    two   due
+
+    $ echo -ne "id,en,es\n1,one,uno\n1,two,due\n" \
+        | csvtk fold -f id -v en,es -s ";" \
+        | csvtk pretty -S plain
+    id   en        es
+    1    one;two   uno;due
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -105,7 +119,6 @@ Example:
 
 		outOpt := csvOutputOption{QuoteAll: config.QuoteAll}
 
-
 		writer := newCSVOutputWriter(outfh, outOpt)
 		if config.OutTabs || config.Tabs {
 			if config.OutDelimiter == ',' {
@@ -121,7 +134,7 @@ Example:
 			checkError(writer.Error())
 		}()
 
-		key2data := make(map[string][]string, 10000)
+		key2data := make(map[string][][]string, 10000)
 		orders := make(map[string]int, 10000)
 
 		file := files[0]
@@ -152,6 +165,7 @@ Example:
 		var key string
 		var N int
 		var ok bool
+		var nKeyFields int
 
 		checkFirstLine := true
 		for record := range csvReader.Ch {
@@ -161,6 +175,18 @@ Example:
 
 			if checkFirstLine {
 				checkFirstLine = false
+				nValueFields := foldValueFieldCount(vfieldStr, record.All, fuzzyFields, config.NoHeaderRow)
+				nKeyFields = len(record.Fields) - nValueFields
+				if nKeyFields < 1 || nValueFields < 1 {
+					checkError(fmt.Errorf("fold requires at least one key field and one value field"))
+				}
+				seen := make(map[int]struct{}, len(record.Fields))
+				for _, field := range record.Fields {
+					if _, exists := seen[field]; exists {
+						checkError(fmt.Errorf("key and value fields must be distinct: field %d selected more than once", field))
+					}
+					seen[field] = struct{}{}
+				}
 
 				if !config.NoHeaderRow || record.IsHeaderRow { // do not replace head line
 					if config.NoOutHeader {
@@ -175,18 +201,22 @@ Example:
 
 			items = record.Selected
 
-			key = encodeFields(items[0:len(items)-1], false)
+			key = encodeFields(items[:nKeyFields], false)
 			if _, ok = key2data[key]; !ok {
-				key2data[key] = make([]string, 0, 1)
+				key2data[key] = make([][]string, len(items)-nKeyFields)
 			}
-			key2data[key] = append(key2data[key], items[len(items)-1])
+			for i, value := range items[nKeyFields:] {
+				key2data[key][i] = append(key2data[key][i], value)
+			}
 			orders[key] = N
 		}
 
 		orderedKey := stringutil.SortCountOfString(orders, false)
 		for _, o := range orderedKey {
 			items = decodeFields(o.Key)
-			items = append(items, strings.Join(key2data[o.Key], separater))
+			for _, values := range key2data[o.Key] {
+				items = append(items, strings.Join(values, separater))
+			}
 			checkError(writer.Write(items))
 		}
 
@@ -194,11 +224,35 @@ Example:
 	},
 }
 
+func foldValueFieldCount(fieldStr string, header []string, fuzzyFields, noHeaderRow bool) int {
+	fields, names, _, _, openRanges := parseFields(fieldStr, ",", noHeaderRow, false)
+	if len(fields) > 0 {
+		n := len(fields)
+		for _, start := range openRanges {
+			n += len(header) - start
+		}
+		return n
+	}
+	if !fuzzyFields {
+		return len(names)
+	}
+	n := 0
+	for _, name := range names {
+		re := fuzzyField2Regexp(name)
+		for _, column := range header {
+			if re.MatchString(column) {
+				n++
+			}
+		}
+	}
+	return n
+}
+
 func init() {
 	RootCmd.AddCommand(collapseCmd)
 	collapseCmd.Flags().StringP("fields", "f", "1", `key fields for grouping. e.g -f 1,2 or -f columnA,columnB`)
-	collapseCmd.Flags().StringP("vfield", "v", "", `value field for folding`)
+	collapseCmd.Flags().StringP("vfield", "v", "", `value fields to fold in parallel, e.g. -v 2,3 or -v en,es`)
 	collapseCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
-	collapseCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields (only for key fields), e.g., -F -f "*name" or -F -f "id123*"`)
+	collapseCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy key and value fields, e.g., -F -f "*name" or -F -v "value*"`)
 	collapseCmd.Flags().StringP("separater", "s", "; ", "separater for folded values")
 }

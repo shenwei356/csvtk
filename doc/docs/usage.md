@@ -246,7 +246,7 @@ Commands for Edit:
   round           round float to n decimal places
 
 Commands for Data Transformation:
-  fold            fold multiple values of a field into cells of groups
+  fold            fold multiple values of one or more fields into cells of groups
   gather          gather columns into key-value pairs, like tidyr::gather/pivot_longer
   long2matrix     convert the long format to a matrix
   matrix2long     convert a matrix to the long format
@@ -2029,54 +2029,66 @@ NA                    3
 Usage
 
 ```text
-fold multiple values of a field into cells of groups
+fold multiple values of one or more fields into cells of groups
 
 Attention:
 
     Only grouping field and value fields are outputted.
+    Multiple value fields are folded in parallel, preserving their row alignment.
 
 Example:
 
     $ echo -ne "id,value,meta\n1,a,12\n1,b,34\n2,c,56\n2,d,78\n" \
-        | csvtk pretty
+        | csvtk pretty -S plain
     id   value   meta
     1    a       12
     1    b       34
     2    c       56
     2    d       78
-    
+
     $ echo -ne "id,value,meta\n1,a,12\n1,b,34\n2,c,56\n2,d,78\n" \
         | csvtk fold -f id -v value -s ";" \
-        | csvtk pretty
+        | csvtk pretty -S plain
     id   value
     1    a;b
     2    c;d
-    
+
     $ echo -ne "id,value,meta\n1,a,12\n1,b,34\n2,c,56\n2,d,78\n" \
         | csvtk fold -f id -v value -s ";" \
         | csvtk unfold -f value -s ";" \
-        | csvtk pretty
+        | csvtk pretty -S plain
     id   value
     1    a
     1    b
     2    c
     2    d
 
+    # fold multiple value fields in parallel
+    $ echo -ne "id,en,es\n1,one,uno\n1,two,due\n" \
+        | csvtk pretty -S plain
+    id   en    es
+    1    one   uno
+    1    two   due
+
+    $ echo -ne "id,en,es\n1,one,uno\n1,two,due\n" \
+        | csvtk fold -f id -v en,es -s ";" \
+        | csvtk pretty -S plain
+    id   en        es
+    1    one;two   uno;due
+
 Usage:
-  csvtk fold [flags]
+  csvtk fold [flags] 
 
 Aliases:
   fold, collapse
 
 Flags:
   -f, --fields string      key fields for grouping. e.g -f 1,2 or -f columnA,columnB (default "1")
-  -F, --fuzzy-fields       using fuzzy fields (only for key fields), e.g., -F -f "*name" or -F -f "id123*"
+  -F, --fuzzy-fields       using fuzzy key and value fields, e.g., -F -f "*name" or -F -v "value*"
   -h, --help               help for fold
   -i, --ignore-case        ignore case
   -s, --separater string   separater for folded values (default "; ")
-  -v, --vfield string      value field for folding
-
-
+  -v, --vfield string      value fields to fold in parallel, e.g. -v 2,3 or -v en,es
 ```
 
 examples
@@ -4086,7 +4098,7 @@ Usage:
 
 Flags:
       --drop            drop extra data, exclusive with --merge
-  -f, --fields string   select only these fields. e.g -f 1,2 or -f columnA,columnB (default "1")
+  -f, --fields string   field to separate, e.g. -f 1 or -f columnA (default "1")
   -h, --help            help for sep
   -i, --ignore-case     ignore case
       --merge           only splits at most N times, exclusive with --drop

@@ -140,7 +140,7 @@ It could save you lots of time in (not) writing Python/R scripts.
 - [`gather`](https://bioinf.shenwei.me/csvtk/usage/#gather): gather columns into key-value pairs, like `tidyr::gather/pivot_longer`
 - [`spread`](https://bioinf.shenwei.me/csvtk/usage/#spread): spread a key-value pair across multiple columns, like `tidyr::spread/pivot_wider`
 - [`unfold`](https://bioinf.shenwei.me/csvtk/usage/#unfold): unfold multiple values in cells of one or more fields
-- [`fold`](https://bioinf.shenwei.me/csvtk/usage/#fold): fold multiple values of a field into cells of groups
+- [`fold`](https://bioinf.shenwei.me/csvtk/usage/#fold): fold multiple values of one or more fields into cells of groups
 - [`long2matrix`](https://bioinf.shenwei.me/csvtk/usage/#long2matrix): convert the long format to a matrix
 - [`matrix2long`](https://bioinf.shenwei.me/csvtk/usage/#matrix2long): convert a matrix to the long format
 
