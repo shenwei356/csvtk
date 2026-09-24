@@ -767,7 +767,7 @@ It could save you lots of time in (not) writing Python/R scripts.</p>
 <li><del>Seamless support for data with meta line (e.g., <code>sep=,</code>) of separator declaration used by MS Excel</del></li>
 </ul>
 <h2 id="subcommands">Subcommands</h2>
-<p>57 subcommands in total.</p>
+<p>59 subcommands in total.</p>
 <p><strong>Information</strong></p>
 <ul>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#headers"><code>headers</code></a>: prints headers</li>
@@ -784,6 +784,7 @@ It could save you lots of time in (not) writing Python/R scripts.</p>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#csv2tab"><code>csv2tab</code></a>: converts CSV to tabular format</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#tab2csv"><code>tab2csv</code></a>: converts tabular format to CSV</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#space2tab"><code>space2tab</code></a>: converts space delimited format to TSV</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#csv2html"><code>csv2html</code></a>: converts CSV/TSV to a standalone responsive HTML table</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#csv2md"><code>csv2md</code></a>: converts CSV to markdown format</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#csv2rst"><code>csv2rst</code></a>: converts CSV to reStructuredText format</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#csv2json"><code>csv2json</code></a>: converts CSV to JSON format</li>
@@ -794,16 +795,17 @@ It could save you lots of time in (not) writing Python/R scripts.</p>
 <ul>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#head"><code>head</code></a>: prints first N records</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#concat"><code>concat</code></a>: concatenates CSV/TSV files by rows</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#paste"><code>paste</code></a>: pastes CSV/TSV files by columns</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#sample"><code>sample</code></a>: sampling by proportion</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#cut"><code>cut</code></a>: select and arrange fields</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#grep"><code>grep</code></a>: greps data by selected fields with patterns/regular expressions</li>
-<li><a href="https://bioinf.shenwei.me/csvtk/usage/#uniq"><code>uniq</code></a>: unique data without sorting</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#uniq"><code>uniq</code></a>: deduplicate records by selected fields without sorting</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#freq"><code>freq</code></a>: frequencies of selected fields</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#inter"><code>inter</code></a>: intersection of multiple files</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#filter"><code>filter</code></a>: filters rows by values of selected fields with arithmetic expression</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#filter2"><code>filter2</code></a>: filters rows by awk-like arithmetic/string expressions</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#join"><code>join</code></a>: join files by selected fields (inner, left and outer join)</li>
-<li><a href="https://bioinf.shenwei.me/csvtk/usage/#split"><code>split</code></a> splits CSV/TSV into multiple files according to column values</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#split"><code>split</code></a>: splits CSV/TSV by column values, rows per chunk, or number of chunks</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#splitxlsx"><code>splitxlsx</code></a>: splits XLSX sheet into multiple sheets according to column values</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#comb"><code>comb</code></a>: compute combinations of items at every row</li>
 </ul>
@@ -830,15 +832,17 @@ It could save you lots of time in (not) writing Python/R scripts.</p>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#sep"><code>sep</code></a>: separate column into multiple columns</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#gather"><code>gather</code></a>: gather columns into key-value pairs, like <code>tidyr::gather/pivot_longer</code></li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#spread"><code>spread</code></a>: spread a key-value pair across multiple columns, like <code>tidyr::spread/pivot_wider</code></li>
-<li><a href="https://bioinf.shenwei.me/csvtk/usage/#unfold"><code>unfold</code></a>: unfold multiple values in cells of a field</li>
-<li><a href="https://bioinf.shenwei.me/csvtk/usage/#fold"><code>fold</code></a>: fold multiple values of a field into cells of groups</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#unfold"><code>unfold</code></a>: unfold multiple values in cells of one or more fields</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#fold"><code>fold</code></a>: fold multiple values of one or more fields into cells of groups</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#long2matrix"><code>long2matrix</code></a>: convert the long format to a matrix</li>
+<li><a href="https://bioinf.shenwei.me/csvtk/usage/#matrix2long"><code>matrix2long</code></a>: convert a matrix to the long format</li>
 </ul>
 <p><strong>Ordering</strong></p>
 <ul>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#sort"><code>sort</code></a>: sorts by selected fields</li>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#shuf"><code>shuf</code></a>: shuffle rows</li>
 </ul>
-<p><strong>Ploting</strong></p>
+<p><strong>Plotting</strong></p>
 <ul>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#plot"><code>plot</code></a> see <a href="http://bioinf.shenwei.me/csvtk/usage/#plot">usage</a><ul>
 <li><a href="https://bioinf.shenwei.me/csvtk/usage/#plot-hist"><code>plot hist</code></a> histogram</li>
@@ -1048,7 +1052,7 @@ name-indexed data such as CSV and tabular JSON http://johnkerl.org/miller</li>
 <li>Do not mix use field (column) numbers and names to specify columns to operate.</li>
 <li>The CSV parser requires all the lines have same numbers of fields/columns.
     Even lines with spaces will cause error.
-    Use <code>-I/--ignore-illegal-row</code> to skip these lines if neccessary.
+    Use <code>-I/--ignore-illegal-row</code> to skip these lines if necessary.
     You can also use "csvtk fix" to fix files with different numbers of columns in rows.</li>
 <li>
 <p>If double-quotes exist in fields not enclosed with double-quotes, e.g.,</p>
@@ -1060,7 +1064,7 @@ name-indexed data such as CSV and tabular JSON http://johnkerl.org/miller</li>
 <p>Please switch on the flag <code>-l</code> or use <code>csvtk fix-quotes</code> to fix it.</p>
 </li>
 <li>
-<p>If somes fields have only a double-quote either in the beginning or in the end, e.g.,</p>
+<p>If some fields have a double-quote only at the beginning or end, e.g.,</p>
 <pre><code>x,d "e","a" b c,1
 </code></pre>
 <p>It would report an error:</p>

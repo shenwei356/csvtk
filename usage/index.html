@@ -366,8 +366,22 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#paste" class="md-nav__link">
+    paste
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#corr" class="md-nav__link">
     corr
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#csv2html" class="md-nav__link">
+    csv2html
   </a>
   
 </li>
@@ -704,6 +718,20 @@
         <li class="md-nav__item">
   <a href="#unfold" class="md-nav__link">
     unfold
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#long2matrix" class="md-nav__link">
+    long2matrix
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#matrix2long" class="md-nav__link">
+    matrix2long
   </a>
   
 </li>
@@ -903,8 +931,22 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#paste" class="md-nav__link">
+    paste
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#corr" class="md-nav__link">
     corr
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#csv2html" class="md-nav__link">
+    csv2html
   </a>
   
 </li>
@@ -1246,6 +1288,20 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#long2matrix" class="md-nav__link">
+    long2matrix
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#matrix2long" class="md-nav__link">
+    matrix2long
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#uniq" class="md-nav__link">
     uniq
   </a>
@@ -1303,7 +1359,7 @@
 <li>Do not mix use field (column) numbers and names to specify columns to operate.</li>
 <li>The CSV parser requires all the lines have same numbers of fields/columns.
     Even lines with spaces will cause error.
-    Use <code>-I/--ignore-illegal-row</code> to skip these lines if neccessary.
+    Use <code>-I/--ignore-illegal-row</code> to skip these lines if necessary.
     You can also use "csvtk fix" to fix files with different numbers of columns in rows.</li>
 <li>
 <p>If double-quotes exist in fields not enclosed with double-quotes, e.g.,</p>
@@ -1315,7 +1371,7 @@
 <p>Please switch on the flag <code>-l</code> or use <code>csvtk fix-quotes</code> to fix it.</p>
 </li>
 <li>
-<p>If somes fields have only a double-quote eighter in the beginning or in the end, e.g.,</p>
+<p>If some fields have a double-quote only at the beginning or end, e.g.,</p>
 <pre><code>x,d "e","a" b c,1
 </code></pre>
 <p>It would report error:</p>
@@ -1347,6 +1403,7 @@ original format as needed.</p>
 </ul>
 <p><strong>Format conversion</strong></p>
 <ul>
+<li><a href="#csv2html">csv2html</a></li>
 <li><a href="#csv2json">csv2json</a></li>
 <li><a href="#csv2md">csv2md</a></li>
 <li><a href="#csv2rst">csv2rst</a></li>
@@ -1362,6 +1419,7 @@ original format as needed.</p>
 <ul>
 <li><a href="#comb">comb</a></li>
 <li><a href="#concat">concat</a></li>
+<li><a href="#paste">paste</a></li>
 <li><a href="#cut">cut</a></li>
 <li><a href="#filter">filter</a></li>
 <li><a href="#filter2">filter2</a></li>
@@ -1400,13 +1458,15 @@ original format as needed.</p>
 <li><a href="#spread">spread</a></li>
 <li><a href="#transpose">transpose</a></li>
 <li><a href="#unfold">unfold</a></li>
+<li><a href="#long2matrix">long2matrix</a></li>
+<li><a href="#matrix2long">matrix2long</a></li>
 </ul>
 <p><strong>Ordering</strong></p>
 <ul>
 <li><a href="#sort">sort</a></li>
 <li><a href="#shuf">shuf</a></li>
 </ul>
-<p><strong>Ploting</strong></p>
+<p><strong>Plotting</strong></p>
 <ul>
 <li><a href="#plot">plot</a></li>
 <li><a href="#plot-hist">plot hist</a></li>
@@ -1424,7 +1484,7 @@ original format as needed.</p>
 <p>Usage</p>
 <pre><code class="language-text">csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.37.0
+Version: 0.38.0
 
 Author: Wei Shen &lt;shenwei356@gmail.com&gt;
 
@@ -1441,14 +1501,14 @@ Attention:
   5. Do not mix use field (column) numbers and names to specify columns to operate.
   6. The CSV parser requires all the lines have same numbers of fields/columns.
      Even lines with spaces will cause error.
-     Use '-I/--ignore-illegal-row' to skip these lines if neccessary.
+     Use '-I/--ignore-illegal-row' to skip these lines if necessary.
      You can also use &quot;csvtk fix&quot; to fix files with different numbers of columns in rows.
   7. If double-quotes exist in fields not enclosed with double-quotes, e.g.,
          x,a &quot;b&quot; c,1
      It would report error:
          bare &quot; in non-quoted-field.
      Please switch on the flag &quot;-l&quot; or use &quot;csvtk fix-quotes&quot; to fix it.
-  8. If somes fields have only a double-quote eighter in the beginning or in the end, e.g.,
+  8. If some fields have a double-quote only at the beginning or end, e.g.,
          x,d &quot;e&quot;,&quot;a&quot; b c,1
      It would report error:
          extraneous or missing &quot; in quoted-field
@@ -1483,6 +1543,7 @@ Commands for Information:
   watch           monitor the specified fields
 
 Format Conversion:
+  csv2html        convert CSV/TSV to a standalone HTML table
   csv2json        convert CSV to JSON format
   csv2md          convert CSV to markdown format
   csv2rst         convert CSV to reStructuredText format
@@ -1505,9 +1566,10 @@ Commands for Set Operation:
   head            print first N records
   inter           intersection of multiple files
   join            join files by selected fields (inner, left and outer join)
+  paste           paste CSV/TSV files by columns
   sample          sampling by proportion
-  split           split CSV/TSV into multiple files according to column values
-  uniq            unique data without sorting
+  split           split CSV/TSV by column values, rows per chunk, or number of chunks
+  uniq            deduplicate records by selected fields without sorting
 
 Commands for Edit:
   add-header      add column names
@@ -1526,18 +1588,20 @@ Commands for Edit:
   round           round float to n decimal places
 
 Commands for Data Transformation:
-  fold            fold multiple values of a field into cells of groups
+  fold            fold multiple values of one or more fields into cells of groups
   gather          gather columns into key-value pairs, like tidyr::gather/pivot_longer
+  long2matrix     convert the long format to a matrix
+  matrix2long     convert a matrix to the long format
   sep             separate column into multiple columns
   spread          spread a key-value pair across multiple columns, like tidyr::spread/pivot_wider
   transpose       transpose CSV data
-  unfold          unfold multiple values in cells of a field
+  unfold          unfold multiple values in cells of one or more fields
 
 Commands for Ordering:
   shuf            shuffle rows
   sort            sort by selected fields
 
-Commands for Ploting:
+Commands for Plotting:
   plot            plot common figures
 
 Commands for Miscellaneous Functions:
@@ -1548,8 +1612,8 @@ Additional Commands:
   version         print version information and check for update
 
 Flags:
-  -C, --comment-char string    lines starting with commment-character will be ignored. if your header
-                               row starts with '#', please assign &quot;-C&quot; another rare symbol, e.g. '$'
+  -C, --comment-char string    lines starting with comment-character will be ignored. if your header row
+                               starts with '#', please assign &quot;-C&quot; another rare symbol, e.g. '$'
                                (default &quot;#&quot;)
   -U, --delete-header          do not output header row
   -d, --delimiter string       delimiting character of the input CSV file (default &quot;,&quot;)
@@ -1569,6 +1633,7 @@ Flags:
   -o, --out-file string        out file (&quot;-&quot; for stdout, suffix .gz for gzipped out) (default &quot;-&quot;)
   -T, --out-tabs               specifies that the output is delimited with tabs. Overrides &quot;-D&quot;
       --quiet                  be quiet and do not show extra information and warnings
+      --quote-all              quote all output fields, even when not necessary
   -Z, --show-row-number        show row number as the first column, with header row skipped
   -t, --tabs                   specifies that the input CSV file is delimited with tabs. Overrides &quot;-d&quot;
   -V, --version                print version information
@@ -1777,16 +1842,23 @@ NA          NA
 <p>Usage</p>
 <pre><code class="language-text">concatenate CSV/TSV files by rows
 
-Note that the second and later files are concatenated to the first one,
-so only columns match that of the first files kept.
+If there's only one input file, it will be directly outputted.
+
+With --original-file, append an original_file column containing the basename
+of each input file. Standard input is labeled &quot;-&quot;.
+
+If multiple input files are provided, the second and subsequent files will be
+concatenated to the first one by rows. And only columns matching those of the
+first file are kept.
 
 Usage:
-  csvtk concat [flags]
+  csvtk concat [flags] 
 
 Flags:
   -h, --help                    help for concat
   -i, --ignore-case             ignore case (column name)
   -k, --keep-unmatched          keep blanks even if no any data of a file matches
+      --original-file           append an original_file column with each input file's basename
   -u, --unmatched-repl string   replacement for unmatched data
 
 </code></pre>
@@ -1817,6 +1889,32 @@ id2   First_name   Last_name    Username   col
 </code></pre>
 </li>
 <li>
+<p>single input file</p>
+<pre><code>$ csvtk concat names.csv
+id,first_name,last_name,username
+11,Rob,Pike,rob
+2,Ken,Thompson,ken
+4,Robert,Griesemer,gri
+1,Robert,Thompson,abc
+NA,Robert,Abel,123
+
+# show line number
+$ csvtk concat names.csv -Z
+row,id,first_name,last_name,username
+1,11,Rob,Pike,rob
+2,2,Ken,Thompson,ken
+3,4,Robert,Griesemer,gri
+4,1,Robert,Thompson,abc
+5,NA,Robert,Abel,123
+
+# append the input file name to each row
+$ csvtk concat --original-file names.csv | csvtk head -n 2
+id,first_name,last_name,username,original_file
+11,Rob,Pike,rob,names.csv
+2,Ken,Thompson,ken,names.csv
+</code></pre>
+</li>
+<li>
 <p>simple one</p>
 <pre><code>$ csvtk concat names.csv names.reorder.csv \
     | csvtk pretty
@@ -1832,6 +1930,15 @@ NA   Robert       Abel        123
 4    Robert       Griesemer   gri
 1    Robert       Thompson    abc
 NA   Robert       Abel        123
+
+# show line number
+$ csvtk concat names.csv names.reorder.csv -Z \
+      | csvtk head -n 3 | csvtk pretty
+row   id   first_name   last_name   username
+---   --   ----------   ---------   --------
+1     11   Rob          Pike        rob     
+2     2    Ken          Thompson    ken     
+3     4    Robert       Griesemer   gri
 </code></pre>
 </li>
 <li>
@@ -1885,9 +1992,33 @@ NA    NA           NA           NA         NA
 </code></pre>
 </li>
 </ol>
+<h2 id="paste">paste</h2>
+<p>Usage</p>
+<pre><code class="language-text">paste CSV/TSV files by columns
+
+Rows are combined by their position in each file. Shorter inputs are padded
+with empty fields to match the longest input. Only one input file may be read
+from stdin.
+
+Usage:
+  csvtk paste [flags]
+
+Flags:
+  -h, --help   help for paste
+</code></pre>
+<p>Example</p>
+<pre><code class="language-text">$ csvtk paste file1.csv file2.csv
+field1,field2,field3,field4
+0,a,0,a
+1,b,1,b
+3,a,3,a
+</code></pre>
 <h2 id="corr">corr</h2>
 <p>Usage</p>
-<pre><code class="language-text">calculate Pearson correlation between two columns
+<pre><code class="language-text">calculate Pearson correlation between two columns.
+
+By default, correlations are written to stdout. With --pass, input rows are
+forwarded to stdout and correlations are written to stderr.
 
 Usage:
   csvtk corr [flags]
@@ -1897,11 +2028,51 @@ Flags:
   -h, --help            help for corr
   -i, --ignore_nan      Ignore non-numeric fields to avoid returning NaN
   -L, --log             Calcute correlations on Log10 transformed data
-  -x, --pass            passthrough mode (forward input to output)
+  -x, --pass            forward input to output and print correlations to stderr
 </code></pre>
 <p>Examples</p>
 <ol>
 <li>Calculate pairwise correlations between field, ignore non-numeric values<pre><code>csvtk -t corr -i -f Foo,Bar input.tsv
+</code></pre>
+</li>
+</ol>
+<h2 id="csv2html">csv2html</h2>
+<p>Usage</p>
+<pre><code class="language-text">convert CSV/TSV to a standalone HTML table
+
+The output contains all CSS needed to display the table. The table uses its
+natural content width and is limited by --table-width.
+
+The value of --table-width can be a number in pixels or a CSS length using
+px, %, em, rem, vw, vh, or ch, for example: 1200, 90%, or 70rem. Percentage
+values greater than 100% are allowed.
+
+Usage:
+  csvtk csv2html [flags]
+
+Flags:
+      --caption string       table caption
+  -h, --help                 help for csv2html
+  -W, --max-width strings    maximum cell width in characters; one value for all columns or comma-separated values for each column (0 for no limit)
+  -w, --min-width strings    minimum cell width in characters; one value for all columns or comma-separated values for each column (0 for no limit)
+      --table-class string   CSS class of the table (default &quot;csvtk-table&quot;)
+      --table-width string   maximum table width (a number in pixels or a CSS length with px, %, em, rem, vw, vh, or ch) (default &quot;100%&quot;)
+</code></pre>
+<p>Examples</p>
+<ol>
+<li>
+<p>Generate a responsive, standalone HTML file:</p>
+<pre><code>csvtk csv2html -o table.html testdata/names.csv
+</code></pre>
+</li>
+<li>
+<p>Limit the table to 960 pixels and wrap cell contents at 30 characters:</p>
+<pre><code>csvtk csv2html --table-width 960 -W 30 -o table.html testdata/names.csv
+</code></pre>
+</li>
+<li>
+<p>Set column-specific minimum and maximum widths:</p>
+<pre><code>csvtk csv2html -w 8,15,15,10 -W 12,30,30,20 -o table.html testdata/names.csv
 </code></pre>
 </li>
 </ol>
@@ -3173,16 +3344,17 @@ NA                    3
 </code></pre>
 <h2 id="fold">fold</h2>
 <p>Usage</p>
-<pre><code class="language-text">fold multiple values of a field into cells of groups
+<pre><code class="language-text">fold multiple values of one or more fields into cells of groups
 
 Attention:
 
     Only grouping field and value fields are outputted.
+    Multiple value fields are folded in parallel, preserving their row alignment.
 
 Example:
 
     $ echo -ne &quot;id,value,meta\n1,a,12\n1,b,34\n2,c,56\n2,d,78\n&quot; \
-        | csvtk pretty
+        | csvtk pretty -S plain
     id   value   meta
     1    a       12
     1    b       34
@@ -3191,7 +3363,7 @@ Example:
 
     $ echo -ne &quot;id,value,meta\n1,a,12\n1,b,34\n2,c,56\n2,d,78\n&quot; \
         | csvtk fold -f id -v value -s &quot;;&quot; \
-        | csvtk pretty
+        | csvtk pretty -S plain
     id   value
     1    a;b
     2    c;d
@@ -3199,28 +3371,39 @@ Example:
     $ echo -ne &quot;id,value,meta\n1,a,12\n1,b,34\n2,c,56\n2,d,78\n&quot; \
         | csvtk fold -f id -v value -s &quot;;&quot; \
         | csvtk unfold -f value -s &quot;;&quot; \
-        | csvtk pretty
+        | csvtk pretty -S plain
     id   value
     1    a
     1    b
     2    c
     2    d
 
+    # fold multiple value fields in parallel
+    $ echo -ne &quot;id,en,es\n1,one,uno\n1,two,due\n&quot; \
+        | csvtk pretty -S plain
+    id   en    es
+    1    one   uno
+    1    two   due
+
+    $ echo -ne &quot;id,en,es\n1,one,uno\n1,two,due\n&quot; \
+        | csvtk fold -f id -v en,es -s &quot;;&quot; \
+        | csvtk pretty -S plain
+    id   en        es
+    1    one;two   uno;due
+
 Usage:
-  csvtk fold [flags]
+  csvtk fold [flags] 
 
 Aliases:
   fold, collapse
 
 Flags:
   -f, --fields string      key fields for grouping. e.g -f 1,2 or -f columnA,columnB (default &quot;1&quot;)
-  -F, --fuzzy-fields       using fuzzy fields (only for key fields), e.g., -F -f &quot;*name&quot; or -F -f &quot;id123*&quot;
+  -F, --fuzzy-fields       using fuzzy key and value fields, e.g., -F -f &quot;*name&quot; or -F -v &quot;value*&quot;
   -h, --help               help for fold
   -i, --ignore-case        ignore case
   -s, --separater string   separater for folded values (default &quot;; &quot;)
-  -v, --vfield string      value field for folding
-
-
+  -v, --vfield string      value fields to fold in parallel, e.g. -v 2,3 or -v en,es
 </code></pre>
 <p>examples</p>
 <ol>
@@ -3657,7 +3840,7 @@ Flags:
   -F, --fuzzy-fields      using fuzzy fields, e.g., -F -f &quot;*name&quot; or -F -f &quot;id123*&quot;
   -h, --help              help for join
   -i, --ignore-case       ignore case
-  -n, --ignore-null       do not match NULL values
+  -n, --ignore-null       do not match rows with an empty key field
   -k, --keep-unmatched    keep unmatched data of the first file (left join)
   -L, --left-join         left join, equals to -k/--keep-unmatched, exclusive with --outer-join
       --na string         content for filling NA data
@@ -3951,9 +4134,10 @@ Supported operators and types:
   Null coalescence: ??
 
 Custom functions:
-  - len(), length of strings, e.g., len($1), len($a), len($1, $2)
+  - len(), characters of strings, e.g., len($1), len($a), len($1, $2).
+    Unicode is supported, e.g., len(&quot;沈伟&quot;)==2
   - ulen(), length of unicode strings/width of unicode strings rendered
-    to a terminal, e.g., len(&quot;沈伟&quot;)==6, ulen(&quot;沈伟&quot;)==4
+    to a terminal, e.g., len(&quot;沈伟&quot;)==2, ulen(&quot;沈伟&quot;)==4
 
 Usage:
   csvtk mutate2 [flags]
@@ -4103,12 +4287,17 @@ Supported Operators:
   Comparison: &gt; &gt;= &lt; &lt;= == !=
   Logical: not ! and &amp;&amp; or ||
   String: + contains startsWith endsWith
+          trim trimPrefix trimSuffix upper lower split splitAfter replace
+          repeat indexOf lastIndexOf hasPrefix hasSuffix
+  Membership: [] . ?. in
   Regex: matches
   Range: ..
   Slice: [:]
   Pipe: |
   Ternary conditional: ? :
   Null coalescence: ??
+  Date: now duration date timezone
+  Number: max min abs ceil floor round
 
 Supported Literals:
 
@@ -4124,7 +4313,7 @@ See Expr language definition link for documentation on built-in functions.
 
 Custom functions:
   - ulen(), length of unicode strings/width of unicode strings rendered
-    to a terminal, e.g., len(&quot;沈伟&quot;)==6, ulen(&quot;沈伟&quot;)==4
+    to a terminal, e.g., len(&quot;沈伟&quot;)==2, ulen(&quot;沈伟&quot;)==4
 
 Usage:
   csvtk mutate3 [flags]
@@ -4305,7 +4494,7 @@ Flags:
       --ylab string             y label text
 
 Global Flags:
-  -C, --comment-char string    lines starting with commment-character will be ignored. if your header
+  -C, --comment-char string    lines starting with comment-character will be ignored. if your header
                                row starts with '#', please assign &quot;-C&quot; another rare symbol, e.g. '$'
                                (default &quot;#&quot;)
   -U, --delete-header          do not output header row
@@ -4687,8 +4876,8 @@ Flags:
                                 should be separated by commas. E.g., -w 0,10,10 limits the min widths of
                                 2nd and 3rd columns
   -s, --separator string        fields/columns separator (default &quot;   &quot;)
-  -S, --style string            output syle. available vaules: default, plain, simple, 3line, grid,
-                                light, round, bold, double. check https://github.com/shenwei356/stable
+  -S, --style string            output style. available values: default, plain, simple, 3line, grid,
+                                light, round, regular, bold, double. check https://github.com/shenwei356/stable
   -x, --wrap-delimiter string   delimiter for wrapping cells (default &quot; &quot;)
 
 </code></pre>
@@ -5186,7 +5375,7 @@ Usage:
 
 Flags:
       --drop            drop extra data, exclusive with --merge
-  -f, --fields string   select only these fields. e.g -f 1,2 or -f columnA,columnB (default &quot;1&quot;)
+  -f, --fields string   field to separate, e.g. -f 1 or -f columnA (default &quot;1&quot;)
   -h, --help            help for sep
   -i, --ignore-case     ignore case
       --merge           only splits at most N times, exclusive with --drop
@@ -5260,6 +5449,7 @@ Sort types:
   - n      : numeric order       : -k 1:n
   - N      : natural order       : -k 1:N   (e.g., &quot;a9&quot; should be in front of &quot;a10&quot;)
   - d      : sort by date        : -k 1:d   (support multiple formats of date and time)
+  - l      : Unicode text length : -k 1:l
   - u      : custom levels       : -k 1:u -L levels.txt
 
 Combinations:
@@ -5273,13 +5463,20 @@ Flags:
   -h, --help             help for sort
   -i, --ignore-case      ignore-case
   -k, --keys strings     keys (multiple values supported). sort type supported, &quot;N&quot; for natural order,
-                         &quot;n&quot; for number, &quot;d&quot; for date/time, &quot;u&quot; for user-defined order and &quot;r&quot; for
-                         reverse. e.g., &quot;-k 1&quot;, &quot;-k 2-&quot;, &quot;-k 3-5:nr&quot;, &quot;-k A:r&quot;, &quot;-k 1:nr -k 2&quot; (default [1-])
+                         &quot;n&quot; for number, &quot;d&quot; for date/time, &quot;l&quot; for Unicode text length, &quot;u&quot; for
+                         user-defined order and &quot;r&quot; for reverse. e.g., &quot;-k 1&quot;, &quot;-k 2-&quot;, &quot;-k 3-5:nr&quot;,
+                         &quot;-k A:lr&quot;, &quot;-k 1:nr -k 2&quot; (default [1-])
   -L, --levels strings   user-defined level file (one level per line, multiple values supported).
                          format: &lt;field&gt;:&lt;level-file&gt;.  e.g., &quot;-k name:u -L name:level.txt&quot;
 </code></pre>
 <p>Examples</p>
 <ul>
+<li>
+<p>To inspect the longest values in one column, sort by Unicode text length in
+  reverse order, then keep the first three records:</p>
+<pre><code>csvtk sort -k last_name:lr testdata/names.csv | csvtk head -n 3
+</code></pre>
+</li>
 <li>
 <p>data</p>
 <pre><code>$ cat testdata/names.csv
@@ -5553,13 +5750,18 @@ a       b
 </code></pre>
 <h2 id="split">split</h2>
 <p>Usage</p>
-<pre><code class="language-text">split CSV/TSV into multiple files according to column values
+<pre><code class="language-text">split CSV/TSV by column values, rows per chunk, or number of chunks
 
 Notes:
 
-  1. flag -o/--out-file can specify out directory for splitted files.
+  1. flag -o/--out-file can specify the output directory for split files.
   2. flag -s/--prefix-as-subdir can create subdirectories with prefixes of
      keys of length X, to avoid writing too many files in the output directory.
+  3. Special characters in key values are percent-encoded in output file names.
+     Long encoded names use a hash.
+  4. flag -n/--nlines splits the input into chunks of up to N records instead of
+     splitting by key values. The header row, when present, is written to every chunk.
+  5. flag -c/--nchunks splits the input into N chunks in a round-robin manner.
 
 Usage:
   csvtk split [flags]
@@ -5573,8 +5775,11 @@ Flags:
   -F, --fuzzy-fields           using fuzzy fields, e.g., -F -f &quot;*name&quot; or -F -f &quot;id123*&quot;
   -h, --help                   help for split
   -i, --ignore-case            ignore case
+  -c, --nchunks int            split into N chunks in a round-robin manner; incompatible with
+                               field-grouping options
+  -n, --nlines int             split into chunks of up to N records; incompatible with field-grouping options
   -G, --out-gzip               force output gzipped file
-  -p, --out-prefix string      output file prefix, the default value is the input file. use -p &quot;&quot; to
+  -p, --out-prefix string      output file prefix, the default value is the input file's base name. use -p &quot;&quot; to
                                disable outputting prefix
   -s, --prefix-as-subdir int   create subdirectories with prefixes of keys of length X, to avoid writing
                                too many files in the output directory
@@ -5623,7 +5828,38 @@ names-Ken-Thompson.csv  names-Robert-Griesemer.csv  names-Rob-Pike.csv
 </code></pre>
 </li>
 <li>
-<p>flag <code>-o/--out-file</code> can specify out directory for splitted files</p>
+<p>split into chunks of at most 2 data records. The header row is written to every chunk.</p>
+<pre><code>$ csvtk split names.csv --nlines 2 -o chunks
+$ ls chunks
+names-1.csv  names-2.csv  names-3.csv
+
+$ cat chunks/names-1.csv
+id,first_name,last_name,username
+11,Rob,Pike,rob
+2,Ken,Thompson,ken
+
+$ cat chunks/names-3.csv
+id,first_name,last_name,username
+NA,Robert,Abel,123
+</code></pre>
+</li>
+<li>
+<p>distribute records among 3 chunks in a round-robin manner.</p>
+<pre><code>$ csvtk split names.csv --nchunks 3 -o chunks
+
+$ cat chunks/names-1.csv
+id,first_name,last_name,username
+11,Rob,Pike,rob
+1,Robert,Thompson,abc
+
+$ cat chunks/names-2.csv
+id,first_name,last_name,username
+2,Ken,Thompson,ken
+NA,Robert,Abel,123
+</code></pre>
+</li>
+<li>
+<p>flag <code>-o/--out-file</code> can specify the output directory for split files</p>
 <pre><code>$ seq 10000 | csvtk split -H -o result
 $ ls result/*.csv | wc -l
 10000
@@ -5726,10 +5962,12 @@ t2/
 <p>Usage</p>
 <pre><code class="language-text">split XLSX sheet into multiple sheets according to column values
 
-Strengths: Sheet properties are remained unchanged.
-Weakness : Complicated sheet structures are not well supported, e.g.,
+Strength: Sheet properties are preserved.
+Limitation: Complex sheet structures are not fully supported, such as
   1. merged cells
   2. more than one header row
+
+Groups that would have the same sheet name receive distinct numeric suffixes.
 
 Usage:
   csvtk splitxlsx [flags]
@@ -5898,6 +6136,7 @@ Flags:
   -g, --groups string        group via fields. e.g -g 1,2 or -g columnA,columnB
   -h, --help                 help for summary
   -i, --ignore-non-numbers   ignore non-numeric values like &quot;NA&quot; or &quot;N/A&quot;
+  -n, --names strings        new names for the summary columns
   -S, --rand-seed int        rand seed for operation &quot;rand&quot; (default 11)
   -s, --separater string     separater for collapsed data (default &quot;; &quot;)
 
@@ -5940,6 +6179,15 @@ f4:sum
     | csvtk summary -f f4:sum,f5:sum -i
 f4:sum,f5:sum
 21.50,118.00
+</code></pre>
+</li>
+<li>
+<p>rename summary columns; group columns keep their original names</p>
+<pre><code>$ cat testdata/digitals2.csv \
+    | csvtk summary -g f1 -f f4:sum,f5:mean -n total,average -i
+f1,total,average
+bar,11.00,15.71
+foo,10.50,1.60
 </code></pre>
 </li>
 <li>
@@ -6080,7 +6328,10 @@ $ csvtk transpose -t  testdata/digitals.tsv
 </code></pre>
 <h2 id="unfold">unfold</h2>
 <p>Usage</p>
-<pre><code class="language-text">unfold multiple values in cells of a field
+<pre><code class="language-text">unfold multiple values in cells of one or more fields
+
+When multiple fields are selected, their values are unfolded in parallel.
+Each selected field must have the same number of values in every row.
 
 Example:
 
@@ -6103,27 +6354,221 @@ Example:
     3    e        34
     3    f        34
 
+    $ echo -ne &quot;key,en,es\nfoo,one;two,uno;due\n&quot; \
+        | csvtk unfold -f en,es -s &quot;;&quot; \
+        | csvtk pretty
+    key   en    es
+    foo   one   uno
+    foo   two   due
+
 Usage:
   csvtk unfold [flags]
 
 Flags:
-  -f, --fields string      field to expand, only one field is allowed. type &quot;csvtk unfold -h&quot; for examples
+  -f, --fields string      fields to expand in parallel. type &quot;csvtk unfold -h&quot; for examples
   -h, --help               help for unfold
   -s, --separater string   separater for folded values (default &quot;; &quot;)
 </code></pre>
+<h2 id="long2matrix">long2matrix</h2>
+<p>Usage</p>
+<pre><code class="language-text">convert the long format to matrix
+
+Input: a three-column table. E.g.,
+
+    col1   col2   value    
+    A      A      1868883.0
+    A      B      1310746.0
+    B      A      1306936.0
+    B      B      2117177.0
+
+Output: a matrix with the same column and row names. E.g.,
+
+        A           B        
+    A   1868883.0   1310746.0
+    B   1306936.0   2117177.0
+
+Usage:
+  csvtk long2matrix [flags] 
+
+Flags:
+  -B, --clear-bad-value    keep records failing to pass the filter but clear the value
+  -f, --fields strings     the three fields/column to use. e.g., -f 1,2,3 or -f a,b,v (default [1-3])
+  -h, --help               help for long2matrix
+  -N, --keep-non-numeric   keep non-numeric values when filtering by --min-value or --max-value
+  -M, --max-value float    only save records with values &lt;= this value (default 1.7976931348623157e+308)
+  -m, --min-value float    only save records with values &gt;= this value (default -1.7976931348623157e+308)
+      --na string          content for filling NA data
+
+</code></pre>
+<p>Examples</p>
+<pre><code>$ cat testdata/pairwise-data.tsv 
+A1      A1      0.90
+A1      B1      0.85
+A1      C1      0.45
+A1      D1      0.96
+B1      B1      0.90
+B1      C1      0.85
+B1      D1      0.56
+C1      C1      0.55
+C1      D1      0.45
+D1      D1      0.90
+
+# all data
+$ cat testdata/pairwise-data.tsv | csvtk long2matrix -Ht \
+  | csvtk pretty -t -S round
+╭────┬──────┬──────┬──────┬──────╮
+│    │ A1   │ B1   │ C1   │ D1   │
+├────┼──────┼──────┼──────┼──────┤
+│ A1 │ 0.90 │ 0.85 │ 0.45 │ 0.96 │
+├────┼──────┼──────┼──────┼──────┤
+│ B1 │      │ 0.90 │ 0.85 │ 0.56 │
+├────┼──────┼──────┼──────┼──────┤
+│ C1 │      │      │ 0.55 │ 0.45 │
+├────┼──────┼──────┼──────┼──────┤
+│ D1 │      │      │      │ 0.90 │
+╰────┴──────┴──────┴──────┴──────╯
+
+# discard records below the minimum; use &quot;.&quot; for missing matrix cells
+$ cat testdata/pairwise-data.tsv | csvtk long2matrix -t --min-value 0.9 --na . \
+  | csvtk pretty -t -S round
+╭────┬────┬──────┬──────╮
+│    │ A1 │ B1   │ D1   │
+├────┼────┼──────┼──────┤
+│ A1 │ .  │ .    │ 0.96 │
+├────┼────┼──────┼──────┤
+│ B1 │ .  │ 0.90 │ .    │
+├────┼────┼──────┼──────┤
+│ D1 │ .  │ .    │ 0.90 │
+╰────┴────┴──────┴──────╯
+
+# keep records that fail the filter, but clear their values
+$ cat testdata/pairwise-data.tsv | csvtk long2matrix -t --min-value 0.9 --clear-bad-value \
+  | csvtk pretty -t -S round
+╭────┬────┬──────┬────┬──────╮
+│    │ A1 │ B1   │ C1 │ D1   │
+├────┼────┼──────┼────┼──────┤
+│ A1 │    │      │    │ 0.96 │
+├────┼────┼──────┼────┼──────┤
+│ B1 │    │ 0.90 │    │      │
+├────┼────┼──────┼────┼──────┤
+│ C1 │    │      │    │      │
+├────┼────┼──────┼────┼──────┤
+│ D1 │    │      │    │ 0.90 │
+╰────┴────┴──────┴────┴──────╯
+
+</code></pre>
+<h2 id="matrix2long">matrix2long</h2>
+<p>Usage</p>
+<pre><code class="language-text">convert a matrix to the long format
+
+Input: a matrix with the same column and row names. E.g.,
+
+        A           B        
+    A   1868883.0   1310746.0
+    B   1306936.0   2117177.0
+
+Output: a three-column table. E.g.,
+
+    col1   col2   value    
+    A      A      1868883.0
+    A      B      1310746.0
+    B      A      1306936.0
+    B      B      2117177.0
+
+Usage:
+  csvtk matrix2long [flags] 
+
+Flags:
+  -B, --blanks strings     blank values, case ignored (default [,na,n/a,none,null,.])
+  -n, --colnames strings   column names of the output (3 values required). e.g -n a,b,v (default
+                           [col1,col2,value])
+  -h, --help               help for matrix2long
+  -N, --keep-non-numeric   keep non-numeric values when filtering by --min-value or --max-value
+  -S, --keep-same-keys     keep records with the same key names
+  -M, --max-value float    only show records with values &lt;= this value (default 1.7976931348623157e+308)
+  -m, --min-value float    only show records with values &gt;= this value (default -1.7976931348623157e+308)
+  -b, --skip-blanks        skip records with blank values (defined by --blanks)
+  -s, --skip-same-keys     skip records with the same key names
+</code></pre>
+<p>Examples</p>
+<pre><code># data
+$ cat testdata/pairwise-data.matrix.tsv | csvtk pretty -t -S round
+╭────┬──────┬──────┬──────┬──────╮
+│    │ A1   │ B1   │ C1   │ D1   │
+├────┼──────┼──────┼──────┼──────┤
+│ A1 │ 0.90 │ 0.85 │ 0.45 │ 0.96 │
+├────┼──────┼──────┼──────┼──────┤
+│ B1 │      │ 0.90 │ 0.85 │ 0.56 │
+├────┼──────┼──────┼──────┼──────┤
+│ C1 │      │      │ 0.55 │ 0.45 │
+├────┼──────┼──────┼──────┼──────┤
+│ D1 │      │      │      │ 0.90 │
+╰────┴──────┴──────┴──────┴──────╯
+
+# remove records without values
+$ cat testdata/pairwise-data.matrix.tsv \
+  | csvtk matrix2long -t --skip-blanks
+col1    col2    value
+A1      A1      0.90
+A1      B1      0.85
+A1      C1      0.45
+A1      D1      0.96
+B1      B1      0.90
+B1      C1      0.85
+B1      D1      0.56
+C1      C1      0.55
+C1      D1      0.45
+D1      D1      0.90
+
+# and filter values, and remove the header line
+$ cat testdata/pairwise-data.matrix.tsv \
+  | csvtk matrix2long -t --skip-blanks --min-value 0.9 --delete-header
+A1      A1      0.90
+A1      D1      0.96
+B1      B1      0.90
+D1      D1      0.90
+</code></pre>
+<pre><code># only keep the data on the diagonal.
+cat testdata/pairwise-data.matrix.tsv \
+  | csvtk matrix2long -t -S \
+  | csvtk long2matrix -t \
+  | csvtk pretty -t -S round
+╭────┬──────┬──────┬──────┬──────╮
+│    │ A1   │ B1   │ C1   │ D1   │
+├────┼──────┼──────┼──────┼──────┤
+│ A1 │ 0.90 │      │      │      │
+├────┼──────┼──────┼──────┼──────┤
+│ B1 │      │ 0.90 │      │      │
+├────┼──────┼──────┼──────┼──────┤
+│ C1 │      │      │ 0.55 │      │
+├────┼──────┼──────┼──────┼──────┤
+│ D1 │      │      │      │ 0.90 │
+╰────┴──────┴──────┴──────┴──────╯
+
+</code></pre>
 <h2 id="uniq">uniq</h2>
 <p>Usage</p>
-<pre><code class="language-text">unique data without sorting
+<pre><code class="language-text">Deduplicate records by selected fields without sorting.
+
+By default, keep the first record for each key; -n keeps the first N records.
+-d prints the first record for each key occurring more than once; -u prints
+records whose keys occur exactly once. Keys are compared across the entire
+input, including non-adjacent records (unlike GNU uniq).
+
+For this command, -d means --repeated; use --delimiter to set the input delimiter.
 
 Usage:
   csvtk uniq [flags]
 
 Flags:
-  -f, --fields string   select these fields as keys. e.g -f 1,2 or -f columnA,columnB (default &quot;1&quot;)
-  -F, --fuzzy-fields    using fuzzy fields, e.g., -F -f &quot;*name&quot; or -F -f &quot;id123*&quot;
-  -h, --help            help for uniq
-  -i, --ignore-case     ignore case
-  -n, --keep-n int      keep at most N records for a key (default 1)
+      --delimiter string   delimiting character of the input CSV file (default &quot;,&quot;)
+  -d, --repeated           only print repeated keys, one first record per key
+  -f, --fields string      select these fields as keys. e.g -f 1,2 or -f columnA,columnB (default &quot;1&quot;)
+  -F, --fuzzy-fields       using fuzzy fields, e.g., -F -f &quot;*name&quot; or -F -f &quot;id123*&quot;
+  -h, --help               help for uniq
+  -i, --ignore-case        ignore case
+  -n, --keep-n int         keep at most N records for a key (default 1)
+  -u, --unique             only print records whose keys occur exactly once
 
 </code></pre>
 <p>Examples:</p>
@@ -6140,7 +6585,7 @@ NA,"Robert","Abel","123"
 </code></pre>
 </li>
 <li>
-<p>unique first_name (it removes rows with duplicated first_name)</p>
+<p>keep the first record for each first_name</p>
 <pre><code>$ cat testdata/names.csv \
     | csvtk uniq -f first_name
 id,first_name,last_name,username
@@ -6158,6 +6603,18 @@ first_name
 Rob
 Ken
 Robert
+</code></pre>
+</li>
+<li>
+<p>select repeated or truly unique first_name values (modes -d and -u cannot be combined with -n)</p>
+<pre><code>$ csvtk uniq -f first_name -d testdata/names.csv
+id,first_name,last_name,username
+4,Robert,Griesemer,gri
+
+$ csvtk uniq -f first_name -u testdata/names.csv
+id,first_name,last_name,username
+11,Rob,Pike,rob
+2,Ken,Thompson,ken
 </code></pre>
 </li>
 <li>
@@ -6212,7 +6669,7 @@ Flags:
   -L, --log              log10(x+1) transform numeric values
   -x, --pass             passthrough mode (forward input to output)
   -p, --print-freq int   print/report after this many records (-1 for print after EOF) (default -1)
-  -Q, --quiet            supress all plotting to stderr
+  -Q, --quiet            suppress all plotting to stderr
   -R, --reset            reset histogram after every report
 </code></pre>
 <p>Examples</p>
