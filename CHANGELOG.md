@@ -5,9 +5,9 @@
         - added a new flag `--quote-all` to quote all output fields, even when not necessary. [#297](https://github.com/shenwei356/csvtk/issues/297)
     - new commands:
         - `csvtk csv2html`: convert CSV/TSV to a standalone responsive HTML table. [#132](https://github.com/shenwei356/csvtk/issues/132)
-        - `csvtk long2matrix`: convert the long format to a matrix. [#91](https://github.com/shenwei356/csvtk/issues/91)
-        - `csvtk matrix2long`: convert a matrix to the long format.
-        - `csvtk paste`: paste CSV/TSV files by columns. [#139](https://github.com/shenwei356/csvtk/issues/139)
+        - **`csvtk long2matrix`: convert the long format to a matrix**. [#91](https://github.com/shenwei356/csvtk/issues/91)
+        - **`csvtk matrix2long`: convert a matrix to the long format**.
+        - **`csvtk paste`: paste CSV/TSV files by columns**. [#139](https://github.com/shenwei356/csvtk/issues/139)
     - `csvtk filter/filter2/mutate2/mutate3/sort/summary/round`:
         - fix wrongly converting `.` to the number zero. [#359](https://github.com/shenwei356/csvtk/issues/359)
     - `csvtk cut`:
@@ -16,30 +16,30 @@
     - `csvtk corr`:
         - write correlations to stdout or `-o` by default; with `--pass`, keep forwarding input to output and writing correlations to stderr. [#370](https://github.com/shenwei356/csvtk/issues/370)
     - `csvtk sort`:
-        - support sorting by Unicode text length with `-k field:l` and reverse order with `-k field:lr`. [#357](https://github.com/shenwei356/csvtk/issues/357)
+        - **support sorting by Unicode text length with `-k field:l` and reverse order with `-k field:lr`**. [#357](https://github.com/shenwei356/csvtk/issues/357)
     - `csvtk concat`:
         - add `--original-file` to append each row's input filename. [#369](https://github.com/shenwei356/csvtk/issues/369)
     - `csvtk unfold`:
-        - support unfolding multiple fields in parallel. [#363](https://github.com/shenwei356/csvtk/issues/363)
+        - **support unfolding multiple fields in parallel**. [#363](https://github.com/shenwei356/csvtk/issues/363)
     - `csvtk fold`:
-        - support folding multiple value fields in parallel. [#320](https://github.com/shenwei356/csvtk/issues/320) [#363](https://github.com/shenwei356/csvtk/issues/363)
+        - **support folding multiple value fields in parallel**. [#320](https://github.com/shenwei356/csvtk/issues/320) [#363](https://github.com/shenwei356/csvtk/issues/363)
     - `csvtk mutate2`:
-        - fix the function `len` for Unicode strings. [#368](https://github.com/shenwei356/csvtk/issues/368)
+        - **fix the function `len` for Unicode strings**. [#368](https://github.com/shenwei356/csvtk/issues/368)
     - `csvtk join/freq/inter/uniq/summary/fold/spread/replace`:
         - fix rare collisions between multi-column keys, when a field contains `_shenwei356_`.
     - `csvtk join`:
         - fix `-n` for empty fields in multi-column keys and retain unmatched rows in left and outer joins.
         - retain columns from header-only input files in outer joins. [#266](https://github.com/shenwei356/csvtk/issues/266)
     - `csvtk uniq`:
-        - add `-d/--repeated` to print one record per repeated key and `-u/--unique` to print records whose keys occur exactly once. [#133](https://github.com/shenwei356/csvtk/issues/133)
+        - **add `-d/--repeated` to print one record per repeated key and `-u/--unique` to print records whose keys occur exactly once**. [#133](https://github.com/shenwei356/csvtk/issues/133)
         - use `--delimiter` instead of `-d` to set the input delimiter for this command.
     - `csvtk freq`:
         - make `-i` ignore case.
     - `csvtk summary`:
-        - add `-n/--names` to rename summary columns. [#273](https://github.com/shenwei356/csvtk/issues/273)
+        - **add `-n/--names` to rename summary columns**. [#273](https://github.com/shenwei356/csvtk/issues/273)
         - preserve input row positions for `argmin` and `argmax` when used with quantiles.
     - `csvtk split`:
-        - add `-n/--nlines` to split input into chunks containing up to N records, and `-c/--nchunks` to distribute records among N chunks in a round-robin manner. An input header row is repeated in every chunk. [#122](https://github.com/shenwei356/csvtk/issues/122)
+        - **add `-n/--nlines` to split input into chunks containing up to N records, and `-c/--nchunks` to distribute records among N chunks in a round-robin manner**. An input header row is repeated in every chunk. [#122](https://github.com/shenwei356/csvtk/issues/122)
         - encode key values in output filenames to prevent collisions and invalid paths.
     - `csvtk splitxlsx`:
         - generate distinct, valid sheet names for keys that produce the same name.

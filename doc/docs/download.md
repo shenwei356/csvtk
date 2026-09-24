@@ -6,19 +6,53 @@
 
 ## Current Version
 
-- [csvtk v0.37.0](https://github.com/shenwei356/csvtk/releases/tag/v0.37.0)
-[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.37.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.37.0)
+- [csvtk v0.38.0](https://github.com/shenwei356/csvtk/releases/tag/v0.38.0)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.38.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.38.0)
     - `csvtk`:
-        - add support of reading and writing LZ4 compression format. [#353](https://github.com/shenwei356/csvtk/issues/353)
+        - correct help text, documentation examples, and spelling.
+        - added a new flag `--quote-all` to quote all output fields, even when not necessary. [#297](https://github.com/shenwei356/csvtk/issues/297)
+    - new commands:
+        - `csvtk csv2html`: convert CSV/TSV to a standalone responsive HTML table. [#132](https://github.com/shenwei356/csvtk/issues/132)
+        - **`csvtk long2matrix`: convert the long format to a matrix**. [#91](https://github.com/shenwei356/csvtk/issues/91)
+        - **`csvtk matrix2long`: convert a matrix to the long format**.
+        - **`csvtk paste`: paste CSV/TSV files by columns**. [#139](https://github.com/shenwei356/csvtk/issues/139)
+    - `csvtk filter/filter2/mutate2/mutate3/sort/summary/round`:
+        - fix wrongly converting `.` to the number zero. [#359](https://github.com/shenwei356/csvtk/issues/359)
     - `csvtk cut`:
-        - allow setting `-f/--fields` multiple times, useful for selecting a long column list.
-    - `csvtk csv2jon`:
-        - fix `-b/--blanks` and `-n/--parse-num`. [#352](https://github.com/shenwei356/csvtk/issues/352)
-        - add a new flag `-K/--skip-key` to skip putting KEY in the data when using -k KEY. [#351](https://github.com/shenwei356/csvtk/issues/351)
-    - `csvtk pretty`:
-        - add a new style `regular`.
-        - adjust styles `3line` and `round`.
+        - support `-Z/--show-row-number`. [#360](https://github.com/shenwei356/csvtk/issues/360)
+        - if there's only one input file, it will be directly outputted.
+    - `csvtk corr`:
+        - write correlations to stdout or `-o` by default; with `--pass`, keep forwarding input to output and writing correlations to stderr. [#370](https://github.com/shenwei356/csvtk/issues/370)
+    - `csvtk sort`:
+        - **support sorting by Unicode text length with `-k field:l` and reverse order with `-k field:lr`**. [#357](https://github.com/shenwei356/csvtk/issues/357)
+    - `csvtk concat`:
+        - add `--original-file` to append each row's input filename. [#369](https://github.com/shenwei356/csvtk/issues/369)
+    - `csvtk unfold`:
+        - **support unfolding multiple fields in parallel**. [#363](https://github.com/shenwei356/csvtk/issues/363)
+    - `csvtk fold`:
+        - **support folding multiple value fields in parallel**. [#320](https://github.com/shenwei356/csvtk/issues/320) [#363](https://github.com/shenwei356/csvtk/issues/363)
+    - `csvtk mutate2`:
+        - **fix the function `len` for Unicode strings**. [#368](https://github.com/shenwei356/csvtk/issues/368)
+    - `csvtk join/freq/inter/uniq/summary/fold/spread/replace`:
+        - fix rare collisions between multi-column keys, when a field contains `_shenwei356_`.
+    - `csvtk join`:
+        - fix `-n` for empty fields in multi-column keys and retain unmatched rows in left and outer joins.
+        - retain columns from header-only input files in outer joins. [#266](https://github.com/shenwei356/csvtk/issues/266)
+    - `csvtk uniq`:
+        - **add `-d/--repeated` to print one record per repeated key and `-u/--unique` to print records whose keys occur exactly once**. [#133](https://github.com/shenwei356/csvtk/issues/133)
+        - use `--delimiter` instead of `-d` to set the input delimiter for this command.
+    - `csvtk freq`:
+        - make `-i` ignore case.
+    - `csvtk summary`:
+        - **add `-n/--names` to rename summary columns**. [#273](https://github.com/shenwei356/csvtk/issues/273)
+        - preserve input row positions for `argmin` and `argmax` when used with quantiles.
+    - `csvtk split`:
+        - **add `-n/--nlines` to split input into chunks containing up to N records, and `-c/--nchunks` to distribute records among N chunks in a round-robin manner**. An input header row is repeated in every chunk. [#122](https://github.com/shenwei356/csvtk/issues/122)
+        - encode key values in output filenames to prevent collisions and invalid paths.
+    - `csvtk splitxlsx`:
+        - generate distinct, valid sheet names for keys that produce the same name.
 
+        
 ### Links
 
 OS     |Arch  |File                                                                                                                           |Download Count
@@ -28,7 +62,11 @@ Linux  |arm64 |[csvtk_linux_arm64.tar.gz](https://github.com/shenwei356/csvtk/re
 macOS  |64-bit|[csvtk_darwin_amd64.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.37.0/csvtk_darwin_amd64.tar.gz)           |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_darwin_amd64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.37.0/csvtk_darwin_amd64.tar.gz)
 macOS  |arm64 |[csvtk_darwin_arm64.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.37.0/csvtk_darwin_arm64.tar.gz)           |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_darwin_arm64.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.37.0/csvtk_darwin_arm64.tar.gz)
 Windows|64-bit|[csvtk_windows_amd64.exe.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.37.0/csvtk_windows_amd64.exe.tar.gz) |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_windows_amd64.exe.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.37.0/csvtk_windows_amd64.exe.tar.gz)
+Windows|arm64 |[csvtk_windows_arm64.exe.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.37.0/csvtk_windows_arm64.exe.tar.gz) |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_windows_arm64.exe.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.37.0/csvtk_windows_arm64.exe.tar.gz)
 FreeBSD|64-bit|[csvtk_freebsd_amd64.exe.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.37.0/csvtk_freebsd_amd64.exe.tar.gz) |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_freebsd_amd64.exe.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.37.0/csvtk_freebsd_amd64.exe.tar.gz)
+FreeBSD|arm64 |[csvtk_freebsd_arm64.exe.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.37.0/csvtk_freebsd_arm64.exe.tar.gz) |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_freebsd_arm64.exe.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.37.0/csvtk_freebsd_arm64.exe.tar.gz)
+OpenBSD|64-bit|[csvtk_openbsd_amd64.exe.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.37.0/csvtk_openbsd_amd64.exe.tar.gz) |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_openbsd_amd64.exe.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.37.0/csvtk_openbsd_amd64.exe.tar.gz)
+OpenBSD|arm64 |[csvtk_openbsd_arm64.exe.tar.gz](https://github.com/shenwei356/csvtk/releases/download/v0.37.0/csvtk_openbsd_arm64.exe.tar.gz) |[![Github Releases (by Asset)](https://img.shields.io/github/downloads/shenwei356/csvtk/latest/csvtk_openbsd_arm64.exe.tar.gz.svg?maxAge=3600)](https://github.com/shenwei356/csvtk/releases/download/v0.37.0/csvtk_openbsd_arm64.exe.tar.gz)
 
 **Notes**
 
@@ -141,6 +179,18 @@ fish:
 
 ## Release history
 
+- [csvtk v0.37.0](https://github.com/shenwei356/csvtk/releases/tag/v0.37.0)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.37.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.37.0)
+    - `csvtk`:
+        - add support of reading and writing LZ4 compression format. [#353](https://github.com/shenwei356/csvtk/issues/353)
+    - `csvtk cut`:
+        - allow setting `-f/--fields` multiple times, useful for selecting a long column list.
+    - `csvtk csv2jon`:
+        - fix `-b/--blanks` and `-n/--parse-num`. [#352](https://github.com/shenwei356/csvtk/issues/352)
+        - add a new flag `-K/--skip-key` to skip putting KEY in the data when using -k KEY. [#351](https://github.com/shenwei356/csvtk/issues/351)
+    - `csvtk pretty`:
+        - add a new style `regular`.
+        - adjust styles `3line` and `round`.
 - [csvtk v0.36.0](https://github.com/shenwei356/csvtk/releases/tag/v0.36.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.36.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.36.0)
     - new command `csvtk shuf`: shuffle rows. [#151](https://github.com/shenwei356/csvtk/issues/151)
