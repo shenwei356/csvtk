@@ -43,6 +43,8 @@
 11. Output paths must differ from input files, including symbolic and hard links.
 12. Read and decompression errors in key-value, pattern, and custom sort-level files
     cause a nonzero exit status; partial contents are not used.
+13. With `-E/--ignore-empty-row` or `-I/--ignore-illegal-row`, `--quiet` also avoids
+    retaining skipped-row line numbers, reducing memory use on large inputs.
 
 `csv2md` and `csv2rst` report input open and decompression errors instead of
 treating unreadable inputs as empty files.
@@ -368,15 +370,18 @@ Usage
 stream file to stdout and report progress on stderr
 
 With -L, a final line without a newline is counted and streamed unchanged.
+The buffer size must be positive. The print frequency must be positive or -1.
+With -p -1, progress is printed only after each file has been read.
 
 Usage:
   csvtk cat [flags]
 
 Flags:
-  -b, --buffsize int     buffer size (default 8192)
+  -b, --buffsize int     buffer size (positive) (default 8192)
   -h, --help             help for cat
   -L, --lines            count lines instead of bytes
-  -p, --print-freq int   print frequency (-1 for print after parsing) (default 1)
+  -p, --print-freq int   progress update frequency in lines/read chunks (positive, or -1 for final
+                         progress only) (default 1)
   -s, --total int        expected total bytes/lines (default -1)
 ```
 
@@ -1690,6 +1695,8 @@ backslashes, and variable-like text (e.g., $name or ${name}).
 Compiled expressions are reused while input types remain unchanged.
 Literal-dependent expressions retain per-row parsing for compatibility.
 
+The two variable formats can be mixed for the same column.
+
 Variables formats:
   $1 or ${1}                        The first field/column
   $a or ${a}                        Column "a"
@@ -2871,6 +2878,8 @@ backslashes, and variable-like text (e.g., $name or ${name}).
 Compiled expressions are reused while input types remain unchanged.
 Literal-dependent expressions retain per-row parsing for compatibility.
 
+The two variable formats can be mixed for the same column.
+
 Variables formats:
   $1 or ${1}                        The first field/column
   $a or ${a}                        Column "a"
@@ -3040,6 +3049,8 @@ backslashes, and variable-like text (e.g., $name or ${name}).
 
 Compiled expressions are reused while input types remain unchanged.
 Literal-dependent expressions retain per-row parsing for compatibility.
+
+The two variable formats can be mixed for the same column.
 
 Variables formats:
   $1 or ${1}                        The first field/column
@@ -4925,6 +4936,7 @@ Attention:
   3. The default operation is count, e.g., "-f 1-2" is equivalent to "-f 1-2:count".
   4. Values are stored only for the numeric or text operations requested for
      each field. Memory use still grows with the retained values and groups.
+  5. The same input and --rand-seed give reproducible results for the rand operation.
 
 Available operations:
  

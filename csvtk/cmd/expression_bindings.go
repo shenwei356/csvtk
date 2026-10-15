@@ -8,6 +8,21 @@ import (
 	"github.com/casbin/govaluate"
 )
 
+// normalizeExpressionReferences gives both spellings of a column the same key.
+// Normalizing once also keeps numeric references distinct from language identifiers.
+func normalizeExpressionReferences(source string) (string, []string) {
+	fields := make([]string, 0)
+	source = reFilter2.ReplaceAllStringFunc(source, func(reference string) string {
+		field := reference[1:]
+		if strings.HasPrefix(reference, "${") {
+			field = reference[2 : len(reference)-1]
+		}
+		fields = append(fields, field)
+		return "${" + field + "}"
+	})
+	return source, fields
+}
+
 // expressionBindings gives column references stable identifiers, allowing a
 // compiled expression to receive differently typed values on successive rows.
 type expressionBindings struct {

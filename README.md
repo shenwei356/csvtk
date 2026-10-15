@@ -311,6 +311,8 @@ More [examples](http://shenwei356.github.io/csvtk/usage/) and [tutorial](http://
 9. Output paths must differ from input files, including symbolic and hard links.
 10. Read and decompression errors in key-value, pattern, and custom sort-level files
     cause a nonzero exit status; partial contents are not used.
+11. With `-E/--ignore-empty-row` or `-I/--ignore-illegal-row`, `--quiet` also avoids
+    retaining skipped-row line numbers, reducing memory use on large inputs.
 
 Examples
 

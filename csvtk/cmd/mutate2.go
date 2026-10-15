@@ -56,6 +56,8 @@ backslashes, and variable-like text (e.g., $name or ${name}).
 Compiled expressions are reused while input types remain unchanged.
 Literal-dependent expressions retain per-row parsing for compatibility.
 
+The two variable formats can be mixed for the same column.
+
 Variables formats:
   $1 or ${1}                        The first field/column
   $a or ${a}                        Column "a"
@@ -188,26 +190,12 @@ Custom functions:
 
 		digitsAsString := getFlagBool(cmd, "numeric-as-string")
 
-		fs := make([]string, 0)
-		varType := make(map[string]int)
-		for _, f := range reFilter2.FindAllStringSubmatch(exprStr, -1) {
-			if reFilter2b.MatchString(f[0]) {
-				varType[f[1]] = 1
-				fs = append(fs, f[1])
-			} else {
-				varType[f[2]] = 0
-				fs = append(fs, f[2])
-			}
-		}
+		exprStr, fs := normalizeExpressionReferences(exprStr)
 
 		varSep := "__sep__"
 		fieldStr := strings.Join(fs, varSep)
 
 		hasNullCoalescence := reNullCoalescence.MatchString(exprStr)
-
-		exprStr = reFiler2VarSymbolStartsWithDigits.ReplaceAllString(exprStr, "shenwei_$1$2")
-		exprStr = reFilter2VarField.ReplaceAllString(exprStr, "shenwei$1")
-		// exprStr = reFilter2VarSymbol.ReplaceAllString(exprStr, "")
 
 		var expression *govaluate.EvaluableExpression
 
@@ -314,12 +302,7 @@ Custom functions:
 				if !selectWithColnames {
 					for _, fieldTmp = range record.Fields {
 						value = record.All[fieldTmp-1]
-						col = strconv.Itoa(fieldTmp)
-						if varType[col] == 1 {
-							col = "${" + col + "}"
-						} else {
-							col = fmt.Sprintf("shenwei%d", fieldTmp)
-						}
+						col = "${" + strconv.Itoa(fieldTmp) + "}"
 
 						if reDigitals.MatchString(value) {
 							if digitsAsString || containCustomFuncs {
@@ -341,13 +324,7 @@ Custom functions:
 					for col = range colnamesMap {
 						value = record.All[colnames2fileds[col][0]-1]
 
-						if reFiler2ColSymbolStartsWithDigits.MatchString(col) {
-							col = fmt.Sprintf("shenwei_%s", col)
-						} else if varType[col] == 1 {
-							col = "${" + col + "}"
-						} else {
-							col = "$" + col
-						}
+						col = "${" + col + "}"
 
 						if reDigitals.MatchString(value) {
 							if digitsAsString || containCustomFuncs {

@@ -57,11 +57,13 @@ type CSVReader struct {
 
 	Ch chan Record
 
-	IgnoreEmptyRow   bool
-	IgnoreIllegalRow bool
-	NumEmptyRows     []int // rows of emtpy rows
-	NumIllegalRows   []int // rows of illegal rows
-
+	IgnoreEmptyRow        bool
+	IgnoreIllegalRow      bool
+	NumEmptyRows          []int // Row numbers of ignored empty rows, retained for warnings.
+	NumIllegalRows        []int // Row numbers of ignored illegal rows, retained for warnings.
+	SkippedEmptyRows      int   // Total ignored empty rows, including in quiet mode.
+	SkippedIllegalRows    int   // Total ignored illegal rows, including in quiet mode.
+	omitSkippedRowNumbers bool  // Quiet readers count skipped rows without retaining their positions.
 }
 
 // NewCSVReader is
@@ -80,12 +82,10 @@ func NewCSVReader(file string) (*CSVReader, error) {
 	ch := make(chan Record, 128)
 
 	csvReader := &CSVReader{
-		file:           file,
-		fh:             fh,
-		Reader:         reader,
-		Ch:             ch,
-		NumEmptyRows:   make([]int, 0, 128),
-		NumIllegalRows: make([]int, 0, 128),
+		file:   file,
+		fh:     fh,
+		Reader: reader,
+		Ch:     ch,
 	}
 	return csvReader, nil
 }
@@ -184,7 +184,10 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 			lineNum++
 			if err != nil {
 				if ignoreIllegalRow {
-					csvReader.NumIllegalRows = append(csvReader.NumIllegalRows, lineNum)
+					csvReader.SkippedIllegalRows++
+					if !csvReader.omitSkippedRowNumbers {
+						csvReader.NumIllegalRows = append(csvReader.NumIllegalRows, lineNum)
+					}
 					continue
 				}
 				csvReader.Ch <- Record{
@@ -206,7 +209,10 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 					}
 				}
 				if !notBlank {
-					csvReader.NumEmptyRows = append(csvReader.NumEmptyRows, lineNum)
+					csvReader.SkippedEmptyRows++
+					if !csvReader.omitSkippedRowNumbers {
+						csvReader.NumEmptyRows = append(csvReader.NumEmptyRows, lineNum)
+					}
 					continue
 				}
 			}
@@ -681,11 +687,11 @@ func readerReport(config *Config, csvReader *CSVReader, file string) {
 	if csvReader == nil {
 		return
 	}
-	if config.IgnoreEmptyRow && len(csvReader.NumEmptyRows) > 0 && config.Verbose {
-		log.Warningf("file '%s': %d empty rows ignored: %d", file, len(csvReader.NumEmptyRows), csvReader.NumEmptyRows)
+	if config.IgnoreEmptyRow && csvReader.SkippedEmptyRows > 0 && config.Verbose {
+		log.Warningf("file '%s': %d empty rows ignored: %d", file, csvReader.SkippedEmptyRows, csvReader.NumEmptyRows)
 	}
-	if config.IgnoreIllegalRow && len(csvReader.NumIllegalRows) > 0 && config.Verbose {
-		log.Warningf("file '%s': %d illegal rows ignored: %d", file, len(csvReader.NumIllegalRows), csvReader.NumIllegalRows)
+	if config.IgnoreIllegalRow && csvReader.SkippedIllegalRows > 0 && config.Verbose {
+		log.Warningf("file '%s': %d illegal rows ignored: %d", file, csvReader.SkippedIllegalRows, csvReader.NumIllegalRows)
 	}
 }
 

@@ -76,7 +76,11 @@ var space2tabCmd = &cobra.Command{
 				outfh.WriteString(strings.Join(stringutil.Split(line, "\t "), "\t"))
 				outfh.WriteByte('\n')
 			}
-			checkError(scanner.Err())
+			// Release each input before opening the next, independently of garbage collection.
+			scanErr := scanner.Err()
+			closeErr := fh.Close()
+			checkError(scanErr)
+			checkError(closeErr)
 		}
 	},
 }

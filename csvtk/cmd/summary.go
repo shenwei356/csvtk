@@ -22,6 +22,7 @@ package cmd
 
 import (
 	"fmt"
+	"maps"
 	"math"
 	"math/rand"
 	"runtime"
@@ -53,6 +54,7 @@ Attention:
   3. The default operation is count, e.g., "-f 1-2" is equivalent to "-f 1-2:count".
   4. Values are stored only for the numeric or text operations requested for
      each field. Memory use still grows with the retained values and groups.
+  5. The same input and --rand-seed give reproducible results for the rand operation.
 
 Available operations:
  
@@ -86,7 +88,10 @@ Available operations:
 			checkError(fmt.Errorf("flag -s (--separater) needed"))
 		}
 		seed := getFlagInt64(cmd, "rand-seed")
-		rand.Seed(seed)
+		// Keep seeded selection local; global rand.Seed is a no-op in recent Go versions.
+		random := rand.New(rand.NewSource(seed))
+		textStats := maps.Clone(allStats2)
+		textStats["rand"] = func(values []string) string { return values[random.Intn(len(values))] }
 
 		ops := getFlagStringSlice(cmd, "fields")
 		if len(ops) == 0 {
@@ -384,7 +389,7 @@ Available operations:
 				f := fieldsD[i]
 
 				if _, ok = allStats[s]; !ok {
-					fu2 = allStats2[s]
+					fu2 = textStats[s]
 					record = append(record, fu2(data2[group][f]))
 				} else {
 					values := data[group][f]

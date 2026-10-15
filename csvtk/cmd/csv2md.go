@@ -137,7 +137,7 @@ Attention:
 		}
 
 		alignRow := make([]string, len(header))
-		var l, r, a string
+		var l, r string
 		for i, w := range widths {
 			switch aligns[i] {
 			case "c", "center":
@@ -147,12 +147,8 @@ Attention:
 			case "r", "right":
 				l, r = "-", ":"
 			}
-			a = l
-			for j := 0; j < w-2; j++ {
-				a += "-"
-			}
-			a += r
-			alignRow[i] = a
+			// Build the alignment line once rather than copying every growing prefix.
+			alignRow[i] = l + strings.Repeat("-", w-2) + r
 		}
 
 		j := len(header) - 1

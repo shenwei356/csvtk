@@ -40,16 +40,24 @@ var catCmd = &cobra.Command{
 	Short: "stream file to stdout and report progress on stderr",
 	Long: `stream file to stdout and report progress on stderr
 
-With -L, a final line without a newline is counted and streamed unchanged.`,
+With -L, a final line without a newline is counted and streamed unchanged.
+The buffer size must be positive. The print frequency must be positive or -1.
+With -p -1, progress is printed only after each file has been read.`,
 
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
 		outFile := config.OutFile
 		files := getFileListFromArgsAndFile(cmd, args, true, "infile-list", true)
 		flagLines := getFlagBool(cmd, "lines")
-		flagBuff := getFlagInt(cmd, "buffsize")
+		flagBuff := getFlagPositiveInt(cmd, "buffsize")
 		flagFreq := getFlagInt(cmd, "print-freq")
 		flagTotal := getFlagInt(cmd, "total")
+		if flagFreq != -1 && flagFreq <= 0 {
+			checkError(fmt.Errorf("value of flag --print-freq should be positive or -1"))
+		}
+		if flagLines && flagTotal < 0 {
+			checkError(fmt.Errorf("flag -s (--total) is required when counting lines"))
+		}
 
 		of := os.Stdout
 		if outFile != "-" {
@@ -74,18 +82,28 @@ With -L, a final line without a newline is counted and streamed unchanged.`,
 				checkError(err)
 			}
 			reader := bufio.NewReaderSize(fh, flagBuff)
-			var bar *pb.ProgressBar
+			// Derive the byte total separately for every file; never reuse the first size.
+			total := int64(flagTotal)
+			if !flagLines && total < 0 {
+				if file == "-" {
+					checkError(fmt.Errorf("flag -s (--total) is required when reading bytes from stdin"))
+				}
+				inputStat, err := fh.Stat()
+				checkError(err)
+				total = inputStat.Size()
+			}
+			bar := pb.New64(total).SetWriter(os.Stderr)
+			if flagFreq == -1 {
+				// Static bars have no timer, so final-only mode cannot print early.
+				bar.Set(pb.Static, true)
+			}
+			bar.Start()
+			var count int
+			var current int64 // Actual lines/bytes read, independent of progress refresh frequency.
 
 			if flagLines {
-				if flagTotal < 0 {
-					fmt.Fprintf(os.Stderr, "Cannot read lines unless the of expected number of lines is specified via -s!\n")
-					os.Exit(1)
-				}
-				bar = pb.StartNew(flagTotal)
-				bar.SetWriter(os.Stderr)
 				var line []byte
 				var err error
-				var count int
 				for {
 					line, err = reader.ReadBytes('\n')
 					if err != nil && err != io.EOF {
@@ -94,8 +112,9 @@ With -L, a final line without a newline is counted and streamed unchanged.`,
 					// ReadBytes can return an unterminated final line together with EOF.
 					if len(line) > 0 {
 						count++
-						if count%flagFreq == 0 {
-							bar.Add(1)
+						current++
+						if flagFreq > 0 && count%flagFreq == 0 {
+							bar.SetCurrent(current)
 						}
 						_, writeErr := writer.Write(line)
 						checkError(writeErr)
@@ -107,42 +126,35 @@ With -L, a final line without a newline is counted and streamed unchanged.`,
 
 			} else {
 				var err error
-				if flagTotal < 0 {
-					if file == "-" {
-						fmt.Fprintf(os.Stderr, "Cannot read from stdin unless the number of expected bytes is specified via -s!\n")
-						os.Exit(1)
-					}
-					inputStat, err := os.Stat(file)
-					checkError(err)
-					flagTotal = int(inputStat.Size())
-
-				}
-				bar = pb.StartNew(flagTotal)
 				byteBuff := make([]byte, flagBuff)
-				var count int
-				var bytesSince int
 				var readSize int
 				for {
 					readSize, err = reader.Read(byteBuff)
+					if err != nil && err != io.EOF {
+						checkError(err)
+					}
+					if readSize > 0 {
+						count++
+						current += int64(readSize)
+						if flagFreq > 0 && count%flagFreq == 0 {
+							bar.SetCurrent(current)
+						}
+						_, writeErr := writer.Write(byteBuff[:readSize])
+						checkError(writeErr)
+					}
 					if err == io.EOF {
 						break
 					}
-					checkError(err)
-					count++
-					bytesSince += readSize
-					if count%flagFreq == 0 {
-						bar.Add(bytesSince)
-						bytesSince = 0
-					}
-					_, err = writer.Write(byteBuff[:readSize])
-					checkError(err)
 				}
 
 			}
 
-			bar.Finish()
-
-			fh.Close()
+			// Include any final partial batch even when the input is shorter than -p.
+			bar.SetCurrent(current).Finish()
+			if flagFreq == -1 {
+				bar.Write()
+			}
+			checkError(fh.Close())
 
 		}
 
@@ -151,8 +163,8 @@ With -L, a final line without a newline is counted and streamed unchanged.`,
 
 func init() {
 	RootCmd.AddCommand(catCmd)
-	catCmd.Flags().IntP("print-freq", "p", 1, "print frequency (-1 for print after parsing)")
-	catCmd.Flags().IntP("buffsize", "b", 4096*2, "buffer size")
+	catCmd.Flags().IntP("print-freq", "p", 1, "progress update frequency in lines/read chunks (positive, or -1 for final progress only)")
+	catCmd.Flags().IntP("buffsize", "b", 4096*2, "buffer size (positive)")
 	catCmd.Flags().BoolP("lines", "L", false, "count lines instead of bytes")
 	catCmd.Flags().IntP("total", "s", -1, "expected total bytes/lines")
 }

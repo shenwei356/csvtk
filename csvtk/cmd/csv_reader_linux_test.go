@@ -93,3 +93,26 @@ func TestEarlyCSVCommandsFileLimit(t *testing.T) {
 		}
 	}
 }
+
+// TestSpace2TabFileLimit requires explicit closure instead of relying on file finalizers.
+func TestSpace2TabFileLimit(t *testing.T) {
+	for _, compressed := range []bool{false, true} {
+		contents := "# comment\na b\n1 2\n"
+		input := writeAccuracyInput(t, "spaces.txt", contents)
+		if compressed {
+			input = writeAuxiliaryGzip(t, contents, "")
+		}
+		args := []string{"-test.run=^TestCSVReaderFileLimitHelper$", "--", "space2tab", "-b", "1K"}
+		for i := 0; i < 100; i++ {
+			args = append(args, input)
+		}
+		ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+		cmd := exec.CommandContext(ctx, os.Args[0], args...)
+		cmd.Env = append(os.Environ(), "CSVTK_READER_FILE_LIMIT_HELPER=1", "GOGC=off")
+		out, err := cmd.CombinedOutput()
+		cancel()
+		if err != nil || string(out) != strings.Repeat("a\tb\n1\t2\n", 100) {
+			t.Fatalf("100 files, compressed=%t: %v: %s", compressed, err, out)
+		}
+	}
+}

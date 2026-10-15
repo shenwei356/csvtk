@@ -4,17 +4,25 @@
         - report buffered output and compression errors with a nonzero exit status.
         - fix expansion of multiple open column ranges in field selection.
         - reject output paths that refer to input files, including symbolic and hard links, before truncating output.
+        - count ignored empty and illegal rows without retaining their line numbers in quiet mode.
     - `csvtk inter`:
         - return an empty intersection for inputs without data rows, regardless of file order.
     - `csvtk csv2md/csv2rst`:
         - report input open and decompression errors instead of treating them as empty files.
+    - `csvtk csv2md`:
+        - build alignment lines in linear time, avoiding repeated string copies for wide fields.
+    - `csvtk space2tab`:
+        - close each input before opening the next, fixing file descriptor exhaustion with many files.
     - `csvtk replace/rename2/grep/sort`:
         - report read and decompression errors in key-value, pattern, and custom sort-level files instead of using partial contents.
     - `csvtk summary`:
         - expand field ranges with the default count operation, fixing unintended grouping and output column counts.
         - size per-group maps by the selected fields and store only values needed by the requested operations.
+        - honor `--rand-seed` with a local random generator on recent Go versions.
     - `csvtk cat`:
         - preserve and count the final line without a newline with `-L/--lines`.
+        - reject nonpositive buffer sizes and invalid progress frequencies before opening output.
+        - count all lines and bytes with any progress frequency, refresh byte totals for each input, and honor final-only progress with `-p -1`.
     - `csvtk fix`:
         - honor `--na` when padding buffered and remaining rows with `-n/--buf-rows`.
         - release the initial row buffer and stream remaining rows when `-n/--buf-rows` is positive.
@@ -29,6 +37,7 @@
         - preserve float64 precision when converting numeric fields for expressions.
         - preserve variable-like text, quotes, and backslashes in string field values.
         - reuse compiled expressions with bound column values, preserving input types and literal-dependent parsing.
+        - allow mixing braced and unbraced references to the same column.
     - `csvtk plot bar`:
         - align grouped bars by category, preserving first-seen order and gaps for missing categories.
         - report duplicate group/category pairs instead of plotting ambiguous values.

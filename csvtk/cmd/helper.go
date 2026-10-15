@@ -489,6 +489,7 @@ func newCSVReaderByConfig(config Config, file string) (*CSVReader, error) {
 	reader.Reader.LazyQuotes = config.LazyQuotes
 	reader.IgnoreEmptyRow = config.IgnoreEmptyRow
 	reader.IgnoreIllegalRow = config.IgnoreIllegalRow
+	reader.omitSkippedRowNumbers = !config.Verbose
 
 	reader.NoHeaderRow = config.NoHeaderRow
 
@@ -705,12 +706,12 @@ func parseCSVfile(cmd *cobra.Command, config Config, file string,
 
 	if config.IgnoreEmptyRow {
 		if config.Verbose {
-			log.Warningf("file '%s': %d empty rows ignored", file, csvReader.NumEmptyRows)
+			log.Warningf("file '%s': %d empty rows ignored", file, csvReader.SkippedEmptyRows)
 		}
 	}
 	if config.IgnoreIllegalRow {
 		if config.Verbose {
-			log.Warningf("file '%s': %d illegal rows ignored", file, csvReader.NumIllegalRows)
+			log.Warningf("file '%s': %d illegal rows ignored", file, csvReader.SkippedIllegalRows)
 		}
 	}
 
