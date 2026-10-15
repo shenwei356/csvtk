@@ -357,6 +357,8 @@ Usage
 ```text
 stream file to stdout and report progress on stderr
 
+With -L, a final line without a newline is counted and streamed unchanged.
+
 Usage:
   csvtk cat [flags]
 

@@ -38,7 +38,9 @@ var catCmd = &cobra.Command{
 
 	Use:   "cat",
 	Short: "stream file to stdout and report progress on stderr",
-	Long:  "stream file to stdout and report progress on stderr",
+	Long: `stream file to stdout and report progress on stderr
+
+With -L, a final line without a newline is counted and streamed unchanged.`,
 
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
@@ -86,16 +88,21 @@ var catCmd = &cobra.Command{
 				var count int
 				for {
 					line, err = reader.ReadBytes('\n')
+					if err != nil && err != io.EOF {
+						checkError(err)
+					}
+					// ReadBytes can return an unterminated final line together with EOF.
+					if len(line) > 0 {
+						count++
+						if count%flagFreq == 0 {
+							bar.Add(1)
+						}
+						_, writeErr := writer.Write(line)
+						checkError(writeErr)
+					}
 					if err == io.EOF {
 						break
 					}
-					checkError(err)
-					count++
-					if count%flagFreq == 0 {
-						bar.Add(1)
-					}
-					_, err := writer.Write(line)
-					checkError(err)
 				}
 
 			} else {

@@ -5,6 +5,8 @@
         - fix expansion of multiple open column ranges in field selection.
     - `csvtk summary`:
         - expand field ranges with the default count operation, fixing unintended grouping and output column counts.
+    - `csvtk cat`:
+        - preserve and count the final line without a newline with `-L/--lines`.
     - `csvtk csv2xlsx`:
         - fix data loss in wide tables and report cell coordinate and write errors.
     - `csvtk join`:

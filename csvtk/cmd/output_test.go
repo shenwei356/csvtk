@@ -40,6 +40,7 @@ func TestOutputWriteErrors(t *testing.T) {
 		{"quote repair", []string{"fix-quotes", "-b", "1M", input}},
 		{"quote removal", []string{"del-quotes", input}},
 		{"cat", []string{"cat", input}},
+		{"cat lines", []string{"cat", "-L", "-s", "2", input}},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
