@@ -24,7 +24,6 @@ import (
 	"fmt"
 	"regexp"
 	"runtime"
-	"sort"
 	"strconv"
 	"strings"
 
@@ -48,6 +47,9 @@ The arithmetic/string expression is supported by:
 
 Numeric field conversion preserves 64-bit floating-point precision.
 Use -s/--numeric-as-string to keep numeric fields as strings.
+
+String field values retain their literal contents, including quotes,
+backslashes, and variable-like text (e.g., $name or ${name}).
 
 Variables formats:
   $1 or ${1}                        The first field/column
@@ -163,7 +165,6 @@ Custom functions:
 
 		hasNullCoalescence := reNullCoalescence.MatchString(filterStr)
 
-		var quote string
 		filterStr0 := filterStr
 		filterStr = reFiler2VarSymbolStartsWithDigits.ReplaceAllString(filterStr, "shenwei_$1$2")
 		filterStr = reFilter2VarField.ReplaceAllString(filterStr, "shenwei$1")
@@ -178,7 +179,6 @@ Custom functions:
 		defer closeOutput(outfh)
 
 		outOpt := csvOutputOption{QuoteAll: config.QuoteAll}
-
 
 		writer := newCSVOutputWriter(outfh, outOpt)
 		if config.OutTabs || config.Tabs {
@@ -236,7 +236,7 @@ Custom functions:
 
 			var selectWithColnames bool
 
-			keys := make([]string, 0, 8)
+			var template expressionTemplate
 
 			checkFirstLine := true
 			for record := range csvReader.Ch {
@@ -296,11 +296,9 @@ Custom functions:
 							col = fmt.Sprintf("shenwei%d", fieldTmp)
 						}
 
-						quote = `'`
-
 						if reDigitals.MatchString(value) {
 							if digitsAsString || containCustomFuncs {
-								parameters[col] = quote + value + quote
+								parameters[col] = quoteGovaluateString(value)
 							} else {
 								valueFloat, err = strconv.ParseFloat(removeComma(value), 64)
 								checkError(err)
@@ -310,14 +308,7 @@ Custom functions:
 							if value == "" && hasNullCoalescence {
 								parameters[col] = "shenweiNULL"
 							} else {
-								if strings.Contains(value, `'`) {
-									value = strings.ReplaceAll(value, `'`, `\'`)
-								}
-								if strings.Contains(value, `"`) {
-									value = strings.ReplaceAll(value, `"`, `\"`)
-								}
-
-								parameters[col] = quote + value + quote
+								parameters[col] = quoteGovaluateString(value)
 							}
 						}
 					}
@@ -333,11 +324,9 @@ Custom functions:
 							col = "$" + col
 						}
 
-						quote = `'`
-
 						if reDigitals.MatchString(value) {
 							if digitsAsString || containCustomFuncs {
-								parameters[col] = quote + value + quote
+								parameters[col] = quoteGovaluateString(value)
 							} else {
 								valueFloat, err = strconv.ParseFloat(removeComma(value), 64)
 								checkError(err)
@@ -347,34 +336,17 @@ Custom functions:
 							if value == "" && hasNullCoalescence {
 								parameters[col] = "shenweiNULL"
 							} else {
-								if strings.Contains(value, `'`) {
-									value = strings.ReplaceAll(value, `'`, `\'`)
-								}
-								if strings.Contains(value, `"`) {
-									value = strings.ReplaceAll(value, `"`, `\"`)
-								}
-
-								parameters[col] = quote + value + quote
+								parameters[col] = quoteGovaluateString(value)
 							}
 						}
 					}
 				}
 
-				// sort variable names by length, so we can replace variables in the right order.
-				// e.g., for -e '$reads_mapped/$reads', we should firstly replace $reads_mapped then $reads.
-				keys = keys[:0]
-				for col = range parameters {
-					keys = append(keys, col)
+				// Locate references once; inserted field values must not be expanded again.
+				if template == nil {
+					template = newExpressionTemplate(filterStr, parameters)
 				}
-				sort.Slice(keys, func(i, j int) bool {
-					return len(keys[i]) > len(keys[j])
-				})
-
-				// replace variable with column data
-				filterStr1 = filterStr
-				for _, col = range keys {
-					filterStr1 = strings.ReplaceAll(filterStr1, col, parameters[col])
-				}
+				filterStr1 = template.render(parameters)
 
 				// evaluate
 				if containCustomFuncs {

@@ -474,7 +474,6 @@ func NewCSVWriterChanByConfig(config Config) (chan []string, error) {
 
 	outOpt := csvOutputOption{QuoteAll: config.QuoteAll}
 
-
 	writer := newCSVOutputWriter(outfh, outOpt)
 	if config.OutTabs {
 		writer.Comma = '\t'
@@ -722,6 +721,76 @@ func formatExpressionFloat(value float64) string {
 		literal += ".0"
 	}
 	return literal
+}
+
+// govaluateStringEscaper escapes backslashes before quotes without reprocessing
+// inserted escapes. Unlike Expr, govaluate requires literal control characters.
+var govaluateStringEscaper = strings.NewReplacer(`\`, `\\`, `'`, `\'`, `"`, `\"`)
+
+// quoteGovaluateString preserves field contents in a govaluate string literal.
+func quoteGovaluateString(value string) string {
+	return "'" + govaluateStringEscaper.Replace(value) + "'"
+}
+
+// expressionPart stores either literal expression text or a column reference.
+type expressionPart struct {
+	text     string // Literal text or the parameter key for a column reference.
+	variable bool   // Whether text names a parameter to fill in for each row.
+}
+
+// expressionTemplate records replacement locations once, so inserted column
+// values are never scanned for more variable references.
+type expressionTemplate []expressionPart
+
+// newExpressionTemplate locates references, preferring longer names when
+// columns share a prefix (for example, $reads_mapped and $reads).
+func newExpressionTemplate(source string, parameters map[string]string) expressionTemplate {
+	keys := make([]string, 0, len(parameters))
+	for key := range parameters {
+		keys = append(keys, key)
+	}
+	sort.Slice(keys, func(i, j int) bool { return len(keys[i]) > len(keys[j]) })
+	parts := make(expressionTemplate, 0, 2*len(keys)+1)
+	for len(source) > 0 {
+		position, key := len(source), ""
+		for _, candidate := range keys {
+			if i := strings.Index(source, candidate); i >= 0 && i < position {
+				position, key = i, candidate
+			}
+		}
+		if position > 0 {
+			parts = append(parts, expressionPart{text: source[:position]})
+		}
+		if key == "" {
+			break
+		}
+		parts = append(parts, expressionPart{text: key, variable: true})
+		source = source[position+len(key):]
+	}
+	return parts
+}
+
+// render fills the original reference positions with this row's column values.
+func (parts expressionTemplate) render(parameters map[string]string) string {
+	// Reserve the complete result to avoid copying large field values on growth.
+	size := 0
+	for _, part := range parts {
+		if part.variable {
+			size += len(parameters[part.text])
+		} else {
+			size += len(part.text)
+		}
+	}
+	var result strings.Builder
+	result.Grow(size)
+	for _, part := range parts {
+		if part.variable {
+			result.WriteString(parameters[part.text])
+		} else {
+			result.WriteString(part.text)
+		}
+	}
+	return result.String()
 }
 
 func readKVs(file string, allLeftAsValue bool) (map[string]string, error) {

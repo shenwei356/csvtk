@@ -24,7 +24,6 @@ import (
 	"fmt"
 	"regexp"
 	"runtime"
-	"sort"
 	"strconv"
 	"strings"
 
@@ -50,6 +49,9 @@ The expression language is supported by Expr:
 Numeric field conversion preserves 64-bit floating-point precision.
 Use -s/--numeric-as-string to keep numeric fields as strings.
 The -w/--decimal-width flag controls rounding of numeric output.
+
+String field values retain their literal contents, including quotes,
+backslashes, and variable-like text (e.g., $name or ${name}).
 
 Variables formats:
   $1 or ${1}                        The first field/column
@@ -153,7 +155,6 @@ func doMutate3(config Config, opts mutate3Opts) {
 
 	outOpt := csvOutputOption{QuoteAll: config.QuoteAll}
 
-
 	writer := newCSVOutputWriter(outfh, outOpt)
 	if config.OutTabs || config.Tabs {
 		if config.OutDelimiter == ',' {
@@ -188,7 +189,6 @@ func doMutate3(config Config, opts mutate3Opts) {
 
 	hasNullCoalescence := reNullCoalescence.MatchString(opts.ExprStr)
 
-	var quote string
 	opts.ExprStr = reFiler2VarSymbolStartsWithDigits.ReplaceAllString(opts.ExprStr, "shenwei_$1$2")
 	opts.ExprStr = reFilter2VarField.ReplaceAllString(opts.ExprStr, "shenwei$1")
 
@@ -256,7 +256,7 @@ func doMutate3(config Config, opts mutate3Opts) {
 		var colnamesMap map[string]*regexp.Regexp
 		var selectWithColnames bool
 		var record2 []string // for output
-		keys := make([]string, 0, 8)
+		var template expressionTemplate
 		decimalFormat := fmt.Sprintf("%%.%df", opts.DecimalWidth)
 
 		checkFirstLine := true
@@ -332,11 +332,9 @@ func doMutate3(config Config, opts mutate3Opts) {
 						col = fmt.Sprintf("shenwei%d", fieldTmp)
 					}
 
-					quote = `'`
-
 					if reDigitals.MatchString(value) {
 						if opts.DigitsAsString {
-							parameters[col] = quote + value + quote
+							parameters[col] = strconv.Quote(value)
 						} else {
 							valueFloat, err = strconv.ParseFloat(removeComma(value), 64)
 							checkError(err)
@@ -346,14 +344,7 @@ func doMutate3(config Config, opts mutate3Opts) {
 						if value == "" && hasNullCoalescence {
 							parameters[col] = "shenweiNULL"
 						} else {
-							if strings.Contains(value, `'`) {
-								value = strings.ReplaceAll(value, `'`, `\'`)
-							}
-							if strings.Contains(value, `"`) {
-								value = strings.ReplaceAll(value, `"`, `\"`)
-							}
-
-							parameters[col] = quote + value + quote
+							parameters[col] = strconv.Quote(value)
 						}
 					}
 				}
@@ -369,11 +360,9 @@ func doMutate3(config Config, opts mutate3Opts) {
 						col = "$" + col
 					}
 
-					quote = `'`
-
 					if reDigitals.MatchString(value) {
 						if opts.DigitsAsString {
-							parameters[col] = quote + value + quote
+							parameters[col] = strconv.Quote(value)
 						} else {
 							valueFloat, err = strconv.ParseFloat(removeComma(value), 64)
 							checkError(err)
@@ -383,34 +372,17 @@ func doMutate3(config Config, opts mutate3Opts) {
 						if value == "" && hasNullCoalescence {
 							parameters[col] = "shenweiNULL"
 						} else {
-							if strings.Contains(value, `'`) {
-								value = strings.ReplaceAll(value, `'`, `\'`)
-							}
-							if strings.Contains(value, `"`) {
-								value = strings.ReplaceAll(value, `"`, `\"`)
-							}
-
-							parameters[col] = quote + value + quote
+							parameters[col] = strconv.Quote(value)
 						}
 					}
 				}
 			}
 
-			// sort variable names by length, so we can replace variables in the right order.
-			// e.g., for -e '$reads_mapped/$reads', we should firstly replace $reads_mapped then $reads.
-			keys = keys[:0]
-			for col = range parameters {
-				keys = append(keys, col)
+			// Locate references once; inserted field values must not be expanded again.
+			if template == nil {
+				template = newExpressionTemplate(opts.ExprStr, parameters)
 			}
-			sort.Slice(keys, func(i, j int) bool {
-				return len(keys[i]) > len(keys[j])
-			})
-
-			// replace variable with column data
-			exprStr1 = opts.ExprStr
-			for _, col = range keys {
-				exprStr1 = strings.ReplaceAll(exprStr1, col, parameters[col])
-			}
+			exprStr1 = template.render(parameters)
 
 			// evaluate
 			program, err = expr.Compile(exprStr1, customFuncs...)

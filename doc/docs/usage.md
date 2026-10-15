@@ -1659,6 +1659,9 @@ The arithmetic/string expression is supported by:
 Numeric field conversion preserves 64-bit floating-point precision.
 Use -s/--numeric-as-string to keep numeric fields as strings.
 
+String field values retain their literal contents, including quotes,
+backslashes, and variable-like text (e.g., $name or ${name}).
+
 Variables formats:
   $1 or ${1}                        The first field/column
   $a or ${a}                        Column "a"
@@ -2827,6 +2830,9 @@ Numeric field conversion preserves 64-bit floating-point precision.
 Use -s/--numeric-as-string to keep numeric fields as strings.
 The -w/--decimal-width flag controls rounding of numeric output.
 
+String field values retain their literal contents, including quotes,
+backslashes, and variable-like text (e.g., $name or ${name}).
+
 Variables formats:
   $1 or ${1}                        The first field/column
   $a or ${a}                        Column "a"
@@ -2990,6 +2996,9 @@ The expression language is supported by Expr:
 Numeric field conversion preserves 64-bit floating-point precision.
 Use -s/--numeric-as-string to keep numeric fields as strings.
 The -w/--decimal-width flag controls rounding of numeric output.
+
+String field values retain their literal contents, including quotes,
+backslashes, and variable-like text (e.g., $name or ${name}).
 
 Variables formats:
   $1 or ${1}                        The first field/column
