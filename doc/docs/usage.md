@@ -3326,7 +3326,7 @@ Flags:
       --color-index int    color index, 1-7 (default 1)
   -h, --help               help for hist
       --line-width float   line width (default 1)
-      --percentiles        calculate percentiles
+      --percentiles        add P99, P95, mean, and sample standard deviation to the X label
 
 ```
 

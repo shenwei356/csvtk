@@ -127,7 +127,9 @@ Notes:
 		percentiles := getFlagBool(cmd, "percentiles")
 		if percentiles {
 			sort.Float64s(v)
-			plotConfig.xlab = fmt.Sprintf("%s\nP99=%.3f P95=%.3f\nMEAN=%.3f STDDEV=%.3f\n", plotConfig.xlab, getPercentile(0.99, v), getPercentile(0.95, v), getPercentile(0.5, v), stat.StdDev(v, nil))
+			// Report the arithmetic mean, while retaining the sample standard deviation.
+			mean, stddev := stat.MeanStdDev(v, nil)
+			plotConfig.xlab = fmt.Sprintf("%s\nP99=%.3f P95=%.3f\nMEAN=%.3f STDDEV=%.3f\n", plotConfig.xlab, getPercentile(0.99, v), getPercentile(0.95, v), mean, stddev)
 		}
 
 		p := plot.New()
@@ -216,7 +218,7 @@ func init() {
 	plotCmd.AddCommand(histCmd)
 	histCmd.Flags().IntP("bins", "", 50, `number of bins`)
 	histCmd.Flags().IntP("color-index", "", 1, `color index, 1-7`)
-	histCmd.Flags().BoolP("percentiles", "", false, `calculate percentiles`)
+	histCmd.Flags().BoolP("percentiles", "", false, `add P99, P95, mean, and sample standard deviation to the X label`)
 
 	histCmd.Flags().Float64P("line-width", "", 1, "line width")
 
