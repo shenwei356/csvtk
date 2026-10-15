@@ -43,6 +43,8 @@ Attention:
   1. Multiple keys supported
   2. Default operation is inner join, use --left-join for left join 
      and --outer-join for outer join.
+  3. An input containing only a header contributes its columns and zero data rows.
+     Inputs without CSV records are skipped.
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -206,7 +208,8 @@ Attention:
 				if config.Verbose {
 					log.Warningf("no data found in file: %s", file)
 				}
-				if len(headerRow) == 0 || !outerJoin {
+				// A header-only input is a zero-row table in every join mode.
+				if len(headerRow) == 0 {
 					continue
 				}
 			}

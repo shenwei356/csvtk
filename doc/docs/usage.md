@@ -2534,6 +2534,8 @@ Attention:
   1. Multiple keys supported
   2. Default operation is inner join, use --left-join for left join
      and --outer-join for outer join.
+  3. An input containing only a header contributes its columns and zero data rows.
+     Inputs without CSV records are skipped.
 
 Usage:
   csvtk join [flags]
