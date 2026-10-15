@@ -21,8 +21,8 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
-	"regexp"
 	"runtime"
 	"strconv"
 	"strings"
@@ -38,6 +38,12 @@ var csv2jsonCmd = &cobra.Command{
 	Use:   "csv2json",
 	Short: "convert CSV to JSON format",
 	Long: `convert CSV to JSON format
+
+Notes:
+
+  1. Column names, keys, and string values are escaped according to JSON syntax.
+  2. With -n/--parse-num, numeric text is normalized without rounding:
+     00 becomes 0, .5 becomes 0.5, and 1. becomes 1.0.
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -87,9 +93,8 @@ var csv2jsonCmd = &cobra.Command{
 		if strings.Contains(fieldStr, ",") {
 			checkError(fmt.Errorf("multiple values not allowed for -k/--key"))
 		}
-		skipKey := getFlagBool(cmd, "skip-key")
-
 		keyed := fieldStr != ""
+		skipKey := keyed && getFlagBool(cmd, "skip-key")
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
@@ -140,7 +145,7 @@ var csv2jsonCmd = &cobra.Command{
 		var col string
 		first := true
 		var ok bool
-		var HeaderRow []string
+		var HeaderRow []string // JSON-quoted column names, encoded once per input.
 
 		checkFirstLine := true
 		var hasHeaderLine bool
@@ -153,7 +158,10 @@ var csv2jsonCmd = &cobra.Command{
 				checkFirstLine = false
 
 				if !config.NoHeaderRow || record.IsHeaderRow {
-					HeaderRow = record.All
+					HeaderRow = make([]string, len(record.All))
+					for i, col = range record.All {
+						HeaderRow[i] = quoteJSONString(col)
+					}
 					hasHeaderLine = true
 
 					continue
@@ -177,9 +185,16 @@ var csv2jsonCmd = &cobra.Command{
 				outfh.WriteString("," + LF)
 			}
 
+			// Omitting the final key column makes the preceding column the last
+			// emitted field; separators must follow output positions.
+			lastField := len(record.All) - 1
+			if skipKey && record.Fields[0] == len(record.All) {
+				lastField--
+			}
+
 			if hasHeaderLine {
 				if keyed {
-					outfh.WriteString(indent + `"` + key + `":` + SEP + `{` + LF)
+					outfh.WriteString(indent + quoteJSONString(key) + `:` + SEP + `{` + LF)
 				} else {
 					outfh.WriteString(indent + `{` + LF)
 				}
@@ -196,10 +211,10 @@ var csv2jsonCmd = &cobra.Command{
 						}
 					}
 
-					if i < len(record.All)-1 {
-						outfh.WriteString(indent + indent + `"` + unescapeJSONField(col) + `":` + SEP + processJSONValue(record.All[i], blanks, parseNum) + "," + LF)
+					if i < lastField {
+						outfh.WriteString(indent + indent + col + `:` + SEP + processJSONValue(record.All[i], blanks, parseNum) + "," + LF)
 					} else {
-						outfh.WriteString(indent + indent + `"` + unescapeJSONField(col) + `":` + SEP + processJSONValue(record.All[i], blanks, parseNum) + LF)
+						outfh.WriteString(indent + indent + col + `:` + SEP + processJSONValue(record.All[i], blanks, parseNum) + LF)
 					}
 
 					parseNum = false
@@ -207,7 +222,7 @@ var csv2jsonCmd = &cobra.Command{
 				outfh.WriteString(indent + "}")
 			} else {
 				if keyed {
-					outfh.WriteString(indent + `"` + key + `":` + SEP + `[` + LF)
+					outfh.WriteString(indent + quoteJSONString(key) + `:` + SEP + `[` + LF)
 				} else {
 					outfh.WriteString(indent + `[` + LF)
 				}
@@ -225,7 +240,7 @@ var csv2jsonCmd = &cobra.Command{
 						}
 					}
 
-					if i < len(record.All)-1 {
+					if i < lastField {
 						outfh.WriteString(indent + indent + processJSONValue(col, blanks, parseNum) + "," + LF)
 					} else {
 						outfh.WriteString(indent + indent + processJSONValue(col, blanks, parseNum) + LF)
@@ -257,17 +272,15 @@ func init() {
 	csv2jsonCmd.Flags().StringSliceP("parse-num", "n", []string{}, `parse numeric values for nth column, multiple values are supported and "a"/"all" for all columns`)
 }
 
-func unescapeJSONField(s string) string {
-	s2 := make([]rune, 0, len(s))
-	for _, r := range s {
-		if r == '"' {
-			s2 = append(s2, rune('\\'))
-		}
-		s2 = append(s2, r)
-	}
-	return string(s2)
+// quoteJSONString encodes keys and string values with the same JSON escaping.
+func quoteJSONString(value string) string {
+	encoded, err := json.Marshal(value)
+	checkError(err)
+	return string(encoded)
 }
 
+// processJSONValue preserves boolean/null handling and converts numeric fields
+// only when requested for their column.
 func processJSONValue(val string, blanks bool, parseNum bool) string {
 	switch strings.ToLower(val) {
 	case "true":
@@ -276,22 +289,42 @@ func processJSONValue(val string, blanks bool, parseNum bool) string {
 		return "false"
 	case "", "na", "n/a", "none", "null", ".":
 		if blanks {
-			return `"` + val + `"`
+			return quoteJSONString(val)
 		}
 		return "null"
 	}
 	if parseNum && reDigitals.MatchString(val) {
-		return reDigitalsLeadingSymbols.ReplaceAllString(val, `$1$2`)
+		return normalizeJSONNumber(val)
 	}
 
-	val = reEscape.ReplaceAllString(val, `\$1`)
-	val = reEscapeNewLine.ReplaceAllString(val, "\\n")
-	val = strings.ReplaceAll(val, "\t", "\\t")
-
-	return `"` + val + `"`
+	return quoteJSONString(val)
 }
 
-var reEscape = regexp.MustCompile(`(["\\])`)
-var reEscapeNewLine = regexp.MustCompile(`\r?\n`)
-
-var reDigitalsLeadingSymbols = regexp.MustCompile(`^[+]?0+([1-9])|^\+(\d|\.)`)
+// normalizeJSONNumber converts a value matching reDigitals to JSON number
+// syntax without floating-point conversion, preserving decimal precision and
+// exponents even when the number is outside the float64 range.
+func normalizeJSONNumber(value string) string {
+	sign := ""
+	if value[0] == '-' {
+		sign, value = "-", value[1:]
+	} else if value[0] == '+' {
+		value = value[1:]
+	}
+	exponent := ""
+	if i := strings.IndexAny(value, "eE"); i >= 0 {
+		value, exponent = value[:i], value[i:]
+	}
+	integer, fraction, hasDecimal := strings.Cut(value, ".")
+	integer = strings.TrimLeft(integer, "0")
+	if integer == "" {
+		integer = "0"
+	}
+	if hasDecimal {
+		// JSON requires digits on both sides of a decimal point.
+		if fraction == "" {
+			fraction = "0"
+		}
+		return sign + integer + "." + fraction + exponent
+	}
+	return sign + integer + exponent
+}

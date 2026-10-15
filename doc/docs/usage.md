@@ -768,6 +768,12 @@ Usage
 ```text
 convert CSV to JSON format
 
+Notes:
+
+  1. Column names, keys, and string values are escaped according to JSON syntax.
+  2. With -n/--parse-num, numeric text is normalized without rounding:
+     00 becomes 0, .5 becomes 0.5, and 1. becomes 1.0.
+
 Usage:
   csvtk csv2json [flags] 
 
