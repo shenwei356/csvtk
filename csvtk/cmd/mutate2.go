@@ -47,6 +47,10 @@ The arithmetic/string expression is supported by:
 
   https://github.com/casbin/govaluate
 
+Numeric field conversion preserves 64-bit floating-point precision.
+Use -s/--numeric-as-string to keep numeric fields as strings.
+The -w/--decimal-width flag controls rounding of numeric output.
+
 Variables formats:
   $1 or ${1}                        The first field/column
   $a or ${a}                        Column "a"
@@ -326,8 +330,9 @@ Custom functions:
 							if digitsAsString || containCustomFuncs {
 								parameters[col] = quote + value + quote
 							} else {
-								valueFloat, _ = strconv.ParseFloat(removeComma(value), 64)
-								parameters[col] = fmt.Sprintf("%.16f", valueFloat)
+								valueFloat, err = strconv.ParseFloat(removeComma(value), 64)
+								checkError(err)
+								parameters[col] = formatExpressionFloat(valueFloat)
 							}
 						} else {
 							if value == "" && hasNullCoalescence {
@@ -362,8 +367,9 @@ Custom functions:
 							if digitsAsString || containCustomFuncs {
 								parameters[col] = quote + value + quote
 							} else {
-								valueFloat, _ = strconv.ParseFloat(removeComma(value), 64)
-								parameters[col] = fmt.Sprintf("%.16f", valueFloat)
+								valueFloat, err = strconv.ParseFloat(removeComma(value), 64)
+								checkError(err)
+								parameters[col] = formatExpressionFloat(valueFloat)
 							}
 						} else {
 							if value == "" && hasNullCoalescence {

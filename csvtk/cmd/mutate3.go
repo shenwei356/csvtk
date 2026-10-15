@@ -47,6 +47,10 @@ The expression language is supported by Expr:
 
   https://expr-lang.org/docs/language-definition
 
+Numeric field conversion preserves 64-bit floating-point precision.
+Use -s/--numeric-as-string to keep numeric fields as strings.
+The -w/--decimal-width flag controls rounding of numeric output.
+
 Variables formats:
   $1 or ${1}                        The first field/column
   $a or ${a}                        Column "a"
@@ -334,8 +338,9 @@ func doMutate3(config Config, opts mutate3Opts) {
 						if opts.DigitsAsString {
 							parameters[col] = quote + value + quote
 						} else {
-							valueFloat, _ = strconv.ParseFloat(removeComma(value), 64)
-							parameters[col] = fmt.Sprintf("%.16f", valueFloat)
+							valueFloat, err = strconv.ParseFloat(removeComma(value), 64)
+							checkError(err)
+							parameters[col] = formatExpressionFloat(valueFloat)
 						}
 					} else {
 						if value == "" && hasNullCoalescence {
@@ -370,8 +375,9 @@ func doMutate3(config Config, opts mutate3Opts) {
 						if opts.DigitsAsString {
 							parameters[col] = quote + value + quote
 						} else {
-							valueFloat, _ = strconv.ParseFloat(removeComma(value), 64)
-							parameters[col] = fmt.Sprintf("%.16f", valueFloat)
+							valueFloat, err = strconv.ParseFloat(removeComma(value), 64)
+							checkError(err)
+							parameters[col] = formatExpressionFloat(valueFloat)
 						}
 					} else {
 						if value == "" && hasNullCoalescence {

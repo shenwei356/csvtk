@@ -713,6 +713,17 @@ func removeComma(s string) string {
 	return strings.ReplaceAll(s, ",", "")
 }
 
+// formatExpressionFloat preserves float64 precision in both expression engines.
+// govaluate needs decimal notation; a decimal point keeps whole values as floats
+// in Expr, including values beyond the integer range. The value must be finite.
+func formatExpressionFloat(value float64) string {
+	literal := strconv.FormatFloat(value, 'f', -1, 64)
+	if !strings.ContainsRune(literal, '.') {
+		literal += ".0"
+	}
+	return literal
+}
+
 func readKVs(file string, allLeftAsValue bool) (map[string]string, error) {
 	type KV [2]string
 	fn := func(line string) (interface{}, bool, error) {

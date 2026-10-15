@@ -1656,6 +1656,9 @@ The arithmetic/string expression is supported by:
 
   https://github.com/Knetic/govaluate
 
+Numeric field conversion preserves 64-bit floating-point precision.
+Use -s/--numeric-as-string to keep numeric fields as strings.
+
 Variables formats:
   $1 or ${1}                        The first field/column
   $a or ${a}                        Column "a"
@@ -2820,6 +2823,10 @@ The arithmetic/string expression is supported by:
 
   https://github.com/Knetic/govaluate
 
+Numeric field conversion preserves 64-bit floating-point precision.
+Use -s/--numeric-as-string to keep numeric fields as strings.
+The -w/--decimal-width flag controls rounding of numeric output.
+
 Variables formats:
   $1 or ${1}                        The first field/column
   $a or ${a}                        Column "a"
@@ -2979,6 +2986,10 @@ create a new column from selected fields with Go-like expressions
 The expression language is supported by Expr:
 
   https://expr-lang.org/docs/language-definition
+
+Numeric field conversion preserves 64-bit floating-point precision.
+Use -s/--numeric-as-string to keep numeric fields as strings.
+The -w/--decimal-width flag controls rounding of numeric output.
 
 Variables formats:
   $1 or ${1}                        The first field/column
