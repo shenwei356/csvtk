@@ -1,56 +1,33 @@
 - [csvtk v0.39.0](https://github.com/shenwei356/csvtk/releases/tag/v0.39.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.39.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.39.0)
     - `csvtk`:
-        - report buffered output and compression errors with a nonzero exit status.
-        - fix expansion of multiple open column ranges in field selection.
-        - reject output paths that refer to input files, including symbolic and hard links, before truncating output.
-        - count ignored empty and illegal rows without retaining their line numbers in quiet mode.
-    - `csvtk inter`:
-        - return an empty intersection for inputs without data rows, regardless of file order.
-    - `csvtk csv2md/csv2rst`:
-        - report input open and decompression errors instead of treating them as empty files.
-    - `csvtk csv2md`:
-        - build alignment lines in linear time, avoiding repeated string copies for wide fields.
-    - `csvtk space2tab`:
-        - close each input before opening the next, fixing file descriptor exhaustion with many files.
-    - `csvtk replace/rename2/grep/sort`:
-        - report read and decompression errors in key-value, pattern, and custom sort-level files instead of using partial contents.
+        - improve performance.
+        - prevent overwriting input files and report file I/O and compression errors.
+        - fix column range selection.
+    - `csvtk inter/join`:
+        - fix intersections with empty inputs and joins with header-only inputs.
     - `csvtk summary`:
-        - expand field ranges with the default count operation, fixing unintended grouping and output column counts.
-        - size per-group maps by the selected fields and store only values needed by the requested operations.
-        - honor `--rand-seed` with a local random generator on recent Go versions.
+        - fix field ranges with the default count operation and honor `--rand-seed`.
     - `csvtk cat`:
-        - preserve and count the final line without a newline with `-L/--lines`.
-        - reject nonpositive buffer sizes and invalid progress frequencies before opening output.
-        - count all lines and bytes with any progress frequency, refresh byte totals for each input, and honor final-only progress with `-p -1`.
+        - preserve final lines without a newline and fix progress reporting and parameter validation.
     - `csvtk fix`:
-        - honor `--na` when padding buffered and remaining rows with `-n/--buf-rows`.
-        - release the initial row buffer and stream remaining rows when `-n/--buf-rows` is positive.
+        - honor `--na` when padding rows with `-n/--buf-rows`.
     - `csvtk concat`:
-        - stream multiple inputs after mapping their columns, reducing memory usage.
-        - report ambiguous columns when generated duplicate names collide with existing names.
+        - report ambiguous column names.
     - `csvtk csv2xlsx`:
-        - fix data loss in wide tables and report cell coordinate and write errors.
-    - `csvtk join`:
-        - fix inner and left joins with header-only input files.
+        - fix data loss in wide tables.
     - `csvtk filter2/mutate2/mutate3`:
-        - preserve float64 precision when converting numeric fields for expressions.
-        - preserve variable-like text, quotes, and backslashes in string field values.
-        - reuse compiled expressions with bound column values, preserving input types and literal-dependent parsing.
-        - allow mixing braced and unbraced references to the same column.
+        - fix numeric precision and string handling, and allow mixing `$x` and `${x}` references.
     - `csvtk plot bar`:
-        - align grouped bars by category, preserving first-seen order and gaps for missing categories.
-        - report duplicate group/category pairs instead of plotting ambiguous values.
+        - fix grouped bar alignment and reject duplicate categories within a group.
     - `csvtk plot hist`:
-        - report the arithmetic mean instead of the median in the `MEAN` label with `--percentiles`.
+        - fix the `MEAN` label with `--percentiles`.
     - `csvtk csv2json`:
-        - correctly escape column names, object keys, and string values.
-        - fix trailing commas when `-K/--skip-key` omits the last column.
-        - normalize numeric values to valid JSON syntax without losing precision.
+        - fix JSON escaping, numeric formatting, and trailing commas with `-K/--skip-key`.
     - `csvtk splitxlsx`:
-        - treat missing cells as empty values, fixing panics on short or blank rows.
-    - `csvtk head/ncol/headers`, `csvtk dim --cols`:
-        - stop and close input readers after the required records, fixing file descriptor and goroutine leaks.
+        - fix panics on short or blank rows.
+    - `csvtk head/ncol/headers/space2tab`, `csvtk dim --cols`:
+        - fix failures when processing many input files.
 - [csvtk v0.38.0](https://github.com/shenwei356/csvtk/releases/tag/v0.38.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.38.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.38.0)
     - `csvtk`:
