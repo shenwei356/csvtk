@@ -146,13 +146,13 @@ Custom functions:
 			"len": func(args ...interface{}) (interface{}, error) {
 				n := 0
 				for _, s := range args {
-					switch s.(type) {
+					switch s := s.(type) {
 					case int:
-						n += len(fmt.Sprintf("%d", s.(int)))
+						n += len(fmt.Sprintf("%d", s))
 					case float64:
-						n += len(fmt.Sprintf("%f", s.(float64)))
+						n += len(fmt.Sprintf("%f", s))
 					case string:
-						n += utf8.RuneCountInString(s.(string))
+						n += utf8.RuneCountInString(s)
 					}
 
 				}
@@ -161,13 +161,13 @@ Custom functions:
 			"ulen": func(args ...interface{}) (interface{}, error) {
 				n := 0
 				for _, s := range args {
-					switch s.(type) {
+					switch s := s.(type) {
 					case int:
-						n += runewidth.StringWidth(fmt.Sprintf("%d", s.(int)))
+						n += runewidth.StringWidth(fmt.Sprintf("%d", s))
 					case float64:
-						n += runewidth.StringWidth(fmt.Sprintf("%f", s.(float64)))
+						n += runewidth.StringWidth(fmt.Sprintf("%f", s))
 					case string:
-						n += runewidth.StringWidth(s.(string))
+						n += runewidth.StringWidth(s)
 					}
 
 				}

@@ -182,7 +182,8 @@ Notes:
 			if first {
 				first = false
 			} else {
-				outfh.WriteString("," + LF)
+				outfh.WriteByte(',')
+				outfh.WriteString(LF)
 			}
 
 			// Omitting the final key column makes the preceding column the last
@@ -193,11 +194,14 @@ Notes:
 			}
 
 			if hasHeaderLine {
+				outfh.WriteString(indent)
 				if keyed {
-					outfh.WriteString(indent + quoteJSONString(key) + `:` + SEP + `{` + LF)
-				} else {
-					outfh.WriteString(indent + `{` + LF)
+					outfh.WriteString(quoteJSONString(key))
+					outfh.WriteByte(':')
+					outfh.WriteString(SEP)
 				}
+				outfh.WriteByte('{')
+				outfh.WriteString(LF)
 				for i, col = range HeaderRow {
 					if skipKey && i+1 == record.Fields[0] {
 						continue
@@ -211,21 +215,31 @@ Notes:
 						}
 					}
 
+					// Write field fragments directly to the buffer, avoiding a joined copy.
+					outfh.WriteString(indent)
+					outfh.WriteString(indent)
+					outfh.WriteString(col)
+					outfh.WriteByte(':')
+					outfh.WriteString(SEP)
+					outfh.WriteString(processJSONValue(record.All[i], blanks, parseNum))
 					if i < lastField {
-						outfh.WriteString(indent + indent + col + `:` + SEP + processJSONValue(record.All[i], blanks, parseNum) + "," + LF)
-					} else {
-						outfh.WriteString(indent + indent + col + `:` + SEP + processJSONValue(record.All[i], blanks, parseNum) + LF)
+						outfh.WriteByte(',')
 					}
+					outfh.WriteString(LF)
 
 					parseNum = false
 				}
-				outfh.WriteString(indent + "}")
+				outfh.WriteString(indent)
+				outfh.WriteByte('}')
 			} else {
+				outfh.WriteString(indent)
 				if keyed {
-					outfh.WriteString(indent + quoteJSONString(key) + `:` + SEP + `[` + LF)
-				} else {
-					outfh.WriteString(indent + `[` + LF)
+					outfh.WriteString(quoteJSONString(key))
+					outfh.WriteByte(':')
+					outfh.WriteString(SEP)
 				}
+				outfh.WriteByte('[')
+				outfh.WriteString(LF)
 
 				for i, col = range record.All {
 					if skipKey && i+1 == record.Fields[0] {
@@ -240,15 +254,18 @@ Notes:
 						}
 					}
 
+					outfh.WriteString(indent)
+					outfh.WriteString(indent)
+					outfh.WriteString(processJSONValue(col, blanks, parseNum))
 					if i < lastField {
-						outfh.WriteString(indent + indent + processJSONValue(col, blanks, parseNum) + "," + LF)
-					} else {
-						outfh.WriteString(indent + indent + processJSONValue(col, blanks, parseNum) + LF)
+						outfh.WriteByte(',')
 					}
+					outfh.WriteString(LF)
 
 					parseNum = false
 				}
-				outfh.WriteString(indent + "]")
+				outfh.WriteString(indent)
+				outfh.WriteByte(']')
 			}
 		}
 

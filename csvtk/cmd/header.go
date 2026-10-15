@@ -87,7 +87,8 @@ Only the first record of each input is inspected.
 					if verbose {
 						outfh.WriteString(fmt.Sprintf("%d\t%s\n", i+1, n))
 					} else {
-						outfh.WriteString(n + "\n")
+						outfh.WriteString(n)
+						outfh.WriteByte('\n')
 					}
 				}
 			}

@@ -32,7 +32,8 @@ func TestCutOpenRanges(t *testing.T) {
 		}
 		var contents strings.Builder
 		for _, row := range rows {
-			contents.WriteString(strings.Join(row, ",") + "\n")
+			contents.WriteString(strings.Join(row, ","))
+			contents.WriteByte('\n')
 		}
 		input := writeAccuracyInput(t, "ranges.csv", contents.String())
 		for _, tc := range cases {

@@ -68,7 +68,10 @@ func TestConcatEmitsBeforeEOF(t *testing.T) {
 	}()
 	written := make(chan error, 1)
 	go func() {
-		_, err := io.WriteString(stdin, "value,id\n"+strings.Repeat("2,next\n", 20000))
+		_, err := io.WriteString(stdin, "value,id\n")
+		if err == nil {
+			_, err = io.WriteString(stdin, strings.Repeat("2,next\n", 20000))
+		}
 		written <- err
 	}()
 	const prefix = "id,value\nfirst,1\nnext,2\n"

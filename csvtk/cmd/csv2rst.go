@@ -131,7 +131,10 @@ Attention:
 				// l = len(r)
 				l = runewidth.StringWidth(r)
 
-				outfh.WriteString(padding + r + padding + strings.Repeat(" ", maxLens[i]-l))
+				outfh.WriteString(padding)
+				outfh.WriteString(r)
+				outfh.WriteString(padding)
+				outfh.WriteString(strings.Repeat(" ", maxLens[i]-l))
 				outfh.WriteString(borderY)
 				if i == ncolsP1 { // not the last column
 					outfh.WriteString("\n")
@@ -155,7 +158,10 @@ Attention:
 				// l = len(r)
 				l = runewidth.StringWidth(r)
 
-				outfh.WriteString(padding + r + padding + strings.Repeat(" ", maxLens[i]-l))
+				outfh.WriteString(padding)
+				outfh.WriteString(r)
+				outfh.WriteString(padding)
+				outfh.WriteString(strings.Repeat(" ", maxLens[i]-l))
 				outfh.WriteString(borderY)
 				if i == ncolsP1 { // not the last column
 					outfh.WriteString("\n")

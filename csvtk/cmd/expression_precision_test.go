@@ -24,7 +24,10 @@ func TestExpressionNumericPrecision(t *testing.T) {
 	}
 	var inputText strings.Builder
 	for _, row := range values {
-		inputText.WriteString(row[0] + "," + row[1] + "\n")
+		inputText.WriteString(row[0])
+		inputText.WriteByte(',')
+		inputText.WriteString(row[1])
+		inputText.WriteByte('\n')
 	}
 	withHeader := writeAccuracyInput(t, "header.csv", "x,y\n"+inputText.String())
 	withoutHeader := writeAccuracyInput(t, "data.csv", inputText.String())

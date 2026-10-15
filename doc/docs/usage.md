@@ -41,6 +41,9 @@
    
 10. Less than half of the subcommands support >1 file.
 
+`csv2json`, `csv2rst`, `headers`, and `space2tab` write text fragments directly
+to buffered output to reduce temporary string allocations during formatting.
+
 
 ## Table of Contents
 

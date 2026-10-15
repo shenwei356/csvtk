@@ -73,7 +73,8 @@ var space2tabCmd = &cobra.Command{
 				if len(strings.TrimSpace(line)) == 0 || rune(line[0]) == config.CommentChar {
 					continue
 				}
-				outfh.WriteString(strings.Join(stringutil.Split(line, "\t "), "\t") + "\n")
+				outfh.WriteString(strings.Join(stringutil.Split(line, "\t "), "\t"))
+				outfh.WriteByte('\n')
 			}
 			checkError(scanner.Err())
 		}
