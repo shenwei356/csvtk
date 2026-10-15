@@ -1790,8 +1790,8 @@ fix CSV/TSV with different numbers of columns in rows
 How to:
   1. First -n/--buf-rows rows are read to check the maximum number of columns.
      The default value 0 means all rows will be read.
-  2. Buffered and remaining rows with fewer columns are appended with empty
-     cells before output.
+  2. Buffered and remaining rows with fewer columns are padded with the value
+     of --na (empty by default) before output.
   3. An error will be reported if the number of columns of any remaining row
      is larger than the maximum number of columns.
 
@@ -1801,6 +1801,7 @@ Usage:
 Flags:
   -n, --buf-rows int   the number of rows to determine the maximum number of columns. 0 for all rows.
   -h, --help           help for fix
+      --na string      content for filling missing (NA) data
 
 
 ```

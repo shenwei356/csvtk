@@ -39,8 +39,8 @@ var fixCmd = &cobra.Command{
 How to:
   1. First -n/--buf-rows rows are read to check the maximum number of columns.
      The default value 0 means all rows will be read.
-  2. Buffered and remaining rows with fewer columns are appended with empty
-     cells before output.
+  2. Buffered and remaining rows with fewer columns are padded with the value
+     of --na (empty by default) before output.
   3. An error will be reported if the number of columns of any remaining row
      is larger than the maximum number of columns.
 
@@ -70,7 +70,6 @@ How to:
 		defer closeOutput(outfh)
 
 		outOpt := csvOutputOption{QuoteAll: config.QuoteAll}
-
 
 		writer := newCSVOutputWriter(outfh, outOpt)
 		if config.OutTabs || config.Tabs {
@@ -138,6 +137,10 @@ How to:
 					}
 					checkedMaxNcols = true
 					empty = make([]string, maxN)
+					// Use the configured fill value for buffered and remaining rows.
+					for i = range empty {
+						empty[i] = na
+					}
 
 					for _, row = range buf {
 						ncol = len(row)

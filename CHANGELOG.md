@@ -7,6 +7,8 @@
         - expand field ranges with the default count operation, fixing unintended grouping and output column counts.
     - `csvtk cat`:
         - preserve and count the final line without a newline with `-L/--lines`.
+    - `csvtk fix`:
+        - honor `--na` when padding buffered and remaining rows with `-n/--buf-rows`.
     - `csvtk csv2xlsx`:
         - fix data loss in wide tables and report cell coordinate and write errors.
     - `csvtk join`:
