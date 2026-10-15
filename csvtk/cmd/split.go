@@ -437,7 +437,7 @@ func appendRows(config Config,
 		writtenFiles.Store(key, true)
 	}
 	checkError(err)
-	defer outfh.Close()
+	defer closeOutput(outfh)
 
 	outOpt := csvOutputOption{QuoteAll: config.QuoteAll}
 

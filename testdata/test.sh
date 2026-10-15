@@ -156,7 +156,8 @@ assert_equal $(cat $STDOUT_FILE | md5sum | cut -d " " -f 1) $(cat testdata/names
 CORR_DATA=testdata/corr_data.tsv
 
 float_gt(){
-    CODE=$(awk 'BEGIN {PREC="double"; print ("'$1'" >= "'$2'")}')
+    # Compare numbers rather than strings, including negative correlations.
+    CODE=$(awk -v a="$1" -v b="$2" 'BEGIN {print (a+0 >= b+0)}')
     return $CODE
 }
 
@@ -165,10 +166,10 @@ fun(){
 }
 run corr fun
 R=$(cut -f 3 corr.tsv)
-# scipy result: 0.8892414849570343
-float_gt $R 0.889
+# Python statistics.correlation for corr_data.tsv: -0.002785068221821459.
+float_gt $R -0.0029
 assert_equal $? 1
-float_gt 0.8893 $R
+float_gt -0.0027 $R
 assert_equal $? 1
 
 rm corr.tsv

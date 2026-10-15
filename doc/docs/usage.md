@@ -176,6 +176,7 @@ Attention:
      therefore there's no need to pipe the result to gzip/pigz.
      csvtk also supports reading and writing xz (.xz), zstd (.zst) and Bzip2 (.bz2) formats.
  10. Less than half of the subcommands support >1 file.
+ 11. Output write and compression errors cause a nonzero exit status.
 
 Environment variables for frequently used global flags:
 

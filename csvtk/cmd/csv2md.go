@@ -73,7 +73,7 @@ Attention:
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
-		defer outfh.Close()
+		defer closeOutput(outfh)
 
 		file := files[0]
 		headerRow, data, csvReader, err := readCSV(config, file)

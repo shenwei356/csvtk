@@ -57,7 +57,7 @@ var xlsx2csvCmd = &cobra.Command{
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
-		defer outfh.Close()
+		defer closeOutput(outfh)
 
 		xlsx, err := excelize.OpenFile(files[0])
 		checkError(err)

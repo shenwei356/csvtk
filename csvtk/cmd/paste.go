@@ -72,7 +72,7 @@ from stdin.
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
-		defer outfh.Close()
+		defer closeOutput(outfh)
 
 		writer := newCSVOutputWriter(outfh, csvOutputOption{QuoteAll: config.QuoteAll})
 		if config.OutTabs || config.Tabs {

@@ -94,7 +94,7 @@ var sepCmd = &cobra.Command{
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
-		defer outfh.Close()
+		defer closeOutput(outfh)
 
 		outOpt := csvOutputOption{QuoteAll: config.QuoteAll}
 

@@ -51,7 +51,7 @@ var dimCmd = &cobra.Command{
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
-		defer outfh.Close()
+		defer closeOutput(outfh)
 
 		var tbl *stable.Table
 		style := &stable.TableStyle{

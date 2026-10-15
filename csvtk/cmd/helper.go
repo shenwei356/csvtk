@@ -23,6 +23,7 @@ package cmd
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -44,6 +45,12 @@ func checkError(err error) {
 		log.Error(err)
 		os.Exit(-1)
 	}
+}
+
+// closeOutput reports errors from the final buffered writes and compression
+// trailers. Call it with defer, after the output has been opened successfully.
+func closeOutput(out io.Closer) {
+	checkError(out.Close())
 }
 
 // encodeFields keeps field boundaries unambiguous even when values contain the
@@ -475,7 +482,7 @@ func NewCSVWriterChanByConfig(config Config) (chan []string, error) {
 		writer.Comma = config.OutDelimiter
 	}
 	go func() {
-		defer outfh.Close()
+		defer closeOutput(outfh)
 		for record := range ch {
 			if err := writer.Write(record); err != nil {
 				log.Fatal("error writing record to csv:", err)

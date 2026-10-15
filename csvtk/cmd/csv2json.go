@@ -93,7 +93,7 @@ var csv2jsonCmd = &cobra.Command{
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
-		defer outfh.Close()
+		defer closeOutput(outfh)
 
 		file := files[0]
 		csvReader, err := newCSVReaderByConfig(config, file)

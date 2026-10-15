@@ -50,14 +50,18 @@ var catCmd = &cobra.Command{
 		flagTotal := getFlagInt(cmd, "total")
 
 		of := os.Stdout
-		defer of.Close()
 		if outFile != "-" {
 			var err error
 			of, err = os.Create(outFile)
 			checkError(err)
 		}
 		writer := bufio.NewWriterSize(of, flagBuff)
-		defer writer.Flush()
+		defer func() {
+			// Flush before closing the selected output so buffered write errors
+			// also produce a nonzero exit status.
+			checkError(writer.Flush())
+			closeOutput(of)
+		}()
 
 		for _, file := range files {
 			fmt.Fprintf(os.Stderr, "Streaming file: %s\n", file)

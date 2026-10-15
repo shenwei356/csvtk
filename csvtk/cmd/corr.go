@@ -56,7 +56,7 @@ forwarded to stdout and correlations are written to stderr.`,
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
-		defer outfh.Close()
+		defer closeOutput(outfh)
 		var reportOut io.Writer = outfh
 		if printPass {
 			reportOut = os.Stderr

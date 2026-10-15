@@ -151,7 +151,7 @@ Attentions:
 			noHighlight = true
 			outfhFile, err = xopen.Wopen(config.OutFile)
 			checkError(err)
-			defer outfhFile.Close()
+			defer closeOutput(outfhFile)
 			writer = newCSVOutputWriter(outfhFile, outOpt)
 		}
 

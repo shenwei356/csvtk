@@ -47,7 +47,7 @@ var ncolCmd = &cobra.Command{
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
-		defer outfh.Close()
+		defer closeOutput(outfh)
 
 		for _, file := range files {
 			var numCols int
