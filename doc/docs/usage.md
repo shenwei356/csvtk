@@ -4896,6 +4896,7 @@ Attention:
 
   1. Do not mix use field (column) numbers and names.
   2. Field range is supported, e.g., "-f 2-5:sum".
+  3. The default operation is count, e.g., "-f 1-2" is equivalent to "-f 1-2:count".
 
 Available operations:
  

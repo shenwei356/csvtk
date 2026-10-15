@@ -50,6 +50,7 @@ Attention:
 
   1. Do not mix use field (column) numbers and names.
   2. Field range is supported, e.g., "-f 2-5:sum".
+  3. The default operation is count, e.g., "-f 1-2" is equivalent to "-f 1-2:count".
 
 Available operations:
  
@@ -115,13 +116,10 @@ Available operations:
 				checkError(fmt.Errorf(`duplicated field in group field and data field: %s`, items[0]))
 			}
 			if len(items) == 1 {
-				fieldsStrsD = append(fieldsStrsD, items[0])
-				if _, ok := stats[items[0]]; !ok {
-					stats[items[0]] = make([]string, 0, 1)
-				}
-				stats[items[0]] = append(stats[items[0]], "count")
-				statsList = append(statsList, []string{items[0], "count"})
-			} else if len(items) == 2 {
+				// Expand default-count ranges just like fields with an explicit operation.
+				items = append(items, "count")
+			}
+			if len(items) == 2 {
 				if items[0] == "" {
 					checkError(fmt.Errorf(`invalid field: %s`, key))
 				}

@@ -3,6 +3,8 @@
     - `csvtk`:
         - report buffered output and compression errors with a nonzero exit status.
         - fix expansion of multiple open column ranges in field selection.
+    - `csvtk summary`:
+        - expand field ranges with the default count operation, fixing unintended grouping and output column counts.
     - `csvtk csv2xlsx`:
         - fix data loss in wide tables and report cell coordinate and write errors.
     - `csvtk join`:
