@@ -29,7 +29,7 @@ import (
 )
 
 // VERSION of csvtk
-const VERSION = "0.38.0"
+const VERSION = "0.39.0"
 
 // versionCmd represents the version command
 var versionCmd = &cobra.Command{

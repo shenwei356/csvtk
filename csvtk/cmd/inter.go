@@ -40,6 +40,7 @@ Attention:
 
   1. fields in all files should be the same, 
      if not, extracting to another file using "csvtk cut".
+  2. An input without data rows makes the intersection empty; no output is written.
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -61,7 +62,6 @@ Attention:
 		defer closeOutput(outfh)
 
 		outOpt := csvOutputOption{QuoteAll: config.QuoteAll}
-
 
 		writer := newCSVOutputWriter(outfh, outOpt)
 		if config.OutTabs || config.Tabs {
@@ -92,10 +92,8 @@ Attention:
 
 			if err != nil {
 				if err == xopen.ErrNoContent {
-					if config.Verbose {
-						log.Warningf("csvtk inter: skipping empty input file: %s", file)
-					}
-					continue
+					// The intersection with an empty set is empty, regardless of file order.
+					return
 				}
 				checkError(err)
 			}
@@ -147,6 +145,9 @@ Attention:
 
 			if firstFile {
 				firstFile = false
+				if len(keysMaps) == 0 {
+					return // Includes header-only, blank-only, and comment-only inputs.
+				}
 				continue
 			}
 

@@ -40,6 +40,12 @@
    csvtk also supports reading and writing xz (.xz), zstd (.zst) and Bzip2 (.bz2) formats.
    
 10. Less than half of the subcommands support >1 file.
+11. Output paths must differ from input files, including symbolic and hard links.
+12. Read and decompression errors in key-value, pattern, and custom sort-level files
+    cause a nonzero exit status; partial contents are not used.
+
+`csv2md` and `csv2rst` report input open and decompression errors instead of
+treating unreadable inputs as empty files.
 
 `csv2json`, `csv2rst`, `headers`, and `space2tab` write text fragments directly
 to buffered output to reduce temporary string allocations during formatting.
@@ -179,7 +185,8 @@ Attention:
      therefore there's no need to pipe the result to gzip/pigz.
      csvtk also supports reading and writing xz (.xz), zstd (.zst) and Bzip2 (.bz2) formats.
  10. Less than half of the subcommands support >1 file.
- 11. Output write and compression errors cause a nonzero exit status.
+ 11. Output paths must differ from input files, including symbolic and hard links.
+ 12. Output write and compression errors cause a nonzero exit status.
 
 Environment variables for frequently used global flags:
 
@@ -2522,6 +2529,7 @@ Attention:
 
   1. fields in all files should be the same, 
      if not, extracting to another file using "csvtk cut".
+  2. An input without data rows makes the intersection empty; no output is written.
 
 Usage:
   csvtk inter [flags]

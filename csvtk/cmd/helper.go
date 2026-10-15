@@ -33,7 +33,6 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
-	"github.com/shenwei356/breader"
 	"github.com/shenwei356/util/pathutil"
 	"github.com/shenwei356/util/stringutil"
 	"github.com/shenwei356/xopen"
@@ -195,15 +194,48 @@ func getFileListFromArgsAndFile(cmd *cobra.Command, args []string, checkFileFrom
 			if !getFlagBool(cmd, "quiet") {
 				log.Warningf("no files found in file list: %s", infileList)
 			}
-			return files
+		} else if len(files) == 1 && isStdin(files[0]) {
+			files = _files
+		} else {
+			files = append(files, _files...)
 		}
-
-		if len(files) == 1 && isStdin(files[0]) {
-			return _files
-		}
-		files = append(files, _files...)
 	}
+	// Reject aliases before any command opens its output with truncation.
+	checkError(checkInputOutputFiles(files, getFlagString(cmd, "out-file")))
 	return files
+}
+
+// checkInputOutputFiles compares file identities, including symlinks and hardlinks.
+// Only regular files need protection; streams and output directories are unchanged.
+func checkInputOutputFiles(files []string, output string) error {
+	if isStdin(output) {
+		return nil
+	}
+	outInfo, err := os.Stat(output)
+	if os.IsNotExist(err) {
+		return nil // A new output cannot alias an existing input.
+	}
+	if err != nil {
+		return err
+	}
+	if !outInfo.Mode().IsRegular() {
+		return nil
+	}
+	for _, file := range files {
+		var inInfo os.FileInfo
+		if isStdin(file) {
+			inInfo, err = os.Stdin.Stat()
+		} else {
+			inInfo, err = os.Stat(file)
+		}
+		if err != nil {
+			return err
+		}
+		if os.SameFile(inInfo, outInfo) {
+			return fmt.Errorf("input %q and output %q are the same file; use a different output file", file, output)
+		}
+	}
+	return nil
 }
 
 func getFlagInt(cmd *cobra.Command, flag string) int {
@@ -533,7 +565,7 @@ func nth(i int) string {
 func readCSV(config Config, file string) ([]string, [][]string, *CSVReader, error) {
 	csvReader, err := newCSVReaderByConfig(config, file)
 	if err != nil {
-		return nil, nil, nil, xopen.ErrNoContent
+		return nil, nil, nil, err
 	}
 
 	csvReader.Read(ReadOption{
@@ -774,39 +806,53 @@ func (parts expressionTemplate) render(parameters map[string]string) string {
 	return result.String()
 }
 
-func readKVs(file string, allLeftAsValue bool) (map[string]string, error) {
-	type KV [2]string
-	fn := func(line string) (interface{}, bool, error) {
-		line = strings.TrimRight(line, "\r\n")
-		if line == "" {
-			return nil, false, nil
-		}
-		items := strings.Split(line, "\t")
-		if len(items) < 2 {
-			return nil, false, nil
-		}
-
-		if allLeftAsValue {
-			return KV([2]string{items[0], strings.Join(items[1:], "\t")}), true, nil
-		}
-		return KV([2]string{items[0], items[1]}), true, nil
+// forEachLine streams auxiliary files without a Scanner token-size limit and
+// reports read, decompression, callback, and close errors instead of treating them as EOF.
+func forEachLine(file string, fn func(string) error) (err error) {
+	reader, err := xopen.Ropen(file)
+	if err == xopen.ErrNoContent {
+		return nil
 	}
-	kvs := make(map[string]string)
-	reader, err := breader.NewBufferedReader(file, 2, 10, fn)
 	if err != nil {
-		return kvs, err
+		return err
 	}
-	var items KV
-	for chunk := range reader.Ch {
-		if chunk.Err != nil {
-			return kvs, err
+	defer func() {
+		if closeErr := reader.Close(); err == nil && closeErr != nil {
+			err = fmt.Errorf("close file %q: %w", file, closeErr)
 		}
-		for _, data := range chunk.Data {
-			items = data.(KV)
-			kvs[items[0]] = items[1]
+	}()
+	for {
+		line, readErr := reader.ReadString('\n')
+		// ReadString may return the final unterminated line together with EOF.
+		if len(line) > 0 {
+			if err = fn(strings.TrimRight(line, "\r\n")); err != nil {
+				return err
+			}
+		}
+		if readErr != nil {
+			if readErr == io.EOF {
+				return nil
+			}
+			return fmt.Errorf("read file %q: %w", file, readErr)
 		}
 	}
-	return kvs, nil
+}
+
+// readKVs ignores lines without a tab and retains the last value of duplicate keys.
+func readKVs(file string, allLeftAsValue bool) (map[string]string, error) {
+	kvs := make(map[string]string)
+	err := forEachLine(file, func(line string) error {
+		key, value, ok := strings.Cut(line, "\t")
+		if !ok {
+			return nil
+		}
+		if !allLeftAsValue {
+			value, _, _ = strings.Cut(value, "\t")
+		}
+		kvs[key] = value
+		return nil
+	})
+	return kvs, err
 }
 
 type orderedField struct {

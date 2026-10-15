@@ -3,6 +3,13 @@
     - `csvtk`:
         - report buffered output and compression errors with a nonzero exit status.
         - fix expansion of multiple open column ranges in field selection.
+        - reject output paths that refer to input files, including symbolic and hard links, before truncating output.
+    - `csvtk inter`:
+        - return an empty intersection for inputs without data rows, regardless of file order.
+    - `csvtk csv2md/csv2rst`:
+        - report input open and decompression errors instead of treating them as empty files.
+    - `csvtk replace/rename2/grep/sort`:
+        - report read and decompression errors in key-value, pattern, and custom sort-level files instead of using partial contents.
     - `csvtk summary`:
         - expand field ranges with the default count operation, fixing unintended grouping and output column counts.
         - size per-group maps by the selected fields and store only values needed by the requested operations.

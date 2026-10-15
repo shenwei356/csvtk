@@ -27,7 +27,6 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
-	"github.com/shenwei356/breader"
 	"github.com/shenwei356/util/stringutil"
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
@@ -85,24 +84,21 @@ Combinations:
 			}
 
 			m := make(map[string]int)
-			reader, err := breader.NewDefaultBufferedReader(items[1])
-			checkError(errors.Wrap(err, "read level file"))
 			var i int
-			for chunk := range reader.Ch {
-				checkError(chunk.Err)
-				for _, data := range chunk.Data {
-					line := data.(string)
-					if line == "" {
-						continue
-					}
-					i++
-					if ignoreCase {
-						m[strings.ToLower(line)] = i
-					} else {
-						m[line] = i
-					}
+			// A partial level list must not silently change the requested sort order.
+			err := forEachLine(items[1], func(line string) error {
+				if line == "" {
+					return nil
 				}
-			}
+				i++
+				if ignoreCase {
+					m[strings.ToLower(line)] = i
+				} else {
+					m[line] = i
+				}
+				return nil
+			})
+			checkError(errors.Wrap(err, "read level file"))
 			if _, ok := levelsMap[items[0]]; ok {
 				if config.Verbose {
 					log.Warningf("overide user-defined level for field %s", items[0])

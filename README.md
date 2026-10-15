@@ -308,6 +308,10 @@ More [examples](http://shenwei356.github.io/csvtk/usage/) and [tutorial](http://
     Please use `csvtk fix-quotes` to fix it, and use `csvtk del-quotes` to reset to the
     original format as needed.
 
+9. Output paths must differ from input files, including symbolic and hard links.
+10. Read and decompression errors in key-value, pattern, and custom sort-level files
+    cause a nonzero exit status; partial contents are not used.
+
 Examples
 
 1. Pretty result

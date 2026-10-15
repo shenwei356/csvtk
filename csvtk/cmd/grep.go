@@ -31,7 +31,6 @@ import (
 
 	"github.com/fatih/color"
 	"github.com/mattn/go-colorable"
-	"github.com/shenwei356/breader"
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
 )
@@ -104,36 +103,28 @@ Attentions:
 
 		if patternFile != "" {
 			noHighlight = true
-			fn := func(line string) (interface{}, bool, error) {
-				line = strings.TrimRight(line, "\r\n")
-				if line == "" {
-					return line, false, nil
+			// Finish reading and validating the pattern file before producing output.
+			checkError(forEachLine(patternFile, func(pattern string) error {
+				if pattern == "" {
+					return nil
 				}
-				return line, true, nil
-			}
-			reader, err := breader.NewBufferedReader(patternFile, config.NumCPUs, 1000, fn)
-			checkError(err)
-			for chunk := range reader.Ch {
-				checkError(chunk.Err)
-				for _, data := range chunk.Data {
-					pattern := data.(string)
-					if useRegexp {
-						p := pattern
-						if ignoreCase {
-							p = "(?i)" + p
-						}
-						re, err := regexp.Compile(p)
-						checkError(err)
-						patternsMap[pattern] = re
-					} else {
-						if ignoreCase {
-							patternsMap[strings.ToLower(pattern)] = nil
-						} else {
-							patternsMap[pattern] = nil
-						}
+				if useRegexp {
+					p := pattern
+					if ignoreCase {
+						p = "(?i)" + p
 					}
+					re, err := regexp.Compile(p)
+					if err != nil {
+						return err
+					}
+					patternsMap[pattern] = re
+				} else if ignoreCase {
+					patternsMap[strings.ToLower(pattern)] = nil
+				} else {
+					patternsMap[pattern] = nil
 				}
-			}
+				return nil
+			}))
 		}
 
 		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
