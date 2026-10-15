@@ -53,6 +53,9 @@ The -w/--decimal-width flag controls rounding of numeric output.
 String field values retain their literal contents, including quotes,
 backslashes, and variable-like text (e.g., $name or ${name}).
 
+Compiled expressions are reused while input types remain unchanged.
+Literal-dependent expressions retain per-row parsing for compatibility.
+
 Variables formats:
   $1 or ${1}                        The first field/column
   $a or ${a}                        Column "a"
@@ -170,8 +173,6 @@ func doMutate3(config Config, opts mutate3Opts) {
 		checkError(writer.Error())
 	}()
 
-	emptyParams := make(map[string]interface{})
-
 	fs := make([]string, 0)
 	varType := make(map[string]int)
 	for _, f := range reFilter2.FindAllStringSubmatch(opts.ExprStr, -1) {
@@ -192,7 +193,6 @@ func doMutate3(config Config, opts mutate3Opts) {
 	opts.ExprStr = reFiler2VarSymbolStartsWithDigits.ReplaceAllString(opts.ExprStr, "shenwei_$1$2")
 	opts.ExprStr = reFilter2VarField.ReplaceAllString(opts.ExprStr, "shenwei$1")
 
-	var exprStr1 string
 	var program *vm.Program
 
 	customFuncs := []expr.Option{
@@ -241,8 +241,7 @@ func doMutate3(config Config, opts mutate3Opts) {
 			DoNotAllowDuplicatedColumnName: true,
 		})
 
-		var parameters map[string]string
-		var parameters2 map[string]interface{}
+		var parameters map[string]interface{}
 
 		var col string
 		var fieldTmp int
@@ -256,7 +255,7 @@ func doMutate3(config Config, opts mutate3Opts) {
 		var colnamesMap map[string]*regexp.Regexp
 		var selectWithColnames bool
 		var record2 []string // for output
-		var template expressionTemplate
+		var bindings *expressionBindings
 		decimalFormat := fmt.Sprintf("%%.%df", opts.DecimalWidth)
 
 		checkFirstLine := true
@@ -270,9 +269,7 @@ func doMutate3(config Config, opts mutate3Opts) {
 
 				selectWithColnames = record.SelectWithColnames
 
-				parameters = make(map[string]string, len(record.All))
-				parameters2 = make(map[string]interface{}, len(record.All))
-				parameters2["shenweiNULL"] = nil
+				parameters = make(map[string]interface{}, len(record.All))
 
 				if !config.NoHeaderRow || record.IsHeaderRow { // do not replace head line
 					colnames2fileds = make(map[string][]int, len(record.Selected))
@@ -334,17 +331,17 @@ func doMutate3(config Config, opts mutate3Opts) {
 
 					if reDigitals.MatchString(value) {
 						if opts.DigitsAsString {
-							parameters[col] = strconv.Quote(value)
+							parameters[col] = value
 						} else {
 							valueFloat, err = strconv.ParseFloat(removeComma(value), 64)
 							checkError(err)
-							parameters[col] = formatExpressionFloat(valueFloat)
+							parameters[col] = valueFloat
 						}
 					} else {
 						if value == "" && hasNullCoalescence {
-							parameters[col] = "shenweiNULL"
+							parameters[col] = nil
 						} else {
-							parameters[col] = strconv.Quote(value)
+							parameters[col] = value
 						}
 					}
 				}
@@ -362,38 +359,36 @@ func doMutate3(config Config, opts mutate3Opts) {
 
 					if reDigitals.MatchString(value) {
 						if opts.DigitsAsString {
-							parameters[col] = strconv.Quote(value)
+							parameters[col] = value
 						} else {
 							valueFloat, err = strconv.ParseFloat(removeComma(value), 64)
 							checkError(err)
-							parameters[col] = formatExpressionFloat(valueFloat)
+							parameters[col] = valueFloat
 						}
 					} else {
 						if value == "" && hasNullCoalescence {
-							parameters[col] = "shenweiNULL"
+							parameters[col] = nil
 						} else {
-							parameters[col] = strconv.Quote(value)
+							parameters[col] = value
 						}
 					}
 				}
 			}
 
-			// Locate references once; inserted field values must not be expanded again.
-			if template == nil {
-				template = newExpressionTemplate(opts.ExprStr, parameters)
+			// Bind column values separately from the expression compiled for this input.
+			if bindings == nil {
+				bindings = newExpressionBindings(opts.ExprStr, parameters, true)
+				program = nil
 			}
-			exprStr1 = template.render(parameters)
-
-			// evaluate
-			program, err = expr.Compile(exprStr1, customFuncs...)
+			source, boundParameters, err := bindings.prepare(parameters)
 			checkError(err)
+			if program == nil || bindings.recompile {
+				program, err = expr.Compile(source, append([]expr.Option{expr.Env(boundParameters)}, customFuncs...)...)
+				checkError(err)
+			}
 
 			// check result
-			if hasNullCoalescence {
-				result, err = expr.Run(program, parameters2)
-			} else {
-				result, err = expr.Run(program, emptyParams)
-			}
+			result, err = expr.Run(program, boundParameters)
 			if err != nil {
 				checkError(fmt.Errorf("data: %s, err: %s", record.All, err))
 			}

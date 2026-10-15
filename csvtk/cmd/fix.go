@@ -39,6 +39,7 @@ var fixCmd = &cobra.Command{
 How to:
   1. First -n/--buf-rows rows are read to check the maximum number of columns.
      The default value 0 means all rows will be read.
+     With a positive value, only these initial rows are buffered.
   2. Buffered and remaining rows with fewer columns are padded with the value
      of --na (empty by default) before output.
   3. An error will be reported if the number of columns of any remaining row
@@ -128,8 +129,8 @@ How to:
 				continue
 			}
 
-			buf = append(buf, record.All)
 			if !checkedMaxNcols {
+				buf = append(buf, record.All)
 				if n == bufRows {
 					maxN = maxNcols(buf)
 					if config.Verbose {
@@ -149,6 +150,8 @@ How to:
 						}
 						writer.Write(row)
 					}
+					// Later rows are written directly; release the sampled records.
+					buf = nil
 				}
 
 				continue

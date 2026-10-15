@@ -559,14 +559,10 @@ func readCSV(config Config, file string) ([]string, [][]string, *CSVReader, erro
 	return headerRow, data, csvReader, nil
 }
 
-func readDataFrame(config Config, file string, ignoreCase bool) ([]string, map[string]string, map[string][]string, error) {
-	df := make(map[string][]string)
+// dataFrameColumns derives the column keys used to align concat inputs without
+// loading their rows. Original names are retained for the output header.
+func dataFrameColumns(config Config, file string, headerRow []string, width int, ignoreCase bool) ([]string, map[string]string) {
 	var colnames []string
-	headerRow, data, csvReader, err := readCSV(config, file)
-
-	if err != nil {
-		return nil, nil, nil, err
-	}
 
 	// in case that col names are not unique in headerRow
 	colname2headerRow := make(map[string]string, len(headerRow))
@@ -612,11 +608,9 @@ func readDataFrame(config Config, file string, ignoreCase bool) ([]string, map[s
 			}
 		}
 	} else {
-		if len(data) == 0 {
-			return colnames, colname2headerRow, df, nil
-		} else if len(data) > 0 {
-			colnames = make([]string, len(data[0]))
-			for i := 0; i < len(data[0]); i++ {
+		if width > 0 {
+			colnames = make([]string, width)
+			for i := 0; i < width; i++ {
 				newName = fmt.Sprintf("%d", i+1)
 				colname2headerRow[newName] = newName
 				colnames[i] = newName
@@ -624,20 +618,7 @@ func readDataFrame(config Config, file string, ignoreCase bool) ([]string, map[s
 		}
 	}
 
-	var ok bool
-	var j int
-	for i, col := range colnames {
-		if _, ok = df[col]; !ok {
-			df[col] = make([]string, 0, 1000)
-		}
-		for j = range data {
-			df[col] = append(df[col], data[j][i])
-		}
-	}
-
-	readerReport(&config, csvReader, file)
-
-	return colnames, colname2headerRow, df, nil
+	return colnames, colname2headerRow
 }
 
 func parseCSVfile(cmd *cobra.Command, config Config, file string,

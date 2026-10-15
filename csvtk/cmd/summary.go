@@ -51,6 +51,8 @@ Attention:
   1. Do not mix use field (column) numbers and names.
   2. Field range is supported, e.g., "-f 2-5:sum".
   3. The default operation is count, e.g., "-f 1-2" is equivalent to "-f 1-2:count".
+  4. Values are stored only for the numeric or text operations requested for
+     each field. Memory use still grows with the retained values and groups.
 
 Available operations:
  
@@ -233,12 +235,12 @@ Available operations:
 		fieldsG := []int{}
 		fieldsD := []int{}
 		fieldsDUniq := []int{}
+		var numericFields, textFields []int // Store only values needed by the requested operations.
 		var f int
 		var v float64
 		var e error
 		var ok bool
 		var group string
-		var needParseDigits bool
 
 		var hasHeaderLine bool
 		checkFirstLine := true
@@ -265,6 +267,22 @@ Available operations:
 						statsI[f] = append(statsI[f], statsList[i][1])
 					}
 				}
+				for _, f := range fieldsDUniq {
+					var numeric, text bool
+					for _, op := range statsI[f] {
+						if _, ok := allStats[op]; ok {
+							numeric = true
+						} else {
+							text = true
+						}
+					}
+					if numeric {
+						numericFields = append(numericFields, f)
+					}
+					if text {
+						textFields = append(textFields, f)
+					}
+				}
 
 				if !config.NoHeaderRow || record.IsHeaderRow {
 					HeaderRow = record.All
@@ -275,30 +293,21 @@ Available operations:
 
 			group = encodeFields(record.Selected[numFieldsD:], false)
 			if _, ok = data[group]; !ok {
-				data[group] = make(map[int][]float64, 1024)
-				scientifc[group] = make(map[int]byte)
-			}
-			if _, ok = data2[group]; !ok {
-				data2[group] = make(map[int][]string, 1024)
+				// Keep every group, including groups with no valid numeric values.
+				data[group] = nil
+				if len(numericFields) > 0 {
+					data[group] = make(map[int][]float64, len(numericFields))
+					scientifc[group] = make(map[int]byte, len(numericFields))
+				}
+				if len(textFields) > 0 {
+					data2[group] = make(map[int][]string, len(textFields))
+				}
 			}
 
-			for _, f = range fieldsDUniq {
-				if _, ok = data2[group][f]; !ok {
-					data2[group][f] = []string{}
-				}
+			for _, f = range textFields {
 				data2[group][f] = append(data2[group][f], record.All[f-1])
-
-				needParseDigits = false
-				for _, op := range statsI[f] {
-					if _, ok = allStats[op]; ok {
-						needParseDigits = true
-						break
-					}
-				}
-
-				if !needParseDigits {
-					continue
-				}
+			}
+			for _, f = range numericFields {
 				if !reDigitals.MatchString(record.All[f-1]) {
 					if ignore {
 						continue

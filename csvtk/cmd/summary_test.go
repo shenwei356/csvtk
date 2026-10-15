@@ -8,6 +8,26 @@ import (
 	"testing"
 )
 
+// TestSummaryOperationStorage covers groups requiring numeric, text, or both value sets.
+func TestSummaryOperationStorage(t *testing.T) {
+	input := writeAccuracyInput(t, "summary.csv", "g,v,t\nA,3,x\nA,1,y\nB,NA,z\n")
+	for _, tc := range []struct {
+		fields string
+		want   [][]string
+	}{
+		{"v:sum,v:countn", [][]string{{"g", "v:sum", "v:countn"}, {"A", "4.00", "2"}, {"B", "NaN", "0"}}},
+		{"v:count,t:collapse", [][]string{{"g", "v:count", "t:collapse"}, {"A", "2", "x; y"}, {"B", "1", "z"}}},
+		{"v:sum,v:count,v:first,t:collapse", [][]string{{"g", "v:sum", "v:count", "v:first", "t:collapse"}, {"A", "4.00", "2", "3", "x; y"}, {"B", "NaN", "1", "NA", "z"}}},
+	} {
+		t.Run(tc.fields, func(t *testing.T) {
+			out, _ := runAccuracyCLI(t, "summary", "-i", "-g", "g", "-f", tc.fields, input)
+			if got := parseAccuracyCSV(t, out); !reflect.DeepEqual(got, tc.want) {
+				t.Fatalf("summary rows: got %q, want %q", got, tc.want)
+			}
+		})
+	}
+}
+
 // TestSummaryDefaultCountRanges checks range expansion before grouping and naming.
 func TestSummaryDefaultCountRanges(t *testing.T) {
 	cases := []struct {

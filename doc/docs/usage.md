@@ -531,6 +531,8 @@ of each input file. Standard input is labeled "-".
 If multiple input files are provided, the second and subsequent files will be
 concatenated to the first one by rows. And only columns matching those of the
 first file are kept.
+Rows are streamed after the column mapping is established. Ambiguous column
+names after duplicate-name normalization are reported as errors.
 
 Usage:
   csvtk concat [flags] 
@@ -1675,6 +1677,9 @@ Use -s/--numeric-as-string to keep numeric fields as strings.
 String field values retain their literal contents, including quotes,
 backslashes, and variable-like text (e.g., $name or ${name}).
 
+Compiled expressions are reused while input types remain unchanged.
+Literal-dependent expressions retain per-row parsing for compatibility.
+
 Variables formats:
   $1 or ${1}                        The first field/column
   $a or ${a}                        Column "a"
@@ -1790,6 +1795,7 @@ fix CSV/TSV with different numbers of columns in rows
 How to:
   1. First -n/--buf-rows rows are read to check the maximum number of columns.
      The default value 0 means all rows will be read.
+     With a positive value, only these initial rows are buffered.
   2. Buffered and remaining rows with fewer columns are padded with the value
      of --na (empty by default) before output.
   3. An error will be reported if the number of columns of any remaining row
@@ -2851,6 +2857,9 @@ The -w/--decimal-width flag controls rounding of numeric output.
 String field values retain their literal contents, including quotes,
 backslashes, and variable-like text (e.g., $name or ${name}).
 
+Compiled expressions are reused while input types remain unchanged.
+Literal-dependent expressions retain per-row parsing for compatibility.
+
 Variables formats:
   $1 or ${1}                        The first field/column
   $a or ${a}                        Column "a"
@@ -3017,6 +3026,9 @@ The -w/--decimal-width flag controls rounding of numeric output.
 
 String field values retain their literal contents, including quotes,
 backslashes, and variable-like text (e.g., $name or ${name}).
+
+Compiled expressions are reused while input types remain unchanged.
+Literal-dependent expressions retain per-row parsing for compatibility.
 
 Variables formats:
   $1 or ${1}                        The first field/column
@@ -4900,6 +4912,8 @@ Attention:
   1. Do not mix use field (column) numbers and names.
   2. Field range is supported, e.g., "-f 2-5:sum".
   3. The default operation is count, e.g., "-f 1-2" is equivalent to "-f 1-2:count".
+  4. Values are stored only for the numeric or text operations requested for
+     each field. Memory use still grows with the retained values and groups.
 
 Available operations:
  

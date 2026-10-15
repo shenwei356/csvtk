@@ -5,10 +5,15 @@
         - fix expansion of multiple open column ranges in field selection.
     - `csvtk summary`:
         - expand field ranges with the default count operation, fixing unintended grouping and output column counts.
+        - size per-group maps by the selected fields and store only values needed by the requested operations.
     - `csvtk cat`:
         - preserve and count the final line without a newline with `-L/--lines`.
     - `csvtk fix`:
         - honor `--na` when padding buffered and remaining rows with `-n/--buf-rows`.
+        - release the initial row buffer and stream remaining rows when `-n/--buf-rows` is positive.
+    - `csvtk concat`:
+        - stream multiple inputs after mapping their columns, reducing memory usage.
+        - report ambiguous columns when generated duplicate names collide with existing names.
     - `csvtk csv2xlsx`:
         - fix data loss in wide tables and report cell coordinate and write errors.
     - `csvtk join`:
@@ -16,6 +21,7 @@
     - `csvtk filter2/mutate2/mutate3`:
         - preserve float64 precision when converting numeric fields for expressions.
         - preserve variable-like text, quotes, and backslashes in string field values.
+        - reuse compiled expressions with bound column values, preserving input types and literal-dependent parsing.
     - `csvtk plot bar`:
         - align grouped bars by category, preserving first-seen order and gaps for missing categories.
         - report duplicate group/category pairs instead of plotting ambiguous values.

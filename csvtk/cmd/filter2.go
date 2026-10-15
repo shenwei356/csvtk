@@ -51,6 +51,9 @@ Use -s/--numeric-as-string to keep numeric fields as strings.
 String field values retain their literal contents, including quotes,
 backslashes, and variable-like text (e.g., $name or ${name}).
 
+Compiled expressions are reused while input types remain unchanged.
+Literal-dependent expressions retain per-row parsing for compatibility.
+
 Variables formats:
   $1 or ${1}                        The first field/column
   $a or ${a}                        Column "a"
@@ -151,8 +154,6 @@ Custom functions:
 			},
 		}
 
-		emptyParams := make(map[string]interface{})
-
 		containCustomFuncs := false
 		for f := range functions {
 			if regexp.MustCompile(f + `\(.+\)`).MatchString(filterStr) {
@@ -170,7 +171,6 @@ Custom functions:
 		filterStr = reFilter2VarField.ReplaceAllString(filterStr, "shenwei$1")
 		// filterStr = reFilter2VarSymbol.ReplaceAllString(filterStr, "")
 
-		var filterStr1 string
 		var expression *govaluate.EvaluableExpression
 		var err error
 
@@ -219,8 +219,7 @@ Custom functions:
 				DoNotAllowDuplicatedColumnName: true,
 			})
 
-			var parameters map[string]string
-			var parameters2 map[string]interface{}
+			var parameters map[string]interface{}
 
 			var flag bool
 			var col string
@@ -236,7 +235,7 @@ Custom functions:
 
 			var selectWithColnames bool
 
-			var template expressionTemplate
+			var bindings *expressionBindings
 
 			checkFirstLine := true
 			for record := range csvReader.Ch {
@@ -249,9 +248,7 @@ Custom functions:
 
 					selectWithColnames = record.SelectWithColnames
 
-					parameters = make(map[string]string, len(record.All))
-					parameters2 = make(map[string]interface{}, len(record.All))
-					parameters2["shenweiNULL"] = nil
+					parameters = make(map[string]interface{}, len(record.All))
 
 					if !config.NoHeaderRow || record.IsHeaderRow { // do not replace head line
 						colnames2fileds = make(map[string][]int, len(record.Selected))
@@ -298,17 +295,17 @@ Custom functions:
 
 						if reDigitals.MatchString(value) {
 							if digitsAsString || containCustomFuncs {
-								parameters[col] = quoteGovaluateString(value)
+								parameters[col] = value
 							} else {
 								valueFloat, err = strconv.ParseFloat(removeComma(value), 64)
 								checkError(err)
-								parameters[col] = formatExpressionFloat(valueFloat)
+								parameters[col] = valueFloat
 							}
 						} else {
 							if value == "" && hasNullCoalescence {
-								parameters[col] = "shenweiNULL"
+								parameters[col] = nil
 							} else {
-								parameters[col] = quoteGovaluateString(value)
+								parameters[col] = value
 							}
 						}
 					}
@@ -326,44 +323,42 @@ Custom functions:
 
 						if reDigitals.MatchString(value) {
 							if digitsAsString || containCustomFuncs {
-								parameters[col] = quoteGovaluateString(value)
+								parameters[col] = value
 							} else {
 								valueFloat, err = strconv.ParseFloat(removeComma(value), 64)
 								checkError(err)
-								parameters[col] = formatExpressionFloat(valueFloat)
+								parameters[col] = valueFloat
 							}
 						} else {
 							if value == "" && hasNullCoalescence {
-								parameters[col] = "shenweiNULL"
+								parameters[col] = nil
 							} else {
-								parameters[col] = quoteGovaluateString(value)
+								parameters[col] = value
 							}
 						}
 					}
 				}
 
-				// Locate references once; inserted field values must not be expanded again.
-				if template == nil {
-					template = newExpressionTemplate(filterStr, parameters)
+				// Bind column values separately from the expression compiled for this input.
+				if bindings == nil {
+					bindings = newExpressionBindings(filterStr, parameters, false)
+					expression = nil
 				}
-				filterStr1 = template.render(parameters)
-
-				// evaluate
-				if containCustomFuncs {
-					expression, err = govaluate.NewEvaluableExpressionWithFunctions(filterStr1, functions)
-				} else {
-					expression, err = govaluate.NewEvaluableExpression(filterStr1)
-				}
+				source, boundParameters, err := bindings.prepare(parameters)
 				checkError(err)
+				if expression == nil || bindings.recompile {
+					if containCustomFuncs {
+						expression, err = govaluate.NewEvaluableExpressionWithFunctions(source, functions)
+					} else {
+						expression, err = govaluate.NewEvaluableExpression(source)
+					}
+					checkError(err)
+				}
 
 				// check result
 				flag = false
 
-				if hasNullCoalescence {
-					result, err = expression.Evaluate(parameters2)
-				} else {
-					result, err = expression.Evaluate(emptyParams)
-				}
+				result, err = expression.Evaluate(boundParameters)
 				if err != nil {
 					flag = false
 					if config.Verbose {
