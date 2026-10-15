@@ -1174,6 +1174,8 @@ Attention:
   1. Multiple CSV/TSV files are saved as separated sheets in .xlsx file.
   2. All input files should all be CSV or TSV.
   3. First rows are freezed unless given '-H/--no-header-row'.
+  4. XLSX sheets support up to 16,384 columns and 1,048,576 rows, including the
+     output header row and any row-number column. Exceeding these limits causes an error.
 
 Usage:
   csvtk csv2xlsx [flags]

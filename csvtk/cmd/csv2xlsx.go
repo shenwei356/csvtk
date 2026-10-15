@@ -21,7 +21,6 @@
 package cmd
 
 import (
-	"fmt"
 	"path/filepath"
 	"runtime"
 	"strconv"
@@ -44,6 +43,8 @@ Attention:
   1. Multiple CSV/TSV files are saved as separated sheets in .xlsx file.
   2. All input files should all be CSV or TSV.
   3. First rows are freezed unless given '-H/--no-header-row'.
+  4. XLSX sheets support up to 16,384 columns and 1,048,576 rows, including the
+     output header row and any row-number column. Exceeding these limits causes an error.
   
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -66,7 +67,7 @@ Attention:
 		}
 
 		xlsx := excelize.NewFile()
-		defer checkError(xlsx.Close())
+		defer closeOutput(xlsx)
 
 		var sheet, cell, val string
 		var col, line int
@@ -136,17 +137,21 @@ Attention:
 				}
 
 				for col, val = range record.Selected {
-					cell = fmt.Sprintf("%s%d", ExcelColumnIndex(col), line)
+					// Validate XLSX limits and convert the zero-based CSV column index.
+					cell, err = excelize.CoordinatesToCellName(col+1, line)
+					checkError(err)
 					if formatNumbers {
 						valFloat, err = strconv.ParseFloat(val, 64)
 						if err != nil {
-							xlsx.SetCellValue(sheet, cell, val)
+							err = xlsx.SetCellValue(sheet, cell, val)
 						} else {
-							xlsx.SetCellFloat(sheet, cell, valFloat, -1, 64)
+							err = xlsx.SetCellFloat(sheet, cell, valFloat, -1, 64)
 						}
 					} else {
-						xlsx.SetCellValue(sheet, cell, val)
+						err = xlsx.SetCellValue(sheet, cell, val)
 					}
+					// A failed cell write must not produce a successful, incomplete workbook.
+					checkError(err)
 				}
 				line++
 			}
@@ -164,19 +169,4 @@ func init() {
 
 	csv2xlsxCmd.Flags().BoolP("format-numbers", "f", false, `save numbers in number format, instead of text`)
 
-}
-
-func ExcelColumnIndex(col int) string {
-	s := make([]byte, 0, 8)
-
-	s = append(s, byte(col%26+65))
-	for col >= 26 {
-		col = col / 26
-		s = append(s, byte(col%26+64))
-	}
-
-	for i, j := 0, len(s)-1; i < j; i, j = i+1, j-1 {
-		s[i], s[j] = s[j], s[i]
-	}
-	return string(s)
 }
