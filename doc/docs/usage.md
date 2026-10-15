@@ -1240,6 +1240,7 @@ Examples:
      csvtk cut -f 3,5-        # 3rd col, and 5th col to the end
      csvtk cut -f 1-          # for all
      csvtk cut -f 2-,1        # move 1th col to the end
+     csvtk cut -f 1-,3-       # all columns, then 3rd column to the end again
   4. Unselect
      csvtk cut -f -1,-3       # discard 1st and 3rd column
      csvtk cut -f -1--3       # discard 1st to 3rd column

@@ -2,6 +2,7 @@
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.39.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.39.0)
     - `csvtk`:
         - report buffered output and compression errors with a nonzero exit status.
+        - fix expansion of multiple open column ranges in field selection.
     - `csvtk csv2xlsx`:
         - fix data loss in wide tables and report cell coordinate and write errors.
     - `csvtk join`:

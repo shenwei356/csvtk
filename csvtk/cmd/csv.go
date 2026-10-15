@@ -550,7 +550,7 @@ func parseFields(
 	var colnames []string
 	var parseHeaderRow bool
 	var negativeFields bool
-	var x2ends map[int]int // [2]int{index of x in fields, x}
+	var x2ends map[int]int // Map each open range's index in fields to its starting field.
 	if strings.Split(fieldsStr, fieldsStrSep)[0] == "" {
 		checkError(fmt.Errorf("the first field should not be empty: %s", fieldsStr))
 	}
@@ -558,7 +558,6 @@ func parseFields(
 	if reIntegers.MatchString(firstField) {
 		fields = []int{}
 		fieldsStrs := strings.Split(fieldsStr, fieldsStrSep)
-		var j int
 		for _, s := range fieldsStrs {
 			found := reIntegerRange.FindAllStringSubmatch(s, -1)
 			if len(found) > 0 { // field range
@@ -572,7 +571,7 @@ func parseFields(
 					if x2ends == nil {
 						x2ends = make(map[int]int, 8)
 					}
-					x2ends[j] = start
+					x2ends[len(fields)-1] = start
 					continue
 				}
 
@@ -588,12 +587,10 @@ func parseFields(
 					if start < end {
 						for i := start; i <= end; i++ {
 							fields = append(fields, i)
-							j++
 						}
 					} else {
 						for i := end; i <= start; i++ {
 							fields = append(fields, i)
-							j++
 						}
 					}
 				} else if start > 0 && end > 0 {
@@ -602,7 +599,6 @@ func parseFields(
 					}
 					for i := start; i <= end; i++ {
 						fields = append(fields, i)
-						j++
 					}
 				} else {
 					checkError(fmt.Errorf("invalid field range: %s. start (%d) and end (%d) should be both > 0 or < 0", s, start, end))
@@ -613,7 +609,6 @@ func parseFields(
 					checkError(fmt.Errorf("failed to parse %s as a field number, you may mix the use of field numbers and column names", s))
 				}
 				fields = append(fields, field)
-				j++
 			}
 		}
 
