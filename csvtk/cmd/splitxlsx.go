@@ -46,6 +46,7 @@ Limitation: Complex sheet structures are not fully supported, such as
   2. more than one header row
 
 Groups that would have the same sheet name receive distinct numeric suffixes.
+Missing cells in selected columns are treated as empty values.
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -153,6 +154,14 @@ Groups that would have the same sheet name receive distinct numeric suffixes.
 		Keys2RowIndex := make(map[string]map[int]struct{}, 10)
 		rows, err := xlsx.GetRows(sheetName)
 		checkError(err)
+		// GetRows omits trailing blank cells, so the longest row defines the
+		// available column range even when the first row is short or empty.
+		nFields := 0
+		for _, record := range rows {
+			if len(record) > nFields {
+				nFields = len(record)
+			}
+		}
 		for rowIndex, record := range rows {
 			if parseHeaderRow { // parsing header row
 				colnames2fileds = make(map[string][]int, len(record))
@@ -215,12 +224,12 @@ Groups that would have the same sheet name receive distinct numeric suffixes.
 			}
 			if checkFields {
 				for field := range fieldsMap {
-					if field > len(record) {
-						checkError(fmt.Errorf(`field (%d) out of range (%d) in sheet: %s`, field, len(record), sheetName))
+					if field > nFields {
+						checkError(fmt.Errorf(`field (%d) out of range (%d) in sheet: %s`, field, nFields, sheetName))
 					}
 				}
 				fields2 := []int{}
-				for f := range record {
+				for f := 0; f < nFields; f++ {
 					_, ok = fieldsMap[f+1]
 					if negativeFields {
 						if !ok {
@@ -242,7 +251,12 @@ Groups that would have the same sheet name receive distinct numeric suffixes.
 			}
 
 			for i, f := range fields {
-				items[i] = record[f-1]
+				// Reset omitted cells on every row; items is reused between groups.
+				if f > len(record) {
+					items[i] = ""
+				} else {
+					items[i] = record[f-1]
+				}
 			}
 
 			if printHeaderRow {

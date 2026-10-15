@@ -4732,6 +4732,7 @@ Limitation: Complex sheet structures are not fully supported, such as
   2. more than one header row
 
 Groups that would have the same sheet name receive distinct numeric suffixes.
+Missing cells in selected columns are treated as empty values.
 
 Usage:
   csvtk splitxlsx [flags]
