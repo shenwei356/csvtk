@@ -37,6 +37,8 @@ var ncolCmd = &cobra.Command{
 	Short:   "print number of columns",
 	Long: `print number of columns
 
+Only the first record of each input is inspected.
+
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
@@ -68,7 +70,8 @@ var ncolCmd = &cobra.Command{
 				}
 			}
 			csvReader.Read(ReadOption{
-				FieldStr: "1-",
+				FieldStr:   "1-",
+				MaxRecords: 1,
 			})
 
 			for record := range csvReader.Ch {
@@ -77,7 +80,6 @@ var ncolCmd = &cobra.Command{
 				}
 
 				numCols = len(record.All)
-				break
 			}
 
 			if printFileName {

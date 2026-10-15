@@ -36,6 +36,8 @@ var headersCmd = &cobra.Command{
 	Short: "print headers",
 	Long: `print headers
 
+Only the first record of each input is inspected.
+
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
@@ -68,7 +70,8 @@ var headersCmd = &cobra.Command{
 			}
 
 			csvReader.Read(ReadOption{
-				FieldStr: "1-",
+				FieldStr:   "1-",
+				MaxRecords: 1,
 			})
 
 			if verbose {
@@ -87,8 +90,6 @@ var headersCmd = &cobra.Command{
 						outfh.WriteString(n + "\n")
 					}
 				}
-
-				break
 			}
 
 			readerReport(&config, csvReader, file)

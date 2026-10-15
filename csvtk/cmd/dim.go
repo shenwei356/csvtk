@@ -38,6 +38,8 @@ var dimCmd = &cobra.Command{
 	Short:   "dimensions of CSV file",
 	Long: `dimensions of CSV file
 
+With --cols, only the first record of each input is inspected.
+
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
@@ -46,6 +48,10 @@ var dimCmd = &cobra.Command{
 
 		tabular := getFlagBool(cmd, "tabular")
 		cols := getFlagBool(cmd, "cols")
+		var maxRecords uint64
+		if cols {
+			maxRecords = 1 // Column counts only need the first record.
+		}
 		rows := getFlagBool(cmd, "rows")
 		noFiles := getFlagBool(cmd, "no-files")
 
@@ -107,7 +113,8 @@ var dimCmd = &cobra.Command{
 			}
 
 			csvReader.Read(ReadOption{
-				FieldStr: "1-",
+				FieldStr:   "1-",
+				MaxRecords: maxRecords,
 			})
 
 			once := true
@@ -126,7 +133,6 @@ var dimCmd = &cobra.Command{
 						} else {
 							outfh.WriteString(fmt.Sprintf("%s\t%d\n", file, numCols))
 						}
-						break
 					}
 					once = false
 				}

@@ -20,6 +20,8 @@
         - normalize numeric values to valid JSON syntax without losing precision.
     - `csvtk splitxlsx`:
         - treat missing cells as empty values, fixing panics on short or blank rows.
+    - `csvtk head/ncol/headers`, `csvtk dim --cols`:
+        - stop and close input readers after the required records, fixing file descriptor and goroutine leaks.
 - [csvtk v0.38.0](https://github.com/shenwei356/csvtk/releases/tag/v0.38.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.38.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.38.0)
     - `csvtk`:

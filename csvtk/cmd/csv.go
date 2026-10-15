@@ -90,7 +90,9 @@ func NewCSVReader(file string) (*CSVReader, error) {
 	return csvReader, nil
 }
 
+// ReadOption configures column selection and optional record limits.
 type ReadOption struct {
+	MaxRecords                     uint64 // Maximum valid records to emit, including header; 0 means unlimited.
 	FieldStr                       string
 	FieldStrSep                    string
 	FuzzyFields                    bool
@@ -104,7 +106,8 @@ type ReadOption struct {
 	Verbose bool
 }
 
-// Run begins to read
+// Read emits records asynchronously and closes the input before closing Ch.
+// Callers must consume Ch to completion; use MaxRecords for prefix reads.
 func (csvReader *CSVReader) Read(opt ReadOption) {
 	go func() {
 		fieldStr := opt.FieldStr
@@ -127,7 +130,9 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 		doNotAllowDuplicatedColumnName := opt.DoNotAllowDuplicatedColumnName
 
 		defer func() {
+			// Release the input before consumers observe the end of the channel.
 			csvReader.fh.Close()
+			close(csvReader.Ch)
 		}()
 
 		fields, colnames, negativeFields, needParseHeaderRow, x2ends := parseFields(fieldStr, fieldStrSep, csvReader.NoHeaderRow, opt.Verbose)
@@ -166,8 +171,11 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 		var record []string
 		var err error
 		var isHeaderRow bool
+		var numRecords uint64
 
-		for {
+		// Limit parsing in the producer so prefix consumers can finish without
+		// leaving a blocked sender or reading another record from an open pipe.
+		for opt.MaxRecords == 0 || numRecords < opt.MaxRecords {
 			record, err = csvReader.Reader.Read()
 			if err == io.EOF {
 				break
@@ -443,6 +451,7 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 			}
 
 			items = make([]string, 0, len(fields))
+			numRecords++
 
 			if showRowNumber {
 				if parseHeaderRow2 {
@@ -522,8 +531,6 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 				SelectWithColnames: selectWithColnames,
 			}
 		}
-
-		close(csvReader.Ch)
 	}()
 }
 

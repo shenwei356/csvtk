@@ -36,6 +36,8 @@ var headCmd = &cobra.Command{
 	Short: "print first N records",
 	Long: `print first N records
 
+Only the requested records and header (if present) are inspected.
+
 Tips:
   - If you want to keep the first N records for each group, use
        csvtk uniq -n 3
@@ -47,13 +49,16 @@ Tips:
 		runtime.GOMAXPROCS(config.NumCPUs)
 
 		number := getFlagPositiveInt(cmd, "number")
+		maxRecords := uint64(number)
+		if !config.NoHeaderRow {
+			maxRecords++ // The header is emitted in addition to the requested data rows.
+		}
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
 		defer closeOutput(outfh)
 
 		outOpt := csvOutputOption{QuoteAll: config.QuoteAll}
-
 
 		writer := newCSVOutputWriter(outfh, outOpt)
 		if config.OutTabs || config.Tabs {
@@ -86,11 +91,11 @@ Tips:
 			}
 
 			csvReader.Read(ReadOption{
-				FieldStr: "1-",
+				FieldStr:   "1-",
+				MaxRecords: maxRecords,
 			})
 
 			isHeaderLine := !config.NoHeaderRow
-			i := 0
 			for record := range csvReader.Ch {
 				if record.Err != nil {
 					checkError(record.Err)
@@ -105,17 +110,12 @@ Tips:
 						unshift(&record.All, "row")
 					}
 				} else {
-					i++
 					if printLineNumber {
 						unshift(&record.All, strconv.Itoa(record.Row))
 					}
 				}
 
 				checkError(writer.Write(record.All))
-
-				if number == i {
-					break
-				}
 			}
 
 			readerReport(&config, csvReader, file)

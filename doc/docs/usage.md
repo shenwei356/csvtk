@@ -1484,6 +1484,8 @@ dim:
 ```text
 dimensions of CSV file
 
+With --cols, only the first record of each input is inspected.
+
 Usage:
   csvtk dim [flags]
 
@@ -1520,6 +1522,8 @@ ncol:
 
 ```text
 print number of columns
+
+Only the first record of each input is inspected.
 
 Usage:
   csvtk ncol [flags]
@@ -2428,6 +2432,8 @@ Usage
 ```text
 print first N records
 
+Only the requested records and header (if present) are inspected.
+
 Tips:
   - If you want to keep the first N records for each group, use
        csvtk uniq -n 3
@@ -2462,6 +2468,8 @@ Usage
 
 ```text
 print headers
+
+Only the first record of each input is inspected.
 
 Usage:
   csvtk headers [flags]
