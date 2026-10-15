@@ -50,6 +50,8 @@ Notes:
   3. If flag -o/--out-file not set (default), image is written to stdout,
      you can display the image by pipping to "display" command of Imagemagic
      or just redirect to file.
+  4. With --group-field, categories are aligned across groups in first-seen
+     order. Missing categories leave gaps. Each group/category pair must be unique.
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -125,15 +127,16 @@ Notes:
 			checkError(err)
 		}
 
-		var xValues []string
-		xValues = make([]string, 0, len(data))
-		for _, d := range data {
-			xValues = append(xValues, d[0])
-		}
+		xValues := make([]string, 0, len(data))
+		// Share category positions across groups, while keeping repeated labels
+		// as separate bars when no grouping column is selected.
+		categoryIndex := make(map[string]int)
 
 		// =======================================
 
-		groups := make(map[string]plotter.Values)
+		// Store only observed positions and values, so sparse groups do not
+		// allocate a full group-by-category matrix.
+		groups := make(map[string]plotter.XYs)
 		groupOrderMap := make(map[string]int)
 		var y float64
 		var ok bool
@@ -169,10 +172,17 @@ Notes:
 				groupName = d[2]
 			}
 
-			if _, ok = groups[groupName]; !ok {
-				groups[groupName] = make(plotter.Values, 0)
+			position := len(xValues)
+			if groupFieldStr == "" {
+				xValues = append(xValues, d[0])
+			} else {
+				if position, ok = categoryIndex[d[0]]; !ok {
+					position = len(xValues)
+					categoryIndex[d[0]] = position
+					xValues = append(xValues, d[0])
+				}
 			}
-			groups[groupName] = append(groups[groupName], y)
+			groups[groupName] = append(groups[groupName], plotter.XY{X: float64(position), Y: y})
 			if _, ok = groupOrderMap[groupName]; !ok {
 				groupOrderMap[groupName] = order
 				order++
@@ -203,19 +213,40 @@ Notes:
 		for i, gor := range groupOrders {
 			v := groups[gor.Key]
 			g := gor.Key
+			sort.Slice(v, func(i, j int) bool { return v[i].X < v[j].X })
 
-			bars, err := plotter.NewBarChart(v, barWidth)
-			checkError(err)
-			bars.LineStyle.Width = vg.Length(0)
-			bars.Color = plotutil.Color(colorIndex - 1 + i)
-			bars.Horizontal = horizontal
+			// BarChart positions must be consecutive. Draw separate runs to leave
+			// gaps for missing categories without storing zero-height placeholders.
+			for start := 0; start < len(v); {
+				end := start + 1
+				for end < len(v) {
+					if v[end].X == v[end-1].X {
+						checkError(fmt.Errorf("duplicate category %q in group %q", xValues[int(v[end].X)], g))
+					}
+					if v[end].X != v[end-1].X+1 {
+						break
+					}
+					end++
+				}
+				values := make(plotter.Values, end-start)
+				for j := start; j < end; j++ {
+					values[j-start] = v[j].Y
+				}
+				bars, err := plotter.NewBarChart(values, barWidth)
+				checkError(err)
+				bars.XMin = v[start].X
+				bars.LineStyle.Width = vg.Length(0)
+				bars.Color = plotutil.Color(colorIndex - 1 + i)
+				bars.Horizontal = horizontal
 
-			// Calculate offset to center the bars
-			bars.Offset = barWidth * vg.Length(float64(i)-(float64(len(groupOrders)-1)/2))
+				// Calculate offset to center the bars.
+				bars.Offset = barWidth * vg.Length(float64(i)-(float64(len(groupOrders)-1)/2))
 
-			p.Add(bars)
-			if addLegend {
-				p.Legend.Add(g, bars)
+				p.Add(bars)
+				if addLegend && start == 0 {
+					p.Legend.Add(g, bars)
+				}
+				start = end
 			}
 		}
 

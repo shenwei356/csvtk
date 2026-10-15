@@ -9,6 +9,9 @@
     - `csvtk filter2/mutate2/mutate3`:
         - preserve float64 precision when converting numeric fields for expressions.
         - preserve variable-like text, quotes, and backslashes in string field values.
+    - `csvtk plot bar`:
+        - align grouped bars by category, preserving first-seen order and gaps for missing categories.
+        - report duplicate group/category pairs instead of plotting ambiguous values.
 - [csvtk v0.38.0](https://github.com/shenwei356/csvtk/releases/tag/v0.38.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.38.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.38.0)
     - `csvtk`:

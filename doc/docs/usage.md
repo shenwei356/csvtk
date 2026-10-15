@@ -3449,6 +3449,8 @@ Notes:
   3. If flag -o/--out-file not set (default), image is written to stdout,
      you can display the image by pipping to "display" command of Imagemagic
      or just redirect to file.
+  4. With --group-field, categories are aligned across groups in first-seen
+     order. Missing categories leave gaps. Each group/category pair must be unique.
 
 Usage:
   csvtk plot bar [flags] 
