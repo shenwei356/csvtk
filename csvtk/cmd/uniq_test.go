@@ -8,6 +8,31 @@ import (
 	"testing"
 )
 
+// TestUniqEmitsBeforeEOF checks output while the producer keeps stdin open,
+// then sends more records to verify deduplication across successive writes.
+func TestUniqEmitsBeforeEOF(t *testing.T) {
+	// Default buffering must still stream once enough output is available.
+	large := strings.Repeat("x", 80*1024)
+	for _, tc := range []struct {
+		name         string
+		args         []string
+		input, want  string
+		later, final string
+	}{
+		{"buffered", nil, "key,value\nA," + large + "\n", "key,value\nA,", "A,duplicate\nB,last\n", large + "\nB,last\n"},
+		{"immediate", []string{"--immediate-output"}, "key,value\nA,first\nA,duplicate\n", "key,value\nA,first\n", "A,again\nB,last\n", "B,last\n"},
+		{"keep two", []string{"--immediate-output", "-n", "2", "-i"}, "key,value\nA,first\na,second\n", "key,value\nA,first\na,second\n", "A,third\nB,last\n", "B,last\n"},
+		{"no header", []string{"--immediate-output", "-H"}, "A,first\n", "A,first\n", "A,again\nB,last\n", "B,last\n"},
+		{"omit header", []string{"--immediate-output", "-U"}, "key,value\nA,first\n", "A,first\n", "A,again\nB,last\n", "B,last\n"},
+		{"quote all tabs", []string{"--immediate-output", "--quote-all", "-t"}, "key\tvalue\nA\t\"first\nline\"\n", "\"key\"\t\"value\"\n\"A\"\t\"first\nline\"\n", "A\tagain\nB\tlast\n", "\"B\"\t\"last\"\n"},
+		{"header only", []string{"--immediate-output"}, "key,value\n", "key,value\n", "A,first\n", "A,first\n"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			assertCLIStreamsBeforeEOF(t, append([]string{"uniq"}, tc.args...), tc.input, tc.want, tc.later, tc.final)
+		})
+	}
+}
+
 func TestUniqFrequencyModes(t *testing.T) {
 	input := writeAccuracyInput(t, "uniq.csv", "key,value\nA,first\nb,first-b\na,second\nc,only\nB,second-b\nA,third\n")
 	cases := []struct {
@@ -21,6 +46,8 @@ func TestUniqFrequencyModes(t *testing.T) {
 		{"repeated long", []string{"--repeated", "-i"}, "key,value\nA,first\nb,first-b\n"},
 		{"unique", []string{"-u"}, "key,value\nb,first-b\na,second\nc,only\nB,second-b\n"},
 		{"unique long case insensitive", []string{"--unique", "-i"}, "key,value\nc,only\n"},
+		{"repeated immediate", []string{"-d", "-i", "--immediate-output"}, "key,value\nA,first\nb,first-b\n"},
+		{"unique immediate", []string{"-u", "--immediate-output"}, "key,value\nb,first-b\na,second\nc,only\nB,second-b\n"},
 		{"no header", []string{"-H", "-i", "-d"}, "A,first\nb,first-b\n"},
 		{"delete header", []string{"-U", "-i", "-u"}, "c,only\n"},
 	}

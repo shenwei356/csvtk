@@ -58,8 +58,7 @@ var combCmd = &cobra.Command{
 		checkError(err)
 		defer closeOutput(outfh)
 
-		outOpt := csvOutputOption{QuoteAll: config.QuoteAll}
-
+		outOpt := config.csvOutputOptions()
 
 		writer := newCSVOutputWriter(outfh, outOpt)
 		if config.OutTabs || config.Tabs {
@@ -164,7 +163,7 @@ var combCmd = &cobra.Command{
 					} else if sortItemsNatSort {
 						natsort.Sort(result)
 					}
-					writer.Write(result)
+					checkError(writer.Write(result))
 				}
 
 				for item = range m {

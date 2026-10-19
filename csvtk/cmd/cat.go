@@ -118,6 +118,7 @@ With -p -1, progress is printed only after each file has been read.`,
 						}
 						_, writeErr := writer.Write(line)
 						checkError(writeErr)
+						config.flushOutput(writer)
 					}
 					if err == io.EOF {
 						break
@@ -141,6 +142,7 @@ With -p -1, progress is printed only after each file has been read.`,
 						}
 						_, writeErr := writer.Write(byteBuff[:readSize])
 						checkError(writeErr)
+						config.flushOutput(writer)
 					}
 					if err == io.EOF {
 						break

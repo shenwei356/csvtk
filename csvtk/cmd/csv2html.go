@@ -109,11 +109,13 @@ values greater than 100% are allowed.
 		if ok && !hasHeader {
 			writeHTMLRow(outfh, first.Selected, false)
 		}
+		config.flushOutput(outfh)
 		for record := range csvReader.Ch {
 			if record.Err != nil {
 				checkError(record.Err)
 			}
 			writeHTMLRow(outfh, record.Selected, false)
+			config.flushOutput(outfh)
 		}
 		writeHTMLDocumentEnd(outfh)
 

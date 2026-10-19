@@ -90,6 +90,7 @@ Only the first record of each input is inspected.
 						outfh.WriteString(n)
 						outfh.WriteByte('\n')
 					}
+					config.flushOutput(outfh)
 				}
 			}
 

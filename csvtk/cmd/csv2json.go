@@ -139,6 +139,7 @@ Notes:
 			outfh.WriteString("[")
 		}
 		outfh.WriteString(LF)
+		config.flushOutput(outfh)
 
 		keysMaps := make(map[string]struct{}, 1024)
 		var i int
@@ -267,6 +268,7 @@ Notes:
 				outfh.WriteString(indent)
 				outfh.WriteByte(']')
 			}
+			config.flushOutput(outfh)
 		}
 
 		outfh.WriteString(LF)

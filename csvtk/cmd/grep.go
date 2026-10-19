@@ -80,8 +80,6 @@ Attentions:
 		printLineNumber := getFlagBool(cmd, "line-number") || config.ShowRowNumber
 		deleteMatched := getFlagBool(cmd, "delete-matched")
 
-		immediateOutput := getFlagBool(cmd, "immediate-output")
-
 		patternsMap := make(map[string]*regexp.Regexp)
 		for _, pattern := range patterns {
 			if useRegexp {
@@ -134,7 +132,7 @@ Attentions:
 		var outfhFile *xopen.Writer
 		var err error
 		isstdin := isStdin(config.OutFile)
-		outOpt := csvOutputOption{QuoteAll: config.QuoteAll}
+		outOpt := config.csvOutputOptions()
 		if isstdin {
 			outfhStd = colorable.NewColorableStdout()
 			writer = newCSVOutputWriter(outfhStd, outOpt)
@@ -286,10 +284,6 @@ Attentions:
 					unshift(&record.All, strconv.Itoa(record.Row))
 				}
 				checkError(writer.Write(record.All))
-
-				if immediateOutput {
-					writer.Flush()
-				}
 			}
 
 			readerReport(&config, csvReader, file)
@@ -312,5 +306,4 @@ func init() {
 	grepCmd.Flags().BoolP("verbose", "", false, `verbose output`)
 	grepCmd.Flags().BoolP("line-number", "n", false, `print line number as the first column ("n")`)
 	grepCmd.Flags().BoolP("delete-matched", "", false, "delete a pattern right after being matched, this keeps the firstly matched data and speedups when using regular expressions")
-	grepCmd.Flags().BoolP("immediate-output", "", false, "print output immediately, do not use write buffer")
 }

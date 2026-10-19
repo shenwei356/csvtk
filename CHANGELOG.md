@@ -1,9 +1,10 @@
-- [csvtk v0.38.1](https://github.com/shenwei356/csvtk/releases/tag/v0.38.1)
-[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.38.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.38.1)
+- [csvtk v0.39.0](https://github.com/shenwei356/csvtk/releases/tag/v0.39.0)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.39.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.39.0)
     - `csvtk`:
         - improve performance.
         - prevent overwriting input files and report file I/O and compression errors.
         - fix column range selection.
+        - make `--immediate-output` a global flag and flush both CSV and file output buffers.
     - `csvtk inter/join`:
         - fix intersections with empty inputs and joins with header-only inputs.
     - `csvtk summary`:

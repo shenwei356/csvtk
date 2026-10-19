@@ -70,6 +70,9 @@ Attention:
  10. Less than half of the subcommands support >1 file.
  11. Output paths must differ from input files, including symbolic and hard links.
  12. Output write and compression errors cause a nonzero exit status.
+ 13. Use --immediate-output to flush each output record or raw chunk in a pipeline.
+     Commands may still buffer input for sorting, grouping, or formatting;
+     compression may also buffer data.
 
 Environment variables for frequently used global flags:
 
@@ -159,6 +162,7 @@ func init() {
 	RootCmd.PersistentFlags().BoolP("delete-header", "U", false, `do not output header row`)
 	RootCmd.PersistentFlags().StringP("out-file", "o", "-", `out file ("-" for stdout, suffix .gz for gzipped out)`)
 	RootCmd.PersistentFlags().BoolP("quote-all", "", false, `quote all output fields, even when not necessary`)
+	RootCmd.PersistentFlags().Bool("immediate-output", false, "flush output after each record or chunk")
 
 	RootCmd.PersistentFlags().BoolP("show-row-number", "Z", false, `show row number as the first column, with header row skipped`)
 

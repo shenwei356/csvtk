@@ -400,6 +400,8 @@ type Config struct {
 
 	QuoteAll bool
 
+	ImmediateOutput bool // Flush output after each record or raw chunk.
+
 	Version bool
 }
 
@@ -471,7 +473,21 @@ func getConfigs(cmd *cobra.Command) Config {
 		IgnoreEmptyRow:   getFlagBool(cmd, "ignore-empty-row"),
 		IgnoreIllegalRow: getFlagBool(cmd, "ignore-illegal-row"),
 
-		QuoteAll: getFlagBool(cmd, "quote-all"),
+		QuoteAll:        getFlagBool(cmd, "quote-all"),
+		ImmediateOutput: getFlagBool(cmd, "immediate-output"),
+	}
+}
+
+// csvOutputOptions passes shared output settings to every CSV writer.
+func (config Config) csvOutputOptions() csvOutputOption {
+	return csvOutputOption{QuoteAll: config.QuoteAll, ImmediateOutput: config.ImmediateOutput}
+}
+
+// flushOutput releases a complete text record or raw chunk when requested.
+// CSV output handles both its own buffer and the underlying writer separately.
+func (config Config) flushOutput(out interface{ Flush() error }) {
+	if config.ImmediateOutput {
+		checkError(out.Flush())
 	}
 }
 
@@ -505,7 +521,7 @@ func NewCSVWriterChanByConfig(config Config) (chan []string, error) {
 
 	ch := make(chan []string, config.NumCPUs)
 
-	outOpt := csvOutputOption{QuoteAll: config.QuoteAll}
+	outOpt := config.csvOutputOptions()
 
 	writer := newCSVOutputWriter(outfh, outOpt)
 	if config.OutTabs {

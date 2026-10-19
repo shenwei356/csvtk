@@ -74,7 +74,7 @@ from stdin.
 		checkError(err)
 		defer closeOutput(outfh)
 
-		writer := newCSVOutputWriter(outfh, csvOutputOption{QuoteAll: config.QuoteAll})
+		writer := newCSVOutputWriter(outfh, config.csvOutputOptions())
 		if config.OutTabs || config.Tabs {
 			if config.OutDelimiter == ',' {
 				writer.Comma = '\t'

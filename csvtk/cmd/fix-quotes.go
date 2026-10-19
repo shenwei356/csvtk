@@ -122,6 +122,7 @@ Limitation:
 			if len(line) == 0 || line[0] == commentChar {
 				outfh.WriteString(line)
 				outfh.WriteByte('\n')
+				config.flushOutput(outfh)
 
 				continue
 			}
@@ -221,6 +222,7 @@ Limitation:
 			buf.WriteByte('\n')
 
 			outfh.Write(buf.Bytes())
+			config.flushOutput(outfh)
 
 			// check ncols
 			if ncols < 0 {

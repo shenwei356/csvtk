@@ -62,7 +62,7 @@ forwarded to stdout and correlations are written to stderr.`,
 			reportOut = os.Stderr
 		}
 
-		outOpt := csvOutputOption{QuoteAll: config.QuoteAll}
+		outOpt := config.csvOutputOptions()
 
 		writer := newCSVOutputWriter(outfh, outOpt)
 		if config.OutTabs || config.Tabs {
@@ -175,7 +175,9 @@ forwarded to stdout and correlations are written to stderr.`,
 					_, err = fmt.Fprintf(reportOut, "%d\t%d\t%.4f\n", field1, field2, pearsonr)
 				}
 				checkError(err)
-
+				if !printPass {
+					config.flushOutput(outfh)
+				}
 			}
 		}
 	},

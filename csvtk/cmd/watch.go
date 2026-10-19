@@ -71,8 +71,7 @@ var watchCmd = &cobra.Command{
 		checkError(err)
 		defer closeOutput(outfh)
 
-		outOpt := csvOutputOption{QuoteAll: config.QuoteAll}
-
+		outOpt := config.csvOutputOptions()
 
 		writer := newCSVOutputWriter(outfh, outOpt)
 		if config.OutTabs || config.Tabs {

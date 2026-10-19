@@ -45,6 +45,11 @@
     cause a nonzero exit status; partial contents are not used.
 13. With `-E/--ignore-empty-row` or `-I/--ignore-illegal-row`, `--quiet` also avoids
     retaining skipped-row line numbers, reducing memory use on large inputs.
+14. Use the global flag `--immediate-output` to flush each output record or raw
+    chunk in a pipeline, for example `csvtk --immediate-output cut -f 1`.
+    It works with stdout and `-o`. Commands may still buffer input for sorting,
+    grouping, or formatting; compression may also buffer data. Enable it on each
+    pipeline stage that needs immediate output.
 
 `csv2md` and `csv2rst` report input open and decompression errors instead of
 treating unreadable inputs as empty files.
@@ -153,7 +158,7 @@ Usage
 ```text
 csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
-Version: 0.38.0
+Version: 0.39.0
 
 Author: Wei Shen <shenwei356@gmail.com>
 
@@ -189,6 +194,9 @@ Attention:
  10. Less than half of the subcommands support >1 file.
  11. Output paths must differ from input files, including symbolic and hard links.
  12. Output write and compression errors cause a nonzero exit status.
+ 13. Use --immediate-output to flush each output record or raw chunk in a pipeline.
+     Commands may still buffer input for sorting, grouping, or formatting;
+     compression may also buffer data.
 
 Environment variables for frequently used global flags:
 
@@ -292,6 +300,7 @@ Flags:
   -E, --ignore-empty-row       ignore empty rows
   -I, --ignore-illegal-row     ignore illegal rows. You can also use 'csvtk fix' to fix files with
                                different numbers of columns in rows
+      --immediate-output       flush output after each record or chunk
   -X, --infile-list string     file of input files list (one file per line), if given, they are appended
                                to files from cli arguments. Note that less than half of the subcommands
                                support >1 file.
@@ -2384,7 +2393,6 @@ Flags:
   -F, --fuzzy-fields          using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
   -h, --help                  help for grep
   -i, --ignore-case           ignore case
-      --immediate-output      print output immediately, do not use write buffer
   -v, --invert                invert match
   -n, --line-number           print line number as the first column ("n")
   -N, --no-highlight          no highlight
@@ -5405,6 +5413,10 @@ By default, keep the first record for each key; -n keeps the first N records.
 records whose keys occur exactly once. Keys are compared across the entire
 input, including non-adjacent records (unlike GNU uniq).
 
+Default and -n modes stream records with buffered output. Use --immediate-output
+to flush each output record, including the header. Compression may add buffering.
+Modes -d and -u wait for the entire input and preserve first-seen key order.
+
 For this command, -d means --repeated; use --delimiter to set the input delimiter.
 
 Usage:
@@ -5412,12 +5424,12 @@ Usage:
 
 Flags:
       --delimiter string   delimiting character of the input CSV file (default ",")
-  -d, --repeated           only print repeated keys, one first record per key
   -f, --fields string      select these fields as keys. e.g -f 1,2 or -f columnA,columnB (default "1")
   -F, --fuzzy-fields       using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
   -h, --help               help for uniq
   -i, --ignore-case        ignore case
   -n, --keep-n int         keep at most N records for a key (default 1)
+  -d, --repeated           only print repeated keys, one first record per key
   -u, --unique             only print records whose keys occur exactly once
 
 ```
@@ -5442,6 +5454,11 @@ Examples:
         11,Rob,Pike,rob
         2,Ken,Thompson,ken
         4,Robert,Griesemer,gri
+
+- print retained records immediately in a pipeline
+
+        $ cat testdata/names.csv \
+            | csvtk uniq -f first_name --immediate-output
 
 - unique first_name, a more common way
 

@@ -394,7 +394,7 @@ type splitOutput struct {
 func newSplitOutput(config Config, outfile string, headerRow []string) *splitOutput {
 	fh, err := xopen.Wopen(outfile)
 	checkError(err)
-	writer := newCSVOutputWriter(fh, csvOutputOption{QuoteAll: config.QuoteAll})
+	writer := newCSVOutputWriter(fh, config.csvOutputOptions())
 	if config.OutTabs || config.Tabs {
 		if config.OutDelimiter == ',' {
 			writer.Comma = '\t'
@@ -439,8 +439,7 @@ func appendRows(config Config,
 	checkError(err)
 	defer closeOutput(outfh)
 
-	outOpt := csvOutputOption{QuoteAll: config.QuoteAll}
-
+	outOpt := config.csvOutputOptions()
 
 	writer := newCSVOutputWriter(outfh, outOpt)
 	if config.OutTabs || config.Tabs {

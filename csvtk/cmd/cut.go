@@ -84,7 +84,7 @@ Examples:
 		checkError(err)
 		defer closeOutput(outfh)
 
-		outOpt := csvOutputOption{QuoteAll: config.QuoteAll}
+		outOpt := config.csvOutputOptions()
 
 		writer := newCSVOutputWriter(outfh, outOpt)
 		if config.OutTabs || config.Tabs {
@@ -141,7 +141,7 @@ Examples:
 				}
 			}
 
-			writer.Write(record.Selected)
+			checkError(writer.Write(record.Selected))
 		}
 
 		readerReport(&config, csvReader, file)

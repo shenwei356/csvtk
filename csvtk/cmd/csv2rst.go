@@ -121,6 +121,7 @@ Attention:
 			outfh.WriteString(cross)
 			if i == ncolsP1 {
 				outfh.WriteString("\n")
+				config.flushOutput(outfh)
 			}
 		}
 
@@ -138,6 +139,7 @@ Attention:
 				outfh.WriteString(borderY)
 				if i == ncolsP1 { // not the last column
 					outfh.WriteString("\n")
+					config.flushOutput(outfh)
 				}
 			}
 
@@ -147,6 +149,7 @@ Attention:
 				outfh.WriteString(cross)
 				if i == ncolsP1 {
 					outfh.WriteString("\n")
+					config.flushOutput(outfh)
 				}
 			}
 		}
@@ -165,6 +168,7 @@ Attention:
 				outfh.WriteString(borderY)
 				if i == ncolsP1 { // not the last column
 					outfh.WriteString("\n")
+					config.flushOutput(outfh)
 				}
 			}
 
@@ -174,6 +178,7 @@ Attention:
 				outfh.WriteString(cross)
 				if i == ncolsP1 {
 					outfh.WriteString("\n")
+					config.flushOutput(outfh)
 				}
 			}
 		}

@@ -96,8 +96,7 @@ var xlsx2csvCmd = &cobra.Command{
 			}
 		}
 
-		outOpt := csvOutputOption{QuoteAll: config.QuoteAll}
-
+		outOpt := config.csvOutputOptions()
 
 		writer := newCSVOutputWriter(outfh, outOpt)
 		if config.OutTabs || config.Tabs {

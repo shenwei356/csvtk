@@ -70,7 +70,7 @@ How to:
 		checkError(err)
 		defer closeOutput(outfh)
 
-		outOpt := csvOutputOption{QuoteAll: config.QuoteAll}
+		outOpt := config.csvOutputOptions()
 
 		writer := newCSVOutputWriter(outfh, outOpt)
 		if config.OutTabs || config.Tabs {
@@ -148,7 +148,7 @@ How to:
 						if ncol < maxN {
 							row = append(row, empty[0:maxN-ncol]...)
 						}
-						writer.Write(row)
+						checkError(writer.Write(row))
 					}
 					// Later rows are written directly; release the sampled records.
 					buf = nil
@@ -163,7 +163,7 @@ How to:
 			} else if ncol < maxN {
 				record.All = append(record.All, empty[0:maxN-ncol]...)
 			}
-			writer.Write(record.All)
+			checkError(writer.Write(record.All))
 		}
 
 		if readAll || !checkedMaxNcols {
@@ -182,7 +182,7 @@ How to:
 				if ncol < maxN {
 					row = append(row, empty[0:maxN-ncol]...)
 				}
-				writer.Write(row)
+				checkError(writer.Write(row))
 			}
 		}
 

@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"bytes"
+	"context"
 	"io"
 	"os"
 	"os/exec"
@@ -9,6 +10,7 @@ import (
 	"runtime"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/shenwei356/xopen"
 )
@@ -20,6 +22,29 @@ func TestOutputWriteErrors(t *testing.T) {
 		t.Skip("/dev/full is a Linux device")
 	}
 	input := writeAccuracyInput(t, "input.csv", "a,b\n1,2\n")
+	// Immediate write failures must terminate even while the producer keeps
+	// stdin open; deferring the error check until EOF can hang a pipeline.
+	t.Run("immediate error before EOF", func(t *testing.T) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		cmd := exec.CommandContext(ctx, os.Args[0], "-test.run=^TestCLIAccuracyHelper$", "--", "cut", "-f", "1", "--immediate-output", "-o", "/dev/full")
+		cmd.Env = append(os.Environ(), "CSVTK_ACCURACY_HELPER=1")
+		stdin, err := cmd.StdinPipe()
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer stdin.Close()
+		var stderr bytes.Buffer
+		cmd.Stderr = &stderr
+		if err := cmd.Start(); err != nil {
+			t.Fatal(err)
+		}
+		_, writeErr := io.WriteString(stdin, "alpha,beta\n1,2\n")
+		err = cmd.Wait()
+		if writeErr != nil || err == nil || ctx.Err() != nil || !strings.Contains(stderr.String(), "no space left on device") {
+			t.Fatalf("expected immediate output error: write=%v, wait=%v, timeout=%v; %s", writeErr, err, ctx.Err(), stderr.String())
+		}
+	})
 	cases := []struct {
 		name string
 		args []string
@@ -27,6 +52,8 @@ func TestOutputWriteErrors(t *testing.T) {
 		{"csv", []string{"cut", "-f", "1", input}},
 		{"quoted csv", []string{"cut", "--quote-all", "-f", "1", input}},
 		{"grep", []string{"grep", "-p", "1", input}},
+		{"uniq", []string{"uniq", input}},
+		{"uniq quoted", []string{"uniq", "--quote-all", input}},
 		{"json", []string{"csv2json", input}},
 		{"markdown", []string{"csv2md", input}},
 		{"rst", []string{"csv2rst", input}},
@@ -44,7 +71,9 @@ func TestOutputWriteErrors(t *testing.T) {
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			assertOutputWriteError(t, append(tc.args, "-o", "/dev/full"), false, "")
+			args := append(tc.args, "-o", "/dev/full")
+			assertOutputWriteError(t, args, false, "")
+			assertOutputWriteError(t, append([]string{"--immediate-output"}, args...), false, "")
 		})
 	}
 	t.Run("stdout", func(t *testing.T) {
@@ -57,6 +86,7 @@ func TestOutputWriteErrors(t *testing.T) {
 				t.Fatal(err)
 			}
 			assertOutputWriteError(t, []string{"cut", "-f", "1", input, "-o", output}, false, "")
+			assertOutputWriteError(t, []string{"cut", "--immediate-output", "-f", "1", input, "-o", output}, false, "")
 		})
 	}
 	t.Run("split groups", func(t *testing.T) {
@@ -99,23 +129,30 @@ func assertOutputWriteError(t *testing.T, args []string, fullStdout bool, dir st
 // TestOutputCompressionRoundTrip checks that finalizing successful outputs still
 // writes complete files in every supported compression format.
 func TestOutputCompressionRoundTrip(t *testing.T) {
-	const inputText = "a,b\n1,2\n"
+	const inputText = "a,b\n1,2\n3,4\n"
 	input := writeAccuracyInput(t, "input.csv", inputText)
 	for _, suffix := range []string{"", ".gz", ".xz", ".zst", ".bz2", ".lz4"} {
 		t.Run("csv"+suffix, func(t *testing.T) {
-			output := filepath.Join(t.TempDir(), "output.csv"+suffix)
-			runAccuracyCLI(t, "cut", "-f", "1-", input, "-o", output)
-			reader, err := xopen.Ropen(output)
-			if err != nil {
-				t.Fatal(err)
-			}
-			got, err := io.ReadAll(reader)
-			closeErr := reader.Close()
-			if err != nil || closeErr != nil {
-				t.Fatalf("read output: %v; close output: %v", err, closeErr)
-			}
-			if string(got) != inputText {
-				t.Fatalf("output: got %q, want %q", got, inputText)
+			for _, args := range [][]string{
+				{"cut", "-f", "1-"},
+				{"cut", "--immediate-output", "-f", "1-"},
+				{"grep", "--immediate-output", "-r", "-p", "."},
+				{"uniq", "--immediate-output"},
+			} {
+				output := filepath.Join(t.TempDir(), "output.csv"+suffix)
+				runAccuracyCLI(t, append(args, input, "-o", output)...)
+				reader, err := xopen.Ropen(output)
+				if err != nil {
+					t.Fatal(err)
+				}
+				got, err := io.ReadAll(reader)
+				closeErr := reader.Close()
+				if err != nil || closeErr != nil {
+					t.Fatalf("read output: %v; close output: %v", err, closeErr)
+				}
+				if string(got) != inputText {
+					t.Fatalf("output: got %q, want %q", got, inputText)
+				}
 			}
 		})
 	}

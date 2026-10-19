@@ -66,7 +66,7 @@ names after duplicate-name normalization are reported as errors.
 		checkError(err)
 		defer closeOutput(outfh)
 
-		outOpt := csvOutputOption{QuoteAll: config.QuoteAll}
+		outOpt := config.csvOutputOptions()
 
 		writer := newCSVOutputWriter(outfh, outOpt)
 		if config.OutTabs || config.Tabs {

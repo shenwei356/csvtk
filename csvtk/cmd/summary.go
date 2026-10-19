@@ -190,7 +190,7 @@ Available operations:
 		checkError(err)
 		defer closeOutput(outfh)
 
-		outOpt := csvOutputOption{QuoteAll: config.QuoteAll}
+		outOpt := config.csvOutputOptions()
 
 		writer := newCSVOutputWriter(outfh, outOpt)
 		if config.OutTabs || config.Tabs {
@@ -354,7 +354,7 @@ Available operations:
 				}
 			}
 
-			writer.Write(record)
+			checkError(writer.Write(record))
 		}
 
 		groups := make([]string, 0, len(data)+len(data2))
@@ -416,7 +416,7 @@ Available operations:
 					}
 				}
 			}
-			writer.Write(record)
+			checkError(writer.Write(record))
 		}
 
 	},

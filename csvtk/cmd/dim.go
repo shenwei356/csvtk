@@ -70,6 +70,7 @@ With --cols, only the first record of each input is inspected.
 		if rows || cols {
 		} else if tabular {
 			outfh.WriteString("file\tnum_cols\tnum_rows\n")
+			config.flushOutput(outfh)
 		} else {
 			tbl = stable.New()
 			tbl.HeaderWithFormat([]stable.Column{
@@ -106,6 +107,7 @@ With --cols, only the first record of each input is inspected.
 						})
 					}
 
+					config.flushOutput(outfh)
 					continue
 				} else {
 					checkError(err)
@@ -162,6 +164,7 @@ With --cols, only the first record of each input is inspected.
 			}
 
 			readerReport(&config, csvReader, file)
+			config.flushOutput(outfh)
 		}
 
 		if !(rows || cols) && !tabular {

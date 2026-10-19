@@ -91,6 +91,7 @@ Limitation:
 			}
 			outfh.WriteString(strings.Join(record.Selected, d))
 			outfh.WriteByte('\n')
+			config.flushOutput(outfh)
 		}
 
 		readerReport(&config, csvReader, file)

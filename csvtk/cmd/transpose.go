@@ -94,8 +94,7 @@ var transposeCmd = &cobra.Command{
 			readerReport(&config, csvReader, file)
 		}
 
-		outOpt := csvOutputOption{QuoteAll: config.QuoteAll}
-
+		outOpt := config.csvOutputOptions()
 
 		writer := newCSVOutputWriter(outfh, outOpt)
 		if config.OutTabs || config.Tabs {

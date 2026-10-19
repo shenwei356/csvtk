@@ -382,11 +382,13 @@ Styles:
 				if !hasHeaderRow {
 					tbl.AddRowStringSlice(record.Selected)
 				}
+				config.flushOutput(outfh)
 
 				continue
 			}
 
 			tbl.AddRowStringSlice(record.Selected)
+			config.flushOutput(outfh)
 		}
 		tbl.Flush()
 

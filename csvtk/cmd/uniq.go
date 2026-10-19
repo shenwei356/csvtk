@@ -41,6 +41,10 @@ By default, keep the first record for each key; -n keeps the first N records.
 records whose keys occur exactly once. Keys are compared across the entire
 input, including non-adjacent records (unlike GNU uniq).
 
+Default and -n modes stream records with buffered output. Use --immediate-output
+to flush each output record, including the header. Compression may add buffering.
+Modes -d and -u wait for the entire input and preserve first-seen key order.
+
 For this command, -d means --repeated; use --delimiter to set the input delimiter.
 
 `,
@@ -68,7 +72,7 @@ For this command, -d means --repeated; use --delimiter to set the input delimite
 		checkError(err)
 		defer closeOutput(outfh)
 
-		outOpt := csvOutputOption{QuoteAll: config.QuoteAll}
+		outOpt := config.csvOutputOptions()
 
 		writer := newCSVOutputWriter(outfh, outOpt)
 		if config.OutTabs || config.Tabs {
