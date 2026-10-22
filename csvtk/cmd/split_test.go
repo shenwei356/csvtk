@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -215,5 +216,167 @@ func assertSplitFiles(t *testing.T, dir string, want map[string]string) {
 		if string(data) != expected {
 			t.Errorf("%s: got %q, want %q", name, data, expected)
 		}
+	}
+}
+
+// TestSplitRejectsUnsafeDirectories preserves all files before rejecting aliases
+// of the working directory and directories containing inputs.
+func TestSplitRejectsUnsafeDirectories(t *testing.T) {
+	for _, name := range []string{"cwd", "absolute cwd", "parent alias", "missing parent alias", "cwd symlink", "ancestor", "input parent", "input ancestor", "input target", "input link", "input directory link", "output link", "file list"} {
+		for _, force := range []bool{false, true} {
+			t.Run(name+"/force="+strconv.FormatBool(force), func(t *testing.T) {
+				root := t.TempDir()
+				cwd := filepath.Join(root, "work")
+				data := filepath.Join(root, "data")
+				links := filepath.Join(root, "links")
+				for _, dir := range []string{cwd, data, links, filepath.Join(cwd, "child")} {
+					if err := os.MkdirAll(dir, 0700); err != nil {
+						t.Fatal(err)
+					}
+				}
+				input := filepath.Join(data, "input.csv")
+				marker := filepath.Join(cwd, "keep.txt")
+				list := filepath.Join(data, "files.txt")
+				originals := map[string]string{input: "id\na\n", marker: "keep\n", list: input + "\n"}
+				for file, content := range originals {
+					if err := os.WriteFile(file, []byte(content), 0600); err != nil {
+						t.Fatal(err)
+					}
+				}
+				output := "."
+				args := []string{"split", "-f", "id"}
+				source := input
+				want := "current directory"
+				switch name {
+				case "absolute cwd":
+					output = cwd
+				case "parent alias":
+					output = "child/.."
+				case "missing parent alias":
+					output = "missing/.."
+				case "cwd symlink":
+					output = filepath.Join(root, "alias")
+					if err := os.Symlink(cwd, output); err != nil {
+						t.Fatal(err)
+					}
+				case "ancestor":
+					output = root
+				case "input parent", "input ancestor":
+					output, want = data, "contains input"
+					if name == "input ancestor" {
+						source = filepath.Join(data, "nested", "input.csv")
+						if err := os.Mkdir(filepath.Dir(source), 0700); err != nil {
+							t.Fatal(err)
+						}
+						originals[source] = "id\na\n"
+						if err := os.WriteFile(source, []byte(originals[source]), 0600); err != nil {
+							t.Fatal(err)
+						}
+					}
+				case "input target", "input link":
+					source = filepath.Join(links, "input.csv")
+					if err := os.Symlink(input, source); err != nil {
+						t.Fatal(err)
+					}
+					output, want = data, "contains input"
+					if name == "input link" {
+						output = links
+					}
+				case "input directory link":
+					link := filepath.Join(links, "data")
+					if err := os.Symlink(data, link); err != nil {
+						t.Fatal(err)
+					}
+					source = filepath.Join(link, "input.csv")
+					output, want = links, "contains input"
+				case "output link":
+					output, want = filepath.Join(root, "output-link"), "contains input"
+					if err := os.Symlink(data, output); err != nil {
+						t.Fatal(err)
+					}
+				case "file list":
+					source = filepath.Join(links, "source.csv")
+					originals[source] = "id\na\n"
+					originals[list] = source + "\n"
+					for _, file := range []string{source, list} {
+						if err := os.WriteFile(file, []byte(originals[file]), 0600); err != nil {
+							t.Fatal(err)
+						}
+					}
+					args = append(args, "-X", list)
+					output, want = data, "contains input"
+				}
+				if name != "file list" {
+					args = append(args, source)
+				}
+				args = append(args, "-o", output)
+				if force {
+					args = append(args, "--force")
+				}
+				cmd := exec.Command(os.Args[0], append([]string{"-test.run=^TestCLIAccuracyHelper$", "--"}, args...)...)
+				cmd.Env = append(os.Environ(), "CSVTK_ACCURACY_HELPER=1")
+				cmd.Dir = cwd
+				out, err := cmd.CombinedOutput()
+				if err == nil || !strings.Contains(string(out), want) || strings.Contains(string(out), "removing old output") {
+					t.Fatalf("expected rejection before modification, got %v: %s", err, out)
+				}
+				for file, want := range originals {
+					got, err := os.ReadFile(file)
+					if err != nil || string(got) != want {
+						t.Fatalf("file changed: %s: %q, %v", file, got, err)
+					}
+				}
+				if name == "input target" || name == "input link" {
+					if _, err := os.Lstat(source); err != nil {
+						t.Fatalf("input link removed: %v", err)
+					}
+				}
+			})
+		}
+	}
+}
+
+// TestSplitSafeDirectories retains default output and forced replacement of a
+// separate directory whose name merely shares a prefix with the input directory.
+func TestSplitSafeDirectories(t *testing.T) {
+	for _, explicit := range []bool{false, true} {
+		t.Run(strconv.FormatBool(explicit), func(t *testing.T) {
+			root := t.TempDir()
+			cwd := filepath.Join(root, "work")
+			if err := os.Mkdir(cwd, 0700); err != nil {
+				t.Fatal(err)
+			}
+			input := filepath.Join(root, "input.csv")
+			if err := os.WriteFile(input, []byte("id\na\n"), 0600); err != nil {
+				t.Fatal(err)
+			}
+			output := cwd
+			args := []string{"split", "-n", "1", input}
+			if explicit {
+				output = filepath.Join(root, "input")
+				if err := os.Mkdir(output, 0700); err != nil {
+					t.Fatal(err)
+				}
+				if err := os.WriteFile(filepath.Join(output, "old.txt"), []byte("old"), 0600); err != nil {
+					t.Fatal(err)
+				}
+				args = append(args, "-o", output, "--force")
+			}
+			cmd := exec.Command(os.Args[0], append([]string{"-test.run=^TestCLIAccuracyHelper$", "--"}, args...)...)
+			cmd.Env = append(os.Environ(), "CSVTK_ACCURACY_HELPER=1")
+			cmd.Dir = cwd
+			if out, err := cmd.CombinedOutput(); err != nil {
+				t.Fatalf("split: %v: %s", err, out)
+			}
+			got, err := os.ReadFile(filepath.Join(output, "input-1.csv"))
+			if err != nil || string(got) != "id\na\n" {
+				t.Fatalf("output: %q, %v", got, err)
+			}
+			if explicit {
+				if _, err := os.Stat(filepath.Join(output, "old.txt")); !os.IsNotExist(err) {
+					t.Fatalf("old output retained: %v", err)
+				}
+			}
+		})
 	}
 }

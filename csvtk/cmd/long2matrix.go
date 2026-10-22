@@ -40,6 +40,8 @@ var long2matrix = &cobra.Command{
 	Short: "convert the long format to a matrix",
 	Long: `convert the long format to matrix
 
+The matrix header is always written; -U/--delete-header is ignored.
+
 Input: a three-column table. E.g.,
 
     col1   col2   value    
@@ -176,6 +178,7 @@ Output: a matrix with the same column and row names. E.g.,
 		row := make([]string, 1, len(keys)+1)
 		row[0] = ""
 		row = append(row, keys...)
+		// Matrix column names are required even when -U is set.
 		checkError(writer.Write(row))
 
 		var k2 string

@@ -5,8 +5,12 @@
         - prevent overwriting input files and report file I/O and compression errors.
         - fix column range selection.
         - make `--immediate-output` a global flag and flush both CSV and file output buffers.
-    - `csvtk inter/join`:
-        - fix intersections with empty inputs and joins with header-only inputs.
+        - preserve explicit stdin input when using `-X/--infile-list`.
+    - `csvtk inter`:
+        - fix intersections with empty inputs.
+    - `csvtk join`:
+        - fix joins with header-only inputs.
+        - fix misplaced keys and missing values in outer joins with reordered key fields.
     - `csvtk summary`:
         - fix field ranges with the default count operation and honor `--rand-seed`.
     - `csvtk cat`:
@@ -27,8 +31,14 @@
         - fix JSON escaping, numeric formatting, and trailing commas with `-K/--skip-key`.
     - `csvtk splitxlsx`:
         - fix panics on short or blank rows.
-    - `csvtk head/ncol/headers/space2tab`, `csvtk dim --cols`:
-        - fix failures when processing many input files.
+    - `csvtk head/ncol/headers/space2tab/dim`:
+        - fix failures when processing many input files (with `--cols` for `dim`).
+    - `csvtk split`:
+        - reject unsafe output directories before deleting files, even with `--force`.
+    - `csvtk sort`:
+        - fix default sorting of single-column input and open ranges selecting only the last column.
+    - `csvtk summary/spread`:
+        - honor `-U/--delete-header`.
 - [csvtk v0.38.0](https://github.com/shenwei356/csvtk/releases/tag/v0.38.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.38.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.38.0)
     - `csvtk`:

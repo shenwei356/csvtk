@@ -40,6 +40,7 @@
    csvtk also supports reading and writing xz (.xz), zstd (.zst) and Bzip2 (.bz2) formats.
    
 10. Less than half of the subcommands support >1 file.
+    With `-X`, listed files are appended to explicitly supplied inputs, including `-`.
 11. Output paths must differ from input files, including symbolic and hard links.
 12. Read and decompression errors in key-value, pattern, and custom sort-level files
     cause a nonzero exit status; partial contents are not used.
@@ -156,6 +157,8 @@ to buffered output to reduce temporary string allocations during formatting.
 Usage
 
 ```text
+$ csvtk -h
+
 csvtk -- a cross-platform, efficient and practical CSV/TSV toolkit
 
 Version: 0.39.0
@@ -192,6 +195,7 @@ Attention:
      therefore there's no need to pipe the result to gzip/pigz.
      csvtk also supports reading and writing xz (.xz), zstd (.zst) and Bzip2 (.bz2) formats.
  10. Less than half of the subcommands support >1 file.
+     With -X, listed files are appended to explicitly supplied inputs, including "-".
  11. Output paths must differ from input files, including symbolic and hard links.
  12. Output write and compression errors cause a nonzero exit status.
  13. Use --immediate-output to flush each output record or raw chunk in a pipeline.
@@ -210,7 +214,7 @@ enable the "-t/--tabs" flag.
 
 Usage:
   csvtk [flags]
-  csvtk [command] 
+  csvtk [command]
 
 Commands for Information:
   corr            calculate Pearson correlation between two columns
@@ -326,6 +330,8 @@ Use "csvtk [command] --help" for more information about a command.
 Usage
 
 ```text
+$ csvtk add-header -h
+
 add column names
 
 Usage:
@@ -334,7 +340,6 @@ Usage:
 Flags:
   -h, --help            help for add-header
   -n, --names strings   column names to add, in CSV format
-
 ```
 
 Examples:
@@ -376,6 +381,8 @@ Examples:
 Usage
 
 ```text
+$ csvtk cat -h
+
 stream file to stdout and report progress on stderr
 
 With -L, a final line without a newline is counted and streamed unchanged.
@@ -409,6 +416,8 @@ Examples
 Usage
 
 ```
+$ csvtk comb -h
+
 compute combinations of items at every row
 
 Usage:
@@ -424,7 +433,6 @@ Flags:
   -n, --number int    number of items in a combination, 0 for no limit, i.e., return all combinations
                       (default 2)
   -s, --sort          sort items in a combination
-
 ```
 
 Examples:
@@ -509,10 +517,12 @@ a,b,c,d
 Usage
 
 ```text
+$ csvtk comma -h
+
 make numbers more readable by adding commas
 
 Usage:
-  csvtk comma [flags] 
+  csvtk comma [flags]
 
 Flags:
   -f, --fields string   select only these fields. e.g -f 1,2 or -f columnA,columnB (default "1")
@@ -545,6 +555,8 @@ NA          NA
 Usage
 
 ```text
+$ csvtk concat -h
+
 concatenate CSV/TSV files by rows
 
 If there's only one input file, it will be directly outputted.
@@ -559,7 +571,7 @@ Rows are streamed after the column mapping is established. Ambiguous column
 names after duplicate-name normalization are reported as errors.
 
 Usage:
-  csvtk concat [flags] 
+  csvtk concat [flags]
 
 Flags:
   -h, --help                    help for concat
@@ -567,7 +579,6 @@ Flags:
   -k, --keep-unmatched          keep blanks even if no any data of a file matches
       --original-file           append an original_file column with each input file's basename
   -u, --unmatched-repl string   replacement for unmatched data
-
 ```
 
 Examples
@@ -699,6 +710,8 @@ Examples
 Usage
 
 ```text
+$ csvtk paste -h
+
 paste CSV/TSV files by columns
 
 Rows are combined by their position in each file. Shorter inputs are padded
@@ -727,6 +740,8 @@ field1,field2,field3,field4
 Usage
 
 ```text
+$ csvtk corr -h
+
 calculate Pearson correlation between two columns.
 
 By default, correlations are written to stdout. With --pass, input rows are
@@ -754,6 +769,8 @@ Examples
 Usage
 
 ```text
+$ csvtk csv2html -h
+
 convert CSV/TSV to a standalone HTML table
 
 The output contains all CSS needed to display the table. The table uses its
@@ -769,10 +786,13 @@ Usage:
 Flags:
       --caption string       table caption
   -h, --help                 help for csv2html
-  -W, --max-width strings    maximum cell width in characters; one value for all columns or comma-separated values for each column (0 for no limit)
-  -w, --min-width strings    minimum cell width in characters; one value for all columns or comma-separated values for each column (0 for no limit)
+  -W, --max-width strings    maximum cell width in characters; one value for all columns or
+                             comma-separated values for each column (0 for no limit)
+  -w, --min-width strings    minimum cell width in characters; one value for all columns or
+                             comma-separated values for each column (0 for no limit)
       --table-class string   CSS class of the table (default "csvtk-table")
-      --table-width string   maximum table width (a number in pixels or a CSS length with px, %, em, rem, vw, vh, or ch) (default "100%")
+      --table-width string   maximum table width (a number in pixels or a CSS length with px, %, em,
+                             rem, vw, vh, or ch) (default "100%")
 ```
 
 Examples
@@ -794,6 +814,8 @@ Examples
 Usage
 
 ```text
+$ csvtk csv2json -h
+
 convert CSV to JSON format
 
 Notes:
@@ -803,7 +825,7 @@ Notes:
      00 becomes 0, .5 becomes 0.5, and 1. becomes 1.0.
 
 Usage:
-  csvtk csv2json [flags] 
+  csvtk csv2json [flags]
 
 Flags:
   -b, --blanks              do not convert "", "na", "n/a", "none", "null", "." to null
@@ -814,7 +836,6 @@ Flags:
   -n, --parse-num strings   parse numeric values for nth column, multiple values are supported and
                             "a"/"all" for all columns
   -K, --skip-key            do not put KEY in the data when using -k KEY
-
 ```
 
 Examples
@@ -1017,6 +1038,8 @@ Examples
 Usage
 
 ```text
+$ csvtk csv2md -h
+
 convert CSV to markdown format
 
 Attention:
@@ -1028,8 +1051,8 @@ Usage:
 
 Flags:
   -a, --alignments string   comma separated alignments. e.g. -a l,c,c,c or -a c (default "l")
+  -h, --help                help for csv2md
   -w, --min-width int       min width (at least 3) (default 3)
-
 ```
 
 Examples
@@ -1083,6 +1106,8 @@ Usage
 
 
 ```text
+$ csvtk csv2rst -h
+
 convert CSV to readable aligned table
 
 Attention:
@@ -1099,7 +1124,6 @@ Flags:
   -b, --horizontal-border string   charactor of horizontal border (default "-")
   -p, --padding string             charactor of padding (default " ")
   -B, --vertical-border string     charactor of vertical border (default "|")
-
 ```
 
 Example
@@ -1180,10 +1204,12 @@ Example
 Usage
 
 ```text
+$ csvtk csv2tab -h
+
 convert CSV to tabular format
 
 Usage:
-  csvtk csv2tab [flags] 
+  csvtk csv2tab [flags]
 
 Flags:
   -h, --help   help for csv2tab
@@ -1201,6 +1227,8 @@ a       b       c
 Usage
 
 ```text
+$ csvtk csv2xlsx -h
+
 convert CSV/TSV files to XLSX file
 
 Attention:
@@ -1216,8 +1244,7 @@ Usage:
 
 Flags:
   -f, --format-numbers   save numbers in number format, instead of text
-  -h, --help   help for csv2xlsx
-
+  -h, --help             help for csv2xlsx
 ```
 
 Examples
@@ -1253,6 +1280,8 @@ Examples
 Usage
 
 ```text
+$ csvtk cut -h
+
 select and arrange fields
 
 Examples:
@@ -1281,12 +1310,11 @@ Usage:
 Flags:
   -m, --allow-missing-col   allow missing column
   -b, --blank-missing-col   blank missing column, only for using column fields
-  -f, --fields string       select only these fields. type "csvtk cut -h" for examples
+  -f, --fields strings      select only these fields. type "csvtk cut -h" for examples
   -F, --fuzzy-fields        using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
   -h, --help                help for cut
   -i, --ignore-case         ignore case (column name)
   -u, --uniq-column         deduplicate columns matched by multiple fuzzy column names
-
 ```
 
 Examples
@@ -1452,6 +1480,8 @@ Examples
 Usage
 
 ```text
+$ csvtk del-header -h
+
 delete column names
 
 Attention:
@@ -1462,7 +1492,6 @@ Usage:
 
 Flags:
   -h, --help   help for del-header
-
 ```
 
 Examples:
@@ -1488,6 +1517,8 @@ Examples:
 Usage
 
 ```text
+$ csvtk del-quotes -h
+
 remove extra double quotes added by 'fix-quotes'
 
 Limitation:
@@ -1511,6 +1542,8 @@ Usage
 dim:
 
 ```text
+$ csvtk dim -h
+
 dimensions of CSV file
 
 With --cols, only the first record of each input is inspected.
@@ -1522,17 +1555,18 @@ Aliases:
   dim, size, stats, stat
 
 Flags:
-      --cols       only print number of columns
+      --cols       only print number of columns (or using "csvtk ncol"
   -h, --help       help for dim
-  -n, --no-files   do not print file names
-      --rows       only print number of rows
+  -n, --no-files   do not print file names (only affect --cols and --rows)
+      --rows       only print number of rows (or using "csvtk nrow")
       --tabular    output in machine-friendly tabular format
-
 ```
 
 nrow:
 
 ```text
+$ csvtk nrow -h
+
 print number of records
 
 Usage:
@@ -1544,12 +1578,13 @@ Aliases:
 Flags:
   -n, --file-name   print file names
   -h, --help        help for nrow
-
 ```
 
 ncol:
 
 ```text
+$ csvtk ncol -h
+
 print number of columns
 
 Only the first record of each input is inspected.
@@ -1563,7 +1598,6 @@ Aliases:
 Flags:
   -n, --file-name   print file names
   -h, --help        help for ncol
-
 ```
 
 Examples
@@ -1616,6 +1650,8 @@ Examples
 Usage
 
 ```text
+$ csvtk filter -h
+
 filter rows by values of selected fields with arithmetic expression
 
 Usage:
@@ -1627,7 +1663,6 @@ Flags:
   -F, --fuzzy-fields    using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
   -h, --help            help for filter
   -n, --line-number     print line number as the first column ("n")
-
 ```
 
 Examples
@@ -1689,11 +1724,13 @@ Examples
 Usage
 
 ```text
+$ csvtk filter2 -h
+
 filter rows by awk-like arithmetic/string expressions
 
 The arithmetic/string expression is supported by:
 
-  https://github.com/Knetic/govaluate
+  https://github.com/casbin/govaluate
 
 Numeric field conversion preserves 64-bit floating-point precision.
 Use -s/--numeric-as-string to keep numeric fields as strings.
@@ -1742,7 +1779,6 @@ Flags:
   -n, --line-number         print line number as the first column ("n")
   -s, --numeric-as-string   treat even numeric fields as strings to avoid converting big numbers into
                             scientific notation
-  
 ```
 
 Examples:
@@ -1816,6 +1852,8 @@ Examples:
 Usage
 
 ```text
+$ csvtk fix -h
+
 fix CSV/TSV with different numbers of columns in rows
 
 How to:
@@ -1834,8 +1872,6 @@ Flags:
   -n, --buf-rows int   the number of rows to determine the maximum number of columns. 0 for all rows.
   -h, --help           help for fix
       --na string      content for filling missing (NA) data
-
-
 ```
 
 Examples
@@ -1878,10 +1914,12 @@ $ cat testdata/unequal_ncols.csv | csvtk fix | csvtk pretty -S grid
 Usage
 
 ```text
+$ csvtk fix-quotes -h
+
 fix malformed CSV/TSV caused by double-quotes
 
 This command fixes fields not appropriately enclosed by double-quotes
-to meet the RFC4180 standard (https://rfc-editor.org/rfc/rfc4180.html).
+to meet the RFC4180 specification (https://rfc-editor.org/rfc/rfc4180.html).
 
 When and how to:
   1. Values containing bare double quotes. e.g.,
@@ -1910,7 +1948,6 @@ Flags:
   -b, --buffer-size string   size of buffer, supported unit: K, M, G. You need increase the value when
                              "bufio.Scanner: token too long" error reported (default "1G")
   -h, --help                 help for fix-quotes
-
 ```
 
 Examples:
@@ -1994,6 +2031,8 @@ Examples:
 Usage
 
 ```text
+$ csvtk fmtdate -h
+
 format date of selected fields
 
 Date parsing is supported by: https://github.com/araddon/dateparse
@@ -2044,7 +2083,6 @@ Flags:
   -k, --keep-unparsed      keep the key as value when no value found for the key
   -z, --time-zone string   timezone aka "Asia/Shanghai" or "America/Los_Angeles" formatted time-zone,
                            type "csvtk fmtdate -h" for details
-
 ```
 
 Examples
@@ -2084,6 +2122,8 @@ NA                    3
 Usage
 
 ```text
+$ csvtk fold -h
+
 fold multiple values of one or more fields into cells of groups
 
 Attention:
@@ -2132,7 +2172,7 @@ Example:
     1    one;two   uno;due
 
 Usage:
-  csvtk fold [flags] 
+  csvtk fold [flags]
 
 Aliases:
   fold, collapse
@@ -2198,19 +2238,21 @@ examples
 Usage
 
 ```text
+$ csvtk freq -h
+
 frequencies of selected fields
 
 Usage:
   csvtk freq [flags]
 
 Flags:
-  -f, --fields string   select only these fields. e.g -f 1,2 or -f columnA,columnB (default "1")
+  -f, --fields string   select these fields as the key. e.g -f 1,2 or -f columnA,columnB (default "1")
   -F, --fuzzy-fields    using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
+  -h, --help            help for freq
   -i, --ignore-case     ignore case
   -r, --reverse         reverse order while sorting
   -n, --sort-by-freq    sort by frequency
   -k, --sort-by-key     sort by key
-
 ```
 
 Examples
@@ -2270,6 +2312,8 @@ Examples
 Usage
 
 ```text
+$ csvtk gather -h
+
 gather columns into key-value pairs, like tidyr::gather/pivot_longer
 
 Usage:
@@ -2282,10 +2326,9 @@ Flags:
   -f, --fields string   fields for gathering. e.g -f 1,2 or -f columnA,columnB, or -f -columnA for
                         unselect columnA
   -F, --fuzzy-fields    using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
-  -h, --help            help for longer
+  -h, --help            help for gather
   -k, --key string      name of key column to create in output
-  -v, --value string    name of value column to create in outpu
-
+  -v, --value string    name of value column to create in output
 ```
 
 Examples:
@@ -2329,6 +2372,8 @@ Examples:
 Usage
 
 ```text
+$ csvtk genautocomplete -h
+
 generate shell autocompletion script
 
 Supported shell: bash|zsh|fish|powershell
@@ -2363,7 +2408,6 @@ Flags:
       --file string    autocompletion file (default "/home/shenwei/.bash_completion.d/csvtk.sh")
   -h, --help           help for genautocomplete
       --shell string   autocompletion type (bash|zsh|fish|powershell) (default "bash")
-
 ```
 
 ## grep
@@ -2371,6 +2415,8 @@ Flags:
 Usage
 
 ```text
+$ csvtk grep -h
+
 grep data by selected fields with patterns/regular expressions
 
 Attentions:
@@ -2401,7 +2447,6 @@ Flags:
   -P, --pattern-file string   pattern files (one pattern per line)
   -r, --use-regexp            patterns are regular expression
       --verbose               verbose output
-
 ```
 
 Examples
@@ -2465,6 +2510,8 @@ Matched parts will be ***highlight***.
 Usage
 
 ```text
+$ csvtk head -h
+
 print first N records
 
 Only the requested records and header (if present) are inspected.
@@ -2477,8 +2524,8 @@ Usage:
   csvtk head [flags]
 
 Flags:
+  -h, --help         help for head
   -n, --number int   print first N records (default 10)
-
 ```
 
 Examples
@@ -2502,6 +2549,8 @@ Examples
 Usage
 
 ```text
+$ csvtk headers -h
+
 print headers
 
 Only the first record of each input is inspected.
@@ -2512,7 +2561,6 @@ Usage:
 Flags:
   -h, --help      help for headers
   -v, --verbose   print verbose information
-
 ```
 
 Examples
@@ -2538,11 +2586,13 @@ $ csvtk headers testdata/[12].csv -v
 Usage
 
 ```text
+$ csvtk inter -h
+
 intersection of multiple files
 
 Attention:
 
-  1. fields in all files should be the same, 
+  1. fields in all files should be the same,
      if not, extracting to another file using "csvtk cut".
   2. An input without data rows makes the intersection empty; no output is written.
 
@@ -2552,8 +2602,8 @@ Usage:
 Flags:
   -f, --fields string   select these fields as the key. e.g -f 1,2 or -f columnA,columnB (default "1")
   -F, --fuzzy-fields    using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
+  -h, --help            help for inter
   -i, --ignore-case     ignore case
-
 ```
 
 Examples:
@@ -2583,6 +2633,8 @@ Examples:
 Usage
 
 ```text
+$ csvtk join -h
+
 join files by selected fields (inner, left and outer join).
 
 Attention:
@@ -2617,7 +2669,6 @@ Flags:
                           add one
   -e, --prefix-trim-ext   trim extension when adding filename as colname prefix
   -s, --suffix strings    add suffixes to colnames from each file
-
 ```
 
 Examples:
@@ -2797,7 +2848,9 @@ Examples:
 Usage
 
 ```text
-create a new column from selected fields by regular expression
+$ csvtk mutate -h
+
+create new column from selected fields by regular expression
 
 Usage:
   csvtk mutate [flags]
@@ -2807,11 +2860,12 @@ Flags:
       --at int           where the new column should appear, 1 for the 1st column, 0 for the last column
       --before string    insert the new column right before the given column name
   -f, --fields string    select only these fields. e.g -f 1,2 or -f columnA,columnB (default "1")
+  -h, --help             help for mutate
   -i, --ignore-case      ignore case
       --na               for unmatched data, use blank instead of original data
   -n, --name string      new column name
   -p, --pattern string   search regular expression with capture bracket. e.g. (default "^(.+)$")
-
+  -R, --remove           remove input column
 ```
 
 Examples
@@ -2870,11 +2924,13 @@ Examples
 Usage
 
 ```text
+$ csvtk mutate2 -h
+
 create a new column from selected fields by awk-like arithmetic/string expressions
 
 The arithmetic/string expression is supported by:
 
-  https://github.com/Knetic/govaluate
+  https://github.com/casbin/govaluate
 
 Numeric field conversion preserves 64-bit floating-point precision.
 Use -s/--numeric-as-string to keep numeric fields as strings.
@@ -2929,7 +2985,6 @@ Flags:
   -n, --name string         new column name
   -s, --numeric-as-string   treat even numeric fields as strings to avoid converting big numbers into
                             scientific notation
-
 ```
 
 Example
@@ -3042,6 +3097,8 @@ Example
 Usage
 
 ```text
+$ csvtk mutate3 -h
+
 create a new column from selected fields with Go-like expressions
 
 The expression language is supported by Expr:
@@ -3226,6 +3283,8 @@ Examples
 Usage
 
 ```text
+$ csvtk plot -h
+
 plot common figures
 
 Notes:
@@ -3238,7 +3297,7 @@ Notes:
      or just redirect to file.
 
 Usage:
-  csvtk plot [command] 
+  csvtk plot [command]
 
 Available Commands:
   bar         plot bar chart
@@ -3274,31 +3333,6 @@ Flags:
       --y-min string            minimum value of Y axis
       --y-scale-ln              scale the Y axis by the natural log
       --ylab string             y label text
-
-Global Flags:
-  -C, --comment-char string    lines starting with comment-character will be ignored. if your header
-                               row starts with '#', please assign "-C" another rare symbol, e.g. '$'
-                               (default "#")
-  -U, --delete-header          do not output header row
-  -d, --delimiter string       delimiting character of the input CSV file (default ",")
-  -E, --ignore-empty-row       ignore empty rows
-  -I, --ignore-illegal-row     ignore illegal rows. You can also use 'csvtk fix' to fix files with
-                               different numbers of columns in rows
-  -X, --infile-list string     file of input files list (one file per line), if given, they are appended
-                               to files from cli arguments
-  -l, --lazy-quotes            if given, a quote may appear in an unquoted field and a non-doubled quote
-                               may appear in a quoted field
-  -H, --no-header-row          specifies that the input CSV file does not have header row
-  -j, --num-cpus int           number of CPUs to use (default 4)
-  -D, --out-delimiter string   delimiting character of the output CSV file, e.g., -D $'\t' for tab
-                               (default ",")
-  -o, --out-file string        out file ("-" for stdout, suffix .gz for gzipped out) (default "-")
-  -T, --out-tabs               specifies that the output is delimited with tabs. Overrides "-D"
-      --quiet                  be quiet and do not show extra information and warnings
-  -Z, --show-row-number        show row number as the first column, with header row skipped
-  -t, --tabs                   specifies that the input CSV file is delimited with tabs. Overrides "-d"
-  -V, --version                print version information
-
 ```
 
 ***Note that most of the flags of `plot` are global flags of the subcommands
@@ -3318,6 +3352,8 @@ Global Flags:
 Usage
 
 ```text
+$ csvtk plot box -h
+
 plot boxplot
 
 Notes:
@@ -3339,7 +3375,6 @@ Flags:
       --horiz              horize box plot
       --line-width float   line width (default 1.5)
       --point-size float   point size (default 3)
-
 ```
 
 Examples
@@ -3367,6 +3402,8 @@ group information is the "Group" column.
 Usage
 
 ```text
+$ csvtk plot hist -h
+
 plot histogram
 
 Notes:
@@ -3387,7 +3424,6 @@ Flags:
   -h, --help               help for hist
       --line-width float   line width (default 1)
       --percentiles        add P99, P95, mean, and sample standard deviation to the X label
-
 ```
 
 Examples
@@ -3419,6 +3455,8 @@ Examples
 Usage
 
 ```text
+$ csvtk plot line -h
+
 line plot and scatter plot
 
 Notes:
@@ -3431,7 +3469,7 @@ Notes:
      or just redirect to file.
 
 Usage:
-  csvtk plot line [flags] 
+  csvtk plot line [flags]
 
 Flags:
       --color-index int        color index, 1-7 (default 1)
@@ -3444,7 +3482,6 @@ Flags:
       --line-width float       line width (default 1.5)
       --point-size float       point size (default 3)
       --scatter                only plot points
-
 ```
 
 Examples
@@ -3499,6 +3536,8 @@ Examples
 Usage
 
 ```text
+$ csvtk plot bar -h
+
 plot bar chart
 
 Notes:
@@ -3513,7 +3552,7 @@ Notes:
      order. Missing categories leave gaps. Each group/category pair must be unique.
 
 Usage:
-  csvtk plot bar [flags] 
+  csvtk plot bar [flags]
 
 Flags:
       --bar-width float       bar width (0 for auto)
@@ -3524,8 +3563,6 @@ Flags:
       --horizontal            horizontal bar chart
       --legend-left           locate legend along the left edge of the plot
       --legend-top            locate legend along the top edge of the plot
-
-
 ```
     
 ## pretty
@@ -3533,6 +3570,8 @@ Flags:
 Usage
 
 ```text
+$ csvtk pretty -h
+
 convert CSV to a readable aligned table
 
 How to:
@@ -3658,7 +3697,7 @@ Styles:
         ╚════╩══════╝
 
 Usage:
-  csvtk pretty [flags] 
+  csvtk pretty [flags]
 
 Flags:
   -m, --align-center strings    align right for selected columns (field index/range or column name, type
@@ -3678,9 +3717,9 @@ Flags:
                                 2nd and 3rd columns
   -s, --separator string        fields/columns separator (default "   ")
   -S, --style string            output style. available values: default, plain, simple, 3line, grid,
-                                light, round, regular, bold, double. check https://github.com/shenwei356/stable
+                                light, round, regular, bold, double. check
+                                https://github.com/shenwei356/stable
   -x, --wrap-delimiter string   delimiter for wrapping cells (default " ")
-
 ```
 
 Examples:
@@ -3850,6 +3889,8 @@ Examples:
 Usage
 
 ```text
+$ csvtk rename -h
+
 rename column names with new names
 
 Usage:
@@ -3858,8 +3899,8 @@ Usage:
 Flags:
   -f, --fields string   select only these fields. e.g -f 1,2 or -f columnA,columnB
   -F, --fuzzy-fields    using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
+  -h, --help            help for rename
   -n, --names string    comma separated new names
-
 ```
 
 Examples:
@@ -3898,6 +3939,8 @@ Examples:
 Usage
 
 ```text
+$ csvtk rename2 -h
+
 rename column names by regular expression
 
 Special replacement symbols:
@@ -3930,7 +3973,6 @@ Flags:
                                             escape character. Ascending number is also supported by
                                             "{nr}".use ${1} instead of $1 when {kv} given!
   -n, --start-num int                       starting number when using {nr} in replacement (default 1)
-
 ```
 
 Examples:
@@ -3995,6 +4037,8 @@ Examples:
 Usage
 
 ```text
+$ csvtk replace -h
+
 replace data of selected fields by regular expression
 
 Note that the replacement supports capture variables.
@@ -4031,7 +4075,7 @@ Special replacement symbols:
           n can be specified by flag --key-capt-idx (default: 1)
 
 Usage:
-  csvtk replace [flags] 
+  csvtk replace [flags]
 
 Flags:
   -f, --fields string                       select only these fields. e.g -f 1,2 or -f columnA,columnB
@@ -4062,7 +4106,6 @@ Flags:
                                             "{nr}".use ${1} instead of $1 when {kv} given!
   -n, --start-num int                       starting number when using {nr}, {gnr}, {enr}, {rnr} in
                                             replacement (default 1)
-
 ```
 
 Examples
@@ -4097,6 +4140,8 @@ Examples
 Usage
 
 ```text
+$ csvtk round -h
+
 round float to n decimal places
 
 Usage:
@@ -4108,7 +4153,6 @@ Flags:
   -f, --fields string       select only these fields. e.g -f 1,2 or -f columnA,columnB (default "1")
   -F, --fuzzy-fields        using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
   -h, --help                help for round
-
 ```
 
 Examples:
@@ -4141,6 +4185,8 @@ Examples:
 Usage
 
 ```text
+$ csvtk sample -h
+
 sampling by proportion
 
 Usage:
@@ -4148,10 +4194,9 @@ Usage:
 
 Flags:
   -h, --help               help for sample
-  -n, --line-number        print line number as the first column ("n")
+  -n, --line-number        print line number as the first column ("row")
   -p, --proportion float   sample by proportion
   -s, --rand-seed int      rand seed (default 11)
-
 ```
 
 Examples
@@ -4178,10 +4223,15 @@ $ seq 100 | csvtk sample -H -p 0.05 -n
 Usage
 
 ```text
+$ csvtk sep -h
+
 separate column into multiple columns
 
 Usage:
   csvtk sep [flags]
+
+Aliases:
+  sep, separate
 
 Flags:
       --drop            drop extra data, exclusive with --merge
@@ -4250,6 +4300,8 @@ taxid   kindom      phylum     class      order      family      genus   species
 Usage
 
 ```text
+$ csvtk sort -h
+
 sort by selected fields
 
 Field types:
@@ -4274,15 +4326,15 @@ Combinations:
   - Multiple fields can be used, e.g., -k year:n -k name
 
 Usage:
-  csvtk sort [flags] 
+  csvtk sort [flags]
 
 Flags:
   -h, --help             help for sort
   -i, --ignore-case      ignore-case
   -k, --keys strings     keys (multiple values supported). sort type supported, "N" for natural order,
                          "n" for number, "d" for date/time, "l" for Unicode text length, "u" for
-                         user-defined order and "r" for reverse. e.g., "-k 1", "-k 2-", "-k 3-5:nr",
-                         "-k A:lr", "-k 1:nr -k 2" (default [1-])
+                         user-defined order and "r" for reverse. e.g., "-k 1", "-k 2-", "-k 3-5:nr", "-k
+                         A:lr", "-k 1:nr -k 2" (default [1-])
   -L, --levels strings   user-defined level file (one level per line, multiple values supported).
                          format: <field>:<level-file>.  e.g., "-k name:u -L name:level.txt"
 ```
@@ -4498,16 +4550,17 @@ Examples
 Usage
 
 ```text
+$ csvtk shuf -h
+
 shuffle rows
 
 Usage:
-  csvtk shuf [flags] 
+  csvtk shuf [flags]
 
 Flags:
   -h, --help            help for shuf
   -s, --rand-seed int   rand seed (default 11)
   -n, --rows int        print first N rows, 0 for all
-
 ```
 
 Examples:
@@ -4546,6 +4599,8 @@ Examples:
 Usage
 
 ```text
+$ csvtk space2tab -h
+
 convert space delimited format to TSV
 
 Usage:
@@ -4555,7 +4610,6 @@ Flags:
   -b, --buffer-size string   size of buffer, supported unit: K, M, G. You need increase the value when
                              "bufio.Scanner: token too long" error reported (default "1G")
   -h, --help                 help for space2tab
-
 ```
 
 Exapmles
@@ -4569,6 +4623,8 @@ Exapmles
 Usage
 
 ```text
+$ csvtk split -h
+
 split CSV/TSV by column values, rows per chunk, or number of chunks
 
 Notes:
@@ -4581,6 +4637,9 @@ Notes:
   4. flag -n/--nlines splits the input into chunks of up to N records instead of
      splitting by key values. The header row, when present, is written to every chunk.
   5. flag -c/--nchunks splits the input into N chunks in a round-robin manner.
+  6. An explicit output directory must not be the current directory, its ancestor,
+     or a directory containing an input file, even with --force. Symlink aliases
+     are checked. Without -o, split files are written to the current directory.
 
 Usage:
   csvtk split [flags]
@@ -4598,11 +4657,10 @@ Flags:
                                field-grouping options
   -n, --nlines int             split into chunks of up to N records; incompatible with field-grouping options
   -G, --out-gzip               force output gzipped file
-  -p, --out-prefix string      output file prefix, the default value is the input file's base name. use -p "" to
-                               disable outputting prefix
+  -p, --out-prefix string      output file prefix, the default value is the input file's base name. use
+                               -p "" to disable outputting prefix
   -s, --prefix-as-subdir int   create subdirectories with prefixes of keys of length X, to avoid writing
                                too many files in the output directory
-
 ```
 
 Examples
@@ -4778,6 +4836,8 @@ Examples
 Usage
 
 ```text
+$ csvtk splitxlsx -h
+
 split XLSX sheet into multiple sheets according to column values
 
 Strength: Sheet properties are preserved.
@@ -4800,7 +4860,6 @@ Flags:
   -a, --list-sheets         list all sheets
   -N, --sheet-index int     Nth sheet to retrieve (default 1)
   -n, --sheet-name string   sheet to retrieve
-
 ```
 
 Examples
@@ -4857,6 +4916,8 @@ Examples
 Usage
 
 ```text
+$ csvtk spread -h
+
 spread a key-value pair across multiple columns, like tidyr::spread/pivot_wider
 
 Usage:
@@ -4871,7 +4932,6 @@ Flags:
       --na string          content for filling NA data
   -s, --separater string   separater for values that share the same key (default "; ")
   -v, --value string       field of the value. e.g -v 1 or -v columnA
-
 ```
 
 Examples:
@@ -4929,12 +4989,28 @@ No header rows
     ┃ c ┃   ┃   ┃ 0 ┃
     ┗━━━┻━━━┻━━━┻━━━┛
 
+    # or using long2matrix
+    $ echo -ne "a,a,0\nb,b,0\nc,c,0\na,b,1\na,c,2\nb,c,3\n" \
+      | csvtk long2matrix -H \
+      | csvtk pretty -S bold
+    ┏━━━┳━━━┳━━━┳━━━┓
+    ┃   ┃ a ┃ b ┃ c ┃
+    ┣━━━╋━━━╋━━━╋━━━┫
+    ┃ a ┃ 0 ┃ 1 ┃ 2 ┃
+    ┣━━━╋━━━╋━━━╋━━━┫
+    ┃ b ┃   ┃ 0 ┃ 3 ┃
+    ┣━━━╋━━━╋━━━╋━━━┫
+    ┃ c ┃   ┃   ┃ 0 ┃
+    ┗━━━┻━━━┻━━━┻━━━┛
+
     
 ## summary
 
 Usage
 
 ```text
+$ csvtk summary -h
+
 summary statistics of selected numeric or text fields (groupby group fields)
 
 Attention:
@@ -4947,19 +5023,19 @@ Attention:
   5. The same input and --rand-seed give reproducible results for the rand operation.
 
 Available operations:
- 
+
   # numeric/statistical operations
   # provided by github.com/gonum/stat and github.com/gonum/floats
   countn (count numeric values), min, max, sum, argmin, argmax,
   mean, stdev, variance, median, q1, q2, q3,
-  entropy (Shannon entropy), 
+  entropy (Shannon entropy),
   prod (product of the elements)
 
   # textual/numeric operations
   count, first, last, rand, unique/uniq, collapse, countunique
 
 Usage:
-  csvtk summary [flags] 
+  csvtk summary [flags]
 
 Flags:
   -w, --decimal-width int    limit floats to N decimal points (default 2)
@@ -4973,7 +5049,6 @@ Flags:
   -n, --names strings        new names for the summary columns
   -S, --rand-seed int        rand seed for operation "rand" (default 11)
   -s, --separater string     separater for collapsed data (default "; ")
-
 ```
 
 Examples
@@ -5120,10 +5195,12 @@ Examples
 Usage
 
 ```text
+$ csvtk tab2csv -h
+
 convert tabular format to CSV
 
 Usage:
-  csvtk tab2csv [flags] 
+  csvtk tab2csv [flags]
 
 Flags:
   -h, --help   help for tab2csv
@@ -5141,11 +5218,15 @@ a,b,c
 Usage
 
 ```text
+$ csvtk transpose -h
+
 transpose CSV data
 
 Usage:
   csvtk transpose [flags]
 
+Flags:
+  -h, --help   help for transpose
 ```
 
 Examples
@@ -5166,6 +5247,8 @@ Examples
 Usage
 
 ```text
+$ csvtk unfold -h
+
 unfold multiple values in cells of one or more fields
 
 When multiple fields are selected, their values are unfolded in parallel.
@@ -5213,11 +5296,15 @@ Flags:
 Usage
 
 ```text
+$ csvtk long2matrix -h
+
 convert the long format to matrix
+
+The matrix header is always written; -U/--delete-header is ignored.
 
 Input: a three-column table. E.g.,
 
-    col1   col2   value    
+    col1   col2   value
     A      A      1868883.0
     A      B      1310746.0
     B      A      1306936.0
@@ -5225,12 +5312,12 @@ Input: a three-column table. E.g.,
 
 Output: a matrix with the same column and row names. E.g.,
 
-        A           B        
+        A           B
     A   1868883.0   1310746.0
     B   1306936.0   2117177.0
 
 Usage:
-  csvtk long2matrix [flags] 
+  csvtk long2matrix [flags]
 
 Flags:
   -B, --clear-bad-value    keep records failing to pass the filter but clear the value
@@ -5240,7 +5327,6 @@ Flags:
   -M, --max-value float    only save records with values <= this value (default 1.7976931348623157e+308)
   -m, --min-value float    only save records with values >= this value (default -1.7976931348623157e+308)
       --na string          content for filling NA data
-
 ```
 
 Examples
@@ -5308,24 +5394,26 @@ $ cat testdata/pairwise-data.tsv | csvtk long2matrix -t --min-value 0.9 --clear-
 Usage
 
 ```text
+$ csvtk matrix2long -h
+
 convert a matrix to the long format
 
 Input: a matrix with the same column and row names. E.g.,
 
-        A           B        
+        A           B
     A   1868883.0   1310746.0
     B   1306936.0   2117177.0
 
 Output: a three-column table. E.g.,
 
-    col1   col2   value    
+    col1   col2   value
     A      A      1868883.0
     A      B      1310746.0
     B      A      1306936.0
     B      B      2117177.0
 
 Usage:
-  csvtk matrix2long [flags] 
+  csvtk matrix2long [flags]
 
 Flags:
   -B, --blanks strings     blank values, case ignored (default [,na,n/a,none,null,.])
@@ -5406,6 +5494,8 @@ cat testdata/pairwise-data.matrix.tsv \
 Usage
 
 ```text
+$ csvtk uniq -h
+
 Deduplicate records by selected fields without sorting.
 
 By default, keep the first record for each key; -n keeps the first N records.
@@ -5431,7 +5521,6 @@ Flags:
   -n, --keep-n int         keep at most N records for a key (default 1)
   -d, --repeated           only print repeated keys, one first record per key
   -u, --unique             only print records whose keys occur exactly once
-
 ```
 
 Examples:
@@ -5508,10 +5597,11 @@ Usage
 
 ```text
 $ csvtk version -h
+
 print version information and check for update
 
 Usage:
-  csvtk version [flags] 
+  csvtk version [flags]
 
 Flags:
   -u, --check-update   check update
@@ -5524,6 +5614,8 @@ Flags:
 Usage
 
 ```text
+$ csvtk watch -h
+
 monitor the specified fields
 
 Usage:
@@ -5564,6 +5656,8 @@ Examples
 Usage
 
 ```text
+$ csvtk xlsx2csv -h
+
 convert XLSX to CSV format
 
 Usage:
@@ -5574,7 +5668,6 @@ Flags:
   -a, --list-sheets         list all sheets
   -i, --sheet-index int     Nth sheet to retrieve (default 1)
   -n, --sheet-name string   sheet to retrieve
-
 ```
 
 Examples

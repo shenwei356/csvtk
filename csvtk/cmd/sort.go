@@ -264,7 +264,8 @@ Combinations:
 						}
 					}
 				} else if start > 0 && end > 0 {
-					if start >= end {
+					// An open range may select only the last column.
+					if start > end || (start == end && found[0][2] != "") {
 						checkError(fmt.Errorf("invalid field range: %s. start (%d) should be less than end (%d)", t.FieldStr, start, end))
 					}
 					for i = start; i <= end; i++ {

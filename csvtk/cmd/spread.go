@@ -209,7 +209,9 @@ var spreadCmd = &cobra.Command{
 		if HeaderRow == nil {
 			HeaderRow = make([]string, nLeft)
 		}
-		checkError(writer.Write(append(HeaderRow, keys...)))
+		if !config.NoOutHeader {
+			checkError(writer.Write(append(HeaderRow, keys...)))
+		}
 
 		var m map[string][]string
 

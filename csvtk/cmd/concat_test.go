@@ -195,3 +195,33 @@ func TestConcatRejectsAmbiguousColumns(t *testing.T) {
 		t.Fatalf("expected an ambiguous-column error, got %v: %s", err, out)
 	}
 }
+
+// TestConcatFileListStdin distinguishes an explicit stdin input from the default
+// placeholder, and retains stdin when it is supplied by the file list itself.
+func TestConcatFileListStdin(t *testing.T) {
+	file := writeAccuracyInput(t, "listed.csv", "id\nlisted\n")
+	list := writeAccuracyInput(t, "files.txt", file+"\n")
+	stdinList := writeAccuracyInput(t, "stdin.txt", "-\n"+file+"\n")
+	emptyList := writeAccuracyInput(t, "empty.txt", "")
+	for _, tc := range []struct {
+		name string
+		args []string
+		want string
+	}{
+		{"explicit", []string{"-", "-X", list}, "id\nstdin\nlisted\n"},
+		{"implicit", []string{"-X", list}, "id\nlisted\n"},
+		{"list stdin", []string{"-X", stdinList}, "id\nstdin\nlisted\n"},
+		{"empty list", []string{"-", "-X", emptyList}, "id\nstdin\n"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			args := append([]string{"-test.run=^TestCLIAccuracyHelper$", "--", "concat"}, tc.args...)
+			cmd := exec.Command(os.Args[0], args...)
+			cmd.Env = append(os.Environ(), "CSVTK_ACCURACY_HELPER=1")
+			cmd.Stdin = strings.NewReader("id\nstdin\n")
+			out, err := cmd.Output()
+			if err != nil || string(out) != tc.want {
+				t.Fatalf("got %q, %v; want %q", out, err, tc.want)
+			}
+		})
+	}
+}

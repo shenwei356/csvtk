@@ -338,7 +338,7 @@ Available operations:
 		readerReport(&config, csvReader, file)
 
 		colsOut := len(fieldsG) + len(fieldsD)
-		if hasHeaderLine {
+		if hasHeaderLine && !config.NoOutHeader {
 			record := make([]string, 0, colsOut)
 			if len(fieldsG) > 0 {
 				for _, i := range fieldsG {

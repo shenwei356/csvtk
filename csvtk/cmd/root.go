@@ -68,6 +68,7 @@ Attention:
      therefore there's no need to pipe the result to gzip/pigz.
      csvtk also supports reading and writing xz (.xz), zstd (.zst) and Bzip2 (.bz2) formats.
  10. Less than half of the subcommands support >1 file.
+     With -X, listed files are appended to explicitly supplied inputs, including "-".
  11. Output paths must differ from input files, including symbolic and hard links.
  12. Output write and compression errors cause a nonzero exit status.
  13. Use --immediate-output to flush each output record or raw chunk in a pipeline.

@@ -116,3 +116,43 @@ func TestJoinInputsWithoutRecords(t *testing.T) {
 		}
 	}
 }
+
+// TestJoinOuterReorderedKeys checks synthetic rows against the selection order
+// across multiple tables, physical column orders, and a header-only first table.
+func TestJoinOuterReorderedKeys(t *testing.T) {
+	for _, headerOnly := range []bool{false, true} {
+		for _, fields := range []string{"2,1;1,2;2,1", "k2,k1"} {
+			for _, threeFiles := range []bool{false, true} {
+				contents := "k1,k2,a\n"
+				if !headerOnly {
+					contents += "A,B,left\n"
+				}
+				left := writeAccuracyInput(t, "left.csv", contents)
+				right := writeAccuracyInput(t, "right.csv", "k2,k1,b\nY,X,right\n")
+				third := writeAccuracyInput(t, "third.csv", "k1,k2,c\nX,Y,third\n")
+				files := []string{left, right}
+				want := [][]string{{"k1", "k2", "a", "b"}}
+				if !headerOnly {
+					want = append(want, []string{"A", "B", "left", "NA"})
+				}
+				want = append(want, []string{"X", "Y", "NA", "right"})
+				selection := fields
+				if threeFiles {
+					files = append(files, third)
+					want[0] = append(want[0], "c")
+					if !headerOnly {
+						want[1] = append(want[1], "NA")
+					}
+					want[len(want)-1] = append(want[len(want)-1], "third")
+				} else if fields != "k2,k1" {
+					selection = "2,1;1,2"
+				}
+				args := append([]string{"join", "-O", "--na", "NA", "-f", selection}, files...)
+				out, _ := runAccuracyCLI(t, args...)
+				if got := parseAccuracyCSV(t, out); !reflect.DeepEqual(got, want) {
+					t.Fatalf("headerOnly=%t fields=%s threeFiles=%t: got %q, want %q", headerOnly, selection, threeFiles, got, want)
+				}
+			}
+		}
+	}
+}

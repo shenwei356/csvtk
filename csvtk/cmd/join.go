@@ -359,22 +359,16 @@ Attention:
 					keys[key] = true
 				}
 
-				fieldsMap := make(map[int]struct{}, len(fields))
-				for _, f := range fields {
-					fieldsMap[f] = struct{}{}
-				}
 				for key, ok = range keys {
 					if !ok {
 						record := make([]string, nCols)
-						items2 := decodeFields(key)
-						j := 0
 						for i = range record {
-							if _, ok = fieldsMap[i+1]; ok {
-								record[i] = items2[j]
-								j++
-							} else {
-								record[i] = na
-							}
+							record[i] = na
+						}
+						// Encoded keys follow selection order, not physical column order.
+						items2 := decodeFields(key)
+						for j, f := range fields {
+							record[f-1] = items2[j]
 						}
 						Data = append(Data, record)
 					}

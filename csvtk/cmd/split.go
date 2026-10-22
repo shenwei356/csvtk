@@ -51,6 +51,9 @@ Notes:
   4. flag -n/--nlines splits the input into chunks of up to N records instead of
      splitting by key values. The header row, when present, is written to every chunk.
   5. flag -c/--nchunks splits the input into N chunks in a round-robin manner.
+  6. An explicit output directory must not be the current directory, its ancestor,
+     or a directory containing an input file, even with --force. Symlink aliases
+     are checked. Without -o, split files are written to the current directory.
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -84,6 +87,17 @@ Notes:
 		subdirLen := getFlagNonNegativeInt(cmd, "prefix-as-subdir")
 		force := getFlagBool(cmd, "force")
 
+		// Validate before opening the input or modifying the output directory.
+		outdir := "./"
+		if config.OutFile != "-" {
+			outdir = config.OutFile
+			protectedFiles := append([]string(nil), files...)
+			if list := getFlagString(cmd, "infile-list"); list != "" {
+				protectedFiles = append(protectedFiles, list)
+			}
+			checkError(checkOutputDirectory(outdir, protectedFiles))
+		}
+
 		file := files[0]
 		csvReader, err := newCSVReaderByConfig(config, file)
 		checkError(err)
@@ -114,9 +128,7 @@ Notes:
 			outFileSuffix = outFileSuffix + ".gz"
 		}
 
-		outdir := "./"
 		if config.OutFile != "-" { // outdir
-			outdir = config.OutFile
 			makeOutDir(outdir, force, "-o/--outfile", true)
 		}
 

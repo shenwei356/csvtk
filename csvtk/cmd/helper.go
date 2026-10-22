@@ -194,7 +194,7 @@ func getFileListFromArgsAndFile(cmd *cobra.Command, args []string, checkFileFrom
 			if !getFlagBool(cmd, "quiet") {
 				log.Warningf("no files found in file list: %s", infileList)
 			}
-		} else if len(files) == 1 && isStdin(files[0]) {
+		} else if len(args) == 0 { // Replace only the implicit stdin input.
 			files = _files
 		} else {
 			files = append(files, _files...)
@@ -994,29 +994,94 @@ func UniqInts(list []int) []int {
 	return s
 }
 
-func makeOutDir(outDir string, force bool, logname string, verbose bool) {
-	pwd, _ := os.Getwd()
-	if outDir != "./" && outDir != "." && pwd != filepath.Clean(outDir) {
-		existed, err := pathutil.DirExists(outDir)
-		checkError(errors.Wrap(err, outDir))
-		if existed {
-			empty, err := pathutil.IsEmpty(outDir)
-			checkError(errors.Wrap(err, outDir))
-			if !empty {
-				if force {
-					if verbose {
-						log.Infof("removing old output directory: %s", outDir)
-					}
-					checkError(os.RemoveAll(outDir))
-				} else {
-					checkError(fmt.Errorf("%s not empty: %s, use --force to overwrite", logname, outDir))
-				}
-			} else {
-				checkError(os.RemoveAll(outDir))
-			}
+// checkOutputDirectory rejects directories whose removal could destroy the
+// working directory or a named input, including symbolic-link aliases.
+func checkOutputDirectory(outDir string, files []string) error {
+	outInfo, err := os.Stat(outDir)
+	if os.IsNotExist(err) {
+		// A not-yet-created component followed by ".." can still name an
+		// existing protected directory once directory creation cleans the path.
+		cleaned, absErr := filepath.Abs(outDir)
+		if absErr != nil {
+			return absErr
 		}
-		checkError(os.MkdirAll(outDir, 0777))
-	} else {
-		log.Errorf("%s should not be current directory", logname)
+		outInfo, err = os.Stat(cleaned)
+		if os.IsNotExist(err) {
+			return nil
+		}
 	}
+	if err != nil {
+		return err
+	}
+	if !outInfo.IsDir() {
+		return fmt.Errorf("output path is not a directory: %s", outDir)
+	}
+	cwd, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+	if contains, err := directoryContainsPath(outInfo, cwd); err != nil {
+		return err
+	} else if contains {
+		return fmt.Errorf("output directory must not be the current directory or its ancestor: %s", outDir)
+	}
+	for _, file := range files {
+		if isStdin(file) {
+			continue
+		}
+		if contains, err := directoryContainsPath(outInfo, file); err != nil {
+			return err
+		} else if contains {
+			return fmt.Errorf("output directory %q contains input %q", outDir, file)
+		}
+	}
+	return nil
+}
+
+// directoryContainsPath checks both lexical and resolved ancestors, protecting
+// symlink entries as well as their targets. File identities also handle case aliases.
+func directoryContainsPath(dir os.FileInfo, path string) (bool, error) {
+	resolved, err := filepath.EvalSymlinks(path)
+	if err != nil {
+		return false, err
+	}
+	for _, candidate := range []string{path, resolved} {
+		candidate, err = filepath.Abs(candidate)
+		if err != nil {
+			return false, err
+		}
+		for {
+			info, err := os.Stat(candidate)
+			if err != nil {
+				return false, err
+			}
+			if os.SameFile(dir, info) {
+				return true, nil
+			}
+			parent := filepath.Dir(candidate)
+			if parent == candidate {
+				break
+			}
+			candidate = parent
+		}
+	}
+	return false, nil
+}
+
+// makeOutDir prepares an output directory after checkOutputDirectory succeeds.
+func makeOutDir(outDir string, force bool, logname string, verbose bool) {
+	existed, err := pathutil.DirExists(outDir)
+	checkError(errors.Wrap(err, outDir))
+	if existed {
+		empty, err := pathutil.IsEmpty(outDir)
+		checkError(errors.Wrap(err, outDir))
+		if !empty && !force {
+			checkError(fmt.Errorf("%s not empty: %s, use --force to overwrite", logname, outDir))
+		}
+		if !empty && verbose {
+			log.Infof("removing old output directory: %s", outDir)
+		}
+		checkError(os.RemoveAll(outDir))
+	}
+	checkError(os.MkdirAll(outDir, 0777))
 }
