@@ -49,13 +49,13 @@ Examples:
      csvtk cut -f 1,3-5       # 1, 3, 4, 5
      csvtk cut -f 3,5-        # 3rd col, and 5th col to the end
      csvtk cut -f 1-          # for all
-     csvtk cut -f 2-,1        # move 1th col to the end
+     csvtk cut -f 2-,1        # move 1st col to the end
      csvtk cut -f 1-,3-       # all columns, then 3rd column to the end again
   4. Unselect
-     csvtk cut -f -1,-3       # discard 1st and 3rd column
-     csvtk cut -f -1--3       # discard 1st to 3rd column
+     csvtk cut -f -1,-3       # discard 1st and 3rd columns
+     csvtk cut -f -1--3       # discard 1st to 3rd columns
      csvtk cut -f -2-         # discard 2nd and all columns on the right.
-     csvtu cut -f -colA,-colB # discard colA and colB
+     csvtk cut -f -colA,-colB # discard colA and colB
 	 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -151,9 +151,9 @@ Examples:
 func init() {
 	RootCmd.AddCommand(cutCmd)
 	cutCmd.Flags().StringSliceP("fields", "f", []string{""}, `select only these fields. type "csvtk cut -h" for examples`)
-	cutCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
+	cutCmd.Flags().BoolP("fuzzy-fields", "F", false, `use fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
 	cutCmd.Flags().BoolP("ignore-case", "i", false, `ignore case (column name)`)
 	cutCmd.Flags().BoolP("uniq-column", "u", false, `deduplicate columns matched by multiple fuzzy column names`)
-	cutCmd.Flags().BoolP("allow-missing-col", "m", false, `allow missing column`)
-	cutCmd.Flags().BoolP("blank-missing-col", "b", false, `blank missing column, only for using column fields`)
+	cutCmd.Flags().BoolP("allow-missing-col", "m", false, `allow missing columns`)
+	cutCmd.Flags().BoolP("blank-missing-col", "b", false, `leave missing columns blank, only when selecting by column name`)
 }

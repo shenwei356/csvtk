@@ -44,13 +44,13 @@ var summaryCmd = &cobra.Command{
 	GroupID: "info",
 
 	Use:   "summary",
-	Short: "summary statistics of selected numeric or text fields (groupby group fields)",
-	Long: `summary statistics of selected numeric or text fields (groupby group fields)
+	Short: "summary statistics of selected numeric or text fields (grouped by group fields)",
+	Long: `summary statistics of selected numeric or text fields (grouped by group fields)
 
 Attention:
 
-  1. Do not mix use field (column) numbers and names.
-  2. Field range is supported, e.g., "-f 2-5:sum".
+  1. Do not mix field (column) numbers and names.
+  2. Field ranges are supported, e.g., "-f 2-5:sum".
   3. The default operation is count, e.g., "-f 1-2" is equivalent to "-f 1-2:count".
   4. Values are stored only for the numeric or text operations requested for
      each field. Memory use still grows with the retained values and groups.
@@ -530,13 +530,13 @@ func init() {
 	sort.Strings(allStatsList)
 
 	RootCmd.AddCommand(summaryCmd)
-	summaryCmd.Flags().StringP("groups", "g", "", `group via fields. e.g -g 1,2 or -g columnA,columnB`)
-	summaryCmd.Flags().StringSliceP("fields", "f", []string{}, fmt.Sprintf(`operations on these fields. e.g "-f 1:count,1:sum", "-f 2-5:sum", or "-f colA:mean". available operations: %s`, strings.Join(allStatsList, ", ")))
+	summaryCmd.Flags().StringP("groups", "g", "", `group via fields. e.g., -g 1,2 or -g columnA,columnB`)
+	summaryCmd.Flags().StringSliceP("fields", "f", []string{}, fmt.Sprintf(`operations on these fields. e.g., "-f 1:count,1:sum", "-f 2-5:sum", or "-f colA:mean". available operations: %s`, strings.Join(allStatsList, ", ")))
 	summaryCmd.Flags().StringSliceP("names", "n", []string{}, "new names for the summary columns")
 	summaryCmd.Flags().BoolP("ignore-non-numbers", "i", false, `ignore non-numeric values like "NA" or "N/A"`)
-	summaryCmd.Flags().IntP("decimal-width", "w", 2, "limit floats to N decimal points")
-	summaryCmd.Flags().StringP("separater", "s", "; ", "separater for collapsed data")
-	summaryCmd.Flags().Int64P("rand-seed", "S", 11, `rand seed for operation "rand"`)
+	summaryCmd.Flags().IntP("decimal-width", "w", 2, "limit floats to N decimal places")
+	summaryCmd.Flags().StringP("separater", "s", "; ", "separator for collapsed data")
+	summaryCmd.Flags().Int64P("rand-seed", "S", 11, `random seed for operation "rand"`)
 }
 
 func validateSummaryNames(names []string, n int) error {

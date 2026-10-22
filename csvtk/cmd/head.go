@@ -33,8 +33,8 @@ var headCmd = &cobra.Command{
 	GroupID: "set",
 
 	Use:   "head",
-	Short: "print first N records",
-	Long: `print first N records
+	Short: "print the first N records",
+	Long: `print the first N records
 
 Only the requested records and header (if present) are inspected.
 
@@ -126,5 +126,5 @@ Tips:
 func init() {
 	RootCmd.AddCommand(headCmd)
 
-	headCmd.Flags().IntP("number", "n", 10, "print first N records")
+	headCmd.Flags().IntP("number", "n", 10, "print the first N records")
 }

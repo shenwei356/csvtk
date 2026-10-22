@@ -38,8 +38,8 @@ var interCmd = &cobra.Command{
 
 Attention:
 
-  1. fields in all files should be the same, 
-     if not, extracting to another file using "csvtk cut".
+  1. Fields in all files should be the same.
+     If not, extract them to another file using "csvtk cut".
   2. An input without data rows makes the intersection empty; no output is written.
 
 `,
@@ -184,7 +184,7 @@ Attention:
 
 func init() {
 	RootCmd.AddCommand(interCmd)
-	interCmd.Flags().StringP("fields", "f", "1", `select these fields as the key. e.g -f 1,2 or -f columnA,columnB`)
+	interCmd.Flags().StringP("fields", "f", "1", `select these fields as the key. e.g., -f 1,2 or -f columnA,columnB`)
 	interCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
-	interCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
+	interCmd.Flags().BoolP("fuzzy-fields", "F", false, `use fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
 }

@@ -34,8 +34,8 @@ const VERSION = "0.39.0"
 // versionCmd represents the version command
 var versionCmd = &cobra.Command{
 	Use:   "version",
-	Short: "print version information and check for update",
-	Long: `print version information and check for update
+	Short: "print version information and check for updates",
+	Long: `print version information and check for updates
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -70,5 +70,5 @@ var versionCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(versionCmd)
 
-	versionCmd.Flags().BoolP("check-update", "u", false, `check update`)
+	versionCmd.Flags().BoolP("check-update", "u", false, `check for updates`)
 }

@@ -34,8 +34,8 @@ var nrowCmd = &cobra.Command{
 
 	Use:     "nrow",
 	Aliases: []string{"nrows"},
-	Short:   "print number of records",
-	Long: `print number of records
+	Short:   "print the number of records",
+	Long: `print the number of records
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {

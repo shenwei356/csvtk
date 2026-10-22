@@ -34,8 +34,8 @@ var ncolCmd = &cobra.Command{
 
 	Use:     "ncol",
 	Aliases: []string{"ncols"},
-	Short:   "print number of columns",
-	Long: `print number of columns
+	Short:   "print the number of columns",
+	Long: `print the number of columns
 
 Only the first record of each input is inspected.
 

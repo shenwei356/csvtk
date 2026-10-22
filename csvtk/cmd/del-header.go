@@ -36,7 +36,7 @@ var delHeaderCmd = &cobra.Command{
 	Long: `delete column names
 
 Attention:
-  1. It delete the first lines of all input files.
+  1. It deletes the first line of each input file.
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {

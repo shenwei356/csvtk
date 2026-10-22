@@ -197,7 +197,7 @@ func init() {
 	RootCmd.AddCommand(watchCmd)
 
 	watchCmd.Flags().StringP("field", "f", "", "field to watch")
-	watchCmd.Flags().IntP("print-freq", "p", -1, "print/report after this many records (-1 for print after EOF)")
+	watchCmd.Flags().IntP("print-freq", "p", -1, "print/report after this many records (-1 to print after EOF)")
 	watchCmd.Flags().StringP("image", "O", "", "save histogram to this PDF/image file")
 	watchCmd.Flags().IntP("delay", "W", 1, "sleep this many seconds after plotting")
 	watchCmd.Flags().IntP("bins", "B", -1, "number of histogram bins")

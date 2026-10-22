@@ -56,10 +56,10 @@ Literal-dependent expressions retain per-row parsing for compatibility.
 
 The two variable formats can be mixed for the same column.
 
-Variables formats:
+Variable formats:
   $1 or ${1}                        The first field/column
   $a or ${a}                        Column "a"
-  ${a,b} or ${a b} or ${a (b)}      Column name with special charactors, 
+  ${a,b} or ${a b} or ${a (b)}      Column name with special characters,
                                     e.g., commas, spaces, and parentheses
 
 Supported operators and types:
@@ -71,15 +71,15 @@ Supported operators and types:
   String constants (single quotes: 'foobar')
   Date constants (single quotes)
   Boolean constants: true false
-  Parenthesis to control order of evaluation ( )
-  Arrays (anything separated by , within parenthesis: (1, 2, 'foo'))
+  Parentheses to control the order of evaluation ( )
+  Arrays (anything separated by , within parentheses: (1, 2, 'foo'))
   Prefixes: ! - ~
   Ternary conditional: ? :
   Null coalescence: ??
 
 Custom functions:
   - len(), length of strings, e.g., len($1), len($a), len($1, $2)
-  - ulen(), length of unicode strings/width of unicode strings rendered
+  - ulen(), length of Unicode strings/width of Unicode strings rendered
     to a terminal, e.g., len("沈伟")==6, ulen("沈伟")==4
 
 `,
@@ -370,7 +370,7 @@ Custom functions:
 func init() {
 	RootCmd.AddCommand(filter2Cmd)
 	filter2Cmd.Flags().StringP("filter", "f", "", `awk-like filter condition. e.g. '$age>12' or '$1 > $3' or '$name=="abc"' or '$1 % 2 == 0'`)
-	filter2Cmd.Flags().BoolP("line-number", "n", false, `print line number as the first column ("n")`)
+	filter2Cmd.Flags().BoolP("line-number", "n", false, `print the line number as the first column ("n")`)
 	filter2Cmd.Flags().BoolP("numeric-as-string", "s", false, `treat even numeric fields as strings to avoid converting big numbers into scientific notation`)
 }
 

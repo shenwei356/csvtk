@@ -201,8 +201,8 @@ func removeNaNs(d1, d2 []float64) ([]float64, []float64) {
 func init() {
 	RootCmd.AddCommand(corrCmd)
 
-	corrCmd.Flags().StringP("fields", "f", "", "comma separated fields")
+	corrCmd.Flags().StringP("fields", "f", "", "comma-separated fields")
 	corrCmd.Flags().BoolP("ignore_nan", "i", false, "Ignore non-numeric fields to avoid returning NaN")
-	corrCmd.Flags().BoolP("log", "L", false, "Calcute correlations on Log10 transformed data")
+	corrCmd.Flags().BoolP("log", "L", false, "Calculate correlations on Log10 transformed data")
 	corrCmd.Flags().BoolP("pass", "x", false, "forward input to output and print correlations to stderr")
 }

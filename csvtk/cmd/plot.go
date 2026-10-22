@@ -39,12 +39,12 @@ var plotCmd = &cobra.Command{
 
 Notes:
 
-  1. Output file can be set by flag -o/--out-file.
-  2. File format is determined by the out file suffix.
+  1. The output file can be set with flag -o/--out-file.
+  2. The file format is determined by the output file suffix.
      Supported formats: eps, jpg|jpeg, pdf, png, svg, and tif|tiff
-  3. If flag -o/--out-file not set (default), image is written to stdout,
-     you can display the image by pipping to "display" command of Imagemagic
-     or just redirect to file.
+  3. If flag -o/--out-file is not set (the default), the image is written to stdout.
+     You can display the image by piping it to the "display" command from ImageMagick
+     or redirect it to a file.
 
 `,
 }
@@ -80,7 +80,7 @@ func init() {
 	plotCmd.PersistentFlags().BoolP("x-scale-ln", "", false, "scale the X axis by the natural log")
 	plotCmd.PersistentFlags().BoolP("y-scale-ln", "", false, "scale the Y axis by the natural log")
 
-	plotCmd.PersistentFlags().StringP("format", "", "png", `image format for stdout when flag -o/--out-file not given. available values: eps, jpg|jpeg, pdf, png, svg, and tif|tiff.`)
+	plotCmd.PersistentFlags().StringP("format", "", "png", `image format for stdout when flag -o/--out-file is not given. Available values: eps, jpg|jpeg, pdf, png, svg, and tif|tiff.`)
 
 	plotCmd.PersistentFlags().StringSliceP("na-values", "", []string{"", "NA", "N/A"}, `NA values, case ignored`)
 	plotCmd.PersistentFlags().BoolP("skip-na", "", false, "skip NA values in --na-values")

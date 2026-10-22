@@ -34,8 +34,8 @@ var roundCmd = &cobra.Command{
 	GroupID: "edit",
 
 	Use:   "round",
-	Short: "round float to n decimal places",
-	Long: `round float to n decimal places
+	Short: "round floats to n decimal places",
+	Long: `round floats to n decimal places
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -146,9 +146,9 @@ var roundCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(roundCmd)
-	roundCmd.Flags().StringP("fields", "f", "1", `select only these fields. e.g -f 1,2 or -f columnA,columnB`)
-	roundCmd.Flags().BoolP("all-fields", "a", false, "all fields, overides -f/--fields")
-	roundCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
-	roundCmd.Flags().IntP("decimal-width", "n", 2, "limit floats to N decimal points")
+	roundCmd.Flags().StringP("fields", "f", "1", `select only these fields. e.g., -f 1,2 or -f columnA,columnB`)
+	roundCmd.Flags().BoolP("all-fields", "a", false, "all fields, overrides -f/--fields")
+	roundCmd.Flags().BoolP("fuzzy-fields", "F", false, `use fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
+	roundCmd.Flags().IntP("decimal-width", "n", 2, "limit floats to N decimal places")
 
 }

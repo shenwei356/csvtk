@@ -37,8 +37,8 @@ var catCmd = &cobra.Command{
 	GroupID: "misc",
 
 	Use:   "cat",
-	Short: "stream file to stdout and report progress on stderr",
-	Long: `stream file to stdout and report progress on stderr
+	Short: "stream a file to stdout and report progress on stderr",
+	Long: `stream a file to stdout and report progress on stderr
 
 With -L, a final line without a newline is counted and streamed unchanged.
 The buffer size must be positive. The print frequency must be positive or -1.

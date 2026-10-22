@@ -54,7 +54,7 @@ Sort types:
   - Default: alphabetical order  : -k 1-
   - n      : numeric order       : -k 1:n
   - N      : natural order       : -k 1:N   (e.g., "a9" should be in front of "a10")
-  - d      : sort by date        : -k 1:d   (support multiple formats of date and time)
+  - d      : sort by date        : -k 1:d   (supports multiple date and time formats)
   - l      : Unicode text length : -k 1:l
   - u      : custom levels       : -k 1:u -L levels.txt
 
@@ -363,5 +363,5 @@ func init() {
 	RootCmd.AddCommand(sortCmd)
 	sortCmd.Flags().StringSliceP("keys", "k", []string{"1-"}, `keys (multiple values supported). sort type supported, "N" for natural order, "n" for number, "d" for date/time, "l" for Unicode text length, "u" for user-defined order and "r" for reverse. e.g., "-k 1", "-k 2-", "-k 3-5:nr", "-k A:lr", "-k 1:nr -k 2"`)
 	sortCmd.Flags().StringSliceP("levels", "L", []string{}, `user-defined level file (one level per line, multiple values supported). format: <field>:<level-file>.  e.g., "-k name:u -L name:level.txt"`)
-	sortCmd.Flags().BoolP("ignore-case", "i", false, "ignore-case")
+	sortCmd.Flags().BoolP("ignore-case", "i", false, "ignore case")
 }

@@ -37,7 +37,7 @@ var fixCmd = &cobra.Command{
 	Long: `fix CSV/TSV with different numbers of columns in rows
 
 How to:
-  1. First -n/--buf-rows rows are read to check the maximum number of columns.
+  1. The first -n/--buf-rows rows are read to check the maximum number of columns.
      The default value 0 means all rows will be read.
      With a positive value, only these initial rows are buffered.
   2. Buffered and remaining rows with fewer columns are padded with the value

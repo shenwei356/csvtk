@@ -39,17 +39,17 @@ import (
 // barCmd represents the bar command
 var barCmd = &cobra.Command{
 	Use:   "bar",
-	Short: "plot bar chart",
-	Long: `plot bar chart
+	Short: "plot a bar chart",
+	Long: `plot a bar chart
 
 Notes:
 
-  1. Output file can be set by flag -o/--out-file.
-  2. File format is determined by the out file suffix.
+  1. The output file can be set with flag -o/--out-file.
+  2. The file format is determined by the output file suffix.
      Supported formats: eps, jpg|jpeg, pdf, png, svg, and tif|tiff
-  3. If flag -o/--out-file not set (default), image is written to stdout,
-     you can display the image by pipping to "display" command of Imagemagic
-     or just redirect to file.
+  3. If flag -o/--out-file is not set (the default), the image is written to stdout.
+     You can display the image by piping it to the "display" command from ImageMagick
+     or redirect it to a file.
   4. With --group-field, categories are aligned across groups in first-seen
      order. Missing categories leave gaps. Each group/category pair must be unique.
 

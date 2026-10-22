@@ -38,36 +38,36 @@ Version: %s
 
 Author: Wei Shen <shenwei356@gmail.com>
 
-Documents  : http://shenwei356.github.io/csvtk
-Source code: https://github.com/shenwei356/csvtk
+Documentation: http://shenwei356.github.io/csvtk
+Source code  : https://github.com/shenwei356/csvtk
 
 Attention:
 
-  1. By default, csvtk assumes input files have header row, if not, switch flag "-H" on.
-  2. By default, csvtk handles CSV files, use flag "-t" for tab-delimited files.
+  1. By default, csvtk assumes input files have a header row. If not, enable flag "-H".
+  2. By default, csvtk handles CSV files. Use flag "-t" for tab-delimited files.
   3. Column names should be unique.
-  4. By default, lines starting with "#" will be ignored, if the header row
-     starts with "#", please assign flag "-C" another rare symbol, e.g. '$'.
-  5. Do not mix use field (column) numbers and names to specify columns to operate.
-  6. The CSV parser requires all the lines have same numbers of fields/columns.
-     Even lines with spaces will cause error.
+  4. By default, lines starting with "#" are ignored. If the header row
+     starts with "#", set flag "-C" to another uncommon symbol, e.g. '$'.
+  5. Do not mix field (column) numbers and names when specifying columns to operate on.
+  6. The CSV parser requires all lines to have the same number of fields/columns.
+     Even lines containing only spaces will cause an error.
      Use '-I/--ignore-illegal-row' to skip these lines if necessary.
      You can also use "csvtk fix" to fix files with different numbers of columns in rows.
   7. If double-quotes exist in fields not enclosed with double-quotes, e.g.,
          x,a "b" c,1
-     It would report error:
+     It would report an error:
          bare " in non-quoted-field.
      Please switch on the flag "-l" or use "csvtk fix-quotes" to fix it.
   8. If some fields have a double-quote only at the beginning or end, e.g.,
          x,d "e","a" b c,1
-     It would report error:
+     It would report an error:
          extraneous or missing " in quoted-field
      Please use "csvtk fix-quotes" to fix it, and use "csvtk del-quotes" to reset to the
      original format as needed.
-  9. csvtk writes gzip files very fast, much faster than the multi-threaded pigz,
+  9. csvtk writes gzip files very fast, much faster than the multi-threaded pigz;
      therefore there's no need to pipe the result to gzip/pigz.
      csvtk also supports reading and writing xz (.xz), zstd (.zst) and Bzip2 (.bz2) formats.
- 10. Less than half of the subcommands support >1 file.
+ 10. Fewer than half of the subcommands support >1 file.
      With -X, listed files are appended to explicitly supplied inputs, including "-".
  11. Output paths must differ from input files, including symbolic and hard links.
  12. Output write and compression errors cause a nonzero exit status.
@@ -118,11 +118,11 @@ func init() {
 		},
 		&cobra.Group{
 			ID:    "set",
-			Title: "Commands for Set Operation:",
+			Title: "Commands for Set Operations:",
 		},
 		&cobra.Group{
 			ID:    "edit",
-			Title: "Commands for Edit:",
+			Title: "Commands for Editing:",
 		},
 		&cobra.Group{
 			ID:    "transform",
@@ -153,23 +153,23 @@ func init() {
 	RootCmd.PersistentFlags().StringP("delimiter", "d", ",", `delimiting character of the input CSV file`)
 	RootCmd.PersistentFlags().StringP("out-delimiter", "D", ",", `delimiting character of the output CSV file, e.g., -D $'\t' for tab`)
 	// RootCmd.PersistentFlags().StringP("quote-char", "q", `"`, `character used to quote strings in the input CSV file`)
-	RootCmd.PersistentFlags().StringP("comment-char", "C", `#`, "lines starting with comment-character will be ignored. "+
-		`if your header row starts with '#', please assign "-C" another rare symbol, e.g. '$'`)
+	RootCmd.PersistentFlags().StringP("comment-char", "C", `#`, "lines starting with the comment character are ignored. "+
+		`If your header row starts with '#', set "-C" to another uncommon symbol, e.g. '$'`)
 	RootCmd.PersistentFlags().BoolP("lazy-quotes", "l", false, `if given, a quote may appear in an unquoted field and a non-doubled quote may appear in a quoted field`)
 
 	RootCmd.PersistentFlags().BoolP("tabs", "t", false, `specifies that the input CSV file is delimited with tabs. Overrides "-d"`)
 	RootCmd.PersistentFlags().BoolP("out-tabs", "T", false, `specifies that the output is delimited with tabs. Overrides "-D"`)
-	RootCmd.PersistentFlags().BoolP("no-header-row", "H", false, `specifies that the input CSV file does not have header row`)
-	RootCmd.PersistentFlags().BoolP("delete-header", "U", false, `do not output header row`)
-	RootCmd.PersistentFlags().StringP("out-file", "o", "-", `out file ("-" for stdout, suffix .gz for gzipped out)`)
+	RootCmd.PersistentFlags().BoolP("no-header-row", "H", false, `specifies that the input CSV file does not have a header row`)
+	RootCmd.PersistentFlags().BoolP("delete-header", "U", false, `do not output the header row`)
+	RootCmd.PersistentFlags().StringP("out-file", "o", "-", `output file ("-" for stdout, suffix .gz for gzipped output)`)
 	RootCmd.PersistentFlags().BoolP("quote-all", "", false, `quote all output fields, even when not necessary`)
 	RootCmd.PersistentFlags().Bool("immediate-output", false, "flush output after each record or chunk")
 
-	RootCmd.PersistentFlags().BoolP("show-row-number", "Z", false, `show row number as the first column, with header row skipped`)
+	RootCmd.PersistentFlags().BoolP("show-row-number", "Z", false, `show the row number as the first column, skipping the header row`)
 
 	RootCmd.PersistentFlags().BoolP("ignore-empty-row", "E", false, `ignore empty rows`)
 	RootCmd.PersistentFlags().BoolP("ignore-illegal-row", "I", false, `ignore illegal rows. You can also use 'csvtk fix' to fix files with different numbers of columns in rows`)
-	RootCmd.PersistentFlags().StringP("infile-list", "X", "", "file of input files list (one file per line), if given, they are appended to files from cli arguments. Note that less than half of the subcommands support >1 file.")
+	RootCmd.PersistentFlags().StringP("infile-list", "X", "", "file listing input files (one file per line); these are appended to files from CLI arguments. Note that fewer than half of the subcommands support >1 file.")
 
 	RootCmd.PersistentFlags().BoolP("version", "V", false, "print version information")
 

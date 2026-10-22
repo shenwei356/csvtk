@@ -128,7 +128,7 @@ var sampleCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(sampleCmd)
 
-	sampleCmd.Flags().Int64P("rand-seed", "s", 11, "rand seed")
+	sampleCmd.Flags().Int64P("rand-seed", "s", 11, "random seed")
 	sampleCmd.Flags().Float64P("proportion", "p", 0, "sample by proportion")
-	sampleCmd.Flags().BoolP("line-number", "n", false, `print line number as the first column ("row")`)
+	sampleCmd.Flags().BoolP("line-number", "n", false, `print the line number as the first column ("row")`)
 }

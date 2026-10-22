@@ -1,8 +1,8 @@
 # Download
 
-`csvtk` is implemented in [Go](https://golang.org/) programming language,
- executable binary files **for most popular operating system** are freely available
-  in [release](https://github.com/shenwei356/csvtk/releases) page.
+`csvtk` is implemented in the [Go](https://golang.org/) programming language.
+Executable binary files **for most popular operating systems** are freely available
+on the [release](https://github.com/shenwei356/csvtk/releases) page.
 
 ## Current Version
 
@@ -17,10 +17,10 @@
         - **`csvtk matrix2long`: convert a matrix to the long format**.
         - **`csvtk paste`: paste CSV/TSV files by columns**. [#139](https://github.com/shenwei356/csvtk/issues/139)
     - `csvtk filter/filter2/mutate2/mutate3/sort/summary/round`:
-        - fix wrongly converting `.` to the number zero. [#359](https://github.com/shenwei356/csvtk/issues/359)
+        - fix incorrectly converting `.` to the number zero. [#359](https://github.com/shenwei356/csvtk/issues/359)
     - `csvtk cut`:
         - support `-Z/--show-row-number`. [#360](https://github.com/shenwei356/csvtk/issues/360)
-        - if there's only one input file, it will be directly outputted.
+        - if there's only one input file, it will be output directly.
     - `csvtk corr`:
         - write correlations to stdout or `-o` by default; with `--pass`, keep forwarding input to output and writing correlations to stderr. [#370](https://github.com/shenwei356/csvtk/issues/370)
     - `csvtk sort`:
@@ -70,35 +70,35 @@ OpenBSD|arm64 |[csvtk_openbsd_arm64.exe.tar.gz](https://github.com/shenwei356/cs
 
 **Notes**
 
-- run `csvtk version` to check update !!!
-- run `csvtk genautocomplete` to update Bash completion !!!
+- run `csvtk version` to check for updates.
+- run `csvtk genautocomplete` to update Bash completion.
 
 
 ## Installation
 
 [Download Page](https://github.com/shenwei356/csvtk/releases)
 
-`csvtk` is implemented in [Go](https://golang.org/) programming language,
- executable binary files **for most popular operating systems** are freely available
-  in [release](https://github.com/shenwei356/csvtk/releases) page.
+`csvtk` is implemented in the [Go](https://golang.org/) programming language.
+Executable binary files **for most popular operating systems** are freely available
+on the [release](https://github.com/shenwei356/csvtk/releases) page.
 
 #### Method 1: Download binaries (latest stable/dev version)
 
-Just [download](https://github.com/shenwei356/csvtk/releases) compressed
-executable file of your operating system,
-and decompress it with `tar -zxvf *.tar.gz` command or other tools.
-And then:
+[Download](https://github.com/shenwei356/csvtk/releases) the compressed
+executable file for your operating system,
+and decompress it with `tar -zxvf *.tar.gz` or another tool.
+Then:
 
 1. **For Linux-like systems**
-    1. If you have root privilege simply copy it to `/usr/local/bin`:
+    1. If you have root privileges, simply copy it to `/usr/local/bin`:
 
             sudo cp csvtk /usr/local/bin/
 
-    1. Or copy to anywhere in the environment variable `PATH`:
+    1. Or copy it to a directory listed in the environment variable `PATH`:
 
             mkdir -p $HOME/bin/; cp csvtk $HOME/bin/
 
-1. **For windows**, just copy `csvtk.exe` to `C:\WINDOWS\system32`.
+1. **For Windows**, just copy `csvtk.exe` to `C:\WINDOWS\system32`.
 
 #### Method 2: Install via conda or pixi (latest stable version)  [![Anaconda Cloud](https://anaconda.org/conda-forge/csvtk/badges/version.svg)](https://anaconda.org/conda-forge/csvtk)
 
@@ -113,11 +113,11 @@ And then:
     
     pixi global install csvtk
 
-#### Method 3: Install via homebrew
+#### Method 3: Install via Homebrew
 
     brew install csvtk
 
-#### Method 4: For ArchLinux AUR users (may be not the latest)
+#### Method 4: For ArchLinux AUR users (may not be the latest)
 
     yaourt -S csvtk
 
@@ -182,7 +182,7 @@ fish:
 - [csvtk v0.37.0](https://github.com/shenwei356/csvtk/releases/tag/v0.37.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.37.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.37.0)
     - `csvtk`:
-        - add support of reading and writing LZ4 compression format. [#353](https://github.com/shenwei356/csvtk/issues/353)
+        - add support for reading and writing the LZ4 compression format. [#353](https://github.com/shenwei356/csvtk/issues/353)
     - `csvtk cut`:
         - allow setting `-f/--fields` multiple times, useful for selecting a long column list.
     - `csvtk csv2jon`:
@@ -197,23 +197,23 @@ fish:
     - `csvtk plot line/hist/bar/box`
         - forgot to scale the font size of legend keys.
     - `csvtk pretty`
-        - fix formatting unicode text.
+        - fix formatting Unicode text.
 - [csvtk v0.35.0](https://github.com/shenwei356/csvtk/releases/tag/v0.35.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.35.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.35.0)
     - `csvtk`:
         - do not support i386 architecture anymore.
     - `csvtk sort`:
-        - **sort on all columns by default**, with a similar way with GNU sort (but the results might be different).  [#337](https://github.com/shenwei356/csvtk/issues/337)
+        - **sort on all columns by default**, in a similar way to GNU sort (but the results might be different).  [#337](https://github.com/shenwei356/csvtk/issues/337)
         - **support field ranges**, e.g., `-k 1-3:N`.
         - fix sort inconsistency for rows with the same key(s). [#337](https://github.com/shenwei356/csvtk/issues/337)
     - `csvtk mutate2/filter2`:
-        - use a new fork of expression evaluation package. [#172](https://github.com/shenwei356/csvtk/issues/172)
+        - use a new fork of the expression evaluation package. [#172](https://github.com/shenwei356/csvtk/issues/172)
     - `csvtk filter2`:
         - fix the panic when using `-Z`. [#332](https://github.com/shenwei356/csvtk/issues/332)
     - `csvtk plot bar`:
-        - fix labels orders [#335](https://github.com/shenwei356/csvtk/issues/335), [#339](https://github.com/shenwei356/csvtk/issues/339).
+        - fix label order [#335](https://github.com/shenwei356/csvtk/issues/335), [#339](https://github.com/shenwei356/csvtk/issues/339).
     - `csvtk summary`:
-        - support field range, e.g., `-f 2-5:sum` [#143](https://github.com/shenwei356/csvtk/issues/143)
+        - support field ranges, e.g., `-f 2-5:sum` [#143](https://github.com/shenwei356/csvtk/issues/143)
 - [csvtk v0.34.0](https://github.com/shenwei356/csvtk/releases/tag/v0.34.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.34.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.34.0)
     - new command `csvtk plot bar`. Contributed by @lovromazgon [#323](https://github.com/shenwei356/csvtk/pull/323)
@@ -223,16 +223,16 @@ fish:
         - fix `-b`. [#156](https://github.com/shenwei356/csvtk/issues/156)
         - fix `-i`. [#317](https://github.com/shenwei356/csvtk/issues/317)
     - `csvtk plot box`:
-        - fix `--horiz` does not swap axes labels. [#314](https://github.com/shenwei356/csvtk/issues/314)
+        - fix `--horiz` not swapping axis labels. [#314](https://github.com/shenwei356/csvtk/issues/314)
     - `csvtk plot line`:
-        - add a new flag `--data-field-x-nominal` to plot line with sortable nominal X axis values, such as date.
+        - add a new flag `--data-field-x-nominal` to plot lines with sortable nominal X axis values, such as dates.
         [#308](https://github.com/shenwei356/csvtk/pull/308) by @lovromazgon
     - `csvtk plot`:
-        - add two new flags `--hide-x-labs` and `--hide-y-labs`, for hiding X/Y axis, ticks, and tick labels. [#326](https://github.com/shenwei356/csvtk/issues/326)
+        - add two new flags `--hide-x-labs` and `--hide-y-labs`, for hiding the X/Y axes, ticks, and tick labels. [#326](https://github.com/shenwei356/csvtk/issues/326)
     - `csvtk fix`:
         - add a new flag `--na` to set content to fill. [#316](https://github.com/shenwei356/csvtk/issues/316)
     - `csvtk replace`:
-        - add new replacements symbol/placeholder for group-specific numbering: `{gnr}`, `{enr}`, `{rnr}`. [#322](https://github.com/shenwei356/csvtk/issues/322)
+        - add new replacement symbols/placeholders for group-specific numbering: `{gnr}`, `{enr}`, `{rnr}`. [#322](https://github.com/shenwei356/csvtk/issues/322)
     - `csvtk sort`:
         - add support for sorting by date/time. [#278](https://github.com/shenwei356/csvtk/issues/278)
 - [csvtk v0.33.0](https://github.com/shenwei356/csvtk/releases/tag/v0.33.0)
@@ -241,31 +241,31 @@ fish:
     - `csvtk`:
         - add a global flag `-V/--version`. [#304](https://github.com/shenwei356/csvtk/issues/304)
     - `csvtk plot box/hist/line`:
-        - adds `--x-scale-ln` and `--y-scale-ln` for natural log scaling of the X & Y axes. [#302]()https://github.com/shenwei356/csvtk/pull/302) by @xxxserxxx
+        - adds `--x-scale-ln` and `--y-scale-ln` for natural log scaling of the X & Y axes. [#302](https://github.com/shenwei356/csvtk/pull/302) by @xxxserxxx
     - `csvtk fold`:
-        - allow folding fields with no separater. [#299](https://github.com/shenwei356/csvtk/pull/299) by @fgvieira
+        - allow folding fields with no separator. [#299](https://github.com/shenwei356/csvtk/pull/299) by @fgvieira
     - `csvtk summary`:
         - numbers in scientific notation are output as is.
 - [csvtk v0.32.0](https://github.com/shenwei356/csvtk/releases/tag/v0.32.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.32.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.32.0)
     - `csvtk filter2/mutate2/mutate3`:
-        - fix a bug of mismatch between column names and values which was brought in v0.31.1. [#295](https://github.com/shenwei356/csvtk/issues/295)
+        - fix a mismatch between column names and values introduced in v0.31.1. [#295](https://github.com/shenwei356/csvtk/issues/295)
         - add some unit tests.
     - `csvtk pretty`:
         - `-w/--min-width` and `-W/--max-width` accept multiple values for setting column-specific thresholds.
-        - add a new format style `round` for round corners.
+        - add a new format style `round` for rounded corners.
 - [csvtk v0.31.1](https://github.com/shenwei356/csvtk/releases/tag/v0.31.1)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.31.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.31.1)
     - `csvtk filter2/mutate2/mutate3`:
         - **fix the slow speed**, I was stupid before. [#269](https://github.com/shenwei356/csvtk/issues/269)
     - `csvtk csv2json`:
-        - further fix values with double quotes and new line symbols. [#291](https://github.com/shenwei356/csvtk/issues/291)
+        - further fix values with double quotes and newline characters. [#291](https://github.com/shenwei356/csvtk/issues/291)
 - [csvtk v0.31.0](https://github.com/shenwei356/csvtk/releases/tag/v0.31.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.31.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.31.0)
     - new command:
         - `csvtk mutate3`: create a new column from selected fields with Go-like expressions. Contributed by @moorereason [172](https://github.com/shenwei356/csvtk/issues/172)
     - `csvtk sort/join`:
-        - faster speed and lower memory.
+        - faster speed and lower memory use.
     - `csvtk sort`:
         - do not panic for empty input. [#287](https://github.com/shenwei356/csvtk/issues/287)
     - `csvtk summary`:
@@ -274,11 +274,11 @@ fish:
         - fix `-n/--start-num`. [#286](https://github.com/shenwei356/csvtk/issues/286)
         - add flag `--nr-width`.
     - `csvtk replace`:
-        - fix implementing `{nr}`. [#286](https://github.com/shenwei356/csvtk/issues/286)
+        - fix the implementation of `{nr}`. [#286](https://github.com/shenwei356/csvtk/issues/286)
     - `csvtk csv2json`:
-        - fix values with double quotes and new line symbols.
+        - fix values with double quotes and newline characters.
     - `csvtk split`:
-        - support customize output file prefix and subdirectory from prefix of keys. [#288](https://github.com/shenwei356/csvtk/issues/288)
+        - support customizing the output file prefix and subdirectory using key prefixes. [#288](https://github.com/shenwei356/csvtk/issues/288)
     - `csvtk spread`:
         - add a new alias "scatter" to "spread". [#265](https://github.com/shenwei356/csvtk/issues/265)
     - `csvtk grep`:
@@ -286,9 +286,9 @@ fish:
     - `csvtk fix-quotes`:
         - new flag `-b, --buffer-size`.
     - `csvtk plot`:
-        - new flag `--scale` for scaling the image width/height, tick, axes, line/point and font sizes proportionally, adviced by @tseemann.
+        - new flag `--scale` for scaling the image width/height, tick, axes, line/point and font sizes proportionally, suggested by @tseemann.
     - `csvtk plot line`:
-        - only add legend for more than one group. [#279](https://github.com/shenwei356/csvtk/issues/279)
+        - only add a legend for more than one group. [#279](https://github.com/shenwei356/csvtk/issues/279)
         - sort points by X for plotting lines. [#280](https://github.com/shenwei356/csvtk/issues/280)
     - `csvtk hist`:
         - new flags: `--line-width`.
@@ -298,14 +298,14 @@ fish:
 - [csvtk v0.30.0](https://github.com/shenwei356/csvtk/releases/tag/v0.30.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.30.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.30.0)
   - `csvtk`:
-      - grouping subcommands in help message.
+      - group subcommands in the help message.
       - add a new global flag `--quiet`. [#261](https://github.com/shenwei356/csvtk/issues/261)
-      - add a new global flag `-U, --delete-header` for disable outputing the header row. Supported commands: concat, csv2tab/tab2csv, csv2xlsx/xlsx2csv, cut, filter, filter2, freq, fold/unfold, gather, fmtdate, grep, head, join, mutate, mutate2, replace, round, sample. [#258](https://github.com/shenwei356/csvtk/issues/258)
+      - add a new global flag `-U, --delete-header` to disable output of the header row. Supported commands: concat, csv2tab/tab2csv, csv2xlsx/xlsx2csv, cut, filter, filter2, freq, fold/unfold, gather, fmtdate, grep, head, join, mutate, mutate2, replace, round, sample. [#258](https://github.com/shenwei356/csvtk/issues/258)
       - support more commands with `-Z/--show-row-number`: head.
   - `csvtk dim`:
-      - fix duplicated rows for multiple input files, this bug was introduced in v0.27.0.
+      - fix duplicated rows for multiple input files; this bug was introduced in v0.27.0.
   - `csvtk concat`:
-      - fix panic when no data found. [#259](https://github.com/shenwei356/csvtk/issues/259)
+      - fix panic when no data is found. [#259](https://github.com/shenwei356/csvtk/issues/259)
   - `csvtk spread`:
       - fix flag checking of `-k` and `-v`.
   - `csvtk sort`:
@@ -315,7 +315,7 @@ fish:
   - `csvtk xls2csv`:
       - output raw data. [#262](https://github.com/shenwei356/csvtk/issues/262)
   - `csvtk pretty`:
-      - change the default value of `-n/--buf-rows` from 128 to 1024, and 0 for loading all data.
+      - change the default value of `-n/--buf-rows` from 128 to 1024; use 0 to load all data.
   - `csvtk join`:
       - new flag `-s/--suffix` for adding suffixes to colnames from each file. [#263](https://github.com/shenwei356/csvtk/issues/263)
 - [csvtk v0.29.0](https://github.com/shenwei356/csvtk/releases/tag/v0.29.0)
@@ -326,7 +326,7 @@ fish:
   - `csvtk del-header`:
       - fix deleting headers of 2nd and later files. [#257](https://github.com/shenwei356/csvtk/issues/257)
   - `csvtk concat`:
-      - fix panic when no data found.
+      - fix panic when no data is found.
   - `csvtk sort`:
       - support column names containing colons. [#254](https://github.com/shenwei356/csvtk/issues/254)
   - `csvtk filter2`:
@@ -347,7 +347,7 @@ fish:
   - `csvtk join`:
       - a new flag `-P/--prefix-duplicates`: add filenames as colname prefixes only for duplicated colnames. [#246](https://github.com/shenwei356/csvtk/issues/246)
   - `csvtk mutate2`:
-      - fix changing the order of the header row, the code was accidentally missing during code refactoring in v0.27.0. [#252](https://github.com/shenwei356/csvtk/issues/252)
+      - fix changing the order of the header row; the code was accidentally omitted during code refactoring in v0.27.0. [#252](https://github.com/shenwei356/csvtk/issues/252)
   - `csvtk xlsx2csv`:
       - fix `open /tmp/excelize-: no such file or directory` error for big `.xlsx` files. [#251](https://github.com/shenwei356/csvtk/issues/251)
   - `csvtk comb`:
@@ -355,8 +355,8 @@ fish:
 - [csvtk v0.27.2](https://github.com/shenwei356/csvtk/releases/tag/v0.27.2)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.27.2/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.27.2)
   - `csvtk pretty`:
-      - fix the bug of empty first row with `-H/--no-header-row`, introduced in v0.27.0.
-      - new style `3line` for three-line table.
+      - fix the bug of an empty first row with `-H/--no-header-row`, introduced in v0.27.0.
+      - new style `3line` for a three-line table.
   - `csvtk csv2xlsx`:
       - binaries compiled with go1.21 would result in a broken xlsx file. [#243](https://github.com/shenwei356/csvtk/issues/243)
   - `csvtk splitxlsx`:
@@ -372,7 +372,7 @@ fish:
       - **most commands support open column range syntax**, e.g.,  `csvtk grep -f 2-`. [#120](https://github.com/shenwei356/csvtk/issues/120)
       - **only selected column names are not allowed to be duplicated in the input data**: box, corr, filter, filter2, fold, freq, gather, historysort, inter, join, line, mutate, mutate2, rename, replace, sep, split, summary, unfold, uniq, watch. Other commands do not have the restriction. [#235](https://github.com/shenwei356/csvtk/issues/235)
       - add a new global flag `-Z/--show-row-number`, supported commands: cut, csv2tab, csv2xlsx, tab2csv, pretty.
-      - the colum name of row number changes from "n" to "row":  csv2xlsx, csv2tab, cut, filter, filter2, grep, pretty, sample, tab2csv.
+      - the column name for the row number changes from "n" to "row":  csv2xlsx, csv2tab, cut, filter, filter2, grep, pretty, sample, tab2csv.
   - **new command**:
       - **`csvtk spread`: spread a key-value pair across multiple columns, like tidyr::spread/pivot_wider**.
        [#91](https://github.com/shenwei356/csvtk/issues/91), [#236](https://github.com/shenwei356/csvtk/issues/236), [#239](https://github.com/shenwei356/csvtk/issues/239)
@@ -384,23 +384,23 @@ fish:
   - `csvtk pretty`:
       - **allow align-center and align-right for specific columns**. [#240](https://github.com/shenwei356/csvtk/issues/240)
   - `csvtk round`:
-      - fix bug of failing to round scientific notation with value small than one, e.g., `7.1E-1`.
+      - fix bug of failing to round scientific notation with a value smaller than one, e.g., `7.1E-1`.
   - `csvtk summary`:
       - fix duplicated columns.
-      - fix result error when multiple stats applied to the same column.
+      - fix result error when multiple stats are applied to the same column.
   - `csvtk corr/watch`:
       - rewrite and fix bug, support choosing fields with column names.
 - [csvtk v0.26.0](https://github.com/shenwei356/csvtk/releases/tag/v0.26.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.26.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.26.0)
   - `csvtk`:
-      - **near all commands skip empty files now**. [#204](https://github.com/shenwei356/csvtk/issues/204)
+      - **nearly all commands skip empty files now**. [#204](https://github.com/shenwei356/csvtk/issues/204)
       - the global flag `--infile-list` accepts stdin "-". [#210](https://github.com/shenwei356/csvtk/issues/210)
   - new command `csvtk fix`: **fix CSV/TSV with different numbers of columns in rows**. [#226](https://github.com/shenwei356/csvtk/issues/226)
   - `csvtk pretty`: **rewrite to support wrapping cells**. [#206](https://github.com/shenwei356/csvtk/issues/206) [#209](https://github.com/shenwei356/csvtk/issues/209)  [#228](https://github.com/shenwei356/csvtk/issues/228)
   - `csvtk cut/fmtdate/freq/grep/rename/rename2/replace/round`: allow duplicated column names.
-  - `csvtk csv2xlsx`: optionally stores numbers as float. [#217](https://github.com/shenwei356/csvtk/issues/217)
-  - `csvtk xlsx2csv`: fix bug where `xlsx2csv` treats small number (padj < 1e-25) as 0. It's solved by updating the excelize package. [#261](https://github.com/shenwei356/csvtk/issues/201)
-  - `csvtk join`: a new flag for adding filename as column name prefix. by @tetedange13 [#202](https://github.com/shenwei356/csvtk/issues/202)
+  - `csvtk csv2xlsx`: optionally store numbers as floats. [#217](https://github.com/shenwei356/csvtk/issues/217)
+  - `csvtk xlsx2csv`: fix bug where `xlsx2csv` treats small numbers (padj < 1e-25) as 0. It's solved by updating the excelize package. [#261](https://github.com/shenwei356/csvtk/issues/201)
+  - `csvtk join`: a new flag for adding a filename as a column name prefix. by @tetedange13 [#202](https://github.com/shenwei356/csvtk/issues/202)
   - `csvtk mutate2`: fix wrongly treating strings like `E10` as numbers in scientific notation. [#219](https://github.com/shenwei356/csvtk/issues/219)
   - `csvtk sep`: fix the logic. [#218](https://github.com/shenwei356/csvtk/issues/218)
   - `csvtk space2tab`: fix "bufio.Scanner: token too long". [#231](https://github.com/shenwei356/csvtk/issues/231)
@@ -409,10 +409,10 @@ fish:
     - `csvtk`: report empty files.
     - `csvtk join`: fix loading file with no records.
     - `csvtk filter2/muate2`:
-        - support variable format of `${var}` with special charactors including commas, spaces, and parentheses, e.g., `${a,b}`, `${a b}`, or `${a (b)}`. [#186](https://github.com/shenwei356/csvtk/issues/186)
-    - `csvtk sort`: fix checking non-existed fileds.
+        - support variable format of `${var}` with special characters including commas, spaces, and parentheses, e.g., `${a,b}`, `${a b}`, or `${a (b)}`. [#186](https://github.com/shenwei356/csvtk/issues/186)
+    - `csvtk sort`: fix checking nonexistent fields.
     - `csvtk plot box/hist/line`: new flag `--skip-na` for skipping missing data. [#188](https://github.com/shenwei356/csvtk/issues/188)
-    - `csvtk csv2xlsx`: stores number as float. [#192](https://github.com/shenwei356/csvtk/issues/192)
+    - `csvtk csv2xlsx`: store numbers as floats. [#192](https://github.com/shenwei356/csvtk/issues/192)
     - `csvtk summary`: new functions `argmin`  and `argmax`. [#181](https://github.com/shenwei356/csvtk/issues/181)
 - [csvtk v0.24.0](https://github.com/shenwei356/csvtk/releases/tag/v0.24.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.24.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.24.0)
@@ -422,10 +422,10 @@ fish:
           - use the same option `-w/--decimal-width` to limit floats to N decimal points.
     - new command `csvtk fmtdate`: format date of selected fields. [#159](https://github.com/shenwei356/csvtk/issues/159)
     - `csvtk grep`: fix bug for searching with `-r -p .`.
-    - `csvtk csv2rst`: fix bug for data containing unicode. [#137](https://github.com/shenwei356/csvtk/issues/137)
+    - `csvtk csv2rst`: fix bug for data containing Unicode. [#137](https://github.com/shenwei356/csvtk/issues/137)
     - `csvtk filter2`: fix bug for date expression. [#146](https://github.com/shenwei356/csvtk/issues/146)
     - `csvtk mutate2/filter2`: 
-        - change the way of rexpression evaluation.
+        - change how expressions are evaluated.
         - add custom functions: `len()`. [#153](https://github.com/shenwei356/csvtk/issues/153)
         - **fix bug when using two or more columns with common prefixes in column names**. [#173](https://github.com/shenwei356/csvtk/issues/173)
         - fix value with single or double quotes. [#174](https://github.com/shenwei356/csvtk/issues/174)
@@ -435,7 +435,7 @@ fish:
     - `csvtk join`: new flag `-n/--ignore-null`. [#163](https://github.com/shenwei356/csvtk/issues/163)
 - [csvtk v0.23.0](https://github.com/shenwei356/csvtk/releases/tag/v0.23.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.23.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.23.0)
-    - new comand: `csvtk csv2rst` for converting CSV to reStructuredText format. [#137](https://github.com/shenwei356/csvtk/issues/137)
+    - new command: `csvtk csv2rst` for converting CSV to reStructuredText format. [#137](https://github.com/shenwei356/csvtk/issues/137)
     - `csvtk pretty`: add header separator line. [#123](https://github.com/shenwei356/csvtk/issues/123)
     - `csvtk mutate2/summary`: fix message and doc. Thanks @VladimirAlexiev  [#127](https://github.com/shenwei356/csvtk/issues/127)
     - `csvtk mutate2`: fix null coalescence: ??. [#129](https://github.com/shenwei356/csvtk/issues/129)
@@ -446,18 +446,18 @@ fish:
 - [csvtk v0.22.0](https://github.com/shenwei356/csvtk/releases/tag/v0.22.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.22.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.22.0)
     - `csvtk`:
-        - **global flag `-t` does not overide `-D` anymore**. [#114](https://github.com/shenwei356/csvtk/issues/114)
+        - **global flag `-t` does not override `-D` anymore**. [#114](https://github.com/shenwei356/csvtk/issues/114)
         - **If the executable/symlink name is `tsvtk` the `-t/--tabs` option for tab input is set**. Thanks @bsipos. [#117](https://github.com/shenwei356/csvtk/pull/117)
     - new command: `csvtk csv2xlsx` for converting CSV/TSV file(s) to a single `.xlsx` file.
     - new command: `csvtk unfold` for unfolding multiple values in cells of a field. [#103](https://github.com/shenwei356/csvtk/issues/103)
     - rename `csvtk collapse` to `csvtk fold`, for folding multiple values of a field into cells of groups.
     - `csvtk cut`: **support range format `2-` to choose 2nd column to the end**. [#106](https://github.com/shenwei356/csvtk/issues/106)
-    - `csvtk round`: fix bug of failing to round scientific notation with value small than one, e.g., `7.1E-1`.
+    - `csvtk round`: fix bug of failing to round scientific notation with a value smaller than one, e.g., `7.1E-1`.
 - [csvtk v0.21.0](https://github.com/shenwei356/csvtk/releases/tag/v0.21.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.21.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.21.0)
     - new command: `csvtk nrow/ncol` for printing number of rows or columns.
     - new command: `round` to round float to n decimal places. [#112](https://github.com/shenwei356/csvtk/issues/112)
-    - `csvtk headers`: file name and column index is optional outputted with new flag `-v/--verbose`.
+    - `csvtk headers`: the file name and column index are optionally output with the new flag `-v/--verbose`.
     - `csvtk dim`: new flags `--tabluar`, `--cols`, `--rows`, `-n/--no-files`.
     - `csvtk dim/ncol/nrow`: can handle empty files now. [#108](https://github.com/shenwei356/csvtk/issues/108)
     - `csvtk csv2json` [#104](https://github.com/shenwei356/csvtk/issues/104):
@@ -472,13 +472,13 @@ fish:
     - new command `csvtk comb`: compute combinations of items at every row.
     - new command `csvtk sep`: separate column into multiple columns. [#96](https://github.com/shenwei356/csvtk/issues/96)
     - `csvtk`:
-        - list lines' number of illegal (`-I`) and empty (`-E`) rows. [#97](https://github.com/shenwei356/csvtk/issues/97)
-        - new flag `--infile-list` for giving file of input files list (one file per line), if given, they are appended to files from cli arguments
+        - list line numbers of illegal (`-I`) and empty (`-E`) rows. [#97](https://github.com/shenwei356/csvtk/issues/97)
+        - new flag `--infile-list` for providing a list of input files (one file per line); these are appended to files from CLI arguments
     - `csvtk join`:
         - reenable flag `-i/--ignore-case`. [#99](https://github.com/shenwei356/csvtk/issues/99)
         - **outer join is supported**. [#23](https://github.com/shenwei356/csvtk/issues/23)
-        - new flag `-L/--left-join`: left join, equals to -k/--keep-unmatched, exclusive with `--outer-join`
-        - new flag `-O/--outer-join`: outer join, exclusive with --left-join
+        - new flag `-L/--left-join`: left join, equivalent to -k/--keep-unmatched, mutually exclusive with `--outer-join`
+        - new flag `-O/--outer-join`: outer join, mutually exclusive with --left-join
         - rename flag `--fill` to `--na`.
     - `csvtk filter2`: fix bug when column names start with digits, e.g., `1000g2015aug`. Thank @VorontsovIE ([#44](https://github.com/shenwei356/csvtk/issues/44))
     - `csvtk concat`: allow one input file. [#98](https://github.com/shenwei356/csvtk/issues/98)
@@ -489,14 +489,14 @@ fish:
         - fix checking file existence.
         - show friendly error message when giving empty field like `csvtk cut -f a, b`.
     - `csvtk summary`: fix err of q1 and q3. [#90](https://github.com/shenwei356/csvtk/issues/90)
-    - `csvtk version`: making checking update optional.
+    - `csvtk version`: make checking for updates optional.
 - [csvtk v0.19.0](https://github.com/shenwei356/csvtk/releases/tag/v0.19.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.19.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.19.0)
     - [new commands by @bsipos](https://github.com/shenwei356/csvtk/pull/84):
         - `watch`: online monitoring and histogram of selected field.
         - `corr`: calculate Pearson correlation between numeric columns.
         - `cat`: stream file and report progress.
-    - `csvtk split`: fix bug of repeatedly output header line when number of output files exceed value of `--buf-groups`. [#83](https://github.com/shenwei356/csvtk/issues/83)
+    - `csvtk split`: fix bug of repeatedly outputting the header line when the number of output files exceeds the value of `--buf-groups`. [#83](https://github.com/shenwei356/csvtk/issues/83)
     - `csvtk plot hist`: new option `--percentiles` to add percentiles to histogram x label. [#88](https://github.com/shenwei356/csvtk/pull/88)
 - [csvtk v0.18.2](https://github.com/shenwei356/csvtk/releases/tag/v0.18.2)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.18.2/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.18.2)
@@ -505,24 +505,24 @@ fish:
     - `csvtk splitxlsx`: changing shorthand flag of `--sheet-index` from `-I` to `-N`.
 - [csvtk v0.18.1](https://github.com/shenwei356/csvtk/releases/tag/v0.18.1)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.18.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.18.1)
-    - `csvtk sort`: fix mutiple-key-sort containing natural order sorting. [#79](https://github.com/shenwei356/csvtk/issues/79)
+    - `csvtk sort`: fix multi-key sorting that includes natural order. [#79](https://github.com/shenwei356/csvtk/issues/79)
     - `csvtk xlsx2csv`: reacts to global flags `-t`, `-T`, `-D` and `-E`. [#78](https://github.com/shenwei356/csvtk/issues/78)
 - [csvtk v0.18.0](https://github.com/shenwei356/csvtk/releases/tag/v0.18.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.18.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.18.0)
     - `csvtk`: add new flag `--ignore-illegal-row` to skip illegal rows. [#72](https://github.com/shenwei356/csvtk/issues/72)
     - `csvtk summary`: add more textual/numeric operations. [#64](https://github.com/shenwei356/csvtk/issues/64)
     - `csvtk sort`: fix bug for sorting by columns with empty values. [#70](https://github.com/shenwei356/csvtk/issues/70)
-    - `csvtk grep`: add new flag `--delete-matched` to delete a pattern right after being matched, this keeps the firstly matched data and speedups when using regular expressions. [#77](https://github.com/shenwei356/csvtk/issues/77)
+    - `csvtk grep`: add new flag `--delete-matched` to delete a pattern right after it is matched; this keeps the first matching data and speeds up searches when using regular expressions. [#77](https://github.com/shenwei356/csvtk/issues/77)
 - [csvtk v0.17.0](https://github.com/shenwei356/csvtk/releases/tag/v0.17.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.17.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.17.0)
-    - new command: `csvtk add-header` and `csvtk del-header` for adding/deleting column names. [#62]
+    - new commands: `csvtk add-header` and `csvtk del-header` for adding/deleting column names. [#62]
 - [csvtk v0.16.0](https://github.com/shenwei356/csvtk/releases/tag/v0.16.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.16.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.16.0)
     - new command: `csvtk csv2json`: convert CSV to JSON format.
-    - remove comand: `csvtk stats2`.
-    - new command `csvtk summary`: summary statistics of selected digital fields (groupby group fields), [usage and examples](https://bioinf.shenwei.me/csvtk/usage/#stats). [#59](https://github.com/shenwei356/csvtk/issues/59)
-    - `csvtk replace`: add flag `--nr-width`: minimum width for {nr} in flag -r/--replacement. e.g., formating "1" to "001" by `--nr-width 3` (default 1)
-    - `csvtk rename2/replace`: add flag `-A, --kv-file-all-left-columns-as-value`, for treating all columns except 1th one as value for kv-file with more than 2 columns. [#56](https://github.com/shenwei356/csvtk/issues/56)
+    - remove command: `csvtk stats2`.
+    - new command `csvtk summary`: summary statistics of selected numeric fields (grouped by group fields), [usage and examples](https://bioinf.shenwei.me/csvtk/usage/#stats). [#59](https://github.com/shenwei356/csvtk/issues/59)
+    - `csvtk replace`: add flag `--nr-width`: minimum width for {nr} in flag -r/--replacement. e.g., formatting "1" to "001" by `--nr-width 3` (default 1)
+    - `csvtk rename2/replace`: add flag `-A, --kv-file-all-left-columns-as-value`, for treating all columns except the 1st as the value for a kv-file with more than 2 columns. [#56](https://github.com/shenwei356/csvtk/issues/56)
 - [csvtk v0.15.0](https://github.com/shenwei356/csvtk/releases/tag/v0.15.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.15.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.15.0)
     - `csvtk`: add global flag `-E/--ignore-empty-row` to skip empty row. [#50](https://github.com/shenwei356/csvtk/issues/50)
@@ -531,10 +531,10 @@ fish:
 - [csvtk v0.14.0](https://github.com/shenwei356/csvtk/releases/tag/v0.14.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.14.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.14.0)
     - `csvtk`: **supporting multi-line fields by replacing [multicorecsv](https://github.com/mzimmerman/multicorecsv ) with standard library [encoding/csv](https://golang.org/pkg/encoding/csv/),
-    while losing [support for metaline](https://github.com/shenwei356/csvtk/issues/13) which was supported since v0.7.0**. It also gain a little speedup.
+    while losing [support for metaline](https://github.com/shenwei356/csvtk/issues/13) which was supported since v0.7.0**. It also gains a little speedup.
     - `csvtk sample`: add flag `-n/--line-number` to print line number as the first column ("n")
     - `csvtk filter2`: fix bug when column names start with digits, e.g., `1000g2015aug` ([#44](https://github.com/shenwei356/csvtk/issues/44))
-    - `csvtk rename2`: add support for similar repalecement symbols `{kv} and {nr}` in `csvtk replace`
+    - `csvtk rename2`: add support for similar replacement symbols `{kv} and {nr}` in `csvtk replace`
 - [csvtk v0.13.0](https://github.com/shenwei356/csvtk/releases/tag/v0.13.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.13.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.13.0)
     - new command `concat` for concatenating CSV/TSV files by rows [#38](https://github.com/shenwei356/csvtk/issues/38)
@@ -546,10 +546,10 @@ fish:
 - [csvtk v0.12.0](https://github.com/shenwei356/csvtk/releases/tag/v0.12.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.12.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.12.0)
     - new command `collapse`: collapsing one field with selected fields as keys
-    - `freq`: keeping orignal order of keys by default
+    - `freq`: keeping original order of keys by default
     - `split`:
         - performance improvement
-        - add option `-G/--out-gzip` for forcing output gzipped file
+        - add option `-G/--out-gzip` to force gzipped output
 - [csvtk v0.11.0](https://github.com/shenwei356/csvtk/releases/tag/v0.11.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.11.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.11.0)
     - add command `split` to split CSV/TSV into multiple files according to column values
@@ -576,19 +576,19 @@ fish:
     `rename`, `rename2`, `replace`, `stats2`, `uniq`.
     - update help message of flag `-F/--fuzzy-fields`.
     - update help message of global flag `-t`, which overrides both `-d` and `-D`.
-      If you want other delimiter for tabular input, use `-t $'\t' -D "delimiter"`.
+      If you want another delimiter for tabular input, use `-t $'\t' -D "delimiter"`.
 - [csvtk v0.7.1](https://github.com/shenwei356/csvtk/releases/tag/v0.7.1)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.7.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.7.1)
     - `csvtk plot box` and `csvtk plot line`: fix bugs for special cases of input
     - compile with go1.8.1
 - [csvtk v0.7.0](https://github.com/shenwei356/csvtk/releases/tag/v0.7.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.7.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.7.0)
-    - fig bug of "stricter field checking" in v0.6.0 and v0.6.1 when using flag `-F/--fuzzy-fields`
+    - fix bug of "stricter field checking" in v0.6.0 and v0.6.1 when using flag `-F/--fuzzy-fields`
     - `csvtk pretty` and `csvtk csv2md`: add attention that
-      these commands treat the first row as header line and require them to be unique.
+      these commands treat the first row as a header line and require column names to be unique.
     - `csvtk stat` renamed to `csvtk stats`, old name is still available as an alias.
     - `csvtk stat2` renamed to `csvtk stats2`, old name is still available as an alias.
-    - [issues/13](https://github.com/shenwei356/csvtk/issues/13) **seamlessly support for data with meta line of separator declaration used by MS Excel**.
+    - [issues/13](https://github.com/shenwei356/csvtk/issues/13) **seamless support for data with a metadata line declaring the separator used by MS Excel**.
 - [csvtk v0.6.1](https://github.com/shenwei356/csvtk/releases/tag/v0.6.1)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.6.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.6.1)
     - `csvtk cut`: minor bug: panic when no fields given. i.e., `csvtk cut`.
@@ -620,21 +620,21 @@ All relevant commands have been fixed.
     - add lots of examples in [usage page](http://bioinf.shenwei.me/csvtk/usage/)
 - [csvtk v0.4.3](https://github.com/shenwei356/csvtk/releases/tag/v0.4.3)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.4.3/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.4.3)
-    - improvement of using experience: flag `-n` is not required anymore when flag `-H` in `csvtk mutate`
+    - improvement to the user experience: flag `-n` is not required anymore when flag `-H` is set in `csvtk mutate`
 - [csvtk v0.4.2](https://github.com/shenwei356/csvtk/releases/tag/v0.4.2)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.4.2/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.4.2)
     - fix highlight bug of `csvtk grep`: if the pattern matches multiple parts,
     the text will be wrongly edited.
     - changes: disable highlight when pattern file given.
-    - change the default output of all plotting commands to STDOUT, now you can
-    pipe the image to "display" command of Imagemagic.
+    - change the default output of all plotting commands to STDOUT; now you can
+    pipe the image to the "display" command of ImageMagick.
 - [csvtk v0.4.1](https://github.com/shenwei356/csvtk/releases/tag/v0.4.1)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.4.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.4.1)
     - Nothing changed. Just fix the links due to inappropriate deployment of v0.4.0
 - [csvtk v0.4.0](https://github.com/shenwei356/csvtk/releases/tag/v0.4.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.4.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.4.0)
     - add flag for `csvtk replace`: `-K` (`--keep-key`) keep the key as value when
-    no value found for the key. This is open in default in previous versions.
+    no value is found for the key. This was enabled by default in previous versions.
 - [csvtk v0.3.9](https://github.com/shenwei356/csvtk/releases/tag/v0.3.9)
   [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.3.9/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.4.0)
     - fix bug: header row incomplete in `csvtk sort` result
@@ -642,12 +642,12 @@ All relevant commands have been fixed.
   [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.3.8.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.3.8.1)
     - fix bug of flag parsing library [pflag](https://github.com/spf13/pflag),
     [detail](https://github.com/spf13/pflag/pull/98).
-    The bug affected the `csvtk grep -r -p`, when value of `-p` contain "[" and "]"
-    at the beginning or end, they are wrongly parsed.
+    The bug affected `csvtk grep -r -p`: when the value of `-p` contains "[" and "]"
+    at the beginning or end, they are parsed incorrectly.
 - [csvtk v0.3.8](https://github.com/shenwei356/csvtk/releases/tag/v0.3.8)
   [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.3.8/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.3.8)
     - new feature: `csvtk cut` supports ordered fields output. e.g., `csvtk cut -f 2,1`
-      outputs the 2nd column in front of 1th column.
+      outputs the 2nd column in front of the 1st column.
     - new commands: `csvtk plot` can plot three types of plots by subcommands:
         - `csvtk plot hist`: histogram
         - `csvtk plot box`: boxplot
@@ -657,7 +657,7 @@ All relevant commands have been fixed.
     - fix a serious bug of using negative field of column name, e.g. `-f "-id"`
 - [csvtk v0.3.6](https://github.com/shenwei356/csvtk/releases/tag/v0.3.6)
   [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.3.6/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.3.6)
-    - `csvtk replace` support replacement symbols `{nr}` (record number)
+    - `csvtk replace` supports replacement symbols `{nr}` (record number)
       and `{kv}` (corresponding value of the key ($1) by key-value file)
 - [csvtk v0.3.5.2](https://github.com/shenwei356/csvtk/releases/tag/v0.5.2)
   [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.3.5.2/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.3.5.2)
@@ -669,10 +669,10 @@ All relevant commands have been fixed.
 - [csvtk v0.3.5](https://github.com/shenwei356/csvtk/releases/tag/v0.3.5)
   [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.3.5/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.3.5)
     - fix minor bug of `csv2md`
-    - add subcommand `version` which could check for update
+    - add subcommand `version` which could check for updates
 - [csvtk v0.3.4](https://github.com/shenwei356/csvtk/releases/tag/v0.3.4)
   [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.3.4/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.3.4)
-    - fix bug of `csvtk replace` that head row should not be edited.
+    - fix bug of `csvtk replace` that incorrectly edited the header row.
 - [csvtk v0.3.3](https://github.com/shenwei356/csvtk/releases/tag/v0.3.3)
   [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.3.3/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.3.3)
     - fix bug of `csvtk grep -t -P`
@@ -681,7 +681,7 @@ All relevant commands have been fixed.
     - fix bug of `inter`
 - [csvtk v0.3.1](https://github.com/shenwei356/csvtk/releases/tag/v0.3.1)
   [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.3.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.3.1)
-    - add support of search multiple fields for `grep`
+    - add support for searching multiple fields for `grep`
 - [csvtk v0.3](https://github.com/shenwei356/csvtk/releases/tag/v0.3)
   [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.3/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.3)
     - add subcommand `csv2md`
@@ -695,14 +695,14 @@ All relevant commands have been fixed.
     - add subcommand `pretty` -- convert CSV to readable aligned table
 - [csvtk v0.2.7](https://github.com/shenwei356/csvtk/releases/tag/v0.2.7)
   [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.2.7/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.2.7)
-    - fix highlight failing in windows
+    - fix highlighting failures in Windows
 - [csvtk v0.2.6](https://github.com/shenwei356/csvtk/releases/tag/v0.2.6)
   [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.2.6/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.2.6)
     - fix one error message of `grep`
     - highlight matched fields in result of `grep`
 - [csvtk v0.2.5](https://github.com/shenwei356/csvtk/releases/tag/v0.2.5)
   [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.2.5/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.2.5)
-    - fix bug of `stat` that failed to considerate files with header row
+    - fix bug of `stat` that failed to handle files with a header row
     - add subcommand `stat2` - summary of selected number fields
     - make the output of `stat` prettier
 - [csvtk v0.2.4](https://github.com/shenwei356/csvtk/releases/tag/v0.2.4)
@@ -718,7 +718,7 @@ All relevant commands have been fixed.
     - add flag `--keep-unmathed` to `join`
 - [csvtk v0.2](https://github.com/shenwei356/csvtk/releases/tag/v0.2)
   [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.2/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.2)
-    - finish almost functions
+    - finish most functions
 - [csvtk v0.2.1](https://github.com/shenwei356/csvtk/releases/tag/v0.2.1)
   [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.2.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.2.1)
     - fix bug of `mutate`

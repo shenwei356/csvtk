@@ -36,11 +36,11 @@ var fmtdateCmd = &cobra.Command{
 	GroupID: "edit",
 
 	Use:   "fmtdate",
-	Short: "format date of selected fields",
-	Long: `format date of selected fields
+	Short: "format dates in selected fields",
+	Long: `format dates in selected fields
 
 Date parsing is supported by: https://github.com/araddon/dateparse
-Date formating is supported by: https://github.com/metakeule/fmtdate
+Date formatting is supported by: https://github.com/metakeule/fmtdate
 
 Time zones: 
     format: Asia/Shanghai
@@ -181,9 +181,9 @@ Placeholders:
 
 func init() {
 	RootCmd.AddCommand(fmtdateCmd)
-	fmtdateCmd.Flags().StringP("fields", "f", "1", `select only these fields. e.g -f 1,2 or -f columnA,columnB`)
-	fmtdateCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
+	fmtdateCmd.Flags().StringP("fields", "f", "1", `select only these fields. e.g., -f 1,2 or -f columnA,columnB`)
+	fmtdateCmd.Flags().BoolP("fuzzy-fields", "F", false, `use fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
 	fmtdateCmd.Flags().StringP("format", "", "YYYY-MM-DD hh:mm:ss", `output date format in MS Excel (TM) syntax, type "csvtk fmtdate -h" for details`)
-	fmtdateCmd.Flags().BoolP("keep-unparsed", "k", false, "keep the key as value when no value found for the key")
-	fmtdateCmd.Flags().StringP("time-zone", "z", "", `timezone aka "Asia/Shanghai" or "America/Los_Angeles" formatted time-zone, type "csvtk fmtdate -h" for details`)
+	fmtdateCmd.Flags().BoolP("keep-unparsed", "k", false, "keep the original value if it cannot be parsed as a date")
+	fmtdateCmd.Flags().StringP("time-zone", "z", "", `time zone, e.g., "Asia/Shanghai" or "America/Los_Angeles", type "csvtk fmtdate -h" for details`)
 }

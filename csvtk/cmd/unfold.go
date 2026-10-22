@@ -169,5 +169,5 @@ func init() {
 	RootCmd.AddCommand(unfoldCmd)
 
 	unfoldCmd.Flags().StringP("fields", "f", "", `fields to expand in parallel. type "csvtk unfold -h" for examples`)
-	unfoldCmd.Flags().StringP("separater", "s", "; ", "separater for folded values")
+	unfoldCmd.Flags().StringP("separater", "s", "; ", "separator for folded values")
 }

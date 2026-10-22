@@ -38,7 +38,7 @@ var long2matrix = &cobra.Command{
 
 	Use:   "long2matrix",
 	Short: "convert the long format to a matrix",
-	Long: `convert the long format to matrix
+	Long: `convert the long format to a matrix
 
 The matrix header is always written; -U/--delete-header is ignored.
 
@@ -200,7 +200,7 @@ Output: a matrix with the same column and row names. E.g.,
 func init() {
 	RootCmd.AddCommand(long2matrix)
 
-	long2matrix.Flags().StringSliceP("fields", "f", []string{"1-3"}, `the three fields/column to use. e.g., -f 1,2,3 or -f a,b,v`)
+	long2matrix.Flags().StringSliceP("fields", "f", []string{"1-3"}, `the three fields/columns to use. e.g., -f 1,2,3 or -f a,b,v`)
 
 	long2matrix.Flags().Float64P("min-value", "m", -math.MaxFloat64, "only save records with values >= this value")
 	long2matrix.Flags().Float64P("max-value", "M", math.MaxFloat64, "only save records with values <= this value")

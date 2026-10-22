@@ -188,7 +188,7 @@ Output: a three-column table. E.g.,
 func init() {
 	RootCmd.AddCommand(matrix2long)
 
-	matrix2long.Flags().StringSliceP("colnames", "n", []string{"col1", "col2", "value"}, `column names of the output (3 values required). e.g -n a,b,v`)
+	matrix2long.Flags().StringSliceP("colnames", "n", []string{"col1", "col2", "value"}, `column names of the output (3 values required). e.g., -n a,b,v`)
 	matrix2long.Flags().BoolP("skip-same-keys", "s", false, `skip records with the same key names`)
 	matrix2long.Flags().BoolP("keep-same-keys", "S", false, `keep records with the same key names`)
 	matrix2long.Flags().BoolP("skip-blanks", "b", false, `skip records with blank values (defined by --blanks)`)

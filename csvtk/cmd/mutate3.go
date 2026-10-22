@@ -58,10 +58,10 @@ Literal-dependent expressions retain per-row parsing for compatibility.
 
 The two variable formats can be mixed for the same column.
 
-Variables formats:
+Variable formats:
   $1 or ${1}                        The first field/column
   $a or ${a}                        Column "a"
-  ${a,b} or ${a b} or ${a (b)}      Column name with special charactors,
+  ${a,b} or ${a b} or ${a (b)}      Column name with special characters,
                                     e.g., commas, spaces, and parentheses
 
 Supported Operators:
@@ -92,10 +92,10 @@ Supported Literals:
   Null: nil
   String: "foo" 'bar'
 
-See Expr language definition link for documentation on built-in functions.
+See the Expr language definition link for documentation on built-in functions.
 
 Custom functions:
-  - ulen(), length of unicode strings/width of unicode strings rendered
+  - ulen(), length of Unicode strings/width of Unicode strings rendered
     to a terminal, e.g., len("沈伟")==2, ulen("沈伟")==4
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -418,7 +418,7 @@ func init() {
 	mutate3Cmd.Flags().StringP("expression", "e", "", `arithmetic/string expressions. e.g. "'string'", '"abc"', ' $a + "-" + $b ', '$1 + $2', '$a / $b', ' $1 > 100 ? "big" : "small" '`)
 	mutate3Cmd.Flags().StringP("name", "n", "", `new column name`)
 	mutate3Cmd.Flags().BoolP("numeric-as-string", "s", false, `treat even numeric fields as strings to avoid converting big numbers into scientific notation`)
-	mutate3Cmd.Flags().IntP("decimal-width", "w", 2, "limit floats to N decimal points")
+	mutate3Cmd.Flags().IntP("decimal-width", "w", 2, "limit floats to N decimal places")
 	mutate3Cmd.Flags().IntP("at", "", 0, "where the new column should appear, 1 for the 1st column, 0 for the last column")
 	mutate3Cmd.Flags().StringP("after", "", "", "insert the new column right after the given column name")
 	mutate3Cmd.Flags().StringP("before", "", "", "insert the new column right before the given column name")

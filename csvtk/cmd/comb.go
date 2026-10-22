@@ -40,8 +40,8 @@ var combCmd = &cobra.Command{
 
 	Use:     "comb",
 	Aliases: []string{"combination"},
-	Short:   "compute combinations of items at every row",
-	Long: `compute combinations of items at every row
+	Short:   "compute combinations of items in each row",
+	Long: `compute combinations of items in each row
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -184,5 +184,5 @@ func init() {
 	combCmd.Flags().BoolP("sort", "s", false, `sort items in a combination`)
 	combCmd.Flags().BoolP("nat-sort", "S", false, `sort items in natural order`)
 	combCmd.Flags().IntP("number", "n", 2, `number of items in a combination, 0 for no limit, i.e., return all combinations`)
-	combCmd.Flags().BoolP("ignore-case", "i", false, "ignore-case")
+	combCmd.Flags().BoolP("ignore-case", "i", false, "ignore case")
 }

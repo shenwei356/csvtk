@@ -1,11 +1,11 @@
 # Tutorial
 
-## Analyzing OTU table
+## Analyzing an OTU table
 
 ### Data
 
-Here is a mock OTU table from 16S rRNA sequencing result.
-Columns are sample IDs in format of "GROUP.ID"
+Here is a mock OTU table from 16S rRNA sequencing results.
+Columns are sample IDs in the format "GROUP.ID".
 
     $ cat otu_table.csv
     Taxonomy,A.1,A.2,A.3,B.1,B.2,B.3,C.1,C.2
@@ -45,7 +45,7 @@ What a mess! Let's make it prettier!
         8       C.1
         9       C.2
 
-1. Convert to tab-delimited table
+1. Convert to a tab-delimited table
 
         $ csvtk csv2tab otu_table.csv
         Taxonomy        A.1     A.2     A.3     B.1     B.2     B.3     C.1     C.2
@@ -55,7 +55,7 @@ What a mess! Let's make it prettier!
         Deferribacteres .17     .00     .24     .01     .01     .01     .01     .01
 
 
-1. Extract data of group A and B and save to file `-o otu_table.gAB.csv`
+1. Extract data for groups A and B and save it to a file with `-o otu_table.gAB.csv`
 
         $ csvtk cut -F -f "Taxonomy,A.*,B.*" otu_table.csv -o otu_table.gAB.csv
 
@@ -67,7 +67,7 @@ What a mess! Let's make it prettier!
         Deferribacteres   .17   .00   .24   .01   .01   .01
 
 
-1. Search some rows by fields. Matched parts will be highlighted as red
+1. Search some rows by fields. Matched parts will be highlighted in red
 
         $ csvtk grep -f Taxonomy -r -p "tes" otu_table.gAB.csv -T
 
@@ -89,7 +89,7 @@ What a mess! Let's make it prettier!
         B.2        .13              .55          .16             .01
         B.3        .22              .41          .29             .01
 
-1. Rename name of the first column
+1. Rename the first column
 
         $ csvtk rename -f 1 -n "sample" otu_table.gAB.t.csv -o otu_table.gAB.t.r.csv
 
@@ -102,7 +102,7 @@ What a mess! Let's make it prettier!
         B.2      .13              .55          .16             .01
         B.3      .22              .41          .29             .01
 
-1. Add group column
+1. Add a group column
 
         $ csvtk mutate -p "(.+?)\." -n group otu_table.gAB.t.r.csv -o otu_table2.csv
 
@@ -155,7 +155,7 @@ What a mess! Let's make it prettier!
         A.3     .13             .49         .12            .24              Ctrl
         B.2     .13             .55         .16            .01              Treatment
 
-1. Filter samples with abundance greater than 0 in all taxons (columns except for sample and group, you can also use `-f "2-5>0"`).
+1. Filter samples with abundance greater than 0 in all taxa (all columns except sample and group; you can also use `-f "2-5>0"`).
 
         $ cat otu_table3.csv \
             | csvtk filter -f "2-5>0" \
@@ -168,7 +168,7 @@ What a mess! Let's make it prettier!
         B.3     .22             .41         .29            .01              Treatment
 
 
-1. Most of the time, we may want to remove samples with abundance of 0 in all taxons.
+1. Most of the time, we may want to remove samples with abundance of 0 in all taxa.
 
         $ cat otu_table3.csv \
             | csvtk filter -f "2-5>0" --any \

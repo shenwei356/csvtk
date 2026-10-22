@@ -35,8 +35,8 @@ var dimCmd = &cobra.Command{
 
 	Use:     "dim",
 	Aliases: []string{"size", "stats", "stat"},
-	Short:   "dimensions of CSV file",
-	Long: `dimensions of CSV file
+	Short:   "dimensions of a CSV file",
+	Long: `dimensions of a CSV file
 
 With --cols, only the first record of each input is inspected.
 
@@ -175,9 +175,9 @@ With --cols, only the first record of each input is inspected.
 
 func init() {
 	dimCmd.Flags().BoolP("tabular", "", false, `output in machine-friendly tabular format`)
-	dimCmd.Flags().BoolP("cols", "", false, `only print number of columns (or using "csvtk ncol"`)
-	dimCmd.Flags().BoolP("rows", "", false, `only print number of rows (or using "csvtk nrow")`)
-	dimCmd.Flags().BoolP("no-files", "n", false, "do not print file names (only affect --cols and --rows)")
+	dimCmd.Flags().BoolP("cols", "", false, `only print the number of columns (or use "csvtk ncol")`)
+	dimCmd.Flags().BoolP("rows", "", false, `only print the number of rows (or use "csvtk nrow")`)
+	dimCmd.Flags().BoolP("no-files", "n", false, "do not print file names (only affects --cols and --rows)")
 
 	RootCmd.AddCommand(dimCmd)
 

@@ -36,12 +36,12 @@ var csv2mdCmd = &cobra.Command{
 	GroupID: "format",
 
 	Use:   "csv2md",
-	Short: "convert CSV to markdown format",
-	Long: `convert CSV to markdown format
+	Short: "convert CSV to Markdown format",
+	Long: `convert CSV to Markdown format
 
 Attention:
 
-  csv2md treats the first row as header line and requires them to be unique
+  csv2md treats the first row as a header line and requires column names to be unique.
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -196,6 +196,6 @@ Attention:
 
 func init() {
 	RootCmd.AddCommand(csv2mdCmd)
-	csv2mdCmd.Flags().StringP("alignments", "a", "l", `comma separated alignments. e.g. -a l,c,c,c or -a c`)
+	csv2mdCmd.Flags().StringP("alignments", "a", "l", `comma-separated alignments. e.g. -a l,c,c,c or -a c`)
 	csv2mdCmd.Flags().IntP("min-width", "w", 3, "min width (at least 3)")
 }

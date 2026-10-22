@@ -36,8 +36,8 @@ var space2tabCmd = &cobra.Command{
 	GroupID: "format",
 
 	Use:   "space2tab",
-	Short: "convert space delimited format to TSV",
-	Long: `convert space delimited format to TSV
+	Short: "convert space-delimited format to TSV",
+	Long: `convert space-delimited format to TSV
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -89,5 +89,5 @@ var space2tabCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(space2tabCmd)
 
-	space2tabCmd.Flags().StringP("buffer-size", "b", "1G", `size of buffer, supported unit: K, M, G. You need increase the value when "bufio.Scanner: token too long" error reported`)
+	space2tabCmd.Flags().StringP("buffer-size", "b", "1G", `buffer size, supported units: K, M, G. Increase the value if a "bufio.Scanner: token too long" error is reported`)
 }

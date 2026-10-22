@@ -34,8 +34,8 @@ var mutateCmd = &cobra.Command{
 	GroupID: "edit",
 
 	Use:   "mutate",
-	Short: "create new column from selected fields by regular expression",
-	Long: `create new column from selected fields by regular expression
+	Short: "create a new column from selected fields using regular expressions",
+	Long: `create a new column from selected fields using regular expressions
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -255,11 +255,11 @@ var mutateCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(mutateCmd)
-	mutateCmd.Flags().StringP("fields", "f", "1", `select only these fields. e.g -f 1,2 or -f columnA,columnB`)
-	mutateCmd.Flags().StringP("pattern", "p", "^(.+)$", `search regular expression with capture bracket. e.g.`)
+	mutateCmd.Flags().StringP("fields", "f", "1", `select only these fields. e.g., -f 1,2 or -f columnA,columnB`)
+	mutateCmd.Flags().StringP("pattern", "p", "^(.+)$", `search regular expression with capture groups`)
 	mutateCmd.Flags().StringP("name", "n", "", `new column name`)
 	mutateCmd.Flags().BoolP("ignore-case", "i", false, "ignore case")
-	mutateCmd.Flags().BoolP("na", "", false, "for unmatched data, use blank instead of original data")
+	mutateCmd.Flags().BoolP("na", "", false, "for unmatched data, use a blank instead of the original data")
 	mutateCmd.Flags().BoolP("remove", "R", false, `remove input column`)
 	mutateCmd.Flags().IntP("at", "", 0, "where the new column should appear, 1 for the 1st column, 0 for the last column")
 	mutateCmd.Flags().StringP("after", "", "", "insert the new column right after the given column name")

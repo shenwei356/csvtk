@@ -37,8 +37,8 @@ var splitXlsxCmd = &cobra.Command{
 	GroupID: "format",
 
 	Use:   "splitxlsx",
-	Short: "split XLSX sheet into multiple sheets according to column values",
-	Long: `split XLSX sheet into multiple sheets according to column values
+	Short: "split an XLSX sheet into multiple sheets according to column values",
+	Long: `split an XLSX sheet into multiple sheets according to column values
 
 Strength: Sheet properties are preserved.
 Limitation: Complex sheet structures are not fully supported, such as
@@ -359,8 +359,8 @@ func truncateSheetName(name string, limit int) string {
 
 func init() {
 	RootCmd.AddCommand(splitXlsxCmd)
-	splitXlsxCmd.Flags().StringP("fields", "f", "1", `comma separated key fields, column name or index. e.g. -f 1-3 or -f id,id2 or -F -f "group*"`)
-	splitXlsxCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
+	splitXlsxCmd.Flags().StringP("fields", "f", "1", `comma-separated key fields, column name or index. e.g. -f 1-3 or -f id,id2 or -F -f "group*"`)
+	splitXlsxCmd.Flags().BoolP("fuzzy-fields", "F", false, `use fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
 	splitXlsxCmd.Flags().BoolP("ignore-case", "i", false, `ignore case (cell value)`)
 	splitXlsxCmd.Flags().StringP("sheet-name", "n", "", "sheet to retrieve")
 	splitXlsxCmd.Flags().BoolP("list-sheets", "a", false, "list all sheets")

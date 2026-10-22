@@ -29,7 +29,7 @@ The CSV parser used by csvtk follows the [RFC4180](https://rfc-editor.org/rfc/rf
        "aaa","b""bb","ccc"
 ```
 
-If a single double-quote exists in one non-quoted-field, an error will be reported. e.g,
+If a single double quote appears in an unquoted field, an error will be reported, e.g.,
 
     $ echo 'a,abc" xyz,d'
     a,abc" xyz,d
@@ -44,7 +44,7 @@ You can add the flag `-l/--lazy-quotes` to fix this.
 
 ## extraneous or missing " in quoted-field
 
-But for the situation below, `-l/--lazy-quotes` won't help:
+For the situation below, `-l/--lazy-quotes` won't help:
 
     $ echo 'a,"abc" xyz,d'
     a,"abc" xyz,d
@@ -60,7 +60,7 @@ But for the situation below, `-l/--lazy-quotes` won't help:
     file  num_cols  num_rows
     -            2         0
 
-**You need to use [csvtk fix-quotes](https://bioinf.shenwei.me/csvtk/usage/#fix-quotes) (available in v0.29.0 or later versions)**:
+**You need to use [csvtk fix-quotes](https://bioinf.shenwei.me/csvtk/usage/#fix-quotes) (available in v0.29.0 or later)**:
 
     $ echo 'a,"abc" xyz,d' | csvtk fix-quotes
     a,"""abc"" xyz",d

@@ -36,11 +36,11 @@ var csv2rstCmd = &cobra.Command{
 
 	Use:   "csv2rst",
 	Short: "convert CSV to reStructuredText format",
-	Long: `convert CSV to readable aligned table
+	Long: `convert CSV to a readable aligned table
 
 Attention:
 
-  1. row span is not supported.
+  1. Row spans are not supported.
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -190,10 +190,10 @@ Attention:
 func init() {
 	RootCmd.AddCommand(csv2rstCmd)
 
-	csv2rstCmd.Flags().StringP("cross", "k", "+", "charactor of cross")
-	csv2rstCmd.Flags().StringP("padding", "p", " ", "charactor of padding")
-	csv2rstCmd.Flags().StringP("horizontal-border", "b", "-", "charactor of horizontal border")
-	csv2rstCmd.Flags().StringP("vertical-border", "B", "|", "charactor of vertical border")
-	csv2rstCmd.Flags().StringP("header", "s", "=", "charactor of separator between header row and data rowws")
+	csv2rstCmd.Flags().StringP("cross", "k", "+", "character for intersections")
+	csv2rstCmd.Flags().StringP("padding", "p", " ", "padding character")
+	csv2rstCmd.Flags().StringP("horizontal-border", "b", "-", "horizontal border character")
+	csv2rstCmd.Flags().StringP("vertical-border", "B", "|", "vertical border character")
+	csv2rstCmd.Flags().StringP("header", "s", "=", "separator character between the header row and data rows")
 
 }

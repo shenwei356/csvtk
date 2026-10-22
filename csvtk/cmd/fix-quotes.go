@@ -42,14 +42,14 @@ var fixquotesCmd = &cobra.Command{
 This command fixes fields not appropriately enclosed by double-quotes
 to meet the RFC4180 specification (https://rfc-editor.org/rfc/rfc4180.html).
 
-When and how to:
-  1. Values containing bare double quotes. e.g.,
+When and how to use it:
+  1. Values containing bare double quotes, e.g.,
        a,abc" xyz,d
      Error information: bare " in non-quoted-field.
-     Fix: adding the flag -l/--lazy-quotes.
+     Fix: add the flag -l/--lazy-quotes.
      Using this command:
        a,abc" xyz,d   ->   a,"abc"" xyz",d
-  2. Values with double quotes in the begining but not in the end. e.g.,
+  2. Values with double quotes at the beginning but not at the end, e.g.,
        a,"abc" xyz,d
      Error information: extraneous or missing " in quoted-field.
      Using this command:
@@ -243,5 +243,5 @@ Limitation:
 func init() {
 	RootCmd.AddCommand(fixquotesCmd)
 
-	fixquotesCmd.Flags().StringP("buffer-size", "b", "1G", `size of buffer, supported unit: K, M, G. You need increase the value when "bufio.Scanner: token too long" error reported`)
+	fixquotesCmd.Flags().StringP("buffer-size", "b", "1G", `buffer size, supported units: K, M, G. Increase the value if a "bufio.Scanner: token too long" error is reported`)
 }

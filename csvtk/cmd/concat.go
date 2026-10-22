@@ -39,13 +39,13 @@ var concatCmd = &cobra.Command{
 	Short: "concatenate CSV/TSV files by rows",
 	Long: `concatenate CSV/TSV files by rows
 
-If there's only one input file, it will be directly outputted.
+If there's only one input file, it will be output directly.
 
 With --original-file, append an original_file column containing the basename
 of each input file. Standard input is labeled "-".
 
 If multiple input files are provided, the second and subsequent files will be
-concatenated to the first one by rows. And only columns matching those of the
+concatenated to the first one by rows. Only columns matching those of the
 first file are kept.
 Rows are streamed after the column mapping is established. Ambiguous column
 names after duplicate-name normalization are reported as errors.
@@ -253,7 +253,7 @@ func init() {
 	RootCmd.AddCommand(concatCmd)
 
 	concatCmd.Flags().BoolP("ignore-case", "i", false, `ignore case (column name)`)
-	concatCmd.Flags().BoolP("keep-unmatched", "k", false, `keep blanks even if no any data of a file matches`)
+	concatCmd.Flags().BoolP("keep-unmatched", "k", false, `keep blanks even if no data from a file matches`)
 	concatCmd.Flags().StringP("unmatched-repl", "u", "", "replacement for unmatched data")
 	concatCmd.Flags().Bool("original-file", false, "append an original_file column with each input file's basename")
 }

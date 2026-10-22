@@ -40,9 +40,9 @@ var joinCmd = &cobra.Command{
 
 Attention:
 
-  1. Multiple keys supported
-  2. Default operation is inner join, use --left-join for left join 
-     and --outer-join for outer join.
+  1. Multiple keys are supported.
+  2. The default operation is an inner join. Use --left-join for a left join
+     and --outer-join for an outer join.
   3. An input containing only a header contributes its columns and zero data rows.
      Inputs without CSV records are skipped.
 
@@ -585,17 +585,17 @@ Attention:
 
 func init() {
 	RootCmd.AddCommand(joinCmd)
-	joinCmd.Flags().StringP("fields", "f", "1", "Semicolon separated key fields of all files, "+
-		`if given one, we think all the files have the same key columns. `+
-		`Fields of different files should be separated by ";", e.g -f "1;2" or -f "A,B;C,D" or -f id`)
+	joinCmd.Flags().StringP("fields", "f", "1", "Semicolon-separated key fields of all files, "+
+		`if only one set is given, all files are assumed to have the same key columns. `+
+		`Fields of different files should be separated by ";", e.g., -f "1;2" or -f "A,B;C,D" or -f id`)
 	joinCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
-	joinCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
+	joinCmd.Flags().BoolP("fuzzy-fields", "F", false, `use fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
 	joinCmd.Flags().BoolP("keep-unmatched", "k", false, `keep unmatched data of the first file (left join)`)
-	joinCmd.Flags().BoolP("left-join", "L", false, `left join, equals to -k/--keep-unmatched, exclusive with --outer-join`)
-	joinCmd.Flags().BoolP("outer-join", "O", false, `outer join, exclusive with --left-join`)
+	joinCmd.Flags().BoolP("left-join", "L", false, `left join, equivalent to -k/--keep-unmatched, mutually exclusive with --outer-join`)
+	joinCmd.Flags().BoolP("outer-join", "O", false, `outer join, mutually exclusive with --left-join`)
 	joinCmd.Flags().StringP("na", "", "", "content for filling NA data")
 	joinCmd.Flags().BoolP("ignore-null", "n", false, "do not match rows with an empty key field")
-	joinCmd.Flags().BoolP("prefix-filename", "p", false, "add each filename as a prefix to each colname. if there's no header row, we'll add one")
+	joinCmd.Flags().BoolP("prefix-filename", "p", false, "add each filename as a prefix to each colname. If there's no header row, we'll add one")
 	joinCmd.Flags().BoolP("prefix-trim-ext", "e", false, "trim extension when adding filename as colname prefix")
 	joinCmd.Flags().BoolP("only-duplicates", "P", false, "add filenames as colname prefixes or add custom suffixes only for duplicated colnames")
 	joinCmd.Flags().StringSliceP("suffix", "s", []string{}, "add suffixes to colnames from each file")

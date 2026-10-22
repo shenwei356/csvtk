@@ -42,31 +42,31 @@ var prettyCmd = &cobra.Command{
 	Long: `convert CSV to a readable aligned table
 
 How to:
-  1. First -n/--buf-rows rows are read to check the minimum and maximum widths
-     of each columns.
+  1. The first -n/--buf-rows rows are read to check the minimum and maximum widths
+     of each column.
 
-     You can also set the global or column-specific (the number of values need
-     equal to the number of columns) thresholds via -w/--min-width and -W/--max-width.
+     You can also set the global or column-specific (the number of values must
+     equal the number of columns) thresholds via -w/--min-width and -W/--max-width.
 
      1a. Cells longer than the maximum width will be wrapped (default) or
          clipped (--clip).
-         Usually, the text is wrapped in space (-x/--wrap-delimiter). But if one
-         word is longer than the -W/--max-width, it will be force split.
-     1b. Texts are aligned left (default), center (-m/--align-center)
+         Usually, the text is wrapped at spaces (-x/--wrap-delimiter). But if one
+         word is longer than the -W/--max-width, it will be split.
+     1b. Text is aligned left (default), center (-m/--align-center)
          or right (-r/--align-right). Users can specify columns with column names,
          field indexes or ranges.
         Examples:
-          -m A,B       # column A and B
-          -m 1,2       # 1st and 2nd column
-          -m -1        # the last column (it's not unselecting in other commands)
+          -m A,B       # columns A and B
+          -m 1,2       # 1st and 2nd columns
+          -m -1        # the last column (unlike unselecting in other commands)
           -m 1,3-5     # 1st, from 3rd to 5th column
           -m 1-        # 1st and later columns (all columns)
           -m -3-       # the last 3 columns
           -m -3--2     # the 2nd and 3rd to last columns
           -m 1- -r -1  # all columns are center-aligned, except the last column
-                       # which is right-aligned. -r overides -m.
+                       # which is right-aligned. -r overrides -m.
 
-  2. Remaining rows are read and immediately outputted, one by one, till the end.
+  2. Remaining rows are read and output immediately, one by one, until the end.
 
 Styles:
 
@@ -398,15 +398,15 @@ Styles:
 
 func init() {
 	RootCmd.AddCommand(prettyCmd)
-	prettyCmd.Flags().StringP("separator", "s", "   ", "fields/columns separator")
+	prettyCmd.Flags().StringP("separator", "s", "   ", "field/column separator")
 	prettyCmd.Flags().StringSliceP("align-right", "r", []string{}, `align right for selected columns (field index/range or column name, type "csvtk pretty -h" for examples)`)
-	prettyCmd.Flags().StringSliceP("align-center", "m", []string{}, `align right for selected columns (field index/range or column name, type "csvtk pretty -h" for examples)`)
+	prettyCmd.Flags().StringSliceP("align-center", "m", []string{}, `align center for selected columns (field index/range or column name, type "csvtk pretty -h" for examples)`)
 	prettyCmd.Flags().StringSliceP("min-width", "w", []string{}, "min width, multiple values (min widths for each column, 0 for no limit) should be separated by commas. E.g., -w 0,10,10 limits the min widths of 2nd and 3rd columns")
 	prettyCmd.Flags().StringSliceP("max-width", "W", []string{}, "max width, multiple values (max widths for each column, 0 for no limit) should be separated by commas. E.g., -W 40,20,0 limits the max widths of 1st and 2nd columns")
 
 	prettyCmd.Flags().StringP("wrap-delimiter", "x", " ", "delimiter for wrapping cells")
 	prettyCmd.Flags().IntP("buf-rows", "n", 1024, "the number of rows to determine the min and max widths (0 for all rows)")
 	prettyCmd.Flags().StringP("style", "S", "", "output style. available values: default, plain, simple, 3line, grid, light, round, regular, bold, double. check https://github.com/shenwei356/stable")
-	prettyCmd.Flags().BoolP("clip", "", false, "clip longer cell instead of wrapping")
+	prettyCmd.Flags().BoolP("clip", "", false, "clip longer cells instead of wrapping")
 	prettyCmd.Flags().StringP("clip-mark", "", "...", "clip mark")
 }

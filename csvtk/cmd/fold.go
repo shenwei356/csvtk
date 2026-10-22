@@ -41,7 +41,7 @@ var collapseCmd = &cobra.Command{
 
 Attention:
 
-    Only grouping field and value fields are outputted.
+    Only grouping fields and value fields are output.
     Multiple value fields are folded in parallel, preserving their row alignment.
 
 Example:
@@ -250,9 +250,9 @@ func foldValueFieldCount(fieldStr string, header []string, fuzzyFields, noHeader
 
 func init() {
 	RootCmd.AddCommand(collapseCmd)
-	collapseCmd.Flags().StringP("fields", "f", "1", `key fields for grouping. e.g -f 1,2 or -f columnA,columnB`)
+	collapseCmd.Flags().StringP("fields", "f", "1", `key fields for grouping. e.g., -f 1,2 or -f columnA,columnB`)
 	collapseCmd.Flags().StringP("vfield", "v", "", `value fields to fold in parallel, e.g. -v 2,3 or -v en,es`)
 	collapseCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
-	collapseCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy key and value fields, e.g., -F -f "*name" or -F -v "value*"`)
-	collapseCmd.Flags().StringP("separater", "s", "; ", "separater for folded values")
+	collapseCmd.Flags().BoolP("fuzzy-fields", "F", false, `use fuzzy key and value fields, e.g., -F -f "*name" or -F -v "value*"`)
+	collapseCmd.Flags().StringP("separater", "s", "; ", "separator for folded values")
 }

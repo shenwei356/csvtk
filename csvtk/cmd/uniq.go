@@ -176,16 +176,16 @@ For this command, -d means --repeated; use --delimiter to set the input delimite
 
 func init() {
 	RootCmd.AddCommand(uniqCmd)
-	uniqCmd.Flags().StringP("fields", "f", "1", `select these fields as keys. e.g -f 1,2 or -f columnA,columnB`)
+	uniqCmd.Flags().StringP("fields", "f", "1", `select these fields as keys. e.g., -f 1,2 or -f columnA,columnB`)
 	uniqCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
-	uniqCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
+	uniqCmd.Flags().BoolP("fuzzy-fields", "F", false, `use fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
 	uniqCmd.Flags().IntP("keep-n", "n", 1, `keep at most N records for a key`)
 	// Shadow the inherited -d shorthand, but share its --delimiter value so
 	// either position of the long flag still configures the input delimiter.
 	delimiter := *RootCmd.PersistentFlags().Lookup("delimiter")
 	delimiter.Shorthand = ""
 	uniqCmd.Flags().AddFlag(&delimiter)
-	uniqCmd.Flags().BoolP("repeated", "d", false, `only print repeated keys, one first record per key`)
+	uniqCmd.Flags().BoolP("repeated", "d", false, `only print the first record for each repeated key`)
 	uniqCmd.Flags().BoolP("unique", "u", false, `only print records whose keys occur exactly once`)
 	uniqCmd.MarkFlagsMutuallyExclusive("repeated", "unique", "keep-n")
 

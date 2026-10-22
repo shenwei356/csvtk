@@ -119,6 +119,6 @@ var shufCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(shufCmd)
 
-	shufCmd.Flags().Int64P("rand-seed", "s", 11, "rand seed")
-	shufCmd.Flags().IntP("rows", "n", 0, "print first N rows, 0 for all")
+	shufCmd.Flags().Int64P("rand-seed", "s", 11, "random seed")
+	shufCmd.Flags().IntP("rows", "n", 0, "print the first N rows, 0 for all")
 }

@@ -35,14 +35,14 @@ var csv2xlsxCmd = &cobra.Command{
 	GroupID: "format",
 
 	Use:   "csv2xlsx",
-	Short: "convert CSV/TSV files to XLSX file",
-	Long: `convert CSV/TSV files to XLSX file
+	Short: "convert CSV/TSV files to an XLSX file",
+	Long: `convert CSV/TSV files to an XLSX file
 
 Attention:
 
-  1. Multiple CSV/TSV files are saved as separated sheets in .xlsx file.
-  2. All input files should all be CSV or TSV.
-  3. First rows are freezed unless given '-H/--no-header-row'.
+  1. Multiple CSV/TSV files are saved as separate sheets in an .xlsx file.
+  2. All input files should be CSV or TSV.
+  3. The first row of each sheet is frozen unless '-H/--no-header-row' is given.
   4. XLSX sheets support up to 16,384 columns and 1,048,576 rows, including the
      output header row and any row-number column. Exceeding these limits causes an error.
   
@@ -167,6 +167,6 @@ Attention:
 func init() {
 	RootCmd.AddCommand(csv2xlsxCmd)
 
-	csv2xlsxCmd.Flags().BoolP("format-numbers", "f", false, `save numbers in number format, instead of text`)
+	csv2xlsxCmd.Flags().BoolP("format-numbers", "f", false, `save numbers in numeric format, instead of text`)
 
 }

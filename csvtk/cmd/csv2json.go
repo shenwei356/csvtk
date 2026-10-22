@@ -284,11 +284,11 @@ Notes:
 
 func init() {
 	RootCmd.AddCommand(csv2jsonCmd)
-	csv2jsonCmd.Flags().StringP("indent", "i", "  ", `indent. if given blank, output json in one line.`)
-	csv2jsonCmd.Flags().StringP("key", "k", "", "output json as an array of objects keyed by a given field rather than as a list. e.g -k 1 or -k columnA")
+	csv2jsonCmd.Flags().StringP("indent", "i", "  ", `indentation; if blank, output JSON on one line.`)
+	csv2jsonCmd.Flags().StringP("key", "k", "", "output JSON as an array of objects keyed by a given field rather than as a list. e.g., -k 1 or -k columnA")
 	csv2jsonCmd.Flags().BoolP("skip-key", "K", false, `do not put KEY in the data when using -k KEY`)
 	csv2jsonCmd.Flags().BoolP("blanks", "b", false, `do not convert "", "na", "n/a", "none", "null", "." to null`)
-	csv2jsonCmd.Flags().StringSliceP("parse-num", "n", []string{}, `parse numeric values for nth column, multiple values are supported and "a"/"all" for all columns`)
+	csv2jsonCmd.Flags().StringSliceP("parse-num", "n", []string{}, `parse numeric values for the nth column; multiple values are supported, with "a"/"all" for all columns`)
 }
 
 // quoteJSONString encodes keys and string values with the same JSON escaping.

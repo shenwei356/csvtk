@@ -43,14 +43,14 @@ var grepCmd = &cobra.Command{
 	Short: "grep data by selected fields with patterns/regular expressions",
 	Long: `grep data by selected fields with patterns/regular expressions
 
-Attentions:
+Attention:
 
-  1. By default, we directly compare the column value with patterns,
-     use "-r/--use-regexp" for partly matching.
+  1. By default, we directly compare the column value with patterns.
+     Use "-r/--use-regexp" for partial matching.
   2. Multiple patterns can be given by setting '-p/--pattern' more than once,
-     or giving comma separated values (CSV formats). 
+     or giving comma-separated values (CSV format).
      Therefore, please use double quotation marks for patterns containing
-     comma, e.g., -p '"A{2,}"'
+     commas, e.g., -p '"A{2,}"'
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -295,15 +295,15 @@ var redText = color.New(color.FgHiRed).SprintFunc()
 
 func init() {
 	RootCmd.AddCommand(grepCmd)
-	grepCmd.Flags().StringP("fields", "f", "1", `comma separated key fields, column name or index. e.g. -f 1-3 or -f id,id2 or -F -f "group*"`)
-	grepCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
-	grepCmd.Flags().StringSliceP("pattern", "p", []string{""}, `query pattern (multiple values supported). Attention: use double quotation marks for patterns containing comma, e.g., -p '"A{2,}"'`)
+	grepCmd.Flags().StringP("fields", "f", "1", `comma-separated key fields, column name or index. e.g. -f 1-3 or -f id,id2 or -F -f "group*"`)
+	grepCmd.Flags().BoolP("fuzzy-fields", "F", false, `use fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
+	grepCmd.Flags().StringSliceP("pattern", "p", []string{""}, `query pattern (multiple values supported). Attention: use double quotation marks for patterns containing commas, e.g., -p '"A{2,}"'`)
 	grepCmd.Flags().StringP("pattern-file", "P", "", `pattern files (one pattern per line)`)
 	grepCmd.Flags().BoolP("ignore-case", "i", false, `ignore case`)
-	grepCmd.Flags().BoolP("use-regexp", "r", false, `patterns are regular expression`)
+	grepCmd.Flags().BoolP("use-regexp", "r", false, `patterns are regular expressions`)
 	grepCmd.Flags().BoolP("invert", "v", false, `invert match`)
 	grepCmd.Flags().BoolP("no-highlight", "N", false, `no highlight`)
 	grepCmd.Flags().BoolP("verbose", "", false, `verbose output`)
-	grepCmd.Flags().BoolP("line-number", "n", false, `print line number as the first column ("n")`)
-	grepCmd.Flags().BoolP("delete-matched", "", false, "delete a pattern right after being matched, this keeps the firstly matched data and speedups when using regular expressions")
+	grepCmd.Flags().BoolP("line-number", "n", false, `print the line number as the first column ("n")`)
+	grepCmd.Flags().BoolP("delete-matched", "", false, "delete a pattern right after it is matched; this keeps the first matching data and speeds up searches with regular expressions")
 }

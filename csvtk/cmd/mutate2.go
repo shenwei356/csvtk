@@ -58,10 +58,10 @@ Literal-dependent expressions retain per-row parsing for compatibility.
 
 The two variable formats can be mixed for the same column.
 
-Variables formats:
+Variable formats:
   $1 or ${1}                        The first field/column
   $a or ${a}                        Column "a"
-  ${a,b} or ${a b} or ${a (b)}      Column name with special charactors, 
+  ${a,b} or ${a b} or ${a (b)}      Column name with special characters,
                                     e.g., commas, spaces, and parentheses
 
 Supported operators and types:
@@ -73,16 +73,16 @@ Supported operators and types:
   String constants (single quotes: 'foobar')
   Date constants (single quotes)
   Boolean constants: true false
-  Parenthesis to control order of evaluation ( )
-  Arrays (anything separated by , within parenthesis: (1, 2, 'foo'))
+  Parentheses to control the order of evaluation ( )
+  Arrays (anything separated by , within parentheses: (1, 2, 'foo'))
   Prefixes: ! - ~
   Ternary conditional: ? :
   Null coalescence: ??
 
 Custom functions:
-  - len(), characters of strings, e.g., len($1), len($a), len($1, $2).
+  - len(), number of characters in strings, e.g., len($1), len($a), len($1, $2).
     Unicode is supported, e.g., len("沈伟")==2
-  - ulen(), length of unicode strings/width of unicode strings rendered
+  - ulen(), length of Unicode strings/width of Unicode strings rendered
     to a terminal, e.g., len("沈伟")==2, ulen("沈伟")==4
 
 `,
@@ -413,7 +413,7 @@ func init() {
 	mutate2Cmd.Flags().StringP("expression", "e", "", `arithmetic/string expressions. e.g. "'string'", '"abc"', ' $a + "-" + $b ', '$1 + $2', '$a / $b', ' $1 > 100 ? "big" : "small" '`)
 	mutate2Cmd.Flags().StringP("name", "n", "", `new column name`)
 	mutate2Cmd.Flags().BoolP("numeric-as-string", "s", false, `treat even numeric fields as strings to avoid converting big numbers into scientific notation`)
-	mutate2Cmd.Flags().IntP("decimal-width", "w", 2, "limit floats to N decimal points")
+	mutate2Cmd.Flags().IntP("decimal-width", "w", 2, "limit floats to N decimal places")
 	mutate2Cmd.Flags().IntP("at", "", 0, "where the new column should appear, 1 for the 1st column, 0 for the last column")
 	mutate2Cmd.Flags().StringP("after", "", "", "insert the new column right after the given column name")
 	mutate2Cmd.Flags().StringP("before", "", "", "insert the new column right before the given column name")

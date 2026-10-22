@@ -36,8 +36,8 @@ var sepCmd = &cobra.Command{
 
 	Use:     "sep",
 	Aliases: []string{"separate"},
-	Short:   "separate column into multiple columns",
-	Long: `separate column into multiple columns
+	Short:   "separate a column into multiple columns",
+	Long: `separate a column into multiple columns
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -255,9 +255,9 @@ func init() {
 	sepCmd.Flags().BoolP("use-regexp", "r", false, `separator is a regular expression`)
 	sepCmd.Flags().BoolP("ignore-case", "i", false, "ignore case")
 	sepCmd.Flags().StringSliceP("names", "n", []string{}, `new column names`)
-	sepCmd.Flags().IntP("num-cols", "N", 0, `preset number of new created columns`)
+	sepCmd.Flags().IntP("num-cols", "N", 0, `preset number of newly created columns`)
 	sepCmd.Flags().BoolP("remove", "R", false, `remove input column`)
 	sepCmd.Flags().StringP("na", "", "", "content for filling NA data")
-	sepCmd.Flags().BoolP("drop", "", false, "drop extra data, exclusive with --merge")
-	sepCmd.Flags().BoolP("merge", "", false, "only splits at most N times, exclusive with --drop")
+	sepCmd.Flags().BoolP("drop", "", false, "drop extra data, mutually exclusive with --merge")
+	sepCmd.Flags().BoolP("merge", "", false, "split at most N times, mutually exclusive with --drop")
 }

@@ -35,14 +35,14 @@ var replaceCmd = &cobra.Command{
 	GroupID: "edit",
 
 	Use:   "replace",
-	Short: "replace data of selected fields by regular expression",
-	Long: `replace data of selected fields by regular expression
+	Short: "replace data in selected fields using regular expressions",
+	Long: `replace data in selected fields using regular expressions
 
 Note that the replacement supports capture variables.
-e.g. $1 represents the text of the first submatch.
-ATTENTION: use SINGLE quote NOT double quotes in *nix OS.
+e.g., $1 represents the text of the first submatch.
+ATTENTION: use SINGLE quotes, not double quotes, on *nix systems.
 
-Examples: Adding space to cell values.
+Examples: Adding a space to cell values.
 
   csvtk replace -p "(.)" -r '$1 '
 
@@ -50,7 +50,7 @@ Or use the \ escape character.
 
   csvtk replace -p "(.)" -r "\$1 "
 
-more on: http://shenwei356.github.io/csvtk/usage/#replace
+More at: http://shenwei356.github.io/csvtk/usage/#replace
 
 Special replacement symbols:
 
@@ -68,7 +68,7 @@ Special replacement symbols:
             A        5       3       1       3
             C        6       1       3       4
 
-  {kv}    Corresponding value of the key (captured variable $n) by key-value file,
+  {kv}    Corresponding value of the key (captured variable $n) from the key-value file;
           n can be specified by flag --key-capt-idx (default: 1)
 
 `,
@@ -352,27 +352,27 @@ Special replacement symbols:
 
 func init() {
 	RootCmd.AddCommand(replaceCmd)
-	replaceCmd.Flags().StringP("fields", "f", "1", `select only these fields. e.g -f 1,2 or -f columnA,columnB`)
-	replaceCmd.Flags().StringSliceP("group", "g", []string{}, `select field(s) for group-specific record numbering, including {gnr}, {enr}, {rnr}. Please use the same field type (field number or column name) with the value of -f/--fields`)
-	replaceCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
+	replaceCmd.Flags().StringP("fields", "f", "1", `select only these fields. e.g., -f 1,2 or -f columnA,columnB`)
+	replaceCmd.Flags().StringSliceP("group", "g", []string{}, `select field(s) for group-specific record numbering, including {gnr}, {enr}, {rnr}. Please use the same field type (field number or column name) as the value of -f/--fields`)
+	replaceCmd.Flags().BoolP("fuzzy-fields", "F", false, `use fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
 	replaceCmd.Flags().StringP("pattern", "p", ".*", "search regular expression")
 	replaceCmd.Flags().StringP("replacement", "r", "",
-		"replacement. supporting capture variables. "+
-			" e.g. $1 represents the text of the first submatch. "+
-			"ATTENTION: for *nix OS, use SINGLE quote NOT double quotes or "+
-			`use the \ escape character. Record number is also supported by "{nr}".`+
-			`use ${1} instead of $1 when {kv} given!`)
+		"replacement supporting capture variables. "+
+			"For example, $1 represents the text of the first submatch. "+
+			"ATTENTION: on *nix systems, use SINGLE quotes, not double quotes, or "+
+			`use the \ escape character. Record numbers are also supported by "{nr}". `+
+			`Use ${1} instead of $1 when {kv} is given!`)
 	replaceCmd.Flags().BoolP("ignore-case", "i", false, "ignore case")
 	replaceCmd.Flags().StringP("kv-file", "k", "",
 		`tab-delimited key-value file for replacing key with value when using "{kv}" in -r (--replacement)`)
-	replaceCmd.Flags().BoolP("keep-key", "K", false, "keep the key as value when no value found for the key")
+	replaceCmd.Flags().BoolP("keep-key", "K", false, "keep the key as the value when no value is found for the key")
 	replaceCmd.Flags().IntP("key-capt-idx", "", 1, "capture variable index of key (1-based)")
 	replaceCmd.Flags().StringP("key-miss-repl", "", "", "replacement for key with no corresponding value")
-	replaceCmd.Flags().IntP("nr-width", "", 1, `minimum width for {nr}, {gnr}, {enr}, {rnr} in flag -r/--replacement. e.g., formating "1" to "001" by --nr-width 3`)
+	replaceCmd.Flags().IntP("nr-width", "", 1, `minimum width for {nr}, {gnr}, {enr}, {rnr} in flag -r/--replacement. e.g., formatting "1" to "001" by --nr-width 3`)
 	replaceCmd.Flags().IntP("start-num", "n", 1, `starting number when using {nr}, {gnr}, {enr}, {rnr} in replacement`)
 	replaceCmd.Flags().IntP("incr-num", "", 1, `increment number when using  {nr}, {gnr}, {enr}, {rnr} in replacement`)
 
-	replaceCmd.Flags().BoolP("kv-file-all-left-columns-as-value", "A", false, "treat all columns except 1th one as value for kv-file with more than 2 columns")
+	replaceCmd.Flags().BoolP("kv-file-all-left-columns-as-value", "A", false, "treat all columns except the 1st as the value for a kv-file with more than 2 columns")
 }
 
 var reNR = regexp.MustCompile(`\{(NR|nr)\}`)

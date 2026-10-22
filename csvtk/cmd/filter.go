@@ -35,8 +35,8 @@ var filterCmd = &cobra.Command{
 	GroupID: "set",
 
 	Use:   "filter",
-	Short: "filter rows by values of selected fields with arithmetic expression",
-	Long: `filter rows by values of selected fields with arithmetic expression
+	Short: "filter rows by values of selected fields with an arithmetic expression",
+	Long: `filter rows by values of selected fields with an arithmetic expression
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -222,9 +222,9 @@ var filterCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(filterCmd)
 	filterCmd.Flags().StringP("filter", "f", "", `filter condition. e.g. -f "age>12" or -f "1,3<=2" or -F -f "c*!=0"`)
-	filterCmd.Flags().BoolP("fuzzy-fields", "F", false, `using fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
-	filterCmd.Flags().BoolP("any", "", false, `print record if any of the field satisfy the condition`)
-	filterCmd.Flags().BoolP("line-number", "n", false, `print line number as the first column ("n")`)
+	filterCmd.Flags().BoolP("fuzzy-fields", "F", false, `use fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
+	filterCmd.Flags().BoolP("any", "", false, `print a record if any of the fields satisfy the condition`)
+	filterCmd.Flags().BoolP("line-number", "n", false, `print the line number as the first column ("n")`)
 }
 
 var reFilter = regexp.MustCompile(`^(.+?)([!<=>]+)([\-\d\.e,E\+]+)$`)

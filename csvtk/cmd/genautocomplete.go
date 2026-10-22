@@ -33,27 +33,27 @@ import (
 // genautocompleteCmd represents the fq2fa command
 var genautocompleteCmd = &cobra.Command{
 	Use:   "genautocomplete",
-	Short: "generate shell autocompletion script (bash|zsh|fish|powershell)",
-	Long: `generate shell autocompletion script
+	Short: "generate a shell autocompletion script (bash|zsh|fish|powershell)",
+	Long: `generate a shell autocompletion script
 
-Supported shell: bash|zsh|fish|powershell
+Supported shells: bash|zsh|fish|powershell
 
 Bash:
 
-    # generate completion shell
+    # generate shell completion
     csvtk genautocomplete --shell bash
 
-    # configure if never did.
+    # configure if not already done.
     # install bash-completion if the "complete" command is not found.
     echo "for bcfile in ~/.bash_completion.d/* ; do source \$bcfile; done" >> ~/.bash_completion
     echo "source ~/.bash_completion" >> ~/.bashrc
 
 Zsh:
 
-    # generate completion shell
+    # generate shell completion
     csvtk genautocomplete --shell zsh --file ~/.zfunc/_csvtk
 
-    # configure if never did
+    # configure if not already done
     echo 'fpath=( ~/.zfunc "${fpath[@]}" )' >> ~/.zshrc
     echo "autoload -U compinit; compinit" >> ~/.zshrc
 
