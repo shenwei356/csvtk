@@ -268,10 +268,14 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 								}
 							}
 						}
+						// Literal column names need no regexp syntax or escaping.
+						name := col
 						if negativeFields {
-							colnamesMap[col[1:]] = fuzzyField2Regexp(col[1:])
-						} else {
-							colnamesMap[col] = fuzzyField2Regexp(col)
+							name = col[1:]
+						}
+						colnamesMap[name] = nil
+						if fuzzyFields {
+							colnamesMap[name] = fuzzyField2Regexp(name)
 						}
 					}
 

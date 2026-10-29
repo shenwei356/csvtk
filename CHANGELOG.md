@@ -6,6 +6,7 @@
         - prevent overwriting input and auxiliary files.
         - report file I/O and compression errors, even with `-I/--ignore-illegal-row`.
         - fix column range selection.
+        - accept literal column names containing regular-expression characters.
         - make `--immediate-output` a global flag and flush both CSV and file output buffers.
         - preserve explicit stdin input when using `-X/--infile-list`.
     - `csvtk inter`:
@@ -45,12 +46,27 @@
         - fix failures when processing many input files (with `--cols` for `dim`).
     - `csvtk split`:
         - reject unsafe output directories before deleting files, even with `--force`.
+        - honor `--buf-rows 1` and fix appending output when reading from stdin.
+        - limit open files and memory when splitting by chunk count.
     - `csvtk split/csv2xlsx/splitxlsx`:
         - reject generated output filenames that overwrite input files.
     - `csvtk sort`:
         - fix default sorting of single-column input and open ranges selecting only the last column.
-    - `csvtk summary/spread`:
+    - `csvtk summary/spread/sep`:
         - honor `-U/--delete-header`.
+    - `csvtk watch`:
+        - prevent image output from overwriting inputs or tabular output.
+        - reject invalid report frequencies and handle inputs without finite numeric values.
+    - `csvtk filter`:
+        - fix `--any` when selected fields contain non-numeric values.
+    - `csvtk comma`:
+        - preserve numeric precision and scientific notation.
+    - `csvtk plot line`:
+        - fix categorical axis ticks for single categories and custom axis limits.
+    - `csvtk fold`:
+        - honor `--ignore-case`, retaining the first spelling of each key.
+    - `csvtk xlsx2csv`:
+        - honor `-o/--out-file` when listing sheets.
 - [csvtk v0.38.0](https://github.com/shenwei356/csvtk/releases/tag/v0.38.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.38.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.38.0)
     - `csvtk`:

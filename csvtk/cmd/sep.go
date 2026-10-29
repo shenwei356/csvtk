@@ -159,6 +159,11 @@ var sepCmd = &cobra.Command{
 					}
 					if !config.NoHeaderRow || record.IsHeaderRow {
 						handleHeaderRow = true
+						if config.NoOutHeader {
+							// Resolve the selected field from the header without emitting it.
+							handleHeaderRow = false
+							continue
+						}
 					}
 				}
 

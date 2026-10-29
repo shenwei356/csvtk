@@ -243,3 +243,21 @@ func TestHeadRecordLimit(t *testing.T) {
 		})
 	}
 }
+
+// TestLiteralColumnNames accepts regexp metacharacters without enabling fuzzy matching.
+func TestLiteralColumnNames(t *testing.T) {
+	input := writeAccuracyInput(t, "input.csv", "value[,other(,plain\nx,y,z\n")
+	for _, tc := range []struct{ fields, want string }{
+		{"value[", "value[\nx\n"}, {"-value[", "other(,plain\ny,z\n"},
+		{"other(,value[", "other(,value[\ny,x\n"},
+	} {
+		out, _ := runAccuracyCLI(t, "cut", "-f", tc.fields, input)
+		if out != tc.want {
+			t.Fatalf("%s: %q", tc.fields, out)
+		}
+	}
+	out, _ := runAccuracyCLI(t, "cut", "-F", "-f", "plain*", input)
+	if out != "plain\nz\n" {
+		t.Fatalf("fuzzy: %q", out)
+	}
+}

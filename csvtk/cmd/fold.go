@@ -43,6 +43,7 @@ Attention:
 
     Only grouping fields and value fields are output.
     Multiple value fields are folded in parallel, preserving their row alignment.
+    With -i, grouping ignores case and retains the first spelling of each key.
 
 Example:
 
@@ -112,6 +113,7 @@ Example:
 		fieldStr = fmt.Sprintf("%s,%s", fieldStr, vfieldStr)
 
 		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
+		ignoreCase := getFlagBool(cmd, "ignore-case")
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
@@ -136,6 +138,7 @@ Example:
 
 		key2data := make(map[string][][]string, 10000)
 		orders := make(map[string]int, 10000)
+		keyValues := make(map[string][]string) // Original spelling of each group's first key.
 
 		file := files[0]
 		csvReader, err := newCSVReaderByConfig(config, file)
@@ -201,9 +204,12 @@ Example:
 
 			items = record.Selected
 
-			key = encodeFields(items[:nKeyFields], false)
+			key = encodeFields(items[:nKeyFields], ignoreCase)
 			if _, ok = key2data[key]; !ok {
 				key2data[key] = make([][]string, len(items)-nKeyFields)
+				if ignoreCase {
+					keyValues[key] = append([]string(nil), items[:nKeyFields]...)
+				}
 			}
 			for i, value := range items[nKeyFields:] {
 				key2data[key][i] = append(key2data[key][i], value)
@@ -214,6 +220,9 @@ Example:
 		orderedKey := stringutil.SortCountOfString(orders, false)
 		for _, o := range orderedKey {
 			items = decodeFields(o.Key)
+			if ignoreCase {
+				items = keyValues[o.Key]
+			}
 			for _, values := range key2data[o.Key] {
 				items = append(items, strings.Join(values, separater))
 			}

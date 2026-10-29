@@ -24,6 +24,7 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"path/filepath"
 	"runtime"
 	"strconv"
 	"time"
@@ -39,7 +40,13 @@ var watchCmd = &cobra.Command{
 
 	Use:   "watch",
 	Short: "monitor the specified fields",
-	Long:  "monitor the specified fields",
+	Long: `monitor the specified fields
+
+Notes:
+  1. --print-freq must be positive, or -1 to report after EOF.
+  2. No histogram is written when there are no finite numeric values.
+  3. The image path must differ from input files, the input file list, and -o.
+`,
 
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
@@ -52,6 +59,16 @@ var watchCmd = &cobra.Command{
 		}
 		printPdf := getFlagString(cmd, "image")
 		printFreq := getFlagInt(cmd, "print-freq")
+		if printFreq != -1 && printFreq <= 0 {
+			checkError(fmt.Errorf("--print-freq must be positive or -1"))
+		}
+		if printPdf != "" {
+			// Check both destinations before either can truncate a file.
+			checkError(checkCommandOutputFiles(cmd, files, printPdf))
+			if !isStdin(config.OutFile) {
+				checkError(checkWatchOutputPaths(config.OutFile, printPdf))
+			}
+		}
 		printDump := getFlagBool(cmd, "dump")
 		printLog := getFlagBool(cmd, "log")
 		printQuiet := getFlagBool(cmd, "quiet")
@@ -148,9 +165,13 @@ var watchCmd = &cobra.Command{
 				if err != nil {
 					continue
 				}
+				p = transform(p)
+				if math.IsNaN(p) || math.IsInf(p, 0) {
+					continue
+				}
 
 				count++
-				h.Update(transform(p))
+				h.Update(p)
 				if printPass {
 					checkError(writer.Write(record.All))
 				}
@@ -176,7 +197,8 @@ var watchCmd = &cobra.Command{
 			}
 		}
 
-		if printFreq < 0 || count%printFreq != 0 {
+		// Empty inputs and inputs without usable numbers have no histogram.
+		if h.DataCount > 0 && (printFreq < 0 || count%printFreq != 0) {
 			if printDump {
 				os.Stderr.Write([]byte(h.Dump()))
 			} else {
@@ -191,6 +213,62 @@ var watchCmd = &cobra.Command{
 			}
 		}
 	},
+}
+
+// checkWatchOutputPaths rejects aliases between the image and tabular outputs,
+// including paths that do not exist yet and aliases through parent directories.
+func checkWatchOutputPaths(output, image string) error {
+	a, err := resolveWatchOutputPath(output)
+	if err != nil {
+		return err
+	}
+	b, err := resolveWatchOutputPath(image)
+	if err != nil {
+		return err
+	}
+	if a == b {
+		return fmt.Errorf("image and tabular output are the same file; use different output files")
+	}
+	left, err := os.Stat(a)
+	if err != nil && !os.IsNotExist(err) {
+		return err
+	}
+	right, err := os.Stat(b)
+	if err != nil && !os.IsNotExist(err) {
+		return err
+	}
+	if left != nil && right != nil && os.SameFile(left, right) {
+		return fmt.Errorf("image and tabular output are the same file; use different output files")
+	}
+	return nil
+}
+
+// resolveWatchOutputPath resolves existing links while allowing a new target.
+func resolveWatchOutputPath(path string) (string, error) {
+	path, err := filepath.Abs(path)
+	if err != nil {
+		return "", err
+	}
+	resolved, err := filepath.EvalSymlinks(path)
+	if err == nil || !os.IsNotExist(err) {
+		return resolved, err
+	}
+	// A dangling link may point to another new output path.
+	if info, statErr := os.Lstat(path); statErr == nil && info.Mode()&os.ModeSymlink != 0 {
+		target, err := os.Readlink(path)
+		if err != nil {
+			return "", err
+		}
+		if !filepath.IsAbs(target) {
+			target = filepath.Join(filepath.Dir(path), target)
+		}
+		return resolveWatchOutputPath(target)
+	}
+	parent, err := resolveWatchOutputPath(filepath.Dir(path))
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(parent, filepath.Base(path)), nil
 }
 
 func init() {

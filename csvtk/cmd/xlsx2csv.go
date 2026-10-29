@@ -66,7 +66,9 @@ var xlsx2csvCmd = &cobra.Command{
 
 		if listSheets {
 			if len(sheets) > 0 {
-				fmt.Println("index\tsheet")
+				_, err = fmt.Fprintln(outfh, "index\tsheet")
+				checkError(err)
+				config.flushOutput(outfh)
 				is := make([]int, len(sheets))
 				i := 0
 				for index := range sheets {
@@ -75,7 +77,9 @@ var xlsx2csvCmd = &cobra.Command{
 				}
 				sort.Ints(is)
 				for _, index := range is {
-					fmt.Printf("%d\t%s\n", index, sheets[index])
+					_, err = fmt.Fprintf(outfh, "%d\t%s\n", index, sheets[index])
+					checkError(err)
+					config.flushOutput(outfh)
 				}
 			}
 			checkError(xlsx.Close())

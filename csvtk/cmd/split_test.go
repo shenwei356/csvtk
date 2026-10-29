@@ -1,7 +1,9 @@
 package cmd
 
 import (
+	"bytes"
 	"compress/gzip"
+	"context"
 	"io"
 	"os"
 	"os/exec"
@@ -9,6 +11,7 @@ import (
 	"strconv"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/shenwei356/xopen"
 )
@@ -424,6 +427,143 @@ func TestSplitSafeDirectories(t *testing.T) {
 			if explicit {
 				if _, err := os.Stat(filepath.Join(output, "old.txt")); !os.IsNotExist(err) {
 					t.Fatalf("old output retained: %v", err)
+				}
+			}
+		})
+	}
+}
+
+// TestSplitStreamsBeforeEOF verifies per-group limits and immediate chunk output
+// while stdin remains open, then checks appends after the reader reaches EOF.
+func TestSplitStreamsBeforeEOF(t *testing.T) {
+	manyChunks := make(map[string]string)
+	for i := 1; i <= 10; i++ {
+		manyChunks["stdin-"+strconv.Itoa(i)+".csv"] = "k,v\n"
+	}
+	manyChunks["stdin-1.csv"] += "A,one\n"
+	manyChunks["stdin-2.csv"] += "A,two\n"
+	manyChunks["stdin-3.csv"] += "B,three\n"
+	for _, tc := range []struct {
+		name  string
+		flags []string
+		first string
+		want  map[string]string
+	}{
+		{"single row buffer", []string{"-b", "1"}, "stdin-A.csv", map[string]string{"stdin-A.csv": "k,v\nA,one\nA,two\n", "stdin-B.csv": "k,v\nB,three\n"}},
+		{"many immediate chunks", []string{"-c", "10", "--immediate-output"}, "stdin-1.csv", manyChunks},
+		{"immediate chunks", []string{"-c", "2", "--immediate-output"}, "stdin-1.csv", map[string]string{"stdin-1.csv": "k,v\nA,one\nB,three\n", "stdin-2.csv": "k,v\nA,two\n"}},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			dir := filepath.Join(t.TempDir(), "out")
+			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+			defer cancel()
+			args := append([]string{"-test.run=^TestCLIAccuracyHelper$", "--", "split", "-o", dir}, tc.flags...)
+			command := exec.CommandContext(ctx, os.Args[0], args...)
+			command.Env = append(os.Environ(), "CSVTK_ACCURACY_HELPER=1")
+			var stderr bytes.Buffer
+			command.Stderr = &stderr
+			stdin, err := command.StdinPipe()
+			if err != nil {
+				t.Fatal(err)
+			}
+			if err := command.Start(); err != nil {
+				t.Fatal(err)
+			}
+			waited := false
+			defer func() {
+				stdin.Close()
+				cancel()
+				if !waited {
+					command.Wait()
+				}
+			}()
+			if _, err := io.WriteString(stdin, "k,v\nA,one\n"); err != nil {
+				t.Fatal(err)
+			}
+			path := filepath.Join(dir, tc.first)
+			for {
+				data, _ := os.ReadFile(path)
+				if string(data) == "k,v\nA,one\n" {
+					break
+				}
+				select {
+				case <-ctx.Done():
+					t.Fatal("split did not write before EOF")
+				case <-time.After(10 * time.Millisecond):
+				}
+			}
+			if _, err := io.WriteString(stdin, "A,two\nB,three\n"); err != nil {
+				t.Fatal(err)
+			}
+			stdin.Close()
+			err = command.Wait()
+			waited = true
+			if err != nil {
+				t.Fatalf("split: %v: %s", err, stderr.String())
+			}
+			assertSplitFiles(t, dir, tc.want)
+		})
+	}
+}
+
+// TestSplitChunkCompressedBatches verifies all concatenated compression streams,
+// exact row order and a single header across multiple buffer flushes.
+func TestSplitChunkCompressedBatches(t *testing.T) {
+	for _, suffix := range []string{".csv", ".csv.gz", ".csv.xz", ".csv.zst", ".csv.bz2", ".csv.lz4"} {
+		t.Run(suffix, func(t *testing.T) {
+			dir := t.TempDir()
+			input := filepath.Join(dir, "input"+suffix)
+			w, err := xopen.Wopen(input)
+			if err != nil {
+				t.Fatal(err)
+			}
+			expected := make([]strings.Builder, 10)
+			for i := range expected {
+				expected[i].WriteString("k,v\n")
+			}
+			if _, err := io.WriteString(w, "k,v\n"); err != nil {
+				t.Fatal(err)
+			}
+			for i := 0; i < 9000; i++ {
+				row := strconv.Itoa(i) + ",value\n"
+				if _, err := io.WriteString(w, row); err != nil {
+					t.Fatal(err)
+				}
+				expected[i%10].WriteString(row)
+			}
+			if err := w.Close(); err != nil {
+				t.Fatal(err)
+			}
+			out := filepath.Join(dir, "out")
+			runAccuracyCLI(t, "split", "-c", "10", "-o", out, input)
+			entries, err := os.ReadDir(out)
+			if err != nil || len(entries) != 10 {
+				t.Fatalf("outputs: %v, %v", entries, err)
+			}
+			for _, entry := range entries {
+				base := strings.TrimSuffix(entry.Name(), filepath.Ext(entry.Name()))
+				if suffix != ".csv" {
+					base = strings.TrimSuffix(base, ".csv")
+				}
+				index := strings.LastIndex(base, "-")
+				chunk, err := strconv.Atoi(base[index+1:])
+				if err != nil {
+					t.Fatal(err)
+				}
+				i := chunk - 1
+				r, err := xopen.Ropen(filepath.Join(out, entry.Name()))
+				if err != nil {
+					t.Fatal(err)
+				}
+				data, err := io.ReadAll(r)
+				if err != nil {
+					t.Fatal(err)
+				}
+				if err := r.Close(); err != nil {
+					t.Fatal(err)
+				}
+				if string(data) != expected[i].String() {
+					t.Fatalf("%s row order, values or header changed", entry.Name())
 				}
 			}
 		})

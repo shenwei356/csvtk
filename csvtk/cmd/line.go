@@ -316,16 +316,13 @@ Notes:
 			p.Y.Tick.Marker = plot.LogTicks{Prec: -1}
 		}
 		if nominal {
-			p.X.Tick.Marker = plot.TickerFunc(func(min, max float64) []plot.Tick {
-				ticks := plot.DefaultTicks{}.Ticks(min, max)
-				for i, t := range ticks {
-					if t.Label == "" { // Skip minor ticks, they are fine.
-						continue
-					}
-					ticks[i].Label = xNominalValues[int(t.Value)]
-				}
-				return ticks
-			})
+			// Category ticks are integer positions, including a single category
+			// and axis limits extending beyond the observed positions.
+			ticks := make([]plot.Tick, len(xNominalValues))
+			for i, name := range xNominalValues {
+				ticks[i] = plot.Tick{Value: float64(i), Label: name}
+			}
+			p.X.Tick.Marker = plot.ConstantTicks(ticks)
 		}
 
 		if plotConfig.xminStr != "" {

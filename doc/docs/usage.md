@@ -525,6 +525,9 @@ $ csvtk comma -h
 
 make numbers more readable by adding commas
 
+Numeric precision is preserved. Scientific notation keeps its exponent;
+commas are added to the integer part of the mantissa.
+
 Usage:
   csvtk comma [flags]
 
@@ -551,7 +554,7 @@ $ echo -ne "12345\nNA\n12345.12\n1.2e6\n" \
 12,345      12,345   
 NA          NA       
 12,345.12   12,345.12
-1,200,000   1,200,000
+1.2e6       1.2e6
 ```
 
 ## concat
@@ -2135,6 +2138,7 @@ Attention:
 
     Only grouping fields and value fields are output.
     Multiple value fields are folded in parallel, preserving their row alignment.
+    With -i, grouping ignores case and retains the first spelling of each key.
 
 Example:
 
@@ -5627,6 +5631,11 @@ Usage
 $ csvtk watch -h
 
 monitor the specified fields
+
+Notes:
+  1. --print-freq must be positive, or -1 to report after EOF.
+  2. No histogram is written when there are no finite numeric values.
+  3. The image path must differ from input files, the input file list, and -o.
 
 Usage:
   csvtk watch [flags]

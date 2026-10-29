@@ -23,9 +23,8 @@ package cmd
 import (
 	"fmt"
 	"runtime"
-	"strconv"
+	"strings"
 
-	"github.com/dustin/go-humanize"
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
 )
@@ -37,6 +36,9 @@ var fmtnumCmd = &cobra.Command{
 	Use:   "comma",
 	Short: "make numbers more readable by adding commas",
 	Long: `make numbers more readable by adding commas
+
+Numeric precision is preserved. Scientific notation keeps its exponent;
+commas are added to the integer part of the mantissa.
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -95,7 +97,6 @@ var fmtnumCmd = &cobra.Command{
 
 			checkFirstLine := true
 			var f int
-			var v float64
 			for record := range csvReader.Ch {
 				if record.Err != nil {
 					checkError(record.Err)
@@ -115,8 +116,7 @@ var fmtnumCmd = &cobra.Command{
 
 				for _, f = range record.Fields {
 					if reDigitals.MatchString(record.All[f-1]) {
-						v, _ = strconv.ParseFloat(record.All[f-1], 64)
-						record.All[f-1] = humanize.Commaf(v)
+						record.All[f-1] = commaNumber(record.All[f-1])
 					}
 				}
 				checkError(writer.Write(record.All))
@@ -125,6 +125,33 @@ var fmtnumCmd = &cobra.Command{
 			readerReport(&config, csvReader, file)
 		}
 	},
+}
+
+// commaNumber groups the integer digits of a validated number without rounding
+// its fraction or expanding an exponent that could require unbounded space.
+func commaNumber(value string) string {
+	start := 0
+	if value[0] == '+' || value[0] == '-' {
+		start = 1
+	}
+	end := strings.IndexAny(value, ".eE")
+	if end < 0 {
+		end = len(value)
+	}
+	if end-start <= 3 {
+		return value
+	}
+	var out strings.Builder
+	out.Grow(len(value) + (end-start-1)/3)
+	out.WriteString(value[:start])
+	for i := start; i < end; i++ {
+		if i > start && (end-i)%3 == 0 {
+			out.WriteByte(',')
+		}
+		out.WriteByte(value[i])
+	}
+	out.WriteString(value[end:])
+	return out.String()
 }
 
 func init() {

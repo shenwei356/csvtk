@@ -78,3 +78,16 @@ func TestFoldRejectsOverlappingFields(t *testing.T) {
 		t.Fatalf("expected overlapping fields error, got %q, err: %v", output, err)
 	}
 }
+
+// TestFoldIgnoreCase preserves the first key's spelling and aligned value columns.
+func TestFoldIgnoreCase(t *testing.T) {
+	input := writeAccuracyInput(t, "input.csv", "id,group,v,w\nA,K,One,1\na,k,Two,2\nA,x,Three,3\n")
+	out, _ := runAccuracyCLI(t, "fold", "-i", "-f", "id,group", "-v", "v,w", "-s", ";", input)
+	if out != "id,group,v,w\nA,K,One;Two,1;2\nA,x,Three,3\n" {
+		t.Fatalf("case folded: %q", out)
+	}
+	out, _ = runAccuracyCLI(t, "fold", "-f", "id,group", "-v", "v,w", "-s", ";", input)
+	if out != "id,group,v,w\nA,K,One,1\na,k,Two,2\nA,x,Three,3\n" {
+		t.Fatalf("case sensitive: %q", out)
+	}
+}

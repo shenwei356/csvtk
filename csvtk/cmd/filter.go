@@ -157,6 +157,10 @@ var filterCmd = &cobra.Command{
 					}
 
 					if !reDigitals.MatchString(val) {
+						// A missing value cannot rule out a match in another field.
+						if any {
+							continue
+						}
 						flag = false
 						break
 					}

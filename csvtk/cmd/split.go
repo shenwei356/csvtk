@@ -99,6 +99,25 @@ Notes:
 			checkError(checkOutputDirectory(outdir, protectedFiles))
 		}
 
+		// Capture input identities before the reader closes stdin at EOF. Generated
+		// paths must remain safe when a later batch reopens an existing output.
+		protectedInputs := make(map[string]os.FileInfo)
+		protectedPaths := append([]string(nil), files...)
+		if list := getFlagString(cmd, "infile-list"); list != "" {
+			protectedPaths = append(protectedPaths, list)
+		}
+		for _, path := range protectedPaths {
+			var info os.FileInfo
+			var err error
+			if isStdin(path) {
+				info, err = os.Stdin.Stat()
+			} else {
+				info, err = os.Stat(path)
+			}
+			checkError(err)
+			protectedInputs[path] = info
+		}
+
 		file := files[0]
 		csvReader, err := newCSVReaderByConfig(config, file)
 		checkError(err)
@@ -142,7 +161,16 @@ Notes:
 		// Check each final filename too: a prefix or an existing link can alias
 		// an input even when the output directory itself is safe.
 		checkOutputPath := func(path string) string {
-			checkError(checkCommandOutputFiles(cmd, files, path))
+			info, err := os.Stat(path)
+			if os.IsNotExist(err) {
+				return path
+			}
+			checkError(err)
+			for input, inputInfo := range protectedInputs {
+				if info.Mode().IsRegular() && os.SameFile(inputInfo, info) {
+					checkError(fmt.Errorf("input %q and output %q are the same file; use a different output file", input, path))
+				}
+			}
 			return path
 		}
 		chunkFile := func(chunk int) string {
@@ -179,7 +207,6 @@ Notes:
 		var headerRow []string
 		// moreThanOneWrite := make(map[string]bool)
 		rowsBuf := make(map[string][][]string, bufGroupsSize)
-		var ok bool
 
 		checkFirstLine := true
 		for record := range csvReader.Ch {
@@ -230,22 +257,14 @@ Notes:
 			row := make([]string, len(record.All))
 			copy(row, record.All)
 
-			if _, ok = rowsBuf[key]; ok {
-				rowsBuf[key] = append(rowsBuf[key], row)
-				if len(rowsBuf[key]) == bufRowsSize {
-					appendRows(config,
-						csvReader,
-						headerRow,
-						outfile(key),
-						rowsBuf[key],
-						key,
-					)
-					rowsBuf[key] = make([][]string, 0, 1)
-
-				}
-			} else {
-				rowsBuf[key] = make([][]string, 0, 1)
-				rowsBuf[key] = append(rowsBuf[key], row)
+			_, buffered := rowsBuf[key]
+			rowsBuf[key] = append(rowsBuf[key], row)
+			// Check the first row too, so -b 1 writes every record.
+			if bufRowsSize > 0 && len(rowsBuf[key]) >= bufRowsSize {
+				appendRows(config, csvReader, headerRow, outfile(key), rowsBuf[key], key)
+				rowsBuf[key] = nil
+			}
+			if !buffered {
 				if len(rowsBuf) == bufGroupsSize { // empty the buffer
 					var wg sync.WaitGroup
 					tokens := make(chan int, config.NumCPUs)
@@ -363,24 +382,47 @@ func splitByNLines(config Config, csvReader *CSVReader, nlines int, outfile func
 	}
 }
 
+// splitByNChunks bounds both buffered data and open files while retaining
+// round-robin order. Reopened compressed files contain concatenated streams.
 func splitByNChunks(config Config, csvReader *CSVReader, nchunks int, outfile func(int) string) {
+	const maxBufferedRows = 4096     // Bound slice overhead even for very short rows.
+	const maxBufferedBytes = 4 << 20 // Flush wide records without retaining a full batch.
+	const maxOpenChunks = 8          // Keep small splits streaming without unbounded file handles.
 	var headerRow []string
-	outputs := make([]*splitOutput, nchunks)
+	var outputs []*splitOutput
+	if nchunks <= maxOpenChunks {
+		outputs = make([]*splitOutput, nchunks)
+	}
 	opened := false
 	openOutputs := func() {
-		for i := range outputs {
-			outputs[i] = newSplitOutput(config, outfile(i+1), headerRow)
+		// Create every chunk, including those receiving no data, one at a time.
+		for i := 0; i < nchunks; i++ {
+			output := newSplitOutput(config, outfile(i+1), headerRow)
+			if outputs != nil {
+				outputs[i] = output
+			} else {
+				output.close()
+			}
 		}
 		opened = true
 	}
-
-	row := 0
+	buffer := make(map[int][][]string)
+	bufferedRows, bufferedBytes := 0, 0
+	flush := func() {
+		for chunk, rows := range buffer {
+			output := openSplitOutput(config, outfile(chunk+1), nil, true)
+			for _, row := range rows {
+				checkError(output.writer.Write(row))
+			}
+			output.close()
+			delete(buffer, chunk)
+		}
+		bufferedRows, bufferedBytes = 0, 0
+	}
+	chunk := 0
 	checkFirstLine := true
 	for record := range csvReader.Ch {
-		if record.Err != nil {
-			checkError(record.Err)
-		}
-
+		checkError(record.Err)
 		if checkFirstLine {
 			checkFirstLine = false
 			if !config.NoHeaderRow || record.IsHeaderRow {
@@ -389,29 +431,51 @@ func splitByNChunks(config Config, csvReader *CSVReader, nchunks int, outfile fu
 				continue
 			}
 		}
-
 		if !opened {
 			openOutputs()
 		}
-		checkError(outputs[row%nchunks].writer.Write(record.All))
-		row++
+		if outputs != nil {
+			checkError(outputs[chunk].writer.Write(record.All))
+			chunk = (chunk + 1) % nchunks
+			continue
+		}
+		buffer[chunk] = append(buffer[chunk], record.All)
+		bufferedRows++
+		for _, field := range record.All {
+			bufferedBytes += len(field)
+		}
+		if config.ImmediateOutput || bufferedRows >= maxBufferedRows || bufferedBytes >= maxBufferedBytes {
+			flush()
+		}
+		chunk = (chunk + 1) % nchunks
 	}
-
 	if !opened {
 		openOutputs()
 	}
+	flush()
 	for _, output := range outputs {
 		output.close()
 	}
 }
 
+// splitOutput owns the CSV and compression buffers for an open chunk.
 type splitOutput struct {
 	fh     *xopen.Writer
 	writer *csvOutputWriter
 }
 
+// newSplitOutput creates a chunk and writes its header once.
 func newSplitOutput(config Config, outfile string, headerRow []string) *splitOutput {
-	fh, err := xopen.Wopen(outfile)
+	return openSplitOutput(config, outfile, headerRow, false)
+}
+
+// openSplitOutput opens a new chunk or appends another batch to an existing one.
+func openSplitOutput(config Config, outfile string, headerRow []string, appendMode bool) *splitOutput {
+	flag := os.O_CREATE | os.O_WRONLY | os.O_TRUNC
+	if appendMode {
+		flag = os.O_CREATE | os.O_WRONLY | os.O_APPEND
+	}
+	fh, err := xopen.WopenFile(outfile, flag, 0666)
 	checkError(err)
 	writer := newCSVOutputWriter(fh, config.csvOutputOptions())
 	if config.OutTabs || config.Tabs {
@@ -429,6 +493,7 @@ func newSplitOutput(config Config, outfile string, headerRow []string) *splitOut
 	return &splitOutput{fh: fh, writer: writer}
 }
 
+// close finalizes both CSV records and the compressed stream.
 func (output *splitOutput) close() {
 	output.writer.Flush()
 	checkError(output.writer.Error())
