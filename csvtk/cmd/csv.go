@@ -22,6 +22,7 @@ package cmd
 
 import (
 	"encoding/csv"
+	"errors"
 	"fmt"
 	"io"
 	"regexp"
@@ -183,7 +184,10 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 
 			lineNum++
 			if err != nil {
-				if ignoreIllegalRow {
+				// Only CSV syntax/width errors are recoverable. Retrying a persistent
+				// I/O or decompression error can loop forever and grow the warning list.
+				var parseErr *csv.ParseError
+				if ignoreIllegalRow && errors.As(err, &parseErr) {
 					csvReader.SkippedIllegalRows++
 					if !csvReader.omitSkippedRowNumbers {
 						csvReader.NumIllegalRows = append(csvReader.NumIllegalRows, lineNum)
@@ -194,6 +198,7 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 					Line: lineNum,
 					Err:  err,
 				}
+				return
 			}
 
 			if record == nil {
@@ -446,6 +451,8 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 						}
 					}
 					fields = fields2
+					// Exclusion replaces the requested fields with valid physical columns.
+					ignoreFields = make([]bool, len(fields))
 				}
 
 				if len(fields) == 0 {

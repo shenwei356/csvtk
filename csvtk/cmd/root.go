@@ -52,6 +52,7 @@ Attention:
   6. The CSV parser requires all lines to have the same number of fields/columns.
      Even lines containing only spaces will cause an error.
      Use '-I/--ignore-illegal-row' to skip these lines if necessary.
+     File I/O and decompression errors are not skipped.
      You can also use "csvtk fix" to fix files with different numbers of columns in rows.
   7. If double-quotes exist in fields not enclosed with double-quotes, e.g.,
          x,a "b" c,1
@@ -69,7 +70,8 @@ Attention:
      csvtk also supports reading and writing xz (.xz), zstd (.zst) and Bzip2 (.bz2) formats.
  10. Fewer than half of the subcommands support >1 file.
      With -X, listed files are appended to explicitly supplied inputs, including "-".
- 11. Output paths must differ from input files, including symbolic and hard links.
+ 11. Output paths must differ from all input files, including file lists and
+     auxiliary files. Symbolic and hard links are checked.
  12. Output write and compression errors cause a nonzero exit status.
  13. Use --immediate-output to flush each output record or raw chunk in a pipeline.
      Commands may still buffer input for sorting, grouping, or formatting;

@@ -3,7 +3,8 @@
     - `csvtk`:
         - correct grammar and wording in command help and Markdown documentation.
         - improve performance.
-        - prevent overwriting input files and report file I/O and compression errors.
+        - prevent overwriting input and auxiliary files.
+        - report file I/O and compression errors, even with `-I/--ignore-illegal-row`.
         - fix column range selection.
         - make `--immediate-output` a global flag and flush both CSV and file output buffers.
         - preserve explicit stdin input when using `-X/--infile-list`.
@@ -22,6 +23,14 @@
         - report ambiguous column names.
     - `csvtk csv2xlsx`:
         - fix data loss in wide tables.
+        - generate distinct, valid sheet names for input files with conflicting names.
+    - `csvtk round`:
+        - fix rounding of integers, decimals, and scientific notation.
+    - `csvtk cut`:
+        - fix a panic when combining `-H`, `-m`, and excluded columns.
+    - `csvtk comb`:
+        - fix reading of multiline fields, long records, comments, and many input files.
+        - reduce memory usage when generating combinations.
     - `csvtk filter2/mutate2/mutate3`:
         - fix numeric precision and string handling, and allow mixing `$x` and `${x}` references.
     - `csvtk plot bar`:
@@ -36,6 +45,8 @@
         - fix failures when processing many input files (with `--cols` for `dim`).
     - `csvtk split`:
         - reject unsafe output directories before deleting files, even with `--force`.
+    - `csvtk split/csv2xlsx/splitxlsx`:
+        - reject generated output filenames that overwrite input files.
     - `csvtk sort`:
         - fix default sorting of single-column input and open ranges selecting only the last column.
     - `csvtk summary/spread`:

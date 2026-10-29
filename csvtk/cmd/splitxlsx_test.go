@@ -13,6 +13,40 @@ import (
 	"github.com/xuri/excelize/v2"
 )
 
+// TestSplitXLSXDefaultOutputAlias keeps the source workbook intact when the default output is a hard link.
+func TestSplitXLSXDefaultOutputAlias(t *testing.T) {
+	dir := t.TempDir()
+	input := filepath.Join(dir, "input.xlsx")
+	book := excelize.NewFile()
+	for i, value := range []string{"group", "a", "b"} {
+		cell, err := excelize.CoordinatesToCellName(1, i+1)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := book.SetCellValue("Sheet1", cell, value); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := book.SaveAs(input); err != nil {
+		t.Fatal(err)
+	}
+	if err := book.Close(); err != nil {
+		t.Fatal(err)
+	}
+	original, err := os.ReadFile(input)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Link(input, filepath.Join(dir, "input.split.xlsx")); err != nil {
+		t.Fatal(err)
+	}
+	assertInputError(t, "same file", "splitxlsx", "-f", "1", input)
+	got, err := os.ReadFile(input)
+	if err != nil || !bytes.Equal(got, original) {
+		t.Fatalf("source workbook changed: %v", err)
+	}
+}
+
 // TestSplitXLSXMissingCells checks actual output sheets for trailing empty key
 // cells, entirely blank rows, and key buffers reused after nonempty values.
 func TestSplitXLSXMissingCells(t *testing.T) {

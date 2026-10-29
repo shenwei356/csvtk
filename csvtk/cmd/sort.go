@@ -82,6 +82,7 @@ Combinations:
 			if len(items) != 2 {
 				checkError(fmt.Errorf("invalid level information format: %s", level))
 			}
+			checkError(checkInputOutputFiles([]string{items[1]}, config.OutFile))
 
 			m := make(map[string]int)
 			var i int

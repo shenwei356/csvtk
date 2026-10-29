@@ -310,6 +310,7 @@ Missing cells in selected columns are treated as empty values.
 			prefx, _ := filepathTrimExtension(files[0])
 			config.OutFile = fmt.Sprintf("%s.split.xlsx", prefx)
 		}
+		checkError(checkCommandOutputFiles(cmd, files, config.OutFile))
 		checkError(xlsx.SaveAs(config.OutFile))
 	},
 }

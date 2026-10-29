@@ -6,6 +6,29 @@ import (
 	"testing"
 )
 
+// TestCutMissingExcludedColumns keeps the missing-column flags aligned after exclusion.
+func TestCutMissingExcludedColumns(t *testing.T) {
+	input := writeAccuracyInput(t, "columns.csv", "a,b,c,d\n1,2,3,4\n")
+	for _, noHeader := range []bool{false, true} {
+		for _, missing := range []string{"-m", "-b"} {
+			for _, fields := range []string{"-1", "-1,-9", "-1,-3-"} {
+				args := []string{"cut", missing, "-f", fields, input}
+				if noHeader {
+					args = append(args, "-H")
+				}
+				out, _ := runAccuracyCLI(t, args...)
+				want := "b,c,d\n2,3,4\n"
+				if fields == "-1,-3-" {
+					want = "b\n2\n"
+				}
+				if out != want {
+					t.Fatalf("%v: got %q, want %q", args, out, want)
+				}
+			}
+		}
+	}
+}
+
 // TestCutOpenRanges checks that each range expands at its requested position.
 func TestCutOpenRanges(t *testing.T) {
 	cases := []struct {

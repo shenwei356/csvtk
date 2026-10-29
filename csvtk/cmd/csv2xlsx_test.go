@@ -13,6 +13,83 @@ import (
 	"github.com/xuri/excelize/v2"
 )
 
+// TestCSV2XLSXUniqueSheets keeps each input in a distinct sheet, including name normalization collisions.
+func TestCSV2XLSXUniqueSheets(t *testing.T) {
+	for _, names := range [][]string{
+		{"sample.csv", "sample.csv", "SAMPLE.csv"},
+		{"a[b].csv", "a_b_.csv", strings.Repeat("x", 40) + ".csv"},
+	} {
+		t.Run(names[0], func(t *testing.T) {
+			args := []string{"csv2xlsx"}
+			want := make([][][]string, len(names))
+			for i, name := range names {
+				value := strconv.Itoa(i)
+				contents := "id,value\n" + value + ",first\n"
+				want[i] = [][]string{{"id", "value"}, {value, "first"}}
+				if i == 0 {
+					contents += "extra,last\n"
+					want[i] = append(want[i], []string{"extra", "last"})
+				}
+				args = append(args, writeAccuracyInput(t, name, contents))
+			}
+			output := filepath.Join(t.TempDir(), "combined.xlsx")
+			runAccuracyCLI(t, append(args, "-o", output)...)
+			xlsx, err := excelize.OpenFile(output)
+			if err != nil {
+				t.Fatal(err)
+			}
+			defer xlsx.Close()
+			sheets := xlsx.GetSheetList()
+			if len(sheets) != len(want) {
+				t.Fatalf("got sheets %q, want %d", sheets, len(want))
+			}
+			for i, sheet := range sheets {
+				rows, err := xlsx.GetRows(sheet)
+				if err != nil || !reflect.DeepEqual(rows, want[i]) {
+					t.Fatalf("sheet %q: got %q, want %q; error: %v", sheet, rows, want[i], err)
+				}
+			}
+		})
+	}
+}
+
+// TestCSV2XLSXDefaultOutputAliases checks the resolved filename before SaveAs can truncate an input.
+func TestCSV2XLSXDefaultOutputAliases(t *testing.T) {
+	for _, alias := range []string{"hardlink", "symlink"} {
+		t.Run(alias, func(t *testing.T) {
+			const contents = "id,value\na,1\n"
+			input := writeAccuracyInput(t, "input.csv", contents)
+			link := os.Link
+			if alias == "symlink" {
+				link = os.Symlink
+			}
+			if err := link(input, input+".xlsx"); err != nil {
+				t.Fatal(err)
+			}
+			assertInputError(t, "same file", "csv2xlsx", input)
+			got, err := os.ReadFile(input)
+			if err != nil || string(got) != contents {
+				t.Fatalf("input changed: %q; error: %v", got, err)
+			}
+		})
+	}
+}
+
+// TestCSV2XLSXDefaultOutputFileListAlias protects the file list after resolving the default output.
+func TestCSV2XLSXDefaultOutputFileListAlias(t *testing.T) {
+	input := writeAccuracyInput(t, "input.csv", "id,value\na,1\n")
+	contents := input + "\n"
+	list := writeAccuracyInput(t, "inputs.txt", contents)
+	if err := os.Link(list, input+".xlsx"); err != nil {
+		t.Fatal(err)
+	}
+	assertInputError(t, "same file", "csv2xlsx", "-X", list)
+	got, err := os.ReadFile(list)
+	if err != nil || string(got) != contents {
+		t.Fatalf("file list changed: %q; error: %v", got, err)
+	}
+}
+
 // TestCSV2XLSXWideTables checks all cells across two- and three-letter column
 // names, including the XLSX column limit, in text and numeric output modes.
 func TestCSV2XLSXWideTables(t *testing.T) {

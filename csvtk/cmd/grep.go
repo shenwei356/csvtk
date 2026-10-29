@@ -100,6 +100,7 @@ Attention:
 		}
 
 		if patternFile != "" {
+			checkError(checkInputOutputFiles([]string{patternFile}, config.OutFile))
 			noHighlight = true
 			// Finish reading and validating the pattern file before producing output.
 			checkError(forEachLine(patternFile, func(pattern string) error {

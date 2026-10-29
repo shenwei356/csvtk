@@ -45,6 +45,7 @@ Attention:
   3. The first row of each sheet is frozen unless '-H/--no-header-row' is given.
   4. XLSX sheets support up to 16,384 columns and 1,048,576 rows, including the
      output header row and any row-number column. Exceeding these limits causes an error.
+  5. Sheet names are derived from input filenames and made valid and unique.
   
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -65,6 +66,7 @@ Attention:
 				outFile = "stdin.xlsx"
 			}
 		}
+		checkError(checkCommandOutputFiles(cmd, files, outFile))
 
 		xlsx := excelize.NewFile()
 		defer closeOutput(xlsx)
@@ -74,6 +76,7 @@ Attention:
 		var valFloat float64
 		var nSheets int
 		var idx, firstIdx int
+		usedSheetNames := make(map[string]struct{}, len(files)) // Names already assigned to input files.
 		for i, file := range files {
 			csvReader, err := newCSVReaderByConfig(config, file)
 			if err != nil {
@@ -99,6 +102,7 @@ Attention:
 				checkError(err)
 			} else {
 				sheet, _ = filepathTrimExtension(filepath.Base(file))
+				sheet = uniqueSheetName(sheet, usedSheetNames)
 				if nSheets == 1 {
 					checkError(xlsx.SetSheetName("Sheet1", sheet))
 				} else {

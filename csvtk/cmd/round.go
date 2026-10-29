@@ -37,6 +37,8 @@ var roundCmd = &cobra.Command{
 	Short: "round floats to n decimal places",
 	Long: `round floats to n decimal places
 
+Scientific notation is preserved; -n rounds the mantissa.
+
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
@@ -101,7 +103,6 @@ var roundCmd = &cobra.Command{
 			})
 
 			var found []string
-			var founds [][]string
 			var fvalue float64
 
 			checkFirstLine := true
@@ -123,17 +124,12 @@ var roundCmd = &cobra.Command{
 				}
 
 				for _, f := range record.Fields {
-					founds = reDigitalsCapt.FindAllStringSubmatch(record.All[f-1], -1)
-					if len(founds) > 0 {
-						found = founds[0]
-						if found[2] == "" { // not scientific notation
-							fvalue, _ = strconv.ParseFloat(found[1], 64)
-							record.All[f-1] = fmt.Sprintf(decimalFormat, fvalue)
-						} else if found[1] == "" { // e20
-						} else {
-							fvalue, _ = strconv.ParseFloat(found[1], 64)
-							record.All[f-1] = fmt.Sprintf(decimalFormat, fvalue) + found[2]
-						}
+					found = reDigitalsCapt.FindStringSubmatch(record.All[f-1])
+					if found != nil {
+						// Round the mantissa without changing the exponent's spelling.
+						fvalue, err = strconv.ParseFloat(found[1], 64)
+						checkError(err)
+						record.All[f-1] = fmt.Sprintf(decimalFormat, fvalue) + found[2]
 					}
 				}
 				checkError(writer.Write(record.All))

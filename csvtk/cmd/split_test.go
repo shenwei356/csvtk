@@ -13,6 +13,55 @@ import (
 	"github.com/shenwei356/xopen"
 )
 
+// TestSplitOutputAliases protects inputs when generated filenames collide in the current directory.
+func TestSplitOutputAliases(t *testing.T) {
+	const contents = "id,value\na,1\nb,2\n"
+	for _, mode := range []string{"lines", "chunks", "keys"} {
+		for _, alias := range []string{"same path", "hardlink", "symlink"} {
+			t.Run(mode+"/"+alias, func(t *testing.T) {
+				dir := t.TempDir()
+				name := "1.csv"
+				flags := []string{"-n", "1"}
+				if mode == "chunks" {
+					flags = []string{"-c", "2"}
+				} else if mode == "keys" {
+					name = "a.csv"
+					flags = []string{"-f", "id"}
+				}
+				output := filepath.Join(dir, name)
+				input := output
+				if alias != "same path" {
+					input = filepath.Join(dir, "source.csv")
+				}
+				if err := os.WriteFile(input, []byte(contents), 0600); err != nil {
+					t.Fatal(err)
+				}
+				if alias != "same path" {
+					link := os.Link
+					if alias == "symlink" {
+						link = os.Symlink
+					}
+					if err := link(input, output); err != nil {
+						t.Fatal(err)
+					}
+				}
+				args := append([]string{"-test.run=^TestCLIAccuracyHelper$", "--", "split", "-p", ""}, flags...)
+				command := exec.Command(os.Args[0], append(args, input)...)
+				command.Dir = dir
+				command.Env = append(os.Environ(), "CSVTK_ACCURACY_HELPER=1")
+				out, err := command.CombinedOutput()
+				if err == nil || !strings.Contains(string(out), "same file") {
+					t.Fatalf("alias was not rejected: %v: %s", err, out)
+				}
+				got, err := os.ReadFile(input)
+				if err != nil || string(got) != contents {
+					t.Fatalf("input changed: %q, %v", got, err)
+				}
+			})
+		}
+	}
+}
+
 func TestSplitByNLines(t *testing.T) {
 	input := writeAccuracyInput(t, "input.csv", "a,b,c,d\n1,2,3,4\n2,3,4,5\n3,4,5,6\n4,5,6,7\n5,6,7,8\n")
 	outdir := filepath.Join(t.TempDir(), "chunks")

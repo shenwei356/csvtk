@@ -201,8 +201,19 @@ func getFileListFromArgsAndFile(cmd *cobra.Command, args []string, checkFileFrom
 		}
 	}
 	// Reject aliases before any command opens its output with truncation.
-	checkError(checkInputOutputFiles(files, getFlagString(cmd, "out-file")))
+	checkError(checkCommandOutputFiles(cmd, files, getFlagString(cmd, "out-file")))
 	return files
+}
+
+// checkCommandOutputFiles protects primary inputs and the file list, including derived output paths.
+func checkCommandOutputFiles(cmd *cobra.Command, files []string, output string) error {
+	if err := checkInputOutputFiles(files, output); err != nil {
+		return err
+	}
+	if list := getFlagString(cmd, "infile-list"); list != "" {
+		return checkInputOutputFiles([]string{list}, output)
+	}
+	return nil
 }
 
 // checkInputOutputFiles compares file identities, including symlinks and hardlinks.
@@ -548,7 +559,9 @@ func NewCSVWriterChanByConfig(config Config) (chan []string, error) {
 
 var reFields = regexp.MustCompile(`([^,]+)(,[^,]+)*,?`)
 var reDigitals = regexp.MustCompile(`^[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?$`)
-var reDigitalsCapt = regexp.MustCompile(`^([+-]?(\d+(\.\d*)?|\.\d+))([eE][+-]?\d+)?$`)
+
+// reDigitalsCapt captures only the mantissa and optional exponent, in that order.
+var reDigitalsCapt = regexp.MustCompile(`^([+-]?(?:\d+(?:\.\d*)?|\.\d+))([eE][+-]?\d+)?$`)
 var reIntegers = regexp.MustCompile(`^[\-\+\d]+$`)
 var reIntegerRange = regexp.MustCompile(`^([\-\d]+?)\-([\-\d]*?)$`)
 var reIntegerRange2 = regexp.MustCompile(`^(\d+)\-(\d+)$`)

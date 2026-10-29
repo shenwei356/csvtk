@@ -21,8 +21,6 @@
 package cmd
 
 import (
-	"bufio"
-	"encoding/csv"
 	"fmt"
 	"runtime"
 	"sort"
@@ -42,6 +40,9 @@ var combCmd = &cobra.Command{
 	Aliases: []string{"combination"},
 	Short:   "compute combinations of items in each row",
 	Long: `compute combinations of items in each row
+
+Rows may have different numbers of fields. Quoted fields may span multiple lines.
+Empty fields and repeated items within each row are ignored.
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -75,15 +76,10 @@ var combCmd = &cobra.Command{
 			checkError(writer.Error())
 		}()
 
-		var fh *xopen.Reader
-		var text string
-		var reader *csv.Reader
-		var line int
 		var item string
-		var _items, items []string
+		var items []string
 		var m map[string]interface{}
-		var combs [][]int
-		var comb []int
+		var comb []int // Reused indices for the current combination.
 		var result []string
 		var n int
 		var ok bool
@@ -95,46 +91,29 @@ var combCmd = &cobra.Command{
 		m = make(map[string]interface{}, 1024)
 
 		for _, file := range files {
-			fh, err = xopen.Ropen(file)
+			reader, err := newCSVReaderByConfig(config, file)
 			if err != nil {
 				checkError(fmt.Errorf("reading file %s: %s", file, err))
 			}
-
-			scanner := bufio.NewScanner(fh)
-
-			line = 0
+			// Each record is an independent set and may contain a different number
+			// of fields. The shared reader handles quoted newlines and closes inputs.
+			reader.Reader.FieldsPerRecord = -1
+			reader.Read(ReadOption{FieldStr: "1-"})
 			n = 0
-			for scanner.Scan() {
-				line++
-				if !config.NoHeaderRow && line == 1 {
+			for record := range reader.Ch {
+				checkError(record.Err)
+				if record.IsHeaderRow {
 					continue
 				}
 				n++
 
-				text = strings.TrimSpace(scanner.Text())
-				if ignoreCase {
-					text = strings.ToLower(text)
-				}
-
-				reader = csv.NewReader(strings.NewReader(text))
-				if config.Tabs {
-					reader.Comma = '\t'
-				} else {
-					reader.Comma = config.Delimiter
-				}
-
-				reader.Comment = config.CommentChar
-				for {
-					_items, err = reader.Read()
-					if err != nil {
-						checkError(fmt.Errorf("[line %d] failed parsing: %s", line, text))
-					}
-					break
-				}
 				items = items[:0]
-				for _, item = range _items {
+				for _, item = range record.All {
 					if item == "" {
 						continue
+					}
+					if ignoreCase {
+						item = strings.ToLower(item)
 					}
 					if _, ok = m[item]; !ok {
 						items = append(items, item)
@@ -151,8 +130,15 @@ var combCmd = &cobra.Command{
 					number = len(items)
 				}
 
-				combs = combin.Combinations(len(items), number)
-				for _, comb = range combs {
+				// Generate one combination at a time instead of retaining the entire set.
+				generator := combin.NewCombinationGenerator(len(items), number)
+				if cap(comb) < number {
+					comb = make([]int, number)
+				} else {
+					comb = comb[:number]
+				}
+				for generator.Next() {
+					generator.Combination(comb)
 					result = result[:0]
 					for _, i = range comb {
 						result = append(result, items[i])
@@ -170,7 +156,7 @@ var combCmd = &cobra.Command{
 					delete(m, item)
 				}
 			}
-			checkError(scanner.Err())
+			readerReport(&config, reader, file)
 			if n == 0 {
 				log.Warning("no input? or only one row? you may need switch on '-H' for single-line input")
 			}

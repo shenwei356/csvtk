@@ -13,6 +13,51 @@ import (
 	"testing"
 )
 
+// TestAuxiliaryOutputAliases protects all auxiliary input types and their filesystem aliases.
+func TestAuxiliaryOutputAliases(t *testing.T) {
+	input := writeAccuracyInput(t, "input.csv", "a\na\n")
+	for _, command := range []string{"replace", "rename2", "grep", "sort", "cut"} {
+		for _, alias := range []string{"same path", "hardlink", "symlink"} {
+			t.Run(command+"/"+alias, func(t *testing.T) {
+				contents := "a\tA\n"
+				if command == "grep" || command == "sort" {
+					contents = "a\n"
+				} else if command == "cut" {
+					contents = input + "\n"
+				}
+				auxiliary := writeAccuracyInput(t, "auxiliary.txt", contents)
+				output := auxiliary
+				if alias != "same path" {
+					output = filepath.Join(filepath.Dir(auxiliary), "output.csv")
+					link := os.Link
+					if alias == "symlink" {
+						link = os.Symlink
+					}
+					if err := link(auxiliary, output); err != nil {
+						t.Fatal(err)
+					}
+				}
+				args := []string{command}
+				switch command {
+				case "replace", "rename2":
+					args = append(args, "-f", "1", "-p", "(.+)", "-r", "{kv}", "-k", auxiliary, input)
+				case "grep":
+					args = append(args, "-P", auxiliary, input)
+				case "sort":
+					args = append(args, "-k", "1:u", "-L", "1:"+auxiliary, input)
+				case "cut":
+					args = append(args, "-f", "1", "-X", auxiliary)
+				}
+				assertInputError(t, "same file", append(args, "-o", output)...)
+				got, err := os.ReadFile(auxiliary)
+				if err != nil || string(got) != contents {
+					t.Fatalf("auxiliary input changed: %q; error: %v", got, err)
+				}
+			})
+		}
+	}
+}
+
 // assertInputError requires a real command failure because checkError exits the process.
 func assertInputError(t *testing.T, want string, args ...string) {
 	t.Helper()

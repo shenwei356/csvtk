@@ -54,6 +54,7 @@ Notes:
   6. An explicit output directory must not be the current directory, its ancestor,
      or a directory containing an input file, even with --force. Symlink aliases
      are checked. Without -o, split files are written to the current directory.
+  7. Generated output files must not overwrite an input file or the input file list.
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -138,8 +139,14 @@ Notes:
 			outFilePrefix += "-"
 		}
 
+		// Check each final filename too: a prefix or an existing link can alias
+		// an input even when the output directory itself is safe.
+		checkOutputPath := func(path string) string {
+			checkError(checkCommandOutputFiles(cmd, files, path))
+			return path
+		}
 		chunkFile := func(chunk int) string {
-			return filepath.Join(outdir, fmt.Sprintf("%s%d%s", outFilePrefix, chunk, outFileSuffix))
+			return checkOutputPath(filepath.Join(outdir, fmt.Sprintf("%s%d%s", outFilePrefix, chunk, outFileSuffix)))
 		}
 		if nlines > 0 {
 			splitByNLines(config, csvReader, nlines, chunkFile)
@@ -158,14 +165,14 @@ Notes:
 		outfile := func(key string) string {
 			name := groupFilenames[key]
 			if subdirLen == 0 {
-				return filepath.Join(outdir, outFilePrefix+name+outFileSuffix)
+				return checkOutputPath(filepath.Join(outdir, outFilePrefix+name+outFileSuffix))
 			}
 			var subdir string
 			if len(name) > subdirLen {
 				subdir = name[:subdirLen]
-				return filepath.Join(outdir, subdir, outFilePrefix+name+outFileSuffix)
+				return checkOutputPath(filepath.Join(outdir, subdir, outFilePrefix+name+outFileSuffix))
 			}
-			return filepath.Join(outdir, outFilePrefix+name+outFileSuffix)
+			return checkOutputPath(filepath.Join(outdir, outFilePrefix+name+outFileSuffix))
 		}
 
 		var key string

@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"bytes"
+	"compress/gzip"
 	"context"
 	"encoding/csv"
 	"io"
@@ -15,6 +16,44 @@ import (
 
 	"github.com/shenwei356/xopen"
 )
+
+// TestCSVReaderIgnoreIllegalReadErrors must fail promptly on a damaged stream, even with -I.
+func TestCSVReaderIgnoreIllegalReadErrors(t *testing.T) {
+	var compressed bytes.Buffer
+	w := gzip.NewWriter(&compressed)
+	if _, err := io.WriteString(w, "a,b\n1,2\n"); err != nil {
+		t.Fatal(err)
+	}
+	if err := w.Close(); err != nil {
+		t.Fatal(err)
+	}
+	for _, damage := range []string{"truncated", "checksum"} {
+		t.Run(damage, func(t *testing.T) {
+			data := append([]byte(nil), compressed.Bytes()...)
+			want := "unexpected EOF"
+			if damage == "truncated" {
+				data = data[:len(data)-5]
+			} else {
+				data[len(data)-8] ^= 1
+				want = "invalid checksum"
+			}
+			input := writeAccuracyInput(t, "broken.gz", string(data))
+			ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+			defer cancel()
+			command := exec.CommandContext(ctx, os.Args[0], "-test.run=^TestCLIAccuracyHelper$", "--", "cut", "--quiet", "-I", "-f", "1-", input)
+			command.Env = append(os.Environ(), "CSVTK_ACCURACY_HELPER=1")
+			out, err := command.CombinedOutput()
+			if ctx.Err() != nil || err == nil || !strings.Contains(string(out), want) {
+				t.Fatalf("expected prompt failure containing %q: %v, timeout=%v, output=%s", want, err, ctx.Err(), out)
+			}
+		})
+	}
+	input := writeAccuracyInput(t, "illegal.csv", "a,b\nbad\n1,2\na\"b,c\n3,4\n")
+	out, _ := runAccuracyCLI(t, "cut", "-I", "-f", "1-", input)
+	if out != "a,b\n1,2\n3,4\n" {
+		t.Fatalf("recoverable CSV errors changed output: %q", out)
+	}
+}
 
 // csvReaderTestInput tracks input closure and can delay its completion.
 type csvReaderTestInput struct {

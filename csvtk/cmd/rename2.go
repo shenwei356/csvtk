@@ -99,6 +99,7 @@ Special replacement symbols:
 			if config.Verbose {
 				log.Infof("read key-value file: %s", kvFile)
 			}
+			checkError(checkInputOutputFiles([]string{kvFile}, config.OutFile))
 			kvs, err = readKVs(kvFile, kvFileAllLeftColumnsAsValue)
 			if err != nil {
 				checkError(fmt.Errorf("read key-value file: %s", err))
