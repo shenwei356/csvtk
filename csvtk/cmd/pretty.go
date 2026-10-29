@@ -315,9 +315,6 @@ Styles:
 				if !config.NoHeaderRow || record.IsHeaderRow {
 					hasHeaderRow = true
 					for i, col = range record.All {
-						if config.ShowRowNumber {
-							i++
-						}
 						if _, ok = colnames2fileds[col]; !ok {
 							colnames2fileds[col] = []int{i + 1}
 						} else {
@@ -352,6 +349,9 @@ Styles:
 						_range = colnames2fileds[col]
 					}
 					for _, i = range _range {
+						if i < 1 || i > len(record.All) {
+							checkError(fmt.Errorf("alignment field %q is out of range for %d columns", col, len(record.All)))
+						}
 						if config.ShowRowNumber {
 							i++
 						}
@@ -370,6 +370,9 @@ Styles:
 						_range = colnames2fileds[col]
 					}
 					for _, i = range _range {
+						if i < 1 || i > len(record.All) {
+							checkError(fmt.Errorf("alignment field %q is out of range for %d columns", col, len(record.All)))
+						}
 						if config.ShowRowNumber {
 							i++
 						}

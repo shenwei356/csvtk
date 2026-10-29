@@ -152,7 +152,7 @@ Special replacement symbols:
 		}
 		groups := getFlagStringSlice(cmd, "group")
 		setGroup := len(groups) > 0
-		groupCols := len(groups)
+		var groupCols int // Number of columns after expanding group selectors.
 
 		if reGNR.MatchString(replacement) || reENR.MatchString(replacement) || reRNR.MatchString(replacement) {
 			if !setGroup {
@@ -224,7 +224,7 @@ Special replacement symbols:
 			nr := startNum
 
 			var group string
-			groupColData := make([]string, groupCols)
+			var groupColData []string
 			var mg map[string]int
 			if replaceWithGNR {
 				mg = make(map[string]int)
@@ -250,6 +250,11 @@ Special replacement symbols:
 
 				if checkFirstLine {
 					checkFirstLine = false
+
+					if _replaceWithXNR {
+						groupCols = expandedFieldCount(strings.Join(groups, ","), record.All, fuzzyFields, config.NoHeaderRow)
+						groupColData = make([]string, groupCols)
+					}
 
 					if !config.NoHeaderRow || record.IsHeaderRow { // do not replace head line
 						if config.NoOutHeader {
@@ -330,11 +335,11 @@ Special replacement symbols:
 								k = strings.ToLower(k)
 							}
 							if _, ok = kvs[k]; ok {
-								r = reKV.ReplaceAllString(r, kvs[k])
+								r = replaceLiteralKV(r, kvs[k])
 							} else if keepKey {
-								r = reKV.ReplaceAllString(r, found[keyCaptIdx])
+								r = replaceLiteralKV(r, found[keyCaptIdx])
 							} else {
-								r = reKV.ReplaceAllString(r, keyMissRepl)
+								r = replaceLiteralKV(r, keyMissRepl)
 							}
 						}
 					}
@@ -362,7 +367,7 @@ func init() {
 			"For example, $1 represents the text of the first submatch. "+
 			"ATTENTION: on *nix systems, use SINGLE quotes, not double quotes, or "+
 			`use the \ escape character. Record numbers are also supported by "{nr}". `+
-			`Use ${1} instead of $1 when {kv} is given!`)
+			`Use ${1} instead of $1 when {kv} is given. Values inserted with {kv} are treated literally.`)
 	replaceCmd.Flags().BoolP("ignore-case", "i", false, "ignore case")
 	replaceCmd.Flags().StringP("kv-file", "k", "",
 		`tab-delimited key-value file for replacing key with value when using "{kv}" in -r (--replacement)`)
@@ -382,3 +387,10 @@ var reENR = regexp.MustCompile(`\{(ENR|enr)\}`)
 var reRNR = regexp.MustCompile(`\{(RNR|rnr)\}`)
 var reKV = regexp.MustCompile(`\{(KV|kv)\}`)
 var reTab = regexp.MustCompile(`\\t`)
+
+// replaceLiteralKV preserves dollars in mapped data while leaving capture
+// variables elsewhere in the user's replacement template active.
+func replaceLiteralKV(template, value string) string {
+	value = strings.ReplaceAll(value, "$", "$$")
+	return reKV.ReplaceAllStringFunc(template, func(string) string { return value })
+}

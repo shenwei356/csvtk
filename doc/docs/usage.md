@@ -1928,6 +1928,7 @@ fix malformed CSV/TSV caused by double-quotes
 
 This command fixes fields not appropriately enclosed by double-quotes
 to meet the RFC4180 specification (https://rfc-editor.org/rfc/rfc4180.html).
+Valid quoted fields, including escaped double-quotes, are preserved.
 
 When and how to use it:
   1. Values containing bare double quotes, e.g.,
@@ -2860,6 +2861,10 @@ Usage
 $ csvtk mutate -h
 
 create a new column from selected fields using regular expressions
+
+The pattern must contain a capturing group; the first capture of the first match
+is used as the new value. With -R, --before and --after refer to the remaining
+columns. If the anchor column is removed, the new column takes its place.
 
 Usage:
   csvtk mutate [flags]
@@ -3982,7 +3987,8 @@ Flags:
                                             represents the text of the first submatch. ATTENTION: use
                                             SINGLE quotes, not double quotes, on *nix systems or use the
                                             \ escape character. Ascending numbers are also supported by
-                                            "{nr}". Use ${1} instead of $1 when {kv} is given!
+                                            "{nr}". Use ${1} instead of $1 when {kv} is given. Values
+                                            inserted with {kv} are treated literally.
   -n, --start-num int                       starting number when using {nr} in replacement (default 1)
 ```
 
@@ -4114,7 +4120,8 @@ Flags:
                                             represents the text of the first submatch. ATTENTION: on
                                             *nix systems, use SINGLE quotes, not double quotes, or use
                                             the \ escape character. Record numbers are also supported by
-                                            "{nr}". Use ${1} instead of $1 when {kv} is given!
+                                            "{nr}". Use ${1} instead of $1 when {kv} is given. Values
+                                            inserted with {kv} are treated literally.
   -n, --start-num int                       starting number when using {nr}, {gnr}, {enr}, {rnr} in
                                             replacement (default 1)
 ```

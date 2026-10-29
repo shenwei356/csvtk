@@ -37,6 +37,10 @@ var mutateCmd = &cobra.Command{
 	Short: "create a new column from selected fields using regular expressions",
 	Long: `create a new column from selected fields using regular expressions
 
+The pattern must contain a capturing group; the first capture of the first match
+is used as the new value. With -R, --before and --after refer to the remaining
+columns. If the anchor column is removed, the new column takes its place.
+
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
@@ -67,9 +71,6 @@ var mutateCmd = &cobra.Command{
 		ignoreCase := getFlagBool(cmd, "ignore-case")
 		naUnmatched := getFlagBool(cmd, "na")
 		pattern := getFlagString(cmd, "pattern")
-		if !regexp.MustCompile(`\(.+\)`).MatchString(pattern) {
-			checkError(fmt.Errorf(`value of -p (--pattern) must contains "(" and ")" to capture data which is used to create new column`))
-		}
 
 		name := getFlagString(cmd, "name")
 		if !config.NoHeaderRow && name == "" && !config.NoOutHeader {
@@ -82,6 +83,9 @@ var mutateCmd = &cobra.Command{
 		}
 		patternRegexp, err := regexp.Compile(p)
 		checkError(err)
+		if patternRegexp.NumSubexp() == 0 {
+			checkError(fmt.Errorf("pattern must contain at least one capturing group"))
+		}
 
 		remove := getFlagBool(cmd, "remove")
 
@@ -160,12 +164,18 @@ var mutateCmd = &cobra.Command{
 						handleHeaderRow = true
 
 						colnames2fileds = make(map[string][]int, len(record.All))
+						// Resolve insertion boundaries after removing the source column.
+						// Either side of a removed anchor refers to its former position.
+						kept := 0
 						for i, col := range record.All {
-							if _, ok := colnames2fileds[col]; !ok {
-								colnames2fileds[col] = []int{i + 1}
-							} else {
-								colnames2fileds[col] = append(colnames2fileds[col], i+1)
+							_, removed := fieldsMap[i]
+							position := kept + 1
+							if !remove || !removed {
+								kept++
+							} else if after != "" {
+								position--
 							}
+							colnames2fileds[col] = append(colnames2fileds[col], position)
 						}
 					}
 				}
@@ -213,9 +223,8 @@ var mutateCmd = &cobra.Command{
 
 				f = record.Fields[0] - 1
 
-				if patternRegexp.MatchString(record.All[f]) {
-					found := patternRegexp.FindAllStringSubmatch(record.All[f], -1)
-					value = found[0][1]
+				if found := patternRegexp.FindStringSubmatch(record.All[f]); found != nil {
+					value = found[1]
 				} else {
 					if naUnmatched {
 						value = ""

@@ -207,11 +207,11 @@ Special replacement symbols:
 										k = strings.ToLower(k)
 									}
 									if _, ok = kvs[k]; ok {
-										r = reKV.ReplaceAllString(r, kvs[k])
+										r = replaceLiteralKV(r, kvs[k])
 									} else if keepKey {
-										r = reKV.ReplaceAllString(r, found[keyCaptIdx])
+										r = replaceLiteralKV(r, found[keyCaptIdx])
 									} else {
-										r = reKV.ReplaceAllString(r, keyMissRepl)
+										r = replaceLiteralKV(r, keyMissRepl)
 									}
 								}
 							}
@@ -244,7 +244,7 @@ func init() {
 			"For example, $1 represents the text of the first submatch. "+
 			"ATTENTION: use SINGLE quotes, not double quotes, on *nix systems or "+
 			`use the \ escape character. Ascending numbers are also supported by "{nr}". `+
-			`Use ${1} instead of $1 when {kv} is given!`)
+			`Use ${1} instead of $1 when {kv} is given. Values inserted with {kv} are treated literally.`)
 	rename2Cmd.Flags().BoolP("ignore-case", "i", false, "ignore case")
 	rename2Cmd.Flags().StringP("kv-file", "k", "",
 		`tab-delimited key-value file for replacing key with value when using "{kv}" in -r (--replacement)`)

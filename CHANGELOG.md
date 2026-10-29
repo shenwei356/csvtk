@@ -67,6 +67,16 @@
         - honor `--ignore-case`, retaining the first spelling of each key.
     - `csvtk xlsx2csv`:
         - honor `-o/--out-file` when listing sheets.
+    - `csvtk replace/rename2`:
+        - preserve literal dollar signs in key-value replacements.
+    - `csvtk replace`:
+        - fix group ranges and fuzzy selectors modifying unintended columns.
+    - `csvtk mutate`:
+        - fix column insertion with `--remove` and validate capturing groups.
+    - `csvtk pretty`:
+        - fix named alignment with row numbers and reject out-of-range alignment fields.
+    - `csvtk fix-quotes`:
+        - preserve valid escaped quotes and support regular-expression characters as delimiters.
 - [csvtk v0.38.0](https://github.com/shenwei356/csvtk/releases/tag/v0.38.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.38.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.38.0)
     - `csvtk`:

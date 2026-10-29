@@ -276,7 +276,7 @@ fish:
     - `csvtk replace`:
         - fix the implementation of `{nr}`. [#286](https://github.com/shenwei356/csvtk/issues/286)
     - `csvtk csv2json`:
-        - fix values with double quotes and newline characters.
+        - fix values with double quotes and newline characters. [#291](https://github.com/shenwei356/csvtk/issues/291)
     - `csvtk split`:
         - support customizing the output file prefix and subdirectory using key prefixes. [#288](https://github.com/shenwei356/csvtk/issues/288)
     - `csvtk spread`:
@@ -364,7 +364,7 @@ fish:
 - [csvtk v0.27.1](https://github.com/shenwei356/csvtk/releases/tag/v0.27.1)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.27.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.27.1)
   - `csvtk filter2/mutate2`:
-      - fix the bug of selecting with field numbers. [#242](https://github.com/shenwei356/csvtk/issues/242)
+      - fix the bug of selecting with field numbers, introduced in v0.27.0. [#242](https://github.com/shenwei356/csvtk/issues/242)
 - [csvtk v0.27.0](https://github.com/shenwei356/csvtk/releases/tag/v0.27.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.27.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.27.0)
   - `csvtk`:
@@ -424,7 +424,7 @@ fish:
     - `csvtk grep`: fix bug for searching with `-r -p .`.
     - `csvtk csv2rst`: fix bug for data containing Unicode. [#137](https://github.com/shenwei356/csvtk/issues/137)
     - `csvtk filter2`: fix bug for date expression. [#146](https://github.com/shenwei356/csvtk/issues/146)
-    - `csvtk mutate2/filter2`: 
+    - `csvtk mutate2/filter2`:
         - change how expressions are evaluated.
         - add custom functions: `len()`. [#153](https://github.com/shenwei356/csvtk/issues/153)
         - **fix bug when using two or more columns with common prefixes in column names**. [#173](https://github.com/shenwei356/csvtk/issues/173)
@@ -515,7 +515,7 @@ fish:
     - `csvtk grep`: add new flag `--delete-matched` to delete a pattern right after it is matched; this keeps the first matching data and speeds up searches when using regular expressions. [#77](https://github.com/shenwei356/csvtk/issues/77)
 - [csvtk v0.17.0](https://github.com/shenwei356/csvtk/releases/tag/v0.17.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.17.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.17.0)
-    - new commands: `csvtk add-header` and `csvtk del-header` for adding/deleting column names. [#62]
+    - new commands: `csvtk add-header` and `csvtk del-header` for adding/deleting column names. [#62](https://github.com/shenwei356/csvtk/issues/62)
 - [csvtk v0.16.0](https://github.com/shenwei356/csvtk/releases/tag/v0.16.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.16.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.16.0)
     - new command: `csvtk csv2json`: convert CSV to JSON format.
@@ -529,7 +529,7 @@ fish:
     - `csvtk mutate2`: add flag `-s/--digits-as-string` for not converting big digits into scientific notation. [#46](https://github.com/shenwei356/csvtk/issues/46)
     - `csvtk sort`: add support for sorting in natural order. [#49](https://github.com/shenwei356/csvtk/issues/49)
 - [csvtk v0.14.0](https://github.com/shenwei356/csvtk/releases/tag/v0.14.0)
-[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.14.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.14.0)
+    [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.14.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.14.0)
     - `csvtk`: **supporting multi-line fields by replacing [multicorecsv](https://github.com/mzimmerman/multicorecsv ) with standard library [encoding/csv](https://golang.org/pkg/encoding/csv/),
     while losing [support for metaline](https://github.com/shenwei356/csvtk/issues/13) which was supported since v0.7.0**. It also gains a little speedup.
     - `csvtk sample`: add flag `-n/--line-number` to print line number as the first column ("n")

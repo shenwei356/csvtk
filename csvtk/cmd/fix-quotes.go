@@ -22,10 +22,9 @@ package cmd
 
 import (
 	"bufio"
-	"bytes"
 	"fmt"
-	"regexp"
 	"runtime"
+	"strings"
 
 	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
@@ -41,6 +40,7 @@ var fixquotesCmd = &cobra.Command{
 
 This command fixes fields not appropriately enclosed by double-quotes
 to meet the RFC4180 specification (https://rfc-editor.org/rfc/rfc4180.html).
+Valid quoted fields, including escaped double-quotes, are preserved.
 
 When and how to use it:
   1. Values containing bare double quotes, e.g.,
@@ -95,29 +95,15 @@ Limitation:
 			checkError(fh.Close())
 		}()
 
-		var buf bytes.Buffer
-
+		var buf []byte // Reuse storage for repaired lines.
 		scanner := bufio.NewScanner(fh)
 		scanner.Buffer(_buf, int(bufferSize))
-		var line string
-		var i, s int
-		var r, p rune
-		var firstField, firstChar bool
-		var hasLeftQuotes, hasRightQuotes bool
-		var nInnerQuotes int // number of inner quotes, might including the right quotes
-		d := config.Delimiter
-		re := regexp.MustCompile(`"`)
-		var field string
-		var n, ncols int
-		ncols = -1
+		ncols := -1
 		var iLine int
-		var reQuotedDelimiter = regexp.MustCompile(fmt.Sprintf(`(^|%c)".*%c.*"($|%c)`, d, d, d))
-		var hasQuotedDelimiter bool
 		var commentChar byte = byte(config.CommentChar)
 		for scanner.Scan() {
 			iLine++
-			line = scanner.Text()
-			hasQuotedDelimiter = reQuotedDelimiter.MatchString(line)
+			line := scanner.Text()
 
 			if len(line) == 0 || line[0] == commentChar {
 				outfh.WriteString(line)
@@ -127,101 +113,11 @@ Limitation:
 				continue
 			}
 
-			n = 0
-			firstField = true
-
-			firstChar = true
-			nInnerQuotes, hasLeftQuotes, hasRightQuotes = 0, false, false
-			buf.Reset()
-
-			s = 0
-
-			for i, r = range line {
-				if r == d {
-					if p == '"' {
-						hasRightQuotes = true
-						nInnerQuotes--
-					}
-
-					// might be a comma within a field
-					if hasLeftQuotes && !hasRightQuotes && hasQuotedDelimiter {
-						continue
-					}
-
-					if firstField {
-						field = line[s:i]
-					} else {
-						field = line[s+1 : i]
-					}
-
-					if nInnerQuotes > 0 ||
-						(hasLeftQuotes && !hasRightQuotes) ||
-						(!hasLeftQuotes && hasRightQuotes) {
-						field = re.ReplaceAllString(field, `""`)
-						field = `"` + field + `"`
-					}
-
-					if !firstField {
-						buf.WriteRune(d)
-					}
-					buf.WriteString(field)
-
-					s = i
-
-					firstField = false
-					n++
-
-					firstChar = true
-					nInnerQuotes, hasLeftQuotes, hasRightQuotes = 0, false, false
-
-					continue
-				}
-
-				if firstChar {
-					if r == '"' {
-						hasLeftQuotes = true
-					}
-					firstChar = false
-				} else if r == '"' {
-					nInnerQuotes++
-				}
-				p = r
-
-			}
-
-			i = len(line)
-			// the last record
-
-			if p == '"' {
-				hasRightQuotes = true
-				nInnerQuotes--
-			}
-
-			if firstField {
-				field = line[s:i]
-			} else {
-				field = line[s+1 : i]
-			}
-
-			if nInnerQuotes > 0 ||
-				(hasLeftQuotes && !hasRightQuotes) ||
-				(!hasLeftQuotes && hasRightQuotes) {
-				field = re.ReplaceAllString(field, `""`)
-				field = `"` + field + `"`
-			}
-
-			if !firstField {
-				buf.WriteRune(d)
-			}
-			buf.WriteString(field)
-
-			// the last record
-
-			n++
-
-			buf.WriteByte('\n')
-
-			outfh.Write(buf.Bytes())
+			var n int
+			buf, n = appendFixedCSVLine(buf[:0], line, byte(config.Delimiter))
+			buf = append(buf, '\n')
+			_, err = outfh.Write(buf)
+			checkError(err)
 			config.flushOutput(outfh)
 
 			// check ncols
@@ -244,4 +140,57 @@ func init() {
 	RootCmd.AddCommand(fixquotesCmd)
 
 	fixquotesCmd.Flags().StringP("buffer-size", "b", "1G", `buffer size, supported units: K, M, G. Increase the value if a "bufio.Scanner: token too long" error is reported`)
+}
+
+// appendFixedCSVLine preserves valid CSV fields and quotes malformed fields.
+// Input is one physical line; multiline fields are intentionally unsupported.
+func appendFixedCSVLine(dst []byte, line string, delimiter byte) ([]byte, int) {
+	fields := 0
+	for start := 0; ; {
+		end := -1
+		// A quoted field may contain delimiters and doubled quotes. Only an
+		// unescaped closing quote followed by a delimiter or EOF ends it.
+		if start < len(line) && line[start] == '"' {
+			for i := start + 1; i < len(line); i++ {
+				if line[i] != '"' {
+					continue
+				}
+				if i+1 < len(line) && line[i+1] == '"' {
+					i++
+					continue
+				}
+				if i+1 == len(line) || line[i+1] == delimiter {
+					end = i + 1
+				}
+				break
+			}
+		}
+		validQuoted := end >= 0
+		if !validQuoted {
+			end = len(line)
+			if i := strings.IndexByte(line[start:], delimiter); i >= 0 {
+				end = start + i
+			}
+		}
+		field := line[start:end]
+		if validQuoted || !strings.ContainsRune(field, '"') {
+			dst = append(dst, field...)
+		} else {
+			// Malformed quoting is literal data; escape every original quote.
+			dst = append(dst, '"')
+			for i := 0; i < len(field); i++ {
+				if field[i] == '"' {
+					dst = append(dst, '"')
+				}
+				dst = append(dst, field[i])
+			}
+			dst = append(dst, '"')
+		}
+		fields++
+		if end == len(line) {
+			return dst, fields
+		}
+		dst = append(dst, delimiter)
+		start = end + 1
+	}
 }

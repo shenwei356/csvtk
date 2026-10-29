@@ -771,3 +771,28 @@ func fieldRange(nFields int, _range string) []int {
 
 	return fields
 }
+
+// expandedFieldCount counts columns selected by positive ranges or names.
+func expandedFieldCount(fieldStr string, header []string, fuzzyFields, noHeaderRow bool) int {
+	fields, names, _, _, openRanges := parseFields(fieldStr, ",", noHeaderRow, false)
+	if len(fields) > 0 {
+		n := len(fields)
+		for _, start := range openRanges {
+			n += len(header) - start
+		}
+		return n
+	}
+	if !fuzzyFields {
+		return len(names)
+	}
+	n := 0
+	for _, name := range names {
+		re := fuzzyField2Regexp(name)
+		for _, column := range header {
+			if re.MatchString(column) {
+				n++
+			}
+		}
+	}
+	return n
+}
