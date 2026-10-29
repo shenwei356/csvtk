@@ -44,6 +44,7 @@ Notes:
   1. Column names, keys, and string values are escaped according to JSON syntax.
   2. With -n/--parse-num, numeric text is normalized without rounding:
      00 becomes 0, .5 becomes 0.5, and 1. becomes 1.0.
+  3. The -k/--key selector must resolve to exactly one column.
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -90,10 +91,11 @@ Notes:
 		}
 
 		fieldStr := getFlagString(cmd, "key")
-		if strings.Contains(fieldStr, ",") {
-			checkError(fmt.Errorf("multiple values not allowed for -k/--key"))
-		}
 		keyed := fieldStr != ""
+		expectedFields := 0
+		if keyed {
+			expectedFields = 1
+		}
 		skipKey := keyed && getFlagBool(cmd, "skip-key")
 
 		outfh, err := xopen.Wopen(config.OutFile)
@@ -126,8 +128,8 @@ Notes:
 		}
 
 		csvReader.Read(ReadOption{
-			FieldStr: fieldStr,
-
+			FieldStr:                       fieldStr,
+			ExactFields:                    expectedFields,
 			DoNotAllowDuplicatedColumnName: keyed,
 		})
 

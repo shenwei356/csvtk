@@ -39,6 +39,9 @@ var sepCmd = &cobra.Command{
 	Short:   "separate a column into multiple columns",
 	Long: `separate a column into multiple columns
 
+The field selector must resolve to exactly one column.
+Flag -i/--ignore-case applies to both literal and regular-expression separators.
+
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
@@ -49,13 +52,9 @@ var sepCmd = &cobra.Command{
 		runtime.GOMAXPROCS(config.NumCPUs)
 
 		names := getFlagStringSlice(cmd, "names")
-		numCols := getFlagInt(cmd, "num-cols")
+		numCols := getFlagNonNegativeInt(cmd, "num-cols")
 		if !config.NoHeaderRow {
-			if len(names) == 0 {
-				checkError(fmt.Errorf("flag -n (--name) needed"))
-			} else if numCols > 0 && numCols != len(names) {
-				checkError(fmt.Errorf("number of new column names (%d) does not match -N (--num-cols) (%d)", len(names), numCols))
-			}
+			checkError(validateSepNames(names, numCols))
 		}
 
 		sep := getFlagString(cmd, "sep")
@@ -67,11 +66,15 @@ var sepCmd = &cobra.Command{
 
 		var err error
 		var sepRe *regexp.Regexp
-		if useRegexp {
+		if useRegexp || ignoreCase {
 			sepS := sep
+			if !useRegexp {
+				sepS = regexp.QuoteMeta(sepS)
+			}
 			if ignoreCase {
 				sepS = "(?i)" + sepS
 			}
+			useRegexp = true
 			sepRe, err = regexp.Compile(sepS)
 			if err != nil {
 				checkError(fmt.Errorf("failed to compile regular expression: %s: %s", sep, err))
@@ -127,6 +130,7 @@ var sepCmd = &cobra.Command{
 			}
 
 			csvReader.Read(ReadOption{
+				ExactFields: 1,
 				FieldStr:    fieldStr,
 				FuzzyFields: false,
 
@@ -142,6 +146,7 @@ var sepCmd = &cobra.Command{
 			var line int
 			var f int
 			var handleHeaderRow bool
+			hasHeaderRow := !config.NoHeaderRow
 			var ok bool
 
 			checkFirstLine := true
@@ -158,6 +163,8 @@ var sepCmd = &cobra.Command{
 						fieldsMap[f-1] = struct{}{}
 					}
 					if !config.NoHeaderRow || record.IsHeaderRow {
+						hasHeaderRow = true
+						checkError(validateSepNames(names, numCols))
 						handleHeaderRow = true
 						if config.NoOutHeader {
 							// Resolve the selected field from the header without emitting it.
@@ -201,7 +208,7 @@ var sepCmd = &cobra.Command{
 									checkError(fmt.Errorf("[line %d] number of new columns (%d) > -N (--num-cols) (%d), please increase -N (--num-cols), or switch on --drop or --merge", line, len(items), numCols))
 								}
 							} else {
-								if !config.NoHeaderRow { // decide the number of newly created columns according to the given colnames names
+								if hasHeaderRow { // decide the number of newly created columns according to the given colnames names
 									if checkNewNumCols {
 										if len(items) <= len(names) {
 											nNewCols = len(names)
@@ -265,4 +272,15 @@ func init() {
 	sepCmd.Flags().StringP("na", "", "", "content for filling NA data")
 	sepCmd.Flags().BoolP("drop", "", false, "drop extra data, mutually exclusive with --merge")
 	sepCmd.Flags().BoolP("merge", "", false, "split at most N times, mutually exclusive with --drop")
+}
+
+// validateSepNames keeps the declared schema consistent with the split width.
+func validateSepNames(names []string, numCols int) error {
+	if len(names) == 0 {
+		return fmt.Errorf("flag -n (--names) needed")
+	}
+	if numCols > 0 && numCols != len(names) {
+		return fmt.Errorf("number of new column names (%d) does not match -N (--num-cols) (%d)", len(names), numCols)
+	}
+	return nil
 }

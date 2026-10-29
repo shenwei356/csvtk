@@ -22,12 +22,12 @@ package cmd
 
 import (
 	"fmt"
-	"regexp"
 	"runtime"
 	"sort"
 	"strings"
 	"unicode/utf16"
 
+	"github.com/shenwei356/xopen"
 	"github.com/spf13/cobra"
 	"github.com/xuri/excelize/v2"
 )
@@ -47,6 +47,7 @@ Limitation: Complex sheet structures are not fully supported, such as
 
 Groups that would have the same sheet name receive distinct numeric suffixes.
 Missing cells in selected columns are treated as empty values.
+Flag -U/--delete-header suppresses headers in generated sheets; the source sheet is preserved.
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -74,13 +75,18 @@ Missing cells in selected columns are treated as empty values.
 
 		xlsx, err := excelize.OpenFile(files[0])
 		checkError(err)
-		defer checkError(xlsx.Close())
+		defer func() { checkError(xlsx.Close()) }()
 
 		sheets := xlsx.GetSheetMap()
 
 		if listSheets {
+			outfh, err := xopen.Wopen(config.OutFile)
+			checkError(err)
+			defer closeOutput(outfh)
 			if len(sheets) > 0 {
-				fmt.Println("index\tsheet")
+				_, err = fmt.Fprintln(outfh, "index\tsheet")
+				checkError(err)
+				config.flushOutput(outfh)
 				is := make([]int, len(sheets))
 				i := 0
 				for index := range sheets {
@@ -89,7 +95,9 @@ Missing cells in selected columns are treated as empty values.
 				}
 				sort.Ints(is)
 				for _, index := range is {
-					fmt.Printf("%d\t%s\n", index, sheets[index])
+					_, err = fmt.Fprintf(outfh, "%d\t%s\n", index, sheets[index])
+					checkError(err)
+					config.flushOutput(outfh)
 				}
 			}
 			return
@@ -112,35 +120,9 @@ Missing cells in selected columns are treated as empty values.
 			}
 		}
 
-		sheetName2Index := make(map[string]int, len(sheets))
-		for i, sheet := range sheets {
-			sheetName2Index[sheet] = i
-		}
+		selection := newFieldSelection(fieldStr)
+		hasHeader := !config.NoHeaderRow || len(selection.names) > 0
 
-		fields, colnames, negativeFields, needParseHeaderRow, _ := parseFields(fieldStr, ",", config.NoHeaderRow, config.Verbose)
-		var fieldsMap map[int]struct{}
-		if len(fields) > 0 {
-			fields2 := make([]int, len(fields))
-			fieldsMap = make(map[int]struct{}, len(fields))
-			for i, f := range fields {
-				if negativeFields {
-					fieldsMap[f*-1] = struct{}{}
-					fields2[i] = f * -1
-				} else {
-					fieldsMap[f] = struct{}{}
-					fields2[i] = f
-				}
-			}
-			fields = fields2
-		}
-
-		parseHeaderRow := needParseHeaderRow // parsing header row
-		printHeaderRow := needParseHeaderRow
-		var colnames2fileds map[string][]int // column name -> []field
-		var colnamesMap map[string]*regexp.Regexp
-
-		checkFields := true
-		var items []string
 		var key string
 		var ok bool
 
@@ -162,92 +144,25 @@ Missing cells in selected columns are treated as empty values.
 				nFields = len(record)
 			}
 		}
+		// Resolve against the worksheet width, including cells omitted from its header.
+		header := make([]string, nFields)
+		if hasHeader && len(rows) > 0 {
+			copy(header, rows[0])
+		}
+		var fields []int
+		if len(rows) > 0 {
+			fields = selection.resolve(header, fuzzyFields)
+		}
+		// Sheet labels and grouping retain the original physical column order.
+		sort.Ints(fields)
+		fields = UniqInts(fields)
+		if len(rows) > 0 && len(fields) == 0 {
+			checkError(fmt.Errorf("no fields matched in sheet: %s", sheetName))
+		}
+		items := make([]string, len(fields))
 		for rowIndex, record := range rows {
-			if parseHeaderRow { // parsing header row
-				colnames2fileds = make(map[string][]int, len(record))
-				for i, col := range record {
-					if _, ok := colnames2fileds[col]; !ok {
-						colnames2fileds[col] = []int{i + 1}
-					} else {
-						colnames2fileds[col] = append(colnames2fileds[col], i+1)
-					}
-				}
-				colnamesMap = make(map[string]*regexp.Regexp, len(colnames))
-				for _, col := range colnames {
-					if !fuzzyFields {
-						if negativeFields {
-							if _, ok = colnames2fileds[col[1:]]; !ok {
-								checkError(fmt.Errorf(`column "%s" not existed in sheet: %s`, col[1:], sheetName))
-							} else if len(colnames2fileds[col]) > 1 {
-								checkError(fmt.Errorf("the selected colname is duplicated in the input data: %s", col))
-							}
-						} else {
-							if _, ok = colnames2fileds[col]; !ok {
-								checkError(fmt.Errorf(`column "%s" not existed in sheet: %s`, col, sheetName))
-							} else if len(colnames2fileds[col]) > 1 {
-								checkError(fmt.Errorf("the selected colname is duplicated in the input data: %s", col))
-							}
-						}
-					}
-					if negativeFields {
-						colnamesMap[col[1:]] = fuzzyField2Regexp(col[1:])
-					} else {
-						colnamesMap[col] = fuzzyField2Regexp(col)
-					}
-				}
-
-				if len(fields) == 0 { // user gives the colnames
-					fields = []int{}
-					for _, col := range record {
-						if fuzzyFields {
-							for _, re := range colnamesMap {
-								if re.MatchString(col) {
-									ok = true
-									break
-								}
-							}
-						} else {
-							_, ok = colnamesMap[col]
-						}
-						if ok {
-							fields = append(fields, colnames2fileds[col]...)
-						}
-					}
-				}
-
-				fieldsMap = make(map[int]struct{}, len(fields))
-				for _, f := range fields {
-					fieldsMap[f] = struct{}{}
-				}
-
-				parseHeaderRow = false
-			}
-			if checkFields {
-				for field := range fieldsMap {
-					if field > nFields {
-						checkError(fmt.Errorf(`field (%d) out of range (%d) in sheet: %s`, field, nFields, sheetName))
-					}
-				}
-				fields2 := []int{}
-				for f := 0; f < nFields; f++ {
-					_, ok = fieldsMap[f+1]
-					if negativeFields {
-						if !ok {
-							fields2 = append(fields2, f+1)
-						}
-					} else {
-						if ok {
-							fields2 = append(fields2, f+1)
-						}
-					}
-				}
-				fields = fields2
-				if len(fields) == 0 {
-					checkError(fmt.Errorf("no fields matched in sheet: %s", sheetName))
-				}
-				items = make([]string, len(fields))
-
-				checkFields = false
+			if rowIndex == 0 && hasHeader {
+				continue
 			}
 
 			for i, f := range fields {
@@ -257,11 +172,6 @@ Missing cells in selected columns are treated as empty values.
 				} else {
 					items[i] = record[f-1]
 				}
-			}
-
-			if printHeaderRow {
-				printHeaderRow = false
-				continue
 			}
 
 			key = encodeFields(items, ignoreCase)
@@ -293,11 +203,11 @@ Missing cells in selected columns are treated as empty values.
 			checkError(xlsx.CopySheet(from, to))
 
 			for i := len(rows) - 1; i >= 0; i-- {
-				if i == 0 && needParseHeaderRow {
+				if i == 0 && hasHeader && !config.NoOutHeader {
 					continue
 				}
 				if _, ok = Keys2RowIndex[key][i]; !ok {
-					xlsx.RemoveRow(name, i+1)
+					checkError(xlsx.RemoveRow(name, i+1))
 				}
 			}
 		}

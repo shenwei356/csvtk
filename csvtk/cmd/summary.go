@@ -49,7 +49,7 @@ var summaryCmd = &cobra.Command{
 
 Attention:
 
-  1. Do not mix field (column) numbers and names.
+  1. Group and data selectors are resolved independently. They must not overlap.
   2. Field ranges are supported, e.g., "-f 2-5:sum".
   3. The default operation is count, e.g., "-f 1-2" is equivalent to "-f 1-2:count".
   4. Values are stored only for the numeric or text operations requested for
@@ -99,29 +99,17 @@ Available operations:
 		}
 		names := getFlagStringSlice(cmd, "names")
 
-		stats := make(map[string][]string)         //  colname -> [stats]
 		statsList := make([][]string, 0, len(ops)) // [ [stats] ]
 		statsI := make(map[int][]string)           //  field -> [stats]
 
-		var fieldsStrsG []string
-		var fieldsStrsGMap map[string]struct{}
-		// var numFieldsG int
+		var groupSelection fieldSelection
 		if groupsStr != "" {
-			fieldsStrsG = strings.Split(groupsStr, ",")
-			fieldsStrsGMap = make(map[string]struct{}, len(fieldsStrsG))
-			for _, k := range fieldsStrsG {
-				fieldsStrsGMap[k] = struct{}{}
-			}
-			// numFieldsG = len(fieldsStrsG)
+			groupSelection = newFieldSelection(groupsStr)
 		}
 
 		fieldsStrsD := []string{}
-		var numFieldsD int
 		for _, key := range ops {
 			items := strings.Split(key, ":")
-			if _, ok := fieldsStrsGMap[items[0]]; ok {
-				checkError(fmt.Errorf(`duplicated field in group field and data field: %s`, items[0]))
-			}
 			if len(items) == 1 {
 				// Expand default-count ranges just like fields with an explicit operation.
 				items = append(items, "count")
@@ -135,14 +123,20 @@ Available operations:
 
 				if reIntegerRange2.MatchString(items[0]) {
 					tmp := strings.Split(items[0], "-")
-					start, _ := strconv.Atoi(tmp[0])
-					end, _ := strconv.Atoi(tmp[1])
+					start, err := strconv.Atoi(tmp[0])
+					checkError(err)
+					end, err := strconv.Atoi(tmp[1])
+					checkError(err)
 					if start > end {
 						checkError(fmt.Errorf(`invalid field range: %s, start should be <= end`, items[0]))
 					}
 
-					for i := start; i <= end; i++ {
+					for i := start; ; i++ {
 						_fields = append(_fields, strconv.Itoa(i))
+						// Avoid overflow when the final field is the largest integer.
+						if i == end {
+							break
+						}
 					}
 				} else if reIntegerRangeOnlyStart.MatchString(items[0]) {
 					checkError(fmt.Errorf(`invalid field range: %s, end field is needed, e.g.i 1-2`, items[0]))
@@ -159,32 +153,19 @@ Available operations:
 				for _, f := range _fields {
 					fieldsStrsD = append(fieldsStrsD, f)
 
-					if _, ok := stats[f]; !ok {
-						stats[f] = make([]string, 0, 1)
-					}
-					stats[f] = append(stats[f], items[1])
 					statsList = append(statsList, []string{f, items[1]})
 				}
 			} else {
 				checkError(fmt.Errorf(`invalid value of flag --fields: %s`, key))
 			}
-			numFieldsD = len(fieldsStrsD)
 		}
-		checkError(validateSummaryNames(names, len(statsList)))
-
-		fieldsStrsDMap := make(map[string]struct{}, len(fieldsStrsD))
-		for _, k := range fieldsStrsD {
-			fieldsStrsDMap[k] = struct{}{}
+		// Each operation retains its own selector, including exclusions.
+		dataSelections := make([]fieldSelection, len(fieldsStrsD))
+		needsHeader := len(groupSelection.names) > 0
+		for i, spec := range fieldsStrsD {
+			dataSelections[i] = newFieldSelection(spec)
+			needsHeader = needsHeader || len(dataSelections[i].names) > 0
 		}
-
-		var tmp []string
-		if len(fieldsStrsG) > 0 {
-			tmp = append(fieldsStrsD, fieldsStrsG...)
-		} else {
-			tmp = fieldsStrsD
-		}
-
-		fieldsStr := strings.Join(tmp, ",")
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
@@ -224,11 +205,10 @@ Available operations:
 			checkError(err)
 		}
 
-		csvReader.Read(ReadOption{
-			FieldStr: fieldsStr,
-
-			DoNotAllowDuplicatedColumnName: true,
-		})
+		if needsHeader {
+			csvReader.NoHeaderRow = false
+		}
+		csvReader.Read(ReadOption{FieldStr: "1-"})
 
 		var HeaderRow []string
 
@@ -238,6 +218,7 @@ Available operations:
 		scientifc := make(map[string]map[int]byte) // for numbers
 
 		fieldsG := []int{}
+		var groupValues []string // Reused values for the resolved grouping columns.
 		fieldsD := []int{}
 		fieldsDUniq := []int{}
 		var numericFields, textFields []int // Store only values needed by the requested operations.
@@ -258,8 +239,29 @@ Available operations:
 			if checkFirstLine {
 				checkFirstLine = false
 
-				fieldsD = append(fieldsD, record.Fields[:numFieldsD]...) //  copy
-				fieldsG = append(fieldsG, record.Fields[numFieldsD:]...) //  copy
+				if groupsStr != "" {
+					fieldsG = groupSelection.resolve(record.All, false)
+				}
+				groupValues = make([]string, len(fieldsG))
+				groupFields := make(map[int]struct{}, len(fieldsG))
+				for _, f := range fieldsG {
+					groupFields[f] = struct{}{}
+				}
+				var expandedStats [][]string
+				for i, selection := range dataSelections {
+					for _, f := range selection.resolve(record.All, false) {
+						if _, overlap := groupFields[f]; overlap {
+							checkError(fmt.Errorf("duplicated field in group field and data field: %d", f))
+						}
+						fieldsD = append(fieldsD, f)
+						expandedStats = append(expandedStats, statsList[i])
+					}
+				}
+				statsList = expandedStats
+				if len(fieldsD) == 0 {
+					checkError(fmt.Errorf("no data fields matched"))
+				}
+				checkError(validateSummaryNames(names, len(statsList)))
 
 				fieldsDUniq = make([]int, len(fieldsD))
 				copy(fieldsDUniq, fieldsD)
@@ -296,7 +298,10 @@ Available operations:
 				}
 			}
 
-			group = encodeFields(record.Selected[numFieldsD:], false)
+			for i, f := range fieldsG {
+				groupValues[i] = record.All[f-1]
+			}
+			group = encodeFields(groupValues, false)
 			if _, ok = data[group]; !ok {
 				// Keep every group, including groups with no valid numeric values.
 				data[group] = nil

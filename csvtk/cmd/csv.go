@@ -93,6 +93,7 @@ func NewCSVReader(file string) (*CSVReader, error) {
 
 // ReadOption configures column selection and optional record limits.
 type ReadOption struct {
+	ExactFields                    int    // Required resolved field count; 0 allows any number of fields.
 	MaxRecords                     uint64 // Maximum valid records to emit, including header; 0 means unlimited.
 	FieldStr                       string
 	FieldStrSep                    string
@@ -255,7 +256,7 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 									if !allowMissingColumn {
 										checkError(fmt.Errorf(`column "%s" not existed in file: %s`, col[1:], csvReader.file))
 									}
-								} else if doNotAllowDuplicatedColumnName && len(colnames2fileds[col]) > 1 {
+								} else if doNotAllowDuplicatedColumnName && len(colnames2fileds[col[1:]]) > 1 {
 									checkError(fmt.Errorf("the selected colname is duplicated in the input data: %s", col))
 								}
 							} else {
@@ -281,7 +282,8 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 
 					// matching colnames
 					if negativeFields {
-						for _, col = range record {
+						for columnIndex, columnName := range record {
+							col = columnName
 							if ignoreFieldCase {
 								col = strings.ToLower(col)
 							}
@@ -299,7 +301,7 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 							}
 
 							if !ok {
-								fields = append(fields, colnames2fileds[col]...)
+								fields = append(fields, columnIndex+1)
 							}
 						}
 					} else {
@@ -313,21 +315,20 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 									col = strings.ToLower(col)
 								}
 
-								for _, col2 := range record {
+								for columnIndex, col2 := range record {
 									if ignoreFieldCase {
 										col2 = strings.ToLower(col2)
 									}
 
 									if colnamesMap[col].MatchString(col2) {
-										for _, i = range colnames2fileds[col2] {
-											if uniqColumn {
-												if _, ok = flags[i]; !ok {
-													fields = append(fields, i)
-													flags[i] = struct{}{}
-												}
-											} else {
+										i = columnIndex + 1
+										if uniqColumn {
+											if _, ok = flags[i]; !ok {
 												fields = append(fields, i)
+												flags[i] = struct{}{}
 											}
+										} else {
+											fields = append(fields, i)
 										}
 									}
 								}
@@ -396,6 +397,7 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 					}
 				}
 
+				checkError(validateSelectedFieldCount(len(fields), opt.ExactFields))
 				if len(fields) == 0 {
 					noRecord = true
 					break
@@ -459,6 +461,7 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 					ignoreFields = make([]bool, len(fields))
 				}
 
+				checkError(validateSelectedFieldCount(len(fields), opt.ExactFields))
 				if len(fields) == 0 {
 					noRecord = true
 					break
@@ -614,8 +617,12 @@ func parseFields(
 					if start >= end {
 						checkError(fmt.Errorf("invalid field range: %s. start (%d) should be less than end (%d)", s, start, end))
 					}
-					for i := start; i <= end; i++ {
+					for i := start; ; i++ {
 						fields = append(fields, i)
+						// Stop before incrementing the largest representable integer.
+						if i == end {
+							break
+						}
 					}
 				} else {
 					checkError(fmt.Errorf("invalid field range: %s. start (%d) and end (%d) should be both > 0 or < 0", s, start, end))
@@ -630,6 +637,10 @@ func parseFields(
 		}
 
 		for _, f := range fields {
+			// Exclusion expansion negates field numbers; MinInt has no positive counterpart.
+			if f == -int(^uint(0)>>1)-1 {
+				checkError(fmt.Errorf("field number out of range: %d", f))
+			}
 			if f == 0 {
 				checkError(fmt.Errorf(`field should not be 0`))
 			} else if f < 0 {
@@ -722,6 +733,9 @@ func fieldRange(nFields int, _range string) []int {
 	if start > nFields {
 		checkError(fmt.Errorf("invalid field range: %s. start (%d) should be less than the number of columns (%d)", _range, start, nFields))
 	}
+	if start < -nFields {
+		checkError(fmt.Errorf("field range %s is out of range for %d columns", _range, nFields))
+	}
 
 	if found[0][2] == "" {
 		if start == 0 {
@@ -743,6 +757,9 @@ func fieldRange(nFields int, _range string) []int {
 	end, err := strconv.Atoi(found[0][2])
 	if err != nil {
 		checkError(fmt.Errorf("fail to parse field range: %s. it should be an integer", found[0][2]))
+	}
+	if end > nFields || end < -nFields {
+		checkError(fmt.Errorf("field range %s is out of range for %d columns", _range, nFields))
 	}
 	if start == 0 || end == 0 {
 		checkError(fmt.Errorf("no 0 allowed in field range: %s", _range))
@@ -772,27 +789,10 @@ func fieldRange(nFields int, _range string) []int {
 	return fields
 }
 
-// expandedFieldCount counts columns selected by positive ranges or names.
-func expandedFieldCount(fieldStr string, header []string, fuzzyFields, noHeaderRow bool) int {
-	fields, names, _, _, openRanges := parseFields(fieldStr, ",", noHeaderRow, false)
-	if len(fields) > 0 {
-		n := len(fields)
-		for _, start := range openRanges {
-			n += len(header) - start
-		}
-		return n
+// validateSelectedFieldCount checks command contracts after ranges and names resolve.
+func validateSelectedFieldCount(actual, expected int) error {
+	if expected > 0 && actual != expected {
+		return fmt.Errorf("expected %d selected fields, got %d", expected, actual)
 	}
-	if !fuzzyFields {
-		return len(names)
-	}
-	n := 0
-	for _, name := range names {
-		re := fuzzyField2Regexp(name)
-		for _, column := range header {
-			if re.MatchString(column) {
-				n++
-			}
-		}
-	}
-	return n
+	return nil
 }

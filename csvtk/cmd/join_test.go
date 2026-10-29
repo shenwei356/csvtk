@@ -156,3 +156,36 @@ func TestJoinOuterReorderedKeys(t *testing.T) {
 		}
 	}
 }
+
+// TestJoinHeaderlessEmptyIntermediate keeps every input column in generated headers.
+func TestJoinHeaderlessEmptyIntermediate(t *testing.T) {
+	a := writeAccuracyInput(t, "a.csv", "A,1\n")
+	b := writeAccuracyInput(t, "b.csv", "B,2\n")
+	c := writeAccuracyInput(t, "c.csv", "B,3\n")
+	for _, tc := range []struct {
+		args []string
+		want string
+	}{
+		{[]string{"-p"}, "key1,a.csv-c2,b.csv-c2,c.csv-c2\n"},
+		{[]string{"-s", "A,B,C"}, "key1,c2-A,c2-B,c2-C\n"},
+	} {
+		args := append([]string{"join", "-H"}, tc.args...)
+		out, _ := runAccuracyCLI(t, append(args, a, b, c)...)
+		if out != tc.want {
+			t.Fatalf("got %q; want %q", out, tc.want)
+		}
+	}
+}
+
+// TestJoinRepeatedKeyFields rejects selections that cannot represent outer keys.
+func TestJoinRepeatedKeyFields(t *testing.T) {
+	a := writeAccuracyInput(t, "a.csv", "k,v\na,1\n")
+	b := writeAccuracyInput(t, "b.csv", "k1,k2,v\nb,c,2\n")
+	for _, mode := range []string{"", "-L", "-O"} {
+		args := []string{"join", "-f", "1,1;1,2"}
+		if mode != "" {
+			args = append(args, mode)
+		}
+		assertInputError(t, "join key field selected more than once", append(args, a, b)...)
+	}
+}

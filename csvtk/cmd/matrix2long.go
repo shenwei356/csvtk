@@ -78,6 +78,9 @@ Output: a three-column table. E.g.,
 		}
 		minValue := getFlagFloat64(cmd, "min-value")
 		maxValue := getFlagFloat64(cmd, "max-value")
+		if math.IsNaN(minValue) || math.IsNaN(maxValue) || minValue > maxValue {
+			checkError(fmt.Errorf("value bounds must not be NaN and min-value must be <= max-value"))
+		}
 		keepNonNumeric := getFlagBool(cmd, "keep-non-numeric")
 		filterByValue := cmd.Flags().Lookup("min-value").Changed || cmd.Flags().Lookup("max-value").Changed
 
@@ -170,11 +173,12 @@ Output: a three-column table. E.g.,
 
 				if filterByValue {
 					v1, err = strconv.ParseFloat(v, 64)
-					if err != nil && !keepNonNumeric { // not a number
+					nonNumeric := err != nil || math.IsNaN(v1)
+					if nonNumeric && !keepNonNumeric { // not a number
 						continue
 					}
 
-					if err == nil && (v1 < minValue || v1 > maxValue) { // out of range
+					if !nonNumeric && (v1 < minValue || v1 > maxValue) { // out of range
 						continue
 					}
 				}
@@ -196,5 +200,5 @@ func init() {
 
 	matrix2long.Flags().Float64P("min-value", "m", -math.MaxFloat64, "only show records with values >= this value")
 	matrix2long.Flags().Float64P("max-value", "M", math.MaxFloat64, "only show records with values <= this value")
-	matrix2long.Flags().BoolP("keep-non-numeric", "N", false, "keep non-numeric values when filtering by --min-value or --max-value")
+	matrix2long.Flags().BoolP("keep-non-numeric", "N", false, "keep non-numeric values (including NaN) when filtering by --min-value or --max-value")
 }

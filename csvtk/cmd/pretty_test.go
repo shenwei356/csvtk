@@ -1,6 +1,17 @@
 package cmd
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
+
+// TestPrettyAlignmentRangeBounds rejects huge ranges before allocating their fields.
+func TestPrettyAlignmentRangeBounds(t *testing.T) {
+	input := writeAccuracyInput(t, "input.csv", "a,b\n1,2\n")
+	for _, spec := range []string{"1-999999999", "-999999999-", "-1--999999999"} {
+		assertInputError(t, "out of range", "pretty", "-r", spec, input)
+	}
+}
 
 // TestPrettyAlignmentWithRowNumbers compares named and numeric column alignment.
 func TestPrettyAlignmentWithRowNumbers(t *testing.T) {
@@ -30,5 +41,20 @@ func TestPrettyAlignmentBounds(t *testing.T) {
 			assertInputError(t, "out of range", "pretty", flag, field, input)
 			assertInputError(t, "out of range", "pretty", "-Z", flag, field, input)
 		}
+	}
+}
+
+// TestPrettyDeleteHeader preserves alignment and row numbering without a header.
+func TestPrettyDeleteHeader(t *testing.T) {
+	input := writeAccuracyInput(t, "input.csv", "alpha,beta\nx,y\n")
+	for _, style := range []string{"plain", "grid", "default"} {
+		out, _ := runAccuracyCLI(t, "pretty", "-U", "-Z", "-r", "beta", "-S", style, input)
+		if strings.Contains(out, "alpha") || strings.Contains(out, "beta") || strings.Contains(out, "row") || !strings.Contains(out, "x") || !strings.Contains(out, "y") {
+			t.Fatalf("%s: %q", style, out)
+		}
+	}
+	out, _ := runAccuracyCLI(t, "pretty", "-H", "-U", "-S", "plain", input)
+	if !strings.Contains(out, "alpha") {
+		t.Fatalf("-H lost its first data row: %q", out)
 	}
 }

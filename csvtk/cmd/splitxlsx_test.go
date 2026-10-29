@@ -68,6 +68,9 @@ func TestSplitXLSXMissingCells(t *testing.T) {
 		{"last column", "3", false, false, nil, byBatch},
 		{"multiple names", "group,batch", false, false, nil, byPair},
 		{"column range", "2-3", false, false, nil, byPair},
+		{"open range", "2-", false, false, nil, byPair},
+		{"fuzzy single column", "g*", false, true, nil, byGroup},
+		{"fuzzy last column", "b*", false, true, nil, byBatch},
 		{"excluded column", "-1", false, false, nil, byPair},
 		{"fuzzy names", "g*,b*", false, true, nil, byPair},
 		{"no header", "2", true, false, nil, byGroup},
@@ -202,5 +205,50 @@ func TestSplitXLSXMissingCellsFieldRange(t *testing.T) {
 	}
 	if _, err := os.Stat(output); !os.IsNotExist(err) {
 		t.Fatalf("unexpected output after field validation failed: %v", err)
+	}
+}
+
+// TestSplitXLSXHeaderAndListing checks output routing and generated sheet headers.
+func TestSplitXLSXHeaderAndListing(t *testing.T) {
+	dir := t.TempDir()
+	input := filepath.Join(dir, "input.xlsx")
+	book := excelize.NewFile()
+	for i, row := range [][]interface{}{{"group", "value"}, {"A", "1"}, {"A", "2"}} {
+		cell, _ := excelize.CoordinatesToCellName(1, i+1)
+		if err := book.SetSheetRow("Sheet1", cell, &row); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := book.SaveAs(input); err != nil {
+		t.Fatal(err)
+	}
+	if err := book.Close(); err != nil {
+		t.Fatal(err)
+	}
+	listing := filepath.Join(dir, "sheets.tsv")
+	out, _ := runAccuracyCLI(t, "splitxlsx", "-a", "-o", listing, input)
+	data, err := os.ReadFile(listing)
+	if out != "" || err != nil || string(data) != "index\tsheet\n1\tSheet1\n" {
+		t.Fatalf("listing stdout %q, file %q, error %v", out, data, err)
+	}
+	output := filepath.Join(dir, "output.xlsx")
+	runAccuracyCLI(t, "splitxlsx", "-U", "-f", "group", "-o", output, input)
+	result, err := excelize.OpenFile(output)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() {
+		if err := result.Close(); err != nil {
+			t.Error(err)
+		}
+	}()
+	rows, err := result.GetRows("A")
+	want := [][]string{{"A", "1"}, {"A", "2"}}
+	if err != nil || !reflect.DeepEqual(rows, want) {
+		t.Fatalf("rows %q, want %q: %v", rows, want, err)
+	}
+	rows, err = result.GetRows("Sheet1")
+	if err != nil || len(rows) != 3 || rows[0][0] != "group" {
+		t.Fatalf("source sheet changed: %q, %v", rows, err)
 	}
 }

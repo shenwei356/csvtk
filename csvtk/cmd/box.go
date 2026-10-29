@@ -255,6 +255,8 @@ Notes:
 			log.Warning("flag --y-max ignored for command box")
 		}
 
+		checkError(preparePlotAxes(p))
+
 		// Save image
 		if isStdin(config.OutFile) {
 			fh, err := p.WriterTo(plotConfig.width*vg.Inch,

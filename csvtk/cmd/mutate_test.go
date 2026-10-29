@@ -52,3 +52,12 @@ func TestMutateCaptureGroups(t *testing.T) {
 		}
 	}
 }
+
+// TestMutateRequiresSelectedField rejects an empty source selection.
+func TestMutateRequiresSelectedField(t *testing.T) {
+	input := writeAccuracyInput(t, "input.csv", "v\nx\n")
+	for _, args := range [][]string{{"-f", "-1"}, {"-H", "-f", "-1"}} {
+		args = append([]string{"mutate", "-p", "(.)", "-n", "new"}, args...)
+		assertInputError(t, "expected 1 selected field", append(args, input)...)
+	}
+}

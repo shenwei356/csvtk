@@ -87,6 +87,16 @@ How to:
 			checkError(writer.Error())
 		}()
 
+		// Retain the header during width inference, suppressing it only at output.
+		skipHeader := config.NoOutHeader && !config.NoHeaderRow
+		writeRow := func(row []string) {
+			if skipHeader {
+				skipHeader = false
+				return
+			}
+			checkError(writer.Write(row))
+		}
+
 		file := files[0]
 
 		csvReader, err := newCSVReaderByConfig(config, file)
@@ -148,7 +158,7 @@ How to:
 						if ncol < maxN {
 							row = append(row, empty[0:maxN-ncol]...)
 						}
-						checkError(writer.Write(row))
+						writeRow(row)
 					}
 					// Later rows are written directly; release the sampled records.
 					buf = nil
@@ -163,7 +173,7 @@ How to:
 			} else if ncol < maxN {
 				record.All = append(record.All, empty[0:maxN-ncol]...)
 			}
-			checkError(writer.Write(record.All))
+			writeRow(record.All)
 		}
 
 		if readAll || !checkedMaxNcols {
@@ -182,7 +192,7 @@ How to:
 				if ncol < maxN {
 					row = append(row, empty[0:maxN-ncol]...)
 				}
-				checkError(writer.Write(row))
+				writeRow(row)
 			}
 		}
 

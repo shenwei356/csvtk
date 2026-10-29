@@ -50,8 +50,8 @@ var space2tabCmd = &cobra.Command{
 			checkError(fmt.Errorf("value of buffer size. supported unit: K, M, G"))
 		}
 		bufferSize, err := ParseByteSize(bufferSizeS)
-		if err != nil {
-			checkError(fmt.Errorf("invalid value of buffer size. supported unit: K, M, G"))
+		if err != nil || bufferSize < 1 || bufferSize > int64(^uint(0)>>1) {
+			checkError(fmt.Errorf("invalid buffer size: %s; expected a positive size fitting this platform (units: K, M, G)", bufferSizeS))
 		}
 
 		outfh, err := xopen.Wopen(config.OutFile)
@@ -68,9 +68,14 @@ var space2tabCmd = &cobra.Command{
 
 			scanner = bufio.NewScanner(fh)
 			scanner.Buffer(buf, int(bufferSize))
+			skipHeader := config.NoOutHeader && !config.NoHeaderRow
 			for scanner.Scan() {
 				line = strings.TrimRight(scanner.Text(), "\r\n")
 				if len(strings.TrimSpace(line)) == 0 || rune(line[0]) == config.CommentChar {
+					continue
+				}
+				if skipHeader {
+					skipHeader = false
 					continue
 				}
 				outfh.WriteString(strings.Join(stringutil.Split(line, "\t "), "\t"))

@@ -1,82 +1,120 @@
 - [csvtk v0.39.0](https://github.com/shenwei356/csvtk/releases/tag/v0.39.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.39.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.39.0)
     - `csvtk`:
-        - correct grammar and wording in command help and Markdown documentation.
         - improve performance.
         - prevent overwriting input and auxiliary files.
         - report file I/O and compression errors, even with `-I/--ignore-illegal-row`.
         - fix column range selection.
+        - prevent integer overflow when expanding column ranges.
+        - avoid repeating duplicate-named columns during exclusions and fuzzy selection.
         - accept literal column names containing regular-expression characters.
         - make `--immediate-output` a global flag and flush both CSV and file output buffers.
         - preserve explicit stdin input when using `-X/--infile-list`.
+    - `csvtk cat`:
+        - preserve final lines without a newline and fix progress reporting and parameter validation.
+    - `csvtk comb`:
+        - fix reading of multiline fields, long records, comments, and many input files.
+        - reduce memory usage when generating combinations.
+    - `csvtk comma`:
+        - preserve numeric precision and scientific notation.
+    - `csvtk concat`:
+        - report ambiguous column names.
+    - `csvtk corr`:
+        - reject multiple input files instead of silently ignoring extra files.
+    - `csvtk csv2json`:
+        - fix JSON escaping, numeric formatting, and trailing commas with `-K/--skip-key`.
+        - require exactly one resolved key column.
+    - `csvtk csv2md`:
+        - escape literal pipes and render cell line breaks without breaking the table.
+    - `csvtk csv2rst`:
+        - preserve multiline cells and align borders with Unicode padding.
+    - `csvtk csv2xlsx`:
+        - fix data loss in wide tables.
+        - generate distinct, valid sheet names for input files with conflicting names.
+    - `csvtk cut`:
+        - fix a panic when combining `-H`, `-m`, and excluded columns.
+    - `csvtk filter`:
+        - fix `--any` when selected fields contain non-numeric values.
+    - `csvtk filter2/mutate2/mutate3`:
+        - fix numeric precision and string handling, and allow mixing `$x` and `${x}` references.
+    - `csvtk fix`:
+        - honor `--na` when padding rows with `-n/--buf-rows`.
+    - `csvtk fix-quotes`:
+        - preserve valid escaped quotes and support regular-expression characters as delimiters.
+    - `csvtk fix-quotes/space2tab`:
+        - reject invalid and overflowing buffer sizes before opening output files.
+    - `csvtk fold`:
+        - honor `--ignore-case`, retaining the first spelling of each key.
+    - `csvtk head/ncol/headers/space2tab/dim`:
+        - fix failures when processing many input files (with `--cols` for `dim`).
     - `csvtk inter`:
         - fix intersections with empty inputs.
     - `csvtk join`:
         - fix joins with header-only inputs.
         - fix misplaced keys and missing values in outer joins with reordered key fields.
-    - `csvtk summary`:
-        - fix field ranges with the default count operation and honor `--rand-seed`.
-    - `csvtk cat`:
-        - preserve final lines without a newline and fix progress reporting and parameter validation.
-    - `csvtk fix`:
-        - honor `--na` when padding rows with `-n/--buf-rows`.
-    - `csvtk concat`:
-        - report ambiguous column names.
-    - `csvtk csv2xlsx`:
-        - fix data loss in wide tables.
-        - generate distinct, valid sheet names for input files with conflicting names.
-    - `csvtk round`:
-        - fix rounding of integers, decimals, and scientific notation.
-    - `csvtk cut`:
-        - fix a panic when combining `-H`, `-m`, and excluded columns.
-    - `csvtk comb`:
-        - fix reading of multiline fields, long records, comments, and many input files.
-        - reduce memory usage when generating combinations.
-    - `csvtk filter2/mutate2/mutate3`:
-        - fix numeric precision and string handling, and allow mixing `$x` and `${x}` references.
+        - retain generated column names after an empty intermediate join and reject repeated key columns.
+    - `csvtk long2matrix/matrix2long`:
+        - validate value bounds and treat NaN as non-numeric when filtering.
+    - `csvtk mutate`:
+        - fix column insertion with `--remove` and validate capturing groups.
+    - `csvtk plot`:
+        - reject invalid field selections, non-finite dimensions, and invalid axis limits.
+        - accept uppercase output format names.
     - `csvtk plot bar`:
         - fix grouped bar alignment and reject duplicate categories within a group.
+        - honor X-axis limits and report unsupported logarithmic scales.
+    - `csvtk plot box/line`:
+        - pad large constant values without losing precision.
+    - `csvtk plot box/line/hist`:
+        - validate logarithmic domains and handle constant positive ranges before opening output files.
+        - reject non-finite axis ranges before rendering.
     - `csvtk plot hist`:
         - fix the `MEAN` label with `--percentiles`.
-    - `csvtk csv2json`:
-        - fix JSON escaping, numeric formatting, and trailing commas with `-K/--skip-key`.
-    - `csvtk splitxlsx`:
-        - fix panics on short or blank rows.
-    - `csvtk head/ncol/headers/space2tab/dim`:
-        - fix failures when processing many input files (with `--cols` for `dim`).
+        - support logarithmic counts with empty bins, reject non-finite values, and report empty samples before computing percentiles.
+        - reject unrepresentable bin widths and ranges before rendering.
+    - `csvtk plot line`:
+        - fix categorical axis ticks for single categories and custom axis limits.
+    - `csvtk pretty`:
+        - fix named alignment with row numbers and reject out-of-range alignment fields.
+        - validate alignment range bounds before expanding them.
+    - `csvtk replace`:
+        - fix group ranges and fuzzy selectors modifying unintended columns.
+    - `csvtk replace/fold/spread`:
+        - resolve field exclusions independently for each selector.
+    - `csvtk replace/rename2`:
+        - preserve literal dollar signs in key-value replacements.
+    - `csvtk round`:
+        - fix rounding of integers, decimals, and scientific notation.
+    - `csvtk sample`:
+        - reject NaN sampling proportions.
+    - `csvtk sep`:
+        - honor case-insensitive literal separators and keep output names and widths consistent when a named field overrides `-H`.
+    - `csvtk sep/mutate/watch`:
+        - require exactly one selected field, including after range and exclusion expansion.
+    - `csvtk sort`:
+        - fix default sorting of single-column input and open ranges selecting only the last column.
     - `csvtk split`:
         - reject unsafe output directories before deleting files, even with `--force`.
         - honor `--buf-rows 1` and fix appending output when reading from stdin.
         - limit open files and memory when splitting by chunk count.
     - `csvtk split/csv2xlsx/splitxlsx`:
         - reject generated output filenames that overwrite input files.
-    - `csvtk sort`:
-        - fix default sorting of single-column input and open ranges selecting only the last column.
-    - `csvtk summary/spread/sep`:
+    - `csvtk splitxlsx`:
+        - fix panics on short or blank rows.
+        - fix open field ranges and fuzzy field matching.
+        - honor `-o/--out-file` when listing sheets and keep the workbook open until processing finishes.
+    - `csvtk summary`:
+        - fix field ranges with the default count operation and honor `--rand-seed`.
+        - resolve data and group selectors independently, including exclusions, and reject overlapping columns.
+        - reject overflowing field numbers.
+    - `csvtk summary/spread/sep/rename/rename2/csv2rst/corr/watch/pretty/fix/del-quotes/split/splitxlsx/space2tab/fix-quotes`:
         - honor `-U/--delete-header`.
     - `csvtk watch`:
         - prevent image output from overwriting inputs or tabular output.
         - reject invalid report frequencies and handle inputs without finite numeric values.
-    - `csvtk filter`:
-        - fix `--any` when selected fields contain non-numeric values.
-    - `csvtk comma`:
-        - preserve numeric precision and scientific notation.
-    - `csvtk plot line`:
-        - fix categorical axis ticks for single categories and custom axis limits.
-    - `csvtk fold`:
-        - honor `--ignore-case`, retaining the first spelling of each key.
+        - preserve non-numeric and non-finite records with `--pass`.
     - `csvtk xlsx2csv`:
         - honor `-o/--out-file` when listing sheets.
-    - `csvtk replace/rename2`:
-        - preserve literal dollar signs in key-value replacements.
-    - `csvtk replace`:
-        - fix group ranges and fuzzy selectors modifying unintended columns.
-    - `csvtk mutate`:
-        - fix column insertion with `--remove` and validate capturing groups.
-    - `csvtk pretty`:
-        - fix named alignment with row numbers and reject out-of-range alignment fields.
-    - `csvtk fix-quotes`:
-        - preserve valid escaped quotes and support regular-expression characters as delimiters.
 - [csvtk v0.38.0](https://github.com/shenwei356/csvtk/releases/tag/v0.38.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.38.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.38.0)
     - `csvtk`:

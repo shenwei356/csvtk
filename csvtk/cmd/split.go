@@ -49,7 +49,8 @@ Notes:
   3. Special characters in key values are percent-encoded in output file names.
      Long encoded names use a hash.
   4. flag -n/--nlines splits the input into chunks of up to N records instead of
-     splitting by key values. The header row, when present, is written to every chunk.
+     splitting by key values. The header row, when present, is written to every chunk
+     unless -U/--delete-header is set.
   5. flag -c/--nchunks splits the input into N chunks in a round-robin manner.
   6. An explicit output directory must not be the current directory, its ancestor,
      or a directory containing an input file, even with --force. Symlink aliases
@@ -487,7 +488,7 @@ func openSplitOutput(config Config, outfile string, headerRow []string, appendMo
 	} else {
 		writer.Comma = config.OutDelimiter
 	}
-	if headerRow != nil {
+	if headerRow != nil && !config.NoOutHeader {
 		checkError(writer.Write(headerRow))
 	}
 	return &splitOutput{fh: fh, writer: writer}
@@ -540,7 +541,7 @@ func appendRows(config Config,
 		checkError(writer.Error())
 	}()
 
-	if !written && headerRow != nil {
+	if !written && headerRow != nil && !config.NoOutHeader {
 		checkError(writer.Write(headerRow))
 	}
 

@@ -69,3 +69,18 @@ func TestFixRejectsWiderRemainingRows(t *testing.T) {
 		t.Fatalf("expected a width error, got %v: %s", err, out)
 	}
 }
+
+// TestFixDeleteHeader retains the header's width even when it is suppressed.
+func TestFixDeleteHeader(t *testing.T) {
+	input := writeAccuracyInput(t, "input.csv", "a,b,c\nx,y\nz\n")
+	for _, n := range []string{"0", "1", "2", "10"} {
+		out, _ := runAccuracyCLI(t, "fix", "-U", "-n", n, "--na", "NA", input)
+		if out != "x,y,NA\nz,NA,NA\n" {
+			t.Fatalf("-n %s: %q", n, out)
+		}
+	}
+	out, _ := runAccuracyCLI(t, "fix", "-H", "-U", "--na", "NA", input)
+	if out != "a,b,c\nx,y,NA\nz,NA,NA\n" {
+		t.Fatal(out)
+	}
+}

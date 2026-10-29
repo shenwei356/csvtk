@@ -41,6 +41,7 @@ var csv2rstCmd = &cobra.Command{
 Attention:
 
   1. Row spans are not supported.
+  2. Line breaks within cells are preserved inside the table borders.
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -85,7 +86,7 @@ Attention:
 			maxLens = make([]int, len(headerRow))
 			for i, r = range headerRow {
 				// l = len(r)
-				l = runewidth.StringWidth(r)
+				l = rstCellWidth(r)
 
 				maxLens[i] = l
 			}
@@ -103,7 +104,7 @@ Attention:
 		for _, record = range data {
 			for i, r = range record {
 				// l = len(r)
-				l = runewidth.StringWidth(r)
+				l = rstCellWidth(r)
 
 				if l > maxLens[i] {
 					maxLens[i] = l
@@ -112,7 +113,7 @@ Attention:
 		}
 
 		// output
-		wPadding := len(padding)
+		wPadding := runewidth.StringWidth(padding)
 
 		// top border
 		outfh.WriteString(cross)
@@ -125,24 +126,37 @@ Attention:
 			}
 		}
 
-		// header row
-		if len(colnames) > 0 {
-			outfh.WriteString(borderY)
-			for i, r = range colnames {
-				// l = len(r)
-				l = runewidth.StringWidth(r)
-
-				outfh.WriteString(padding)
-				outfh.WriteString(r)
-				outfh.WriteString(padding)
-				outfh.WriteString(strings.Repeat(" ", maxLens[i]-l))
-				outfh.WriteString(borderY)
-				if i == ncolsP1 { // not the last column
-					outfh.WriteString("\n")
-					config.flushOutput(outfh)
+		// Write wrapped cell lines inside the same logical row.
+		writeRow := func(row []string) {
+			lines := make([][]string, len(row))
+			height := 1
+			for i, cell := range row {
+				lines[i] = strings.Split(cell, "\n")
+				if len(lines[i]) > height {
+					height = len(lines[i])
 				}
 			}
+			for line := 0; line < height; line++ {
+				outfh.WriteString(borderY)
+				for i, cellLines := range lines {
+					cell := ""
+					if line < len(cellLines) {
+						cell = cellLines[line]
+					}
+					outfh.WriteString(padding)
+					outfh.WriteString(cell)
+					outfh.WriteString(padding)
+					outfh.WriteString(strings.Repeat(" ", maxLens[i]-runewidth.StringWidth(cell)))
+					outfh.WriteString(borderY)
+				}
+				outfh.WriteByte('\n')
+				config.flushOutput(outfh)
+			}
+		}
 
+		// Header separators appear only when the header is written.
+		if len(colnames) > 0 && !config.NoOutHeader {
+			writeRow(colnames)
 			outfh.WriteString(cross)
 			for i, l = range maxLens {
 				outfh.WriteString(strings.Repeat(header, l+wPadding<<1))
@@ -156,21 +170,7 @@ Attention:
 
 		// data row
 		for _, row := range data {
-			outfh.WriteString(borderY)
-			for i, r = range row {
-				// l = len(r)
-				l = runewidth.StringWidth(r)
-
-				outfh.WriteString(padding)
-				outfh.WriteString(r)
-				outfh.WriteString(padding)
-				outfh.WriteString(strings.Repeat(" ", maxLens[i]-l))
-				outfh.WriteString(borderY)
-				if i == ncolsP1 { // not the last column
-					outfh.WriteString("\n")
-					config.flushOutput(outfh)
-				}
-			}
+			writeRow(row)
 
 			outfh.WriteString(cross)
 			for i, l = range maxLens {
@@ -196,4 +196,15 @@ func init() {
 	csv2rstCmd.Flags().StringP("vertical-border", "B", "|", "vertical border character")
 	csv2rstCmd.Flags().StringP("header", "s", "=", "separator character between the header row and data rows")
 
+}
+
+// rstCellWidth returns the display width of a multiline cell's longest line.
+func rstCellWidth(cell string) int {
+	width := 0
+	for _, line := range strings.Split(cell, "\n") {
+		if n := runewidth.StringWidth(line); n > width {
+			width = n
+		}
+	}
+	return width
 }

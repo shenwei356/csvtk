@@ -52,11 +52,17 @@ Notes:
      or redirect it to a file.
   4. With --group-field, categories are aligned across groups in first-seen
      order. Missing categories leave gaps. Each group/category pair must be unique.
+  5. Logarithmic axes are not supported. With --horizontal, use --x-min/--x-max
+     to set the value-axis limits.
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
 		plotConfig := getPlotConfigs(cmd)
+		// Bars start at zero, which cannot be represented on a logarithmic axis.
+		if plotConfig.scaleLnX || plotConfig.scaleLnY {
+			checkError(fmt.Errorf("plot bar does not support logarithmic axes"))
+		}
 
 		files := getFileListFromArgsAndFile(cmd, args, true, "infile-list", true)
 		if len(files) > 1 {
@@ -64,42 +70,21 @@ Notes:
 		}
 		runtime.GOMAXPROCS(config.NumCPUs)
 
-		barWidth := vg.Points(getFlagFloat64(cmd, "bar-width") * plotConfig.scale)
+		barWidth := vg.Points(getFlagNonNegativeFloat64(cmd, "bar-width") * plotConfig.scale)
 		colorIndex := getFlagPositiveInt(cmd, "color-index")
 		if colorIndex > 7 {
 			checkError(fmt.Errorf("unsupported color index"))
 		}
 
 		dataFieldXStr := getFlagString(cmd, "data-field-x")
-		if dataFieldXStr == "" {
-			checkError(fmt.Errorf("flag -x (--data-field-x) needed"))
-		}
-		if strings.Contains(dataFieldXStr, ",") {
-			checkError(fmt.Errorf("only one field allowed for flag -x (--data-field-x)"))
-		}
-		if dataFieldXStr[0] == '-' {
-			checkError(fmt.Errorf("unselect not allowed for flag -y (--data-field-x)"))
-		}
+		checkError(validatePlotField(dataFieldXStr, "data-field-x"))
 
 		dataFieldYStr := getFlagString(cmd, "data-field-y")
-		if dataFieldYStr == "" {
-			checkError(fmt.Errorf("flag -y (--data-field-y) needed"))
-		}
-		if strings.Contains(dataFieldYStr, ",") {
-			checkError(fmt.Errorf("only one field allowed for flag -y (--data-field-y)"))
-		}
-		if dataFieldXStr[0] == '-' {
-			checkError(fmt.Errorf("unselect not allowed for flag -y (--data-field-y)"))
-		}
+		checkError(validatePlotField(dataFieldYStr, "data-field-y"))
 
 		groupFieldStr := getFlagString(cmd, "group-field")
 		if len(groupFieldStr) > 0 {
-			if strings.Contains(groupFieldStr, ",") {
-				checkError(fmt.Errorf("only one field allowed for flag --group-field"))
-			}
-			if groupFieldStr[0] == '-' {
-				checkError(fmt.Errorf("unselect not allowed for flag --group-field"))
-			}
+			checkError(validatePlotField(groupFieldStr, "group-field"))
 			plotConfig.fieldStr = dataFieldXStr + "," + dataFieldYStr + "," + groupFieldStr
 		} else {
 			plotConfig.fieldStr = dataFieldXStr + "," + dataFieldYStr
@@ -302,22 +287,19 @@ Notes:
 			p.Y.Tick.Label.Font.Size = plotConfig.tickLabelSize
 		}
 
-		// TODO log scale
-		// if plotConfig.scaleLnX {
-		// 	p.X.Scale = plot.LogScale{}
-		// 	p.X.Tick.Marker = plot.LogTicks{Prec: -1}
-		// }
-		// if plotConfig.scaleLnY {
-		// 	p.Y.Scale = plot.LogScale{}
-		// 	p.Y.Tick.Marker = plot.LogTicks{Prec: -1}
-		// }
-
+		if plotConfig.xminStr != "" {
+			p.X.Min = plotConfig.xmin
+		}
+		if plotConfig.xmaxStr != "" {
+			p.X.Max = plotConfig.xmax
+		}
 		if plotConfig.yminStr != "" {
 			p.Y.Min = plotConfig.ymin
 		}
 		if plotConfig.ymaxStr != "" {
 			p.Y.Max = plotConfig.ymax
 		}
+		checkError(preparePlotAxes(p))
 
 		// Save image
 		if isStdin(config.OutFile) {

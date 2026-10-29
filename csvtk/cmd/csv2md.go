@@ -42,6 +42,7 @@ var csv2mdCmd = &cobra.Command{
 Attention:
 
   csv2md treats the first row as a header line and requires column names to be unique.
+  Literal pipes are escaped, and line breaks in cells are rendered as <br>.
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -104,6 +105,16 @@ Attention:
 			} else if len(data) > 0 {
 				header = data[0]
 				datas = data[1:]
+			}
+		}
+
+		// Pipes and physical line breaks must not create extra table cells or rows.
+		for i, value := range header {
+			header[i] = markdownCellEscaper.Replace(value)
+		}
+		for _, row := range datas {
+			for i, value := range row {
+				row[i] = markdownCellEscaper.Replace(value)
 			}
 		}
 
@@ -199,3 +210,6 @@ func init() {
 	csv2mdCmd.Flags().StringP("alignments", "a", "l", `comma-separated alignments. e.g. -a l,c,c,c or -a c`)
 	csv2mdCmd.Flags().IntP("min-width", "w", 3, "min width (at least 3)")
 }
+
+// markdownCellEscaper preserves literal backslashes and pipes within table cells.
+var markdownCellEscaper = strings.NewReplacer("\\", "\\\\", "|", "\\|", "\r\n", "<br>", "\n", "<br>", "\r", "<br>")

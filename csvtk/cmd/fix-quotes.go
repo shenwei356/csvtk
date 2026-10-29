@@ -80,8 +80,8 @@ Limitation:
 			checkError(fmt.Errorf("value of buffer size. supported unit: K, M, G"))
 		}
 		bufferSize, err := ParseByteSize(bufferSizeS)
-		if err != nil {
-			checkError(fmt.Errorf("invalid value of buffer size. supported unit: K, M, G"))
+		if err != nil || bufferSize < 1 || bufferSize > int64(^uint(0)>>1) {
+			checkError(fmt.Errorf("invalid buffer size: %s; expected a positive size fitting this platform (units: K, M, G)", bufferSizeS))
 		}
 		_buf := make([]byte, bufferSize)
 
@@ -98,6 +98,7 @@ Limitation:
 		var buf []byte // Reuse storage for repaired lines.
 		scanner := bufio.NewScanner(fh)
 		scanner.Buffer(_buf, int(bufferSize))
+		skipHeader := config.NoOutHeader && !config.NoHeaderRow
 		ncols := -1
 		var iLine int
 		var commentChar byte = byte(config.CommentChar)
@@ -115,10 +116,15 @@ Limitation:
 
 			var n int
 			buf, n = appendFixedCSVLine(buf[:0], line, byte(config.Delimiter))
-			buf = append(buf, '\n')
-			_, err = outfh.Write(buf)
-			checkError(err)
-			config.flushOutput(outfh)
+			// The suppressed header still defines the expected number of fields.
+			if skipHeader {
+				skipHeader = false
+			} else {
+				buf = append(buf, '\n')
+				_, err = outfh.Write(buf)
+				checkError(err)
+				config.flushOutput(outfh)
+			}
 
 			// check ncols
 			if ncols < 0 {

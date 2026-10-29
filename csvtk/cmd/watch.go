@@ -135,7 +135,8 @@ Notes:
 			}
 
 			csvReader.Read(ReadOption{
-				FieldStr: printField,
+				ExactFields: 1,
+				FieldStr:    printField,
 
 				DoNotAllowDuplicatedColumnName: true,
 			})
@@ -149,16 +150,17 @@ Notes:
 				if checkFirstLine {
 					checkFirstLine = false
 
-					if len(record.Fields) > 1 {
-						checkError(fmt.Errorf("only a single field allowed"))
-					}
-
 					if !config.NoHeaderRow || record.IsHeaderRow {
-						if printPass {
+						if printPass && !config.NoOutHeader {
 							checkError(writer.Write(record.All))
 						}
 						continue
 					}
+				}
+
+				// Passthrough preserves records even when the plotted value is unusable.
+				if printPass {
+					checkError(writer.Write(record.All))
 				}
 
 				p, err = strconv.ParseFloat(record.Selected[0], 64)
@@ -172,9 +174,6 @@ Notes:
 
 				count++
 				h.Update(p)
-				if printPass {
-					checkError(writer.Write(record.All))
-				}
 
 				if printFreq > 0 && count%printFreq == 0 {
 					if printDump {

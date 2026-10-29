@@ -49,7 +49,7 @@ var sampleCmd = &cobra.Command{
 		if proportion == 0 {
 			checkError(fmt.Errorf("flag -p (--proportion) needed"))
 		}
-		if proportion <= 0 || proportion > 1 {
+		if !(proportion > 0 && proportion <= 1) {
 			checkError(fmt.Errorf("value of -p (--proportion) (%f) should be in range of (0, 1]", proportion))
 		}
 
@@ -129,6 +129,6 @@ func init() {
 	RootCmd.AddCommand(sampleCmd)
 
 	sampleCmd.Flags().Int64P("rand-seed", "s", 11, "random seed")
-	sampleCmd.Flags().Float64P("proportion", "p", 0, "sample by proportion")
+	sampleCmd.Flags().Float64P("proportion", "p", 0, "sample by proportion in (0, 1]")
 	sampleCmd.Flags().BoolP("line-number", "n", false, `print the line number as the first column ("row")`)
 }

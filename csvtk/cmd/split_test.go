@@ -569,3 +569,31 @@ func TestSplitChunkCompressedBatches(t *testing.T) {
 		})
 	}
 }
+
+// TestSplitDeleteHeader applies header suppression to every splitting mode.
+func TestSplitDeleteHeader(t *testing.T) {
+	input := writeAccuracyInput(t, "input.csv", "key,value\nA,1\nB,2\nA,3\n")
+	for _, mode := range [][]string{{"-f", "1"}, {"-n", "2"}, {"-c", "2"}} {
+		baseline, without := filepath.Join(t.TempDir(), "with"), filepath.Join(t.TempDir(), "without")
+		runAccuracyCLI(t, append(append([]string{"split", "-o", baseline}, mode...), input)...)
+		runAccuracyCLI(t, append(append([]string{"split", "-U", "-o", without}, mode...), input)...)
+		entries, err := os.ReadDir(baseline)
+		if err != nil {
+			t.Fatal(err)
+		}
+		for _, entry := range entries {
+			expected, err := os.ReadFile(filepath.Join(baseline, entry.Name()))
+			if err != nil {
+				t.Fatal(err)
+			}
+			actual, err := os.ReadFile(filepath.Join(without, entry.Name()))
+			if err != nil {
+				t.Fatal(err)
+			}
+			want := strings.TrimPrefix(string(expected), "key,value\n")
+			if string(actual) != want {
+				t.Fatalf("%v %s: got %q; want %q", mode, entry.Name(), actual, want)
+			}
+		}
+	}
+}

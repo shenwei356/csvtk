@@ -47,6 +47,9 @@ forwarded to stdout and correlations are written to stderr.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
 		files := getFileListFromArgsAndFile(cmd, args, true, "infile-list", true)
+		if len(files) > 1 {
+			checkError(fmt.Errorf("no more than one file should be given"))
+		}
 		runtime.GOMAXPROCS(config.NumCPUs)
 
 		printField := getFlagString(cmd, "fields")
@@ -132,7 +135,7 @@ forwarded to stdout and correlations are written to stderr.`,
 					hasHeaderRow = true
 					HeaderRow = record.All
 
-					if printPass {
+					if printPass && !config.NoOutHeader {
 						checkError(writer.Write(record.All))
 					}
 					continue

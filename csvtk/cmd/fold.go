@@ -45,6 +45,8 @@ Attention:
     Multiple value fields are folded in parallel, preserving their row alignment.
     With -i, grouping ignores case and retains the first spelling of each key.
 
+Key and value field selectors are resolved independently, including exclusions.
+
 Example:
 
     $ echo -ne "id,value,meta\n1,a,12\n1,b,34\n2,c,56\n2,d,78\n" \
@@ -110,7 +112,8 @@ Example:
 
 		separater := getFlagString(cmd, "separater")
 
-		fieldStr = fmt.Sprintf("%s,%s", fieldStr, vfieldStr)
+		keySelection := newFieldSelection(fieldStr)
+		valueSelection := newFieldSelection(vfieldStr)
 
 		fuzzyFields := getFlagBool(cmd, "fuzzy-fields")
 		ignoreCase := getFlagBool(cmd, "ignore-case")
@@ -157,18 +160,17 @@ Example:
 			checkError(err)
 		}
 
-		csvReader.Read(ReadOption{
-			FieldStr:    fieldStr,
-			FuzzyFields: fuzzyFields,
-
-			DoNotAllowDuplicatedColumnName: true,
-		})
+		if len(keySelection.names)+len(valueSelection.names) > 0 {
+			csvReader.NoHeaderRow = false
+		}
+		csvReader.Read(ReadOption{FieldStr: "1-"})
 
 		var items []string
 		var key string
 		var N int
 		var ok bool
 		var nKeyFields int
+		var fields []int // Key columns followed by value columns.
 
 		checkFirstLine := true
 		for record := range csvReader.Ch {
@@ -178,31 +180,35 @@ Example:
 
 			if checkFirstLine {
 				checkFirstLine = false
-				nValueFields := expandedFieldCount(vfieldStr, record.All, fuzzyFields, config.NoHeaderRow)
-				nKeyFields = len(record.Fields) - nValueFields
+				keyFields := keySelection.resolve(record.All, fuzzyFields)
+				valueFields := valueSelection.resolve(record.All, fuzzyFields)
+				nKeyFields = len(keyFields)
+				nValueFields := len(valueFields)
+				fields = append(keyFields, valueFields...)
 				if nKeyFields < 1 || nValueFields < 1 {
 					checkError(fmt.Errorf("fold requires at least one key field and one value field"))
 				}
-				seen := make(map[int]struct{}, len(record.Fields))
-				for _, field := range record.Fields {
+				seen := make(map[int]struct{}, len(fields))
+				for _, field := range fields {
 					if _, exists := seen[field]; exists {
 						checkError(fmt.Errorf("key and value fields must be distinct: field %d selected more than once", field))
 					}
 					seen[field] = struct{}{}
 				}
-
-				if !config.NoHeaderRow || record.IsHeaderRow { // do not replace head line
-					if config.NoOutHeader {
-						continue
-					}
-					checkError(writer.Write(record.Selected))
-					continue
-				}
 			}
 
+			// Reuse the reader's selection buffer after validating distinct fields.
+			items = record.Selected[:len(fields)]
+			for i, field := range fields {
+				items[i] = record.All[field-1]
+			}
+			if record.IsHeaderRow {
+				if !config.NoOutHeader {
+					checkError(writer.Write(items))
+				}
+				continue
+			}
 			N++
-
-			items = record.Selected
 
 			key = encodeFields(items[:nKeyFields], ignoreCase)
 			if _, ok = key2data[key]; !ok {

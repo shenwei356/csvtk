@@ -17,6 +17,26 @@ import (
 	"github.com/shenwei356/xopen"
 )
 
+// TestCSVFieldRangeIntegerLimit must terminate when a range ends at MaxInt.
+func TestCSVFieldRangeIntegerLimit(t *testing.T) {
+	maximum := int(^uint(0) >> 1)
+	input := writeAccuracyInput(t, "input.csv", "a,b\n1,2\n")
+	for _, tc := range []struct{ command, spec string }{
+		{"cut", strconv.Itoa(maximum-1) + "-" + strconv.Itoa(maximum)},
+		{"summary", strconv.Itoa(maximum-1) + "-" + strconv.Itoa(maximum)},
+		{"cut", strconv.Itoa(-maximum-1) + "-"},
+	} {
+		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+		child := exec.CommandContext(ctx, os.Args[0], "-test.run=^TestCLIAccuracyHelper$", "--", tc.command, "-f", tc.spec, input)
+		child.Env = append(os.Environ(), "CSVTK_ACCURACY_HELPER=1")
+		output, err := child.CombinedOutput()
+		cancel()
+		if ctx.Err() == context.DeadlineExceeded || err == nil || !strings.Contains(string(output), "out of range") {
+			t.Fatalf("%s %s: expected prompt range error, got %v: %s", tc.command, tc.spec, err, output)
+		}
+	}
+}
+
 // TestCSVReaderIgnoreIllegalReadErrors must fail promptly on a damaged stream, even with -I.
 func TestCSVReaderIgnoreIllegalReadErrors(t *testing.T) {
 	var compressed bytes.Buffer
@@ -259,5 +279,16 @@ func TestLiteralColumnNames(t *testing.T) {
 	out, _ := runAccuracyCLI(t, "cut", "-F", "-f", "plain*", input)
 	if out != "plain\nz\n" {
 		t.Fatalf("fuzzy: %q", out)
+	}
+}
+
+// TestCSVReaderDuplicateNameSelections visits each physical column once per selector.
+func TestCSVReaderDuplicateNameSelections(t *testing.T) {
+	input := writeAccuracyInput(t, "duplicates.csv", "a,a,b\nx,y,z\n")
+	for _, args := range [][]string{{"cut", "-f", "-b"}, {"cut", "-F", "-f", "a*"}} {
+		out, _ := runAccuracyCLI(t, append(args, input)...)
+		if out != "a,a\nx,y\n" {
+			t.Fatalf("%q: got %q", args, out)
+		}
 	}
 }

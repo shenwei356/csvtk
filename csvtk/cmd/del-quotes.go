@@ -83,6 +83,9 @@ Limitation:
 			if record.Err != nil {
 				checkError(record.Err)
 			}
+			if record.IsHeaderRow && config.NoOutHeader {
+				continue
+			}
 			for i, v = range record.Selected {
 				// if fieldNeedsQuotes(v, config.Delimiter) {
 				if strings.Contains(v, d) {

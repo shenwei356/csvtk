@@ -74,6 +74,9 @@ Output: a matrix with the same column and row names. E.g.,
 
 		minValue := getFlagFloat64(cmd, "min-value")
 		maxValue := getFlagFloat64(cmd, "max-value")
+		if math.IsNaN(minValue) || math.IsNaN(maxValue) || minValue > maxValue {
+			checkError(fmt.Errorf("value bounds must not be NaN and min-value must be <= max-value"))
+		}
 		filterByValue := cmd.Flags().Lookup("min-value").Changed || cmd.Flags().Lookup("max-value").Changed
 		keepNonNumeric := getFlagBool(cmd, "keep-non-numeric")
 		clearBadValues := getFlagBool(cmd, "clear-bad-value")
@@ -134,7 +137,8 @@ Output: a matrix with the same column and row names. E.g.,
 
 			if filterByValue {
 				v1, err = strconv.ParseFloat(v, 64)
-				if (err != nil && !keepNonNumeric) || (err == nil && (v1 < minValue || v1 > maxValue)) {
+				nonNumeric := err != nil || math.IsNaN(v1)
+				if (nonNumeric && !keepNonNumeric) || (!nonNumeric && (v1 < minValue || v1 > maxValue)) {
 					if clearBadValues {
 						v = na
 					} else {
@@ -204,7 +208,7 @@ func init() {
 
 	long2matrix.Flags().Float64P("min-value", "m", -math.MaxFloat64, "only save records with values >= this value")
 	long2matrix.Flags().Float64P("max-value", "M", math.MaxFloat64, "only save records with values <= this value")
-	long2matrix.Flags().BoolP("keep-non-numeric", "N", false, "keep non-numeric values when filtering by --min-value or --max-value")
+	long2matrix.Flags().BoolP("keep-non-numeric", "N", false, "keep non-numeric values (including NaN) when filtering by --min-value or --max-value")
 	long2matrix.Flags().BoolP("clear-bad-value", "B", false, "keep records failing to pass the filter but clear the value")
 
 	long2matrix.Flags().StringP("na", "", "", "content for filling NA data")

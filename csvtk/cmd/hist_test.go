@@ -3,6 +3,7 @@ package cmd
 import (
 	"encoding/xml"
 	"io"
+	"os"
 	"strings"
 	"testing"
 )
@@ -84,6 +85,45 @@ func TestHistPercentileStatistics(t *testing.T) {
 					t.Fatalf("statistics rendered without --percentiles: %s", text)
 				}
 			})
+		}
+	}
+}
+
+// TestHistogramUnrepresentableBins rejects finite samples whose bins lose precision.
+func TestHistogramUnrepresentableBins(t *testing.T) {
+	for _, values := range []string{"-1e308\n0\n1e308", "1e308\n1e308", "5e-324\n1e-323"} {
+		input := writeAccuracyInput(t, "hist.csv", "v\n"+values+"\n")
+		output := writeAccuracyInput(t, "hist.svg", "sentinel")
+		assertInputError(t, "histogram range", "plot", "hist", "-o", output, input)
+		data, err := os.ReadFile(output)
+		if err != nil || string(data) != "sentinel" {
+			t.Fatalf("output changed: %q, %v", data, err)
+		}
+	}
+}
+
+// TestHistogramNoValues reports empty samples instead of computing undefined percentiles.
+func TestHistogramNoValues(t *testing.T) {
+	for _, content := range []string{"v\n", "v\nNA\n"} {
+		input := writeAccuracyInput(t, "hist.csv", content)
+		for _, percentile := range []bool{false, true} {
+			args := []string{"plot", "hist", "--skip-na", "--format", "svg"}
+			if percentile {
+				args = append(args, "--percentiles")
+			}
+			assertInputError(t, "no numeric data", append(args, input)...)
+		}
+	}
+}
+
+// TestHistogramNonFiniteValues rejects values that the histogram binning cannot handle.
+func TestHistogramNonFiniteValues(t *testing.T) {
+	for _, value := range []string{"NaN", "Inf", "-Inf"} {
+		input := writeAccuracyInput(t, "hist.csv", "v\n1\n"+value+"\n")
+		assertInputError(t, "non-finite histogram value", "plot", "hist", "--format", "svg", input)
+		out, _ := runAccuracyCLI(t, "plot", "hist", "--skip-na", "--na-values", value, "--format", "svg", input)
+		if !strings.Contains(out, "<svg") || strings.Contains(out, "NaN") {
+			t.Fatal("invalid SVG after skipping NA")
 		}
 	}
 }

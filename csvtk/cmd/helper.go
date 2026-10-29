@@ -24,6 +24,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"math"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -267,6 +268,9 @@ func getFlagPositiveInt(cmd *cobra.Command, flag string) int {
 func getFlagPositiveFloat64(cmd *cobra.Command, flag string) float64 {
 	value, err := cmd.Flags().GetFloat64(flag)
 	checkError(err)
+	if math.IsNaN(value) || math.IsInf(value, 0) {
+		checkError(fmt.Errorf("value of flag --%s should be finite", flag))
+	}
 	if value <= 0 {
 		checkError(fmt.Errorf("value of flag --%s should be greater than 0", flag))
 	}
@@ -285,8 +289,11 @@ func getFlagNonNegativeInt(cmd *cobra.Command, flag string) int {
 func getFlagNonNegativeFloat64(cmd *cobra.Command, flag string) float64 {
 	value, err := cmd.Flags().GetFloat64(flag)
 	checkError(err)
+	if math.IsNaN(value) || math.IsInf(value, 0) {
+		checkError(fmt.Errorf("value of flag --%s should be finite", flag))
+	}
 	if value < 0 {
-		checkError(fmt.Errorf("value of flag --%s should be greater than or equal to ", flag))
+		checkError(fmt.Errorf("value of flag --%s should be greater than or equal to 0", flag))
 	}
 	return value
 }
@@ -935,54 +942,33 @@ func filepathTrimExtension2(file string, suffixes []string) (string, string, str
 	return name, e1, e2
 }
 
-// ParseByteSize parses byte size from string
+// ParseByteSize parses a finite, nonnegative byte count with an optional binary unit.
 func ParseByteSize(val string) (int64, error) {
-	val = strings.Trim(val, " \t\r\n")
+	val = strings.TrimSpace(val)
 	if val == "" {
 		return 0, nil
 	}
-	var u int64
-	var noUnit bool
+	unit := float64(1)
+	number := val
 	switch val[len(val)-1] {
 	case 'B', 'b':
-		u = 1
+		number = val[:len(val)-1]
 	case 'K', 'k':
-		u = 1 << 10
+		unit, number = 1<<10, val[:len(val)-1]
 	case 'M', 'm':
-		u = 1 << 20
+		unit, number = 1<<20, val[:len(val)-1]
 	case 'G', 'g':
-		u = 1 << 30
+		unit, number = 1<<30, val[:len(val)-1]
 	case 'T', 't':
-		u = 1 << 40
-	default:
-		noUnit = true
-		u = 1
+		unit, number = 1<<40, val[:len(val)-1]
 	}
-	var size float64
-	var err error
-	if noUnit {
-		size, err = strconv.ParseFloat(val, 10)
-		if err != nil {
-			return 0, fmt.Errorf("invalid byte size: %s", val)
-		}
-		if size < 0 {
-			size = 0
-		}
-		return int64(size), nil
-	}
-
-	if len(val) == 1 { // no value
-		return 0, nil
-	}
-
-	size, err = strconv.ParseFloat(strings.Trim(val[0:len(val)-1], " \t\r\n"), 10)
-	if err != nil {
+	size, err := strconv.ParseFloat(strings.TrimSpace(number), 64)
+	size *= unit
+	// Conversion at or above 2^63 is outside int64, including rounded overflow.
+	if err != nil || math.IsNaN(size) || math.IsInf(size, 0) || size < 0 || size >= 1<<63 {
 		return 0, fmt.Errorf("invalid byte size: %s", val)
 	}
-	if size < 0 {
-		size = 0
-	}
-	return int64(size * float64(u)), nil
+	return int64(size), nil
 }
 
 // UniqInts sort the list first and compute uniq values

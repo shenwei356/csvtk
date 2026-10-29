@@ -129,7 +129,8 @@ columns. If the anchor column is removed, the new column takes its place.
 			}
 
 			csvReader.Read(ReadOption{
-				FieldStr: fieldStr,
+				ExactFields: 1,
+				FieldStr:    fieldStr,
 
 				DoNotAllowDuplicatedColumnName: true,
 			})
@@ -150,10 +151,6 @@ columns. If the anchor column is removed, the new column takes its place.
 
 				if checkFirstLine {
 					checkFirstLine = false
-
-					if len(record.Fields) > 1 {
-						checkError(fmt.Errorf("only a single field allowed"))
-					}
 
 					fieldsMap = make(map[int]interface{}, len(record.Selected))
 					for _, f = range record.Fields {

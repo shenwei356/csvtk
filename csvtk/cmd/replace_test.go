@@ -92,3 +92,24 @@ func testLiteralKV(t *testing.T, command string) {
 		}
 	}
 }
+
+// TestReplaceIndependentExclusions keeps replacement fields separate from group fields.
+func TestReplaceIndependentExclusions(t *testing.T) {
+	input := writeAccuracyInput(t, "input.csv", "a,b,c\nx,y,z\nx,y,q\nx,w,z\n")
+	for _, tc := range []struct {
+		target, group string
+		fuzzy         bool
+	}{
+		{"-1,-2", "-3", false}, {"-a,-b", "-c", false}, {"-a,-b", "a,b", false},
+		{"3", "-3", false}, {"c", "-c*", true}, {"3", "a,b", false},
+	} {
+		args := []string{"replace", "-f", tc.target, "-g", tc.group, "-p", ".+", "-r", "{gnr}"}
+		if tc.fuzzy {
+			args = append(args, "-F")
+		}
+		out, _ := runAccuracyCLI(t, append(args, input)...)
+		if out != "a,b,c\nx,y,1\nx,y,2\nx,w,1\n" {
+			t.Fatalf("%v: %q", args, out)
+		}
+	}
+}

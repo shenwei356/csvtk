@@ -72,35 +72,14 @@ Notes:
 		}
 
 		dataFieldXStr := getFlagString(cmd, "data-field-x")
-		if dataFieldXStr == "" {
-			checkError(fmt.Errorf("flag -x (--data-field-x) needed"))
-		}
-		if strings.Contains(dataFieldXStr, ",") {
-			checkError(fmt.Errorf("only one field allowed for flag -x (--data-field-x)"))
-		}
-		if dataFieldXStr[0] == '-' {
-			checkError(fmt.Errorf("unselect not allowed for flag -y (--data-field-x)"))
-		}
+		checkError(validatePlotField(dataFieldXStr, "data-field-x"))
 
 		dataFieldYStr := getFlagString(cmd, "data-field-y")
-		if dataFieldYStr == "" {
-			checkError(fmt.Errorf("flag -y (--data-field-y) needed"))
-		}
-		if strings.Contains(dataFieldYStr, ",") {
-			checkError(fmt.Errorf("only one field allowed for flag -y (--data-field-y)"))
-		}
-		if dataFieldXStr[0] == '-' {
-			checkError(fmt.Errorf("unselect not allowed for flag -y (--data-field-y)"))
-		}
+		checkError(validatePlotField(dataFieldYStr, "data-field-y"))
 
 		groupFieldStr := getFlagString(cmd, "group-field")
 		if len(groupFieldStr) > 0 {
-			if strings.Contains(groupFieldStr, ",") {
-				checkError(fmt.Errorf("only one field allowed for flag --group-field"))
-			}
-			if groupFieldStr[0] == '-' {
-				checkError(fmt.Errorf("unselect not allowed for flag --group-field"))
-			}
+			checkError(validatePlotField(groupFieldStr, "group-field"))
 			plotConfig.fieldStr = dataFieldXStr + "," + dataFieldYStr + "," + groupFieldStr
 		} else {
 			plotConfig.fieldStr = dataFieldXStr + "," + dataFieldYStr
@@ -325,6 +304,9 @@ Notes:
 			p.X.Tick.Marker = plot.ConstantTicks(ticks)
 		}
 
+		// Validate the data domain before explicit bounds can hide invalid values.
+		checkError(preparePlotAxes(p))
+
 		if plotConfig.xminStr != "" {
 			p.X.Min = plotConfig.xmin
 		}
@@ -337,6 +319,8 @@ Notes:
 		if plotConfig.ymaxStr != "" {
 			p.Y.Max = plotConfig.ymax
 		}
+
+		checkError(preparePlotAxes(p))
 
 		// Save image
 		if isStdin(config.OutFile) {

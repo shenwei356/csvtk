@@ -8,6 +8,14 @@ import (
 	"testing"
 )
 
+// TestSummaryOverflowingRange rejects integer conversion errors before expansion.
+func TestSummaryOverflowingRange(t *testing.T) {
+	input := writeAccuracyInput(t, "summary.csv", "a,b\n1,2\n")
+	for _, spec := range []string{"99999999999999999999-99999999999999999999", "1-99999999999999999999"} {
+		assertInputError(t, "value out of range", "summary", "-f", spec, input)
+	}
+}
+
 // TestSummaryOperationStorage covers groups requiring numeric, text, or both value sets.
 func TestSummaryOperationStorage(t *testing.T) {
 	input := writeAccuracyInput(t, "summary.csv", "g,v,t\nA,3,x\nA,1,y\nB,NA,z\n")
@@ -98,4 +106,25 @@ func TestSummaryCountRangeValidation(t *testing.T) {
 			})
 		}
 	}
+}
+
+// TestSummaryIndependentFields keeps excluded data columns from becoming group keys.
+func TestSummaryIndependentFields(t *testing.T) {
+	input := writeAccuracyInput(t, "summary.csv", "g,a,b\nX,1,2\nX,3,4\nY,5,6\n")
+	for _, tc := range []struct {
+		args []string
+		want string
+	}{
+		{[]string{"-f", "-1:count"}, "a:count,b:count\n3,3\n"},
+		{[]string{"-f", "-g:count", "-g", "g"}, "g,a:count,b:count\nX,2,2\nY,1,1\n"},
+		{[]string{"-f", "2:sum", "-g", "-2,-3"}, "g,a:sum\nX,4.00\nY,5.00\n"},
+		{[]string{"-f", "a:sum", "-g", "1"}, "g,a:sum\nX,4.00\nY,5.00\n"},
+		{[]string{"-f", "-1:count,2:sum", "-n", "a_count,b_count,total"}, "a_count,b_count,total\n3,3,9.00\n"},
+	} {
+		out, _ := runAccuracyCLI(t, append(append([]string{"summary"}, tc.args...), input)...)
+		if out != tc.want {
+			t.Fatalf("args %q: got %q; want %q", tc.args, out, tc.want)
+		}
+	}
+	assertInputError(t, "duplicated field", "summary", "-g", "1-2", "-f", "a:sum", input)
 }

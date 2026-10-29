@@ -256,3 +256,17 @@ func TestCSV2JSONEmptyInput(t *testing.T) {
 		}
 	}
 }
+
+// TestCSV2JSONKeySelection requires exactly one resolved key column.
+func TestCSV2JSONKeySelection(t *testing.T) {
+	input := writeAccuracyInput(t, "json.csv", "a,b\nx,y\n")
+	for _, key := range []string{"1-2", "1-", "-1,-2"} {
+		assertInputError(t, "expected 1 selected field", "csv2json", "-k", key, input)
+	}
+	single := writeAccuracyInput(t, "single.csv", "a\nx\n")
+	assertInputError(t, "expected 1 selected field", "csv2json", "-k", "-1", single)
+	out, _ := runAccuracyCLI(t, "csv2json", "-k", "-1", "-K", "-i", "", input)
+	if out != "{\"y\":{\"a\":\"x\"}}\n" {
+		t.Fatalf("got %q", out)
+	}
+}

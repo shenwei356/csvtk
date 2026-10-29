@@ -12,6 +12,25 @@ import (
 	"testing"
 )
 
+// TestBarAxisOptions checks the actual horizontal value axis and unsupported scales.
+func TestBarAxisOptions(t *testing.T) {
+	input := writeAccuracyInput(t, "bar.csv", "name,value\na,1\nb,100\n")
+	for _, flag := range []string{"--x-scale-ln", "--y-scale-ln"} {
+		output := writeAccuracyInput(t, "bar.svg", "sentinel")
+		assertInputError(t, "does not support logarithmic axes", "plot", "bar", "-x", "1", "-y", "2", flag, "-o", output, input)
+		data, err := os.ReadFile(output)
+		if err != nil || string(data) != "sentinel" {
+			t.Fatalf("output changed: %q, %v", data, err)
+		}
+	}
+	args := []string{"plot", "bar", "-x", "1", "-y", "2", "--horizontal", "--format", "svg"}
+	plain, _ := runAccuracyCLI(t, append(args, input)...)
+	bounded, _ := runAccuracyCLI(t, append(args, "--x-max", "200", input)...)
+	if plain == bounded || !strings.Contains(bounded, ">200</text>") {
+		t.Fatal("horizontal value-axis maximum was ignored")
+	}
+}
+
 // TestBarCategoryAlignment compares rendered charts for equivalent tables whose
 // groups list categories in different orders, including gaps and skipped rows.
 func TestBarCategoryAlignment(t *testing.T) {

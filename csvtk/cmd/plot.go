@@ -22,10 +22,12 @@ package cmd
 
 import (
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
 
 	"github.com/spf13/cobra"
+	"gonum.org/v1/plot"
 	"gonum.org/v1/plot/vg"
 )
 
@@ -45,6 +47,8 @@ Notes:
   3. If flag -o/--out-file is not set (the default), the image is written to stdout.
      You can display the image by piping it to the "display" command from ImageMagick
      or redirect it to a file.
+  4. Field selectors must identify a single column; ranges are not supported.
+     Image dimensions and explicit axis limits must be finite.
 
 `,
 }
@@ -52,8 +56,8 @@ Notes:
 func init() {
 	RootCmd.AddCommand(plotCmd)
 
-	plotCmd.PersistentFlags().StringP("data-field", "f", "1", `column index or column name of data`)
-	plotCmd.PersistentFlags().StringP("group-field", "g", "", `column index or column name of group`)
+	plotCmd.PersistentFlags().StringP("data-field", "f", "1", `single column index or column name of data`)
+	plotCmd.PersistentFlags().StringP("group-field", "g", "", `single column index or column name of group`)
 
 	plotCmd.PersistentFlags().StringP("title", "", "", "Figure title")
 	plotCmd.PersistentFlags().StringP("xlab", "", "", "x label text")
@@ -91,21 +95,11 @@ func getPlotConfigs(cmd *cobra.Command) *plotConfigs {
 	config := new(plotConfigs)
 
 	config.dataFieldStr = getFlagString(cmd, "data-field")
-	if strings.Contains(config.dataFieldStr, ",") {
-		checkError(fmt.Errorf("only one field allowed for flag --data-field"))
-	}
-	if config.dataFieldStr[0] == '-' {
-		checkError(fmt.Errorf("unselect not allowed for flag --data-field"))
-	}
+	checkError(validatePlotField(config.dataFieldStr, "data-field"))
 
 	config.groupFieldStr = getFlagString(cmd, "group-field")
 	if len(config.groupFieldStr) > 0 {
-		if strings.Contains(config.groupFieldStr, ",") {
-			checkError(fmt.Errorf("only one field allowed for flag --group-field"))
-		}
-		if config.groupFieldStr[0] == '-' {
-			checkError(fmt.Errorf("unselect not allowed for flag --group-field"))
-		}
+		checkError(validatePlotField(config.groupFieldStr, "group-field"))
 		config.fieldStr = config.dataFieldStr + "," + config.groupFieldStr
 	} else {
 		config.fieldStr = config.dataFieldStr
@@ -137,34 +131,41 @@ func getPlotConfigs(cmd *cobra.Command) *plotConfigs {
 	config.xminStr = getFlagString(cmd, "x-min")
 	if config.xminStr != "" {
 		config.xmin, err = strconv.ParseFloat(config.xminStr, 64)
-		if err != nil {
-			checkError(fmt.Errorf("value of flag --%s should be float", "x-min"))
+		if err != nil || math.IsNaN(config.xmin) || math.IsInf(config.xmin, 0) {
+			checkError(fmt.Errorf("value of flag --%s should be finite", "x-min"))
 		}
 	}
 	config.xmaxStr = getFlagString(cmd, "x-max")
 	if config.xmaxStr != "" {
 		config.xmax, err = strconv.ParseFloat(config.xmaxStr, 64)
-		if err != nil {
-			checkError(fmt.Errorf("value of flag --%s should be float", "x-max"))
+		if err != nil || math.IsNaN(config.xmax) || math.IsInf(config.xmax, 0) {
+			checkError(fmt.Errorf("value of flag --%s should be finite", "x-max"))
 		}
 	}
 	config.yminStr = getFlagString(cmd, "y-min")
 	if config.yminStr != "" {
 		config.ymin, err = strconv.ParseFloat(config.yminStr, 64)
-		if err != nil {
-			checkError(fmt.Errorf("value of flag --%s should be float", "y-min"))
+		if err != nil || math.IsNaN(config.ymin) || math.IsInf(config.ymin, 0) {
+			checkError(fmt.Errorf("value of flag --%s should be finite", "y-min"))
 		}
 	}
 	config.ymaxStr = getFlagString(cmd, "y-max")
 	if config.ymaxStr != "" {
 		config.ymax, err = strconv.ParseFloat(config.ymaxStr, 64)
-		if err != nil {
-			checkError(fmt.Errorf("value of flag --%s should be float", "y-max"))
+		if err != nil || math.IsNaN(config.ymax) || math.IsInf(config.ymax, 0) {
+			checkError(fmt.Errorf("value of flag --%s should be finite", "y-max"))
 		}
 	}
 
-	config.format = getFlagString(cmd, "format")
-	switch strings.ToLower(config.format) {
+	if config.xminStr != "" && config.xmaxStr != "" && config.xmin >= config.xmax {
+		checkError(fmt.Errorf("--x-min should be less than --x-max"))
+	}
+	if config.yminStr != "" && config.ymaxStr != "" && config.ymin >= config.ymax {
+		checkError(fmt.Errorf("--y-min should be less than --y-max"))
+	}
+
+	config.format = strings.ToLower(getFlagString(cmd, "format"))
+	switch config.format {
 	case "eps", "jpg", "jpeg", "pdf", "png", "svg", "tif", "tiff":
 	default:
 		checkError(fmt.Errorf("invalid image format. available format: eps, jpg|jpeg, pdf, png, svg, and tif|tiff"))
@@ -184,4 +185,60 @@ type plotConfigs struct {
 	xmin, xmax, ymin, ymax                float64
 	xminStr, xmaxStr, yminStr, ymaxStr    string
 	format                                string
+}
+
+// validatePlotField rejects selections that would shift data and group positions.
+func validatePlotField(spec, flag string) error {
+	if spec == "" {
+		return fmt.Errorf("flag --%s needs a column index or name", flag)
+	}
+	if strings.Contains(spec, ",") || reIntegerRange.MatchString(spec) {
+		return fmt.Errorf("only one field allowed for flag --%s", flag)
+	}
+	if spec[0] == '-' {
+		return fmt.Errorf("unselect not allowed for flag --%s", flag)
+	}
+	return nil
+}
+
+// preparePlotAxes validates ranges before an output file is opened.
+// Padding must remain representable and preserve positive logarithmic domains.
+func preparePlotAxes(p *plot.Plot) error {
+	for _, item := range []struct {
+		name string
+		axis *plot.Axis
+	}{{"X", &p.X}, {"Y", &p.Y}} {
+		axis := item.axis
+		if _, logarithmic := axis.Scale.(plot.LogScale); !logarithmic {
+			if math.IsNaN(axis.Min) || math.IsNaN(axis.Max) || math.IsInf(axis.Min, 0) || math.IsInf(axis.Max, 0) || math.IsInf(axis.Max-axis.Min, 0) {
+				return fmt.Errorf("%s axis requires finite bounds and range", item.name)
+			}
+			if axis.Min == axis.Max {
+				// Preserve the library's unit padding unless rounding would erase it.
+				padding := 1.0
+				if axis.Min-padding == axis.Min || axis.Max+padding == axis.Max {
+					padding = math.Abs(axis.Min) * 0.05
+				}
+				if lower := axis.Min - padding; !math.IsInf(lower, 0) {
+					axis.Min = lower
+				}
+				if upper := axis.Max + padding; !math.IsInf(upper, 0) {
+					axis.Max = upper
+				}
+			}
+			continue
+		}
+		if !(axis.Min > 0) || !(axis.Max > 0) || math.IsInf(axis.Min, 0) || math.IsInf(axis.Max, 0) {
+			return fmt.Errorf("%s logarithmic axis requires positive finite bounds and data", item.name)
+		}
+		if axis.Min == axis.Max {
+			if lower := axis.Min / 2; lower > 0 {
+				axis.Min = lower
+			}
+			if upper := axis.Max * 2; !math.IsInf(upper, 0) {
+				axis.Max = upper
+			}
+		}
+	}
+	return nil
 }

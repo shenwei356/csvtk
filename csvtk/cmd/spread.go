@@ -41,6 +41,8 @@ var spreadCmd = &cobra.Command{
 	Short: "spread a key-value pair across multiple columns, like tidyr::spread/pivot_wider",
 	Long: `spread a key-value pair across multiple columns, like tidyr::spread/pivot_wider
 
+Key and value selectors are resolved independently; each must select one column.
+
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
@@ -61,8 +63,8 @@ var spreadCmd = &cobra.Command{
 		na := getFlagString(cmd, "na")
 		separater := getFlagString(cmd, "separater")
 
-		fieldStr := fieldKey + "," + fieldValue
-		fuzzyFields := false
+		keySelection := newFieldSelection(fieldKey)
+		valueSelection := newFieldSelection(fieldValue)
 
 		outfh, err := xopen.Wopen(config.OutFile)
 		checkError(err)
@@ -102,14 +104,13 @@ var spreadCmd = &cobra.Command{
 			checkError(err)
 		}
 
-		csvReader.Read(ReadOption{
-			FieldStr:    fieldStr,
-			FuzzyFields: fuzzyFields,
-
-			DoNotAllowDuplicatedColumnName: true,
-		})
+		if len(keySelection.names)+len(valueSelection.names) > 0 {
+			csvReader.NoHeaderRow = false
+		}
+		csvReader.Read(ReadOption{FieldStr: fieldKey, DoNotAllowDuplicatedColumnName: true})
 
 		var fieldsMap map[int]interface{}
+		var fields []int // The independently resolved key and value columns.
 		var f int
 		var left, key, val string
 		var vals []string
@@ -135,15 +136,20 @@ var spreadCmd = &cobra.Command{
 				checkError(fmt.Errorf("input data should have at least two columns"))
 			}
 
-			if len(record.Fields) != 2 {
-				checkError(fmt.Errorf("only exactly one key field and one value field are allowed"))
+			if checkFirstLine {
+				keyFields := record.Fields
+				valueFields := valueSelection.resolve(record.All, false)
+				if len(keyFields) != 1 || len(valueFields) != 1 {
+					checkError(fmt.Errorf("only exactly one key field and one value field are allowed"))
+				}
+				fields = append(keyFields, valueFields...)
 			}
-			if record.Fields[0] == record.Fields[1] {
+			if fields[0] == fields[1] {
 				checkError(fmt.Errorf("key field and value field should be different"))
 			}
 
-			fieldsMap = make(map[int]interface{}, len(record.Selected))
-			for _, f = range record.Fields {
+			fieldsMap = make(map[int]interface{}, len(fields))
+			for _, f = range fields {
 				fieldsMap[f-1] = struct{}{}
 			}
 
@@ -180,7 +186,7 @@ var spreadCmd = &cobra.Command{
 				groupOrder[left] = record.Row
 			}
 
-			key, val = record.Selected[0], record.Selected[1]
+			key, val = record.All[fields[0]-1], record.All[fields[1]-1]
 
 			if _, ok = data[left]; !ok {
 				data[left] = make(map[string][]string, 8)

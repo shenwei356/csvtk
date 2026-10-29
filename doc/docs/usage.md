@@ -830,6 +830,7 @@ Notes:
   1. Column names, keys, and string values are escaped according to JSON syntax.
   2. With -n/--parse-num, numeric text is normalized without rounding:
      00 becomes 0, .5 becomes 0.5, and 1. becomes 1.0.
+  3. The -k/--key selector must resolve to exactly one column.
 
 Usage:
   csvtk csv2json [flags]
@@ -1052,6 +1053,7 @@ convert CSV to Markdown format
 Attention:
 
   csv2md treats the first row as a header line and requires column names to be unique.
+  Literal pipes are escaped, and line breaks in cells are rendered as <br>.
 
 Usage:
   csvtk csv2md [flags]
@@ -1120,6 +1122,7 @@ convert CSV to a readable aligned table
 Attention:
 
   1. Row spans are not supported.
+  2. Line breaks within cells are preserved inside the table borders.
 
 Usage:
   csvtk csv2rst [flags]
@@ -2141,6 +2144,8 @@ Attention:
     Multiple value fields are folded in parallel, preserving their row alignment.
     With -i, grouping ignores case and retains the first spelling of each key.
 
+Key and value field selectors are resolved independently, including exclusions.
+
 Example:
 
     $ echo -ne "id,value,meta\n1,a,12\n1,b,34\n2,c,56\n2,d,78\n" \
@@ -2649,7 +2654,7 @@ join files by selected fields (inner, left and outer join).
 
 Attention:
 
-  1. Multiple keys are supported.
+  1. Multiple keys are supported. Each key column must be selected only once.
   2. The default operation is an inner join. Use --left-join for a left join
      and --outer-join for an outer join.
   3. An input containing only a header contributes its columns and zero data rows.
@@ -3309,6 +3314,8 @@ Notes:
   3. If flag -o/--out-file is not set (the default), the image is written to stdout.
      You can display the image by piping it to the "display" command from ImageMagick
      or redirect it to a file.
+  4. Field selectors must identify a single column; ranges are not supported.
+     Image dimensions and explicit axis limits must be finite.
 
 Usage:
   csvtk plot [command]
@@ -3321,10 +3328,10 @@ Available Commands:
 
 Flags:
       --axis-width float        axis width (default 1.5)
-  -f, --data-field string       column index or column name of data (default "1")
+  -f, --data-field string       single column index or column name of data (default "1")
       --format string           image format for stdout when flag -o/--out-file is not given. Available
                                 values: eps, jpg|jpeg, pdf, png, svg, and tif|tiff. (default "png")
-  -g, --group-field string      column index or column name of group
+  -g, --group-field string      single column index or column name of group
       --height float            Figure height (default 4.5)
   -h, --help                    help for plot
       --hide-x-labs             hide X axis, ticks, and tick labels
@@ -3347,8 +3354,6 @@ Flags:
       --y-min string            minimum value of Y axis
       --y-scale-ln              scale the Y axis by the natural log
       --ylab string             y label text
-
-Use "csvtk plot [command] --help" for more information about a command.
 ```
 
 ***Note that most of the flags of `plot` are global flags of the subcommands
@@ -3430,6 +3435,10 @@ Notes:
   3. If flag -o/--out-file is not set (the default), the image is written to stdout.
      You can display the image by piping it to the "display" command from ImageMagick
      or redirect it to a file.
+  4. At least one numeric value must remain after --skip-na filtering.
+     Non-finite values must be skipped explicitly with --na-values and --skip-na.
+  5. Data ranges and bin boundaries must be representable without overflow or
+     loss of floating-point precision; rescale the data or reduce --bins if needed.
 
 Usage:
   csvtk plot hist [flags]
@@ -3566,6 +3575,8 @@ Notes:
      or redirect it to a file.
   4. With --group-field, categories are aligned across groups in first-seen
      order. Missing categories leave gaps. Each group/category pair must be unique.
+  5. Logarithmic axes are not supported. With --horizontal, use --x-min/--x-max
+     to set the value-axis limits.
 
 Usage:
   csvtk plot bar [flags]
@@ -4099,8 +4110,8 @@ Flags:
                                             (default "1")
   -F, --fuzzy-fields                        use fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"
   -g, --group strings                       select field(s) for group-specific record numbering,
-                                            including {gnr}, {enr}, {rnr}. Please use the same field
-                                            type (field number or column name) as the value of -f/--fields
+                                            including {gnr}, {enr}, {rnr}. Field ranges and exclusions
+                                            are resolved independently of -f/--fields
   -h, --help                                help for replace
   -i, --ignore-case                         ignore case
       --incr-num int                        increment number when using  {nr}, {gnr}, {enr}, {rnr} in
@@ -4215,7 +4226,7 @@ Usage:
 Flags:
   -h, --help               help for sample
   -n, --line-number        print the line number as the first column ("row")
-  -p, --proportion float   sample by proportion
+  -p, --proportion float   sample by proportion in (0, 1]
   -s, --rand-seed int      random seed (default 11)
 ```
 
@@ -4246,6 +4257,9 @@ Usage
 $ csvtk sep -h
 
 separate a column into multiple columns
+
+The field selector must resolve to exactly one column.
+Flag -i/--ignore-case applies to both literal and regular-expression separators.
 
 Usage:
   csvtk sep [flags]
@@ -4655,7 +4669,8 @@ Notes:
   3. Special characters in key values are percent-encoded in output file names.
      Long encoded names use a hash.
   4. flag -n/--nlines splits the input into chunks of up to N records instead of
-     splitting by key values. The header row, when present, is written to every chunk.
+     splitting by key values. The header row, when present, is written to every chunk
+     unless -U/--delete-header is set.
   5. flag -c/--nchunks splits the input into N chunks in a round-robin manner.
   6. An explicit output directory must not be the current directory, its ancestor,
      or a directory containing an input file, even with --force. Symlink aliases
@@ -4868,6 +4883,7 @@ Limitation: Complex sheet structures are not fully supported, such as
 
 Groups that would have the same sheet name receive distinct numeric suffixes.
 Missing cells in selected columns are treated as empty values.
+Flag -U/--delete-header suppresses headers in generated sheets; the source sheet is preserved.
 
 Usage:
   csvtk splitxlsx [flags]
@@ -4940,6 +4956,8 @@ Usage
 $ csvtk spread -h
 
 spread a key-value pair across multiple columns, like tidyr::spread/pivot_wider
+
+Key and value selectors are resolved independently; each must select one column.
 
 Usage:
   csvtk spread [flags]
@@ -5036,7 +5054,7 @@ summary statistics of selected numeric or text fields (grouped by group fields)
 
 Attention:
 
-  1. Do not mix field (column) numbers and names.
+  1. Group and data selectors are resolved independently. They must not overlap.
   2. Field ranges are supported, e.g., "-f 2-5:sum".
   3. The default operation is count, e.g., "-f 1-2" is equivalent to "-f 1-2:count".
   4. Values are stored only for the numeric or text operations requested for
@@ -5344,7 +5362,8 @@ Flags:
   -B, --clear-bad-value    keep records failing to pass the filter but clear the value
   -f, --fields strings     the three fields/columns to use. e.g., -f 1,2,3 or -f a,b,v (default [1-3])
   -h, --help               help for long2matrix
-  -N, --keep-non-numeric   keep non-numeric values when filtering by --min-value or --max-value
+  -N, --keep-non-numeric   keep non-numeric values (including NaN) when filtering by --min-value or
+                           --max-value
   -M, --max-value float    only save records with values <= this value (default 1.7976931348623157e+308)
   -m, --min-value float    only save records with values >= this value (default -1.7976931348623157e+308)
       --na string          content for filling NA data
@@ -5441,7 +5460,8 @@ Flags:
   -n, --colnames strings   column names of the output (3 values required). e.g., -n a,b,v (default
                            [col1,col2,value])
   -h, --help               help for matrix2long
-  -N, --keep-non-numeric   keep non-numeric values when filtering by --min-value or --max-value
+  -N, --keep-non-numeric   keep non-numeric values (including NaN) when filtering by --min-value or
+                           --max-value
   -S, --keep-same-keys     keep records with the same key names
   -M, --max-value float    only show records with values <= this value (default 1.7976931348623157e+308)
   -m, --min-value float    only show records with values >= this value (default -1.7976931348623157e+308)

@@ -98,3 +98,16 @@ func TestCorrOutputStreams(t *testing.T) {
 		t.Fatalf("passthrough file: %q, error %v", data, err)
 	}
 }
+
+// TestCorrInputCount rejects extra inputs instead of silently ignoring them.
+func TestCorrInputCount(t *testing.T) {
+	input := writeAccuracyInput(t, "input.csv", "a,b\n1,2\n3,4\n")
+	other := writeAccuracyInput(t, "other.csv", "a,b\n1,4\n3,2\n")
+	assertInputError(t, "no more than one file", "corr", "-f", "1,2", input, other)
+	list := writeAccuracyInput(t, "list.txt", other+"\n")
+	assertInputError(t, "no more than one file", "corr", "-f", "1,2", input, "-X", list)
+	out, report := runAccuracyCLI(t, "corr", "-f", "1,2", "--pass", "-U", input)
+	if out != "1,2\n3,4\n" || report != "a\tb\t1.0000\n" {
+		t.Fatalf("out %q report %q", out, report)
+	}
+}

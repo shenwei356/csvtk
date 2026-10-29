@@ -22,6 +22,7 @@ package cmd
 
 import (
 	"fmt"
+	"math"
 	"os"
 	"runtime"
 	"sort"
@@ -50,6 +51,10 @@ Notes:
   3. If flag -o/--out-file is not set (the default), the image is written to stdout.
      You can display the image by piping it to the "display" command from ImageMagick
      or redirect it to a file.
+  4. At least one numeric value must remain after --skip-na filtering.
+     Non-finite values must be skipped explicitly with --na-values and --skip-na.
+  5. Data ranges and bin boundaries must be representable without overflow or
+     loss of floating-point precision; rescale the data or reduce --bins if needed.
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -121,7 +126,28 @@ Notes:
 					checkError(fmt.Errorf("fail to parse data: %s at column: %d. please choose the right column by flag -f (--data-field)", d[0], fields[0]))
 				}
 			}
+			if math.IsNaN(f) || math.IsInf(f, 0) {
+				checkError(fmt.Errorf("non-finite histogram value: %s", d[0]))
+			}
 			v = append(v, f)
+		}
+
+		if len(v) == 0 {
+			checkError(fmt.Errorf("no numeric data to plot"))
+		}
+		// Validate bin arithmetic before the plotting library can overflow or
+		// collapse distinct boundaries to the same floating-point value.
+		minimum, maximum := v[0], v[0]
+		for _, value := range v[1:] {
+			minimum = math.Min(minimum, value)
+			maximum = math.Max(maximum, value)
+		}
+		binWidth := (maximum - minimum) / float64(bins)
+		if minimum == maximum {
+			binWidth = 1 // The plotting library uses one unit-wide bin for constants.
+		}
+		if math.IsInf(maximum-minimum, 0) || binWidth <= 0 || minimum+binWidth <= minimum || maximum-binWidth >= maximum {
+			checkError(fmt.Errorf("histogram range cannot be represented with %d bins; rescale the data or reduce --bins", bins))
 		}
 
 		percentiles := getFlagBool(cmd, "percentiles")
@@ -142,6 +168,8 @@ Notes:
 		// h.Normalize(1)
 		h.FillColor = plotutil.Color(colorIndex - 1)
 		h.LineStyle.Width = lineWidth
+		// Exclude empty bins from the logarithmic count range.
+		h.LogY = plotConfig.scaleLnY
 		p.Add(h)
 
 		p.Title.Text = plotConfig.title
@@ -179,6 +207,9 @@ Notes:
 			p.Y.Tick.Marker = plot.LogTicks{Prec: -1}
 		}
 
+		// Validate the data domain before explicit bounds can hide invalid values.
+		checkError(preparePlotAxes(p))
+
 		if plotConfig.xminStr != "" {
 			p.X.Min = plotConfig.xmin
 		}
@@ -191,6 +222,8 @@ Notes:
 		if plotConfig.ymaxStr != "" {
 			p.Y.Max = plotConfig.ymax
 		}
+
+		checkError(preparePlotAxes(p))
 
 		// Save image
 		if isStdin(config.OutFile) {

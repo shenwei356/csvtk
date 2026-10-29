@@ -120,3 +120,24 @@ func TestWatchEmptyHistogram(t *testing.T) {
 		t.Fatalf("valid histogram not written: %v", err)
 	}
 }
+
+// TestWatchPassthrough retains non-numeric records and honors header suppression.
+func TestWatchPassthrough(t *testing.T) {
+	input := writeAccuracyInput(t, "input.csv", "value\n1\ntext\nNaN\nInf\n-2\n")
+	for _, logScale := range []bool{false, true} {
+		args := []string{"watch", "-f", "1", "--pass", "-Q", "-U"}
+		if logScale {
+			args = append(args, "--log")
+		}
+		out, _ := runAccuracyCLI(t, append(args, input)...)
+		if out != "1\ntext\nNaN\nInf\n-2\n" {
+			t.Fatalf("lost passthrough data: %q", out)
+		}
+	}
+}
+
+// TestWatchRequiresSelectedField rejects an empty complement instead of dropping the input.
+func TestWatchRequiresSelectedField(t *testing.T) {
+	input := writeAccuracyInput(t, "input.csv", "v\n1\n")
+	assertInputError(t, "expected 1 selected field", "watch", "-f", "-1", "--pass", "-Q", input)
+}

@@ -152,7 +152,11 @@ Special replacement symbols:
 		}
 		groups := getFlagStringSlice(cmd, "group")
 		setGroup := len(groups) > 0
-		var groupCols int // Number of columns after expanding group selectors.
+		targetSelection := newFieldSelection(fieldStr)
+		var groupSelection fieldSelection
+		if setGroup {
+			groupSelection = newFieldSelection(strings.Join(groups, ","))
+		}
 
 		if reGNR.MatchString(replacement) || reENR.MatchString(replacement) || reRNR.MatchString(replacement) {
 			if !setGroup {
@@ -203,17 +207,11 @@ Special replacement symbols:
 				checkError(err)
 			}
 
-			_fieldStr := fieldStr
-			if _replaceWithXNR {
-				_fieldStr += "," + strings.Join(groups, ",")
+			// Column names in either selection imply a header, even with -H.
+			if len(targetSelection.names)+len(groupSelection.names) > 0 {
+				csvReader.NoHeaderRow = false
 			}
-
-			csvReader.Read(ReadOption{
-				FieldStr:    _fieldStr,
-				FuzzyFields: fuzzyFields,
-
-				DoNotAllowDuplicatedColumnName: true,
-			})
+			csvReader.Read(ReadOption{FieldStr: fieldStr, FuzzyFields: fuzzyFields, DoNotAllowDuplicatedColumnName: true})
 
 			var i int
 			var r string
@@ -240,7 +238,7 @@ Special replacement symbols:
 			var groupPre string
 			var hasGroupPre bool
 
-			var fields []int
+			var fields, groupFields []int
 
 			checkFirstLine := true
 			for record := range csvReader.Ch {
@@ -251,9 +249,13 @@ Special replacement symbols:
 				if checkFirstLine {
 					checkFirstLine = false
 
+					fields = record.Fields
 					if _replaceWithXNR {
-						groupCols = expandedFieldCount(strings.Join(groups, ","), record.All, fuzzyFields, config.NoHeaderRow)
-						groupColData = make([]string, groupCols)
+						groupFields = groupSelection.resolve(record.All, fuzzyFields)
+						groupColData = make([]string, len(groupFields))
+					}
+					if len(fields) == 0 {
+						continue
 					}
 
 					if !config.NoHeaderRow || record.IsHeaderRow { // do not replace head line
@@ -265,10 +267,12 @@ Special replacement symbols:
 					}
 				}
 
+				if len(fields) == 0 {
+					continue
+				}
 				if _replaceWithXNR {
-					fields = record.Fields[:len(record.Fields)-groupCols]
-					for i := 0; i < groupCols; i++ {
-						groupColData[i] = record.All[record.Fields[len(record.Fields)-groupCols+i]-1]
+					for i, field := range groupFields {
+						groupColData[i] = record.All[field-1]
 					}
 					group = encodeFields(groupColData, false)
 
@@ -293,8 +297,6 @@ Special replacement symbols:
 						groupPre = group
 						hasGroupPre = true
 					}
-				} else {
-					fields = record.Fields
 				}
 
 				for _, i = range fields {
@@ -359,7 +361,7 @@ Special replacement symbols:
 func init() {
 	RootCmd.AddCommand(replaceCmd)
 	replaceCmd.Flags().StringP("fields", "f", "1", `select only these fields. e.g., -f 1,2 or -f columnA,columnB`)
-	replaceCmd.Flags().StringSliceP("group", "g", []string{}, `select field(s) for group-specific record numbering, including {gnr}, {enr}, {rnr}. Please use the same field type (field number or column name) as the value of -f/--fields`)
+	replaceCmd.Flags().StringSliceP("group", "g", []string{}, `select field(s) for group-specific record numbering, including {gnr}, {enr}, {rnr}. Field ranges and exclusions are resolved independently of -f/--fields`)
 	replaceCmd.Flags().BoolP("fuzzy-fields", "F", false, `use fuzzy fields, e.g., -F -f "*name" or -F -f "id123*"`)
 	replaceCmd.Flags().StringP("pattern", "p", ".*", "search regular expression")
 	replaceCmd.Flags().StringP("replacement", "r", "",

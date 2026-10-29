@@ -3,6 +3,7 @@ package cmd
 import (
 	"bytes"
 	"encoding/csv"
+	"os"
 	"reflect"
 	"strings"
 	"testing"
@@ -60,5 +61,33 @@ func TestFixQuotesMixedFields(t *testing.T) {
 	}
 	if len(rows) != 6 || rows[2][1] != "quotes\trequired" || rows[3][1] != "fake\" record" || rows[4][1] != "\"Cellvibrio\" Winogradsky" {
 		t.Fatalf("documented examples: %q", rows)
+	}
+}
+
+// TestFixQuotesDeleteHeader still checks field counts against a suppressed header.
+func TestFixQuotesDeleteHeader(t *testing.T) {
+	input := writeAccuracyInput(t, "input.csv", "# comment\n\na,b\nx,y\n")
+	out, _ := runAccuracyCLI(t, "fix-quotes", "-U", input)
+	if out != "# comment\n\nx,y\n" {
+		t.Fatalf("got %q", out)
+	}
+	out, _ = runAccuracyCLI(t, "fix-quotes", "-H", "-U", input)
+	if out != "# comment\n\na,b\nx,y\n" {
+		t.Fatalf("got %q", out)
+	}
+	invalid := writeAccuracyInput(t, "invalid.csv", "a,b\nx,y,z\n")
+	assertInputError(t, "unequal number of fields", "fix-quotes", "-U", invalid)
+}
+
+// TestFixQuotesBufferSize validates buffer options before truncating output.
+func TestFixQuotesBufferSize(t *testing.T) {
+	input := writeAccuracyInput(t, "input.csv", "a,b\nx,y\n")
+	for _, size := range []string{"0", "-1", "NaN", "Inf", "9223372036854775808G"} {
+		output := writeAccuracyInput(t, "output.csv", "sentinel")
+		assertInputError(t, "buffer size", "fix-quotes", "-b", size, "-o", output, input)
+		got, err := os.ReadFile(output)
+		if err != nil || string(got) != "sentinel" {
+			t.Fatalf("output changed: %q, %v", got, err)
+		}
 	}
 }

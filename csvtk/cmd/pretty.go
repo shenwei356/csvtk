@@ -380,6 +380,12 @@ Styles:
 					}
 				}
 
+				// Keep column formatting while suppressing header text and its separator.
+				if config.NoOutHeader {
+					for i := range header {
+						header[i].Header = ""
+					}
+				}
 				tbl.HeaderWithFormat(header)
 
 				if !hasHeaderRow {

@@ -40,7 +40,7 @@ var joinCmd = &cobra.Command{
 
 Attention:
 
-  1. Multiple keys are supported.
+  1. Multiple keys are supported. Each key column must be selected only once.
   2. The default operation is an inner join. Use --left-join for a left join
      and --outer-join for an outer join.
   3. An input containing only a header contributes its columns and zero data rows.
@@ -163,6 +163,7 @@ Attention:
 				if len(data) == 0 && len(headerRow) == 0 {
 					continue
 				}
+				checkError(validateJoinKeyFields(fields))
 				if expectedKeyFields == 0 {
 					expectedKeyFields = len(fields)
 				} else if len(fields) != expectedKeyFields {
@@ -213,6 +214,7 @@ Attention:
 					continue
 				}
 			}
+			checkError(validateJoinKeyFields(fields))
 			nCols := len(headerRow)
 			if len(data) > 0 {
 				nCols = len(data[0])
@@ -452,7 +454,7 @@ Attention:
 				}
 				HeaderRow = newHeaderRow
 			} else if filenameAsPrefix {
-				if len(Data) > 0 {
+				if len(data) > 0 {
 					var Colname string
 					for f, colname = range data[0] {
 						if _, ok = fieldsMap[f+1]; !ok {
@@ -478,7 +480,7 @@ Attention:
 					}
 				}
 			} else if addSuffix {
-				if len(Data) > 0 {
+				if len(data) > 0 {
 					var Colname string
 					for f, colname = range data[0] {
 						if _, ok = fieldsMap[f+1]; !ok {
@@ -599,4 +601,16 @@ func init() {
 	joinCmd.Flags().BoolP("prefix-trim-ext", "e", false, "trim extension when adding filename as colname prefix")
 	joinCmd.Flags().BoolP("only-duplicates", "P", false, "add filenames as colname prefixes or add custom suffixes only for duplicated colnames")
 	joinCmd.Flags().StringSliceP("suffix", "s", []string{}, "add suffixes to colnames from each file")
+}
+
+// validateJoinKeyFields ensures each encoded key component has a distinct destination.
+func validateJoinKeyFields(fields []int) error {
+	seen := make(map[int]struct{}, len(fields))
+	for _, field := range fields {
+		if _, exists := seen[field]; exists {
+			return fmt.Errorf("join key field selected more than once: %d", field)
+		}
+		seen[field] = struct{}{}
+	}
+	return nil
 }

@@ -115,7 +115,9 @@ var renameCmd = &cobra.Command{
 							record.All[f-1] = names[i]
 						}
 
-						checkError(writer.Write(record.All))
+						if !config.NoOutHeader {
+							checkError(writer.Write(record.All))
+						}
 						continue
 					}
 				}

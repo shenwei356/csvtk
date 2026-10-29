@@ -91,3 +91,18 @@ func TestFoldIgnoreCase(t *testing.T) {
 		t.Fatalf("case sensitive: %q", out)
 	}
 }
+
+// TestFoldIndependentExclusions folds complementary selections without losing all fields.
+func TestFoldIndependentExclusions(t *testing.T) {
+	input := writeAccuracyInput(t, "input.csv", "a,b,c\nx,y,z\nx,w,q\n")
+	for _, selectors := range [][2]string{{"-2,-3", "-1"}, {"a", "-a"}, {"-b,-c", "b,c"}} {
+		out, _ := runAccuracyCLI(t, "fold", "-f", selectors[0], "-v", selectors[1], "-s", ";", input)
+		if out != "a,b,c\nx,y;w,z;q\n" {
+			t.Fatalf("%v: %q", selectors, out)
+		}
+	}
+	out, _ := runAccuracyCLI(t, "fold", "-H", "-f", "-2,-3", "-v", "-1", "-s", ";", writeAccuracyInput(t, "no-header.csv", "x,y,z\nx,w,q\n"))
+	if out != "x,y;w,z;q\n" {
+		t.Fatal(out)
+	}
+}
