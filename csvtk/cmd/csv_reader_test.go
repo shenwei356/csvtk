@@ -17,6 +17,44 @@ import (
 	"github.com/shenwei356/xopen"
 )
 
+// TestCSVReaderEmptyRowsDoNotSetWidth infers columns from retained records only.
+func TestCSVReaderEmptyRowsDoNotSetWidth(t *testing.T) {
+	for _, prefix := range []string{"\"\"\n", ",,\n", "\"\"\n,,\n"} {
+		input := writeAccuracyInput(t, "input.csv", prefix+"a,b\n1,2\n,,\n3,4\n")
+		for _, flags := range [][]string{nil, {"-I"}, {"-H"}, {"-U"}, {"-Z"}} {
+			args := append([]string{"cut", "-E", "-f", "1-"}, flags...)
+			out, _ := runAccuracyCLI(t, append(args, input)...)
+			want := "a,b\n1,2\n3,4\n"
+			if len(flags) > 0 && flags[0] == "-U" {
+				want = "1,2\n3,4\n"
+			} else if len(flags) > 0 && flags[0] == "-Z" {
+				want = "row,a,b\n1,1,2\n2,3,4\n"
+			}
+			if out != want {
+				t.Errorf("prefix %q, flags %v: got %q, want %q", prefix, flags, out, want)
+			}
+		}
+	}
+	input := writeAccuracyInput(t, "bad.csv", "a,b\n,\"bad\"quote\n")
+	assertInputError(t, "extraneous or missing", "cut", "-E", "-f", "1-", input)
+	input = writeAccuracyInput(t, "width.csv", "a,b\nx\n")
+	assertInputError(t, "wrong number of fields", "cut", "-E", "-f", "1-", input)
+}
+
+// TestCSVReaderIllegalRowsDoNotSetWidth discards widths inferred from partial records.
+func TestCSVReaderIllegalRowsDoNotSetWidth(t *testing.T) {
+	input := writeAccuracyInput(t, "input.csv", "a,b\"c\nx,y\n1,2\n")
+	for _, args := range [][]string{{"cut", "-I", "-f", "1-"}, {"head", "-I", "-n", "1"}} {
+		out, stderr := runAccuracyCLI(t, append(args, input)...)
+		if want := "x,y\n1,2\n"; out != want {
+			t.Errorf("args %v: got %q, want %q", args, out, want)
+		}
+		if !strings.Contains(stderr, "1 illegal rows ignored") {
+			t.Errorf("unexpected skipped-row count: %s", stderr)
+		}
+	}
+}
+
 // TestCSVFieldRangeIntegerLimit must terminate when a range ends at MaxInt.
 func TestCSVFieldRangeIntegerLimit(t *testing.T) {
 	maximum := int(^uint(0) >> 1)

@@ -10,6 +10,9 @@
         - accept literal column names containing regular-expression characters.
         - make `--immediate-output` a global flag and flush both CSV and file output buffers.
         - preserve explicit stdin input when using `-X/--infile-list`.
+        - infer column counts from retained records when skipping empty or illegal rows, and skip empty rows with differing widths under `-E`.
+    - `csvtk add-header`:
+        - reject mismatched column counts in subsequent input files.
     - `csvtk cat`:
         - preserve final lines without a newline and fix progress reporting and parameter validation.
     - `csvtk comb`:
@@ -93,6 +96,7 @@
         - require exactly one selected field, including after range and exclusion expansion.
     - `csvtk sort`:
         - fix default sorting of single-column input and open ranges selecting only the last column.
+        - correctly sort by numeric-looking column names and negative open ranges.
     - `csvtk split`:
         - reject unsafe output directories before deleting files, even with `--force`.
         - honor `--buf-rows 1` and fix appending output when reading from stdin.
@@ -107,7 +111,8 @@
         - fix field ranges with the default count operation and honor `--rand-seed`.
         - resolve data and group selectors independently, including exclusions, and reject overlapping columns.
         - reject overflowing field numbers.
-    - `csvtk summary/spread/sep/rename/rename2/csv2rst/corr/watch/pretty/fix/del-quotes/split/splitxlsx/space2tab/fix-quotes`:
+        - avoid overflow when computing medians and quartiles of finite values.
+    - `csvtk summary/spread/sep/rename/rename2/csv2rst/corr/watch/pretty/fix/del-quotes/split/splitxlsx/space2tab/fix-quotes/transpose`:
         - honor `-U/--delete-header`.
     - `csvtk watch`:
         - prevent image output from overwriting inputs or tabular output.

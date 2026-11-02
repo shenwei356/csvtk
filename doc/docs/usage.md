@@ -13,6 +13,9 @@
 6. The CSV parser requires all lines to have the same number of fields/columns.
     Even lines containing only spaces will cause an error.
     Use `-I/--ignore-illegal-row` to skip these lines if necessary.
+    Use `-E/--ignore-empty-row` to skip records whose fields are all empty,
+    even if their widths differ. Skipped records do not determine the expected
+    number of columns.
     You can also use "csvtk fix" to fix files with different numbers of columns in rows.
 7. If double-quotes exist in fields not enclosed with double-quotes, e.g.,
 
@@ -179,6 +182,8 @@ Attention:
   6. The CSV parser requires all lines to have the same number of fields/columns.
      Even lines containing only spaces will cause an error.
      Use '-I/--ignore-illegal-row' to skip these lines if necessary.
+     Use '-E/--ignore-empty-row' to skip records whose fields are all empty.
+     Skipped records do not determine the expected number of columns.
      File I/O and decompression errors are not skipped.
      You can also use "csvtk fix" to fix files with different numbers of columns in rows.
   7. If double-quotes exist in fields not enclosed with double-quotes, e.g.,
@@ -334,6 +339,8 @@ Usage
 $ csvtk add-header -h
 
 add column names
+
+All input files must have the same number of columns as the added header.
 
 Usage:
   csvtk add-header [flags]
@@ -4346,6 +4353,7 @@ Field types:
      - From 3rd to 5th column    : -k 3-5
      - Fields except for the 4th : -k -4
      - Fields except for 3rd-5th : -k -3--5
+     - Fields before the 3rd    : -k -3-
 
 Sort types:
   - Default: alphabetical order  : -k 1-
@@ -5260,6 +5268,9 @@ Usage
 $ csvtk transpose -h
 
 transpose CSV data
+
+With -U/--delete-header, omit the first transposed row. With -H/--no-header-row,
+all rows are retained even when -U is set.
 
 Usage:
   csvtk transpose [flags]

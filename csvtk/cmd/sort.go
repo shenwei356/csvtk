@@ -49,6 +49,7 @@ Field types:
      - From 3rd to 5th column    : -k 3-5
      - Fields except for the 4th : -k -4
      - Fields except for 3rd-5th : -k -3--5
+     - Fields before the 3rd    : -k -3-
 
 Sort types:
   - Default: alphabetical order  : -k 1-
@@ -240,6 +241,10 @@ Combinations:
 
 				if found[0][2] == "" {
 					end = ncols
+					if start < 0 {
+						// An exclusion starting past the last column removes nothing.
+						end = min(start, -ncols)
+					}
 				} else {
 					end, err = strconv.Atoi(found[0][2])
 					if err != nil {
@@ -277,8 +282,9 @@ Combinations:
 				}
 
 			} else { // a single field
-				if reDigitals.MatchString(t.FieldStr) { // field number, might be negative
-					field, _ = strconv.Atoi(t.FieldStr)
+				if reIntegers.MatchString(t.FieldStr) { // field number, might be negative
+					field, err = strconv.Atoi(t.FieldStr)
+					checkError(err)
 					if field > 0 {
 						_fields = append(_fields, field-1)
 					} else {
@@ -294,7 +300,7 @@ Combinations:
 					}
 
 					if len(headerRow) > 0 {
-						if reDigitals.MatchString(t.FieldStr) {
+						if reIntegers.MatchString(t.FieldStr) {
 							field, err = strconv.Atoi(t.FieldStr)
 							checkError(err)
 							field--

@@ -52,6 +52,8 @@ Attention:
   6. The CSV parser requires all lines to have the same number of fields/columns.
      Even lines containing only spaces will cause an error.
      Use '-I/--ignore-illegal-row' to skip these lines if necessary.
+     Use '-E/--ignore-empty-row' to skip records whose fields are all empty.
+     Skipped records do not determine the expected number of columns.
      File I/O and decompression errors are not skipped.
      You can also use "csvtk fix" to fix files with different numbers of columns in rows.
   7. If double-quotes exist in fields not enclosed with double-quotes, e.g.,

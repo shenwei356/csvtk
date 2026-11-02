@@ -551,15 +551,9 @@ func validateSummaryNames(names []string, n int) error {
 	return nil
 }
 
+// median uses the same overflow-safe interpolation as the other quantiles.
 func median(sorted []float64) float64 {
-	l := len(sorted)
-	if l == 0 {
-		return 0
-	}
-	if l%2 == 0 {
-		return (sorted[l/2-1] + sorted[l/2]) / 2
-	}
-	return sorted[l/2]
+	return percentileValue(sorted, 0.5)
 }
 
 /*
@@ -579,5 +573,24 @@ func percentileValue(sorted []float64, percentile float64) float64 {
 
 	h := float64(l-1) * percentile
 	fh := math.Floor(h)
-	return sorted[int(fh)] + (h-fh)*(sorted[int(fh)+1]-sorted[int(fh)])
+	left := sorted[int(fh)]
+	weight := h - fh
+	if weight == 0 {
+		return left // Includes the last endpoint, which has no right neighbor.
+	}
+	right := sorted[int(fh)+1]
+	if weight == 0.5 {
+		// Add before halving to retain subnormal midpoint rounding. Only
+		// halve first when the sum overflows, where underflow is impossible.
+		if sum := left + right; !math.IsInf(sum, 0) {
+			return sum / 2
+		}
+		return left/2 + right/2
+	}
+	if math.Signbit(left) != math.Signbit(right) {
+		// Subtracting opposite-sign finite values can overflow.
+		return (1-weight)*left + weight*right
+	}
+	// This form also preserves equal subnormal values without underflow.
+	return left + weight*(right-left)
 }

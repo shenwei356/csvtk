@@ -36,6 +36,8 @@ var addHeaderCmd = &cobra.Command{
 	Short: "add column names",
 	Long: `add column names
 
+All input files must have the same number of columns as the added header.
+
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
@@ -87,12 +89,13 @@ var addHeaderCmd = &cobra.Command{
 				FieldStr: "1-",
 			})
 
+			checkWidth := true // Every input must match the shared output header.
 			for record := range csvReader.Ch {
 				if record.Err != nil {
 					checkError(record.Err)
 				}
 
-				if printHeaderRow {
+				if checkWidth {
 					if len(colnames) == 0 {
 						colnames = make([]string, len(record.All))
 						for i := 0; i < len(record.All); i++ {
@@ -101,6 +104,9 @@ var addHeaderCmd = &cobra.Command{
 					} else if len(colnames) != len(record.All) {
 						checkError(fmt.Errorf("number of fields (%d) and new colnames (%d) do not match", len(record.All), len(colnames)))
 					}
+					checkWidth = false
+				}
+				if printHeaderRow {
 					checkError(writer.Write(colnames))
 					printHeaderRow = false
 				}

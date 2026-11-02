@@ -178,17 +178,42 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 		// Limit parsing in the producer so prefix consumers can finish without
 		// leaving a blocked sender or reading another record from an open pipe.
 		for opt.MaxRecords == 0 || numRecords < opt.MaxRecords {
+			inferWidth := csvReader.Reader.FieldsPerRecord == 0
 			record, err = csvReader.Reader.Read()
 			if err == io.EOF {
 				break
 			}
 
 			lineNum++
+			// Empty rows do not define the table width. A width mismatch alone
+			// must not prevent -E from skipping an otherwise valid empty record.
+			if ignoreEmptyRow && record != nil && (err == nil || errors.Is(err, csv.ErrFieldCount)) {
+				notBlank = false
+				for _, data = range record {
+					if data != "" {
+						notBlank = true
+						break
+					}
+				}
+				if !notBlank {
+					if inferWidth {
+						csvReader.Reader.FieldsPerRecord = 0
+					}
+					csvReader.SkippedEmptyRows++
+					if !csvReader.omitSkippedRowNumbers {
+						csvReader.NumEmptyRows = append(csvReader.NumEmptyRows, lineNum)
+					}
+					continue
+				}
+			}
 			if err != nil {
 				// Only CSV syntax/width errors are recoverable. Retrying a persistent
 				// I/O or decompression error can loop forever and grow the warning list.
 				var parseErr *csv.ParseError
 				if ignoreIllegalRow && errors.As(err, &parseErr) {
+					if inferWidth {
+						csvReader.Reader.FieldsPerRecord = 0 // A partial record cannot define the table width.
+					}
 					csvReader.SkippedIllegalRows++
 					if !csvReader.omitSkippedRowNumbers {
 						csvReader.NumIllegalRows = append(csvReader.NumIllegalRows, lineNum)
@@ -204,23 +229,6 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 
 			if record == nil {
 				continue
-			}
-
-			if ignoreEmptyRow {
-				notBlank = false
-				for _, data = range record {
-					if data != "" {
-						notBlank = true
-						break
-					}
-				}
-				if !notBlank {
-					csvReader.SkippedEmptyRows++
-					if !csvReader.omitSkippedRowNumbers {
-						csvReader.NumEmptyRows = append(csvReader.NumEmptyRows, lineNum)
-					}
-					continue
-				}
 			}
 
 			// ------------------------------------------------------------------

@@ -36,6 +36,9 @@ var transposeCmd = &cobra.Command{
 	Short: "transpose CSV data",
 	Long: `transpose CSV data
 
+With -U/--delete-header, omit the first transposed row. With -H/--no-header-row,
+all rows are retained even when -U is set.
+
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		config := getConfigs(cmd)
@@ -112,6 +115,9 @@ var transposeCmd = &cobra.Command{
 		}()
 
 		for j := uint64(0); j < numCols0; j++ {
+			if j == 0 && config.NoOutHeader && !config.NoHeaderRow {
+				continue // The first input column becomes the output header.
+			}
 			rowNew := make([]string, numRows)
 			for i, rowOld := range data {
 				rowNew[i] = rowOld[j]

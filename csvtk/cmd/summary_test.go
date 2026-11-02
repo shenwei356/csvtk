@@ -1,12 +1,46 @@
 package cmd
 
 import (
+	"math"
 	"os"
 	"os/exec"
 	"reflect"
 	"strings"
 	"testing"
 )
+
+// TestSummaryLargeQuantiles keeps finite order statistics finite.
+func TestSummaryLargeQuantiles(t *testing.T) {
+	for _, tc := range []struct{ values, want string }{
+		{"1e308\n1e308\n", "1.00e+308,1.00e+308,1.00e+308,1.00e+308"},
+		{"-1e308\n1e308\n", "0.00e+00,-5.00e+307,0.00e+00,5.00e+307"},
+	} {
+		input := writeAccuracyInput(t, "input.csv", "x\n"+tc.values)
+		out, _ := runAccuracyCLI(t, "summary", "-f", "x:median,x:q1,x:q2,x:q3", input)
+		want := "x:median,x:q1,x:q2,x:q3\n" + tc.want + "\n"
+		if out != want {
+			t.Errorf("got %q, want %q", out, want)
+		}
+	}
+}
+
+// TestPercentileBoundaries checks exact endpoints and tiny nonzero values.
+func TestPercentileBoundaries(t *testing.T) {
+	for _, tc := range []struct {
+		values  []float64
+		p, want float64
+	}{
+		{[]float64{-1e308, 1e308}, 0, -1e308},
+		{[]float64{-1e308, 1e308}, 1, 1e308},
+		{[]float64{math.SmallestNonzeroFloat64, math.SmallestNonzeroFloat64}, .5, math.SmallestNonzeroFloat64},
+		{[]float64{math.SmallestNonzeroFloat64, 2 * math.SmallestNonzeroFloat64}, .5, 2 * math.SmallestNonzeroFloat64},
+		{[]float64{1, 2, 3, 4}, .25, 1.75},
+	} {
+		if got := percentileValue(tc.values, tc.p); got != tc.want {
+			t.Errorf("percentile(%v, %g) = %g, want %g", tc.values, tc.p, got, tc.want)
+		}
+	}
+}
 
 // TestSummaryOverflowingRange rejects integer conversion errors before expansion.
 func TestSummaryOverflowingRange(t *testing.T) {
