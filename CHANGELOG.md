@@ -28,7 +28,7 @@
         - fix JSON escaping, numeric formatting, and trailing commas with `-K/--skip-key`.
         - require exactly one resolved key column.
     - `csvtk csv2md`:
-        - escape literal pipes and render cell line breaks without breaking the table.
+        - **escape literal pipes and render cell line breaks without breaking the table**.
     - `csvtk csv2rst`:
         - preserve multiline cells and align borders with Unicode padding.
     - `csvtk csv2xlsx`:

@@ -221,7 +221,7 @@ enable the "-t/--tabs" flag.
 
 Usage:
   csvtk [flags]
-  csvtk [command]
+  csvtk [command] 
 
 Commands for Information:
   corr            calculate Pearson correlation between two columns
