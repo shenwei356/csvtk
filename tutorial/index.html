@@ -348,11 +348,11 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#analyzing-otu-table" class="md-nav__link">
-    Analyzing OTU table
+  <a href="#analyzing-an-otu-table" class="md-nav__link">
+    Analyzing an OTU table
   </a>
   
-    <nav class="md-nav" aria-label="Analyzing OTU table">
+    <nav class="md-nav" aria-label="Analyzing an OTU table">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -447,11 +447,11 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#analyzing-otu-table" class="md-nav__link">
-    Analyzing OTU table
+  <a href="#analyzing-an-otu-table" class="md-nav__link">
+    Analyzing an OTU table
   </a>
   
-    <nav class="md-nav" aria-label="Analyzing OTU table">
+    <nav class="md-nav" aria-label="Analyzing an OTU table">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -492,10 +492,10 @@
 
 
 <h1 id="tutorial">Tutorial</h1>
-<h2 id="analyzing-otu-table">Analyzing OTU table</h2>
+<h2 id="analyzing-an-otu-table">Analyzing an OTU table</h2>
 <h3 id="data">Data</h3>
-<p>Here is a mock OTU table from 16S rRNA sequencing result.
-Columns are sample IDs in format of "GROUP.ID"</p>
+<p>Here is a mock OTU table from 16S rRNA sequencing results.
+Columns are sample IDs in the format "GROUP.ID".</p>
 <pre><code>$ cat otu_table.csv
 Taxonomy,A.1,A.2,A.3,B.1,B.2,B.3,C.1,C.2
 Proteobacteria,.13,.29,.13,.16,.13,.22,.30,.23
@@ -536,7 +536,7 @@ otu_table.csv          9          4
 </code></pre>
 </li>
 <li>
-<p>Convert to tab-delimited table</p>
+<p>Convert to a tab-delimited table</p>
 <pre><code>$ csvtk csv2tab otu_table.csv
 Taxonomy        A.1     A.2     A.3     B.1     B.2     B.3     C.1     C.2
 Proteobacteria  .13     .29     .13     .16     .13     .22     .30     .23
@@ -546,7 +546,7 @@ Deferribacteres .17     .00     .24     .01     .01     .01     .01     .01
 </code></pre>
 </li>
 <li>
-<p>Extract data of group A and B and save to file <code>-o otu_table.gAB.csv</code></p>
+<p>Extract data for groups A and B and save it to a file with <code>-o otu_table.gAB.csv</code></p>
 <pre><code>$ csvtk cut -F -f "Taxonomy,A.*,B.*" otu_table.csv -o otu_table.gAB.csv
 
 $ csvtk pretty otu_table.gAB.csv
@@ -558,7 +558,7 @@ Deferribacteres   .17   .00   .24   .01   .01   .01
 </code></pre>
 </li>
 <li>
-<p>Search some rows by fields. Matched parts will be highlighted as red</p>
+<p>Search some rows by fields. Matched parts will be highlighted in red</p>
 <pre><code>$ csvtk grep -f Taxonomy -r -p "tes" otu_table.gAB.csv -T
 </code></pre>
 <p>Result:</p>
@@ -579,7 +579,7 @@ B.3        .22              .41          .29             .01
 </code></pre>
 </li>
 <li>
-<p>Rename name of the first column</p>
+<p>Rename the first column</p>
 <pre><code>$ csvtk rename -f 1 -n "sample" otu_table.gAB.t.csv -o otu_table.gAB.t.r.csv
 
 $ csvtk pretty otu_table.gAB.t.r.csv
@@ -593,7 +593,7 @@ B.3      .22              .41          .29             .01
 </code></pre>
 </li>
 <li>
-<p>Add group column</p>
+<p>Add a group column</p>
 <pre><code>$ csvtk mutate -p "(.+?)\." -n group otu_table.gAB.t.r.csv -o otu_table2.csv
 
 $ csvtk pretty otu_table2.csv
@@ -649,7 +649,7 @@ B.2     .13             .55         .16            .01              Treatment
 </code></pre>
 </li>
 <li>
-<p>Filter samples with abundance greater than 0 in all taxons (columns except for sample and group, you can also use <code>-f "2-5&gt;0"</code>).</p>
+<p>Filter samples with abundance greater than 0 in all taxa (all columns except sample and group; you can also use <code>-f "2-5&gt;0"</code>).</p>
 <pre><code>$ cat otu_table3.csv \
     | csvtk filter -f "2-5&gt;0" \
     | csvtk pretty -s "  "   
@@ -662,7 +662,7 @@ B.3     .22             .41         .29            .01              Treatment
 </code></pre>
 </li>
 <li>
-<p>Most of the time, we may want to remove samples with abundance of 0 in all taxons.</p>
+<p>Most of the time, we may want to remove samples with abundance of 0 in all taxa.</p>
 <pre><code>$ cat otu_table3.csv \
     | csvtk filter -f "2-5&gt;0" --any \
     | csvtk pretty -s "  "

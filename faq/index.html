@@ -518,7 +518,7 @@
 
        &quot;aaa&quot;,&quot;b&quot;&quot;bb&quot;,&quot;ccc&quot;
 </code></pre>
-<p>If a single double-quote exists in one non-quoted-field, an error will be reported. e.g,</p>
+<p>If a single double quote appears in an unquoted field, an error will be reported, e.g.,</p>
 <pre><code>$ echo 'a,abc" xyz,d'
 a,abc" xyz,d
 
@@ -530,7 +530,7 @@ $ echo 'a,abc" xyz,d' | csvtk cut -f 1-
 a,"abc"" xyz",d
 </code></pre>
 <h2 id="extraneous-or-missing-in-quoted-field">extraneous or missing " in quoted-field</h2>
-<p>But for the situation below, <code>-l/--lazy-quotes</code> won't help:</p>
+<p>For the situation below, <code>-l/--lazy-quotes</code> won't help:</p>
 <pre><code>$ echo 'a,"abc" xyz,d'
 a,"abc" xyz,d
 
@@ -545,7 +545,7 @@ $ echo 'a,"abc" xyz,d' | csvtk cut -f 1- -l | csvtk dim
 file  num_cols  num_rows
 -            2         0
 </code></pre>
-<p><strong>You need to use <a href="https://bioinf.shenwei.me/csvtk/usage/#fix-quotes">csvtk fix-quotes</a> (available in v0.29.0 or later versions)</strong>:</p>
+<p><strong>You need to use <a href="https://bioinf.shenwei.me/csvtk/usage/#fix-quotes">csvtk fix-quotes</a> (available in v0.29.0 or later)</strong>:</p>
 <pre><code>$ echo 'a,"abc" xyz,d' | csvtk fix-quotes
 a,"""abc"" xyz",d
 
