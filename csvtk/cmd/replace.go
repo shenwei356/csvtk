@@ -209,6 +209,9 @@ Special replacement symbols:
 
 			// Column names in either selection imply a header, even with -H.
 			if len(targetSelection.names)+len(groupSelection.names) > 0 {
+				if csvReader.NoHeaderRow && config.Verbose {
+					log.Warningf("colnames detected, flag -H (--no-header-row) ignored")
+				}
 				csvReader.NoHeaderRow = false
 			}
 			csvReader.Read(ReadOption{FieldStr: fieldStr, FuzzyFields: fuzzyFields, DoNotAllowDuplicatedColumnName: true})

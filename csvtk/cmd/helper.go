@@ -526,6 +526,7 @@ func newCSVReaderByConfig(config Config, file string) (*CSVReader, error) {
 	reader.omitSkippedRowNumbers = !config.Verbose
 
 	reader.NoHeaderRow = config.NoHeaderRow
+	reader.quiet = !config.Verbose
 
 	return reader, nil
 }

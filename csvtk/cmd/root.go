@@ -49,6 +49,7 @@ Attention:
   4. By default, lines starting with "#" are ignored. If the header row
      starts with "#", set flag "-C" to another uncommon symbol, e.g. '$'.
   5. Do not mix field (column) numbers and names when specifying columns to operate on.
+     Selecting columns by name overrides "-H" and emits a warning (unless --quiet).
   6. The CSV parser requires all lines to have the same number of fields/columns.
      Even lines containing only spaces will cause an error.
      Use '-I/--ignore-illegal-row' to skip these lines if necessary.

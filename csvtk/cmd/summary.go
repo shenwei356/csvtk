@@ -206,6 +206,9 @@ Available operations:
 		}
 
 		if needsHeader {
+			if csvReader.NoHeaderRow && config.Verbose {
+				log.Warningf("colnames detected, flag -H (--no-header-row) ignored")
+			}
 			csvReader.NoHeaderRow = false
 		}
 		csvReader.Read(ReadOption{FieldStr: "1-"})

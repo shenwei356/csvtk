@@ -121,6 +121,9 @@ Flag -U/--delete-header suppresses headers in generated sheets; the source sheet
 		}
 
 		selection := newFieldSelection(fieldStr)
+		if config.NoHeaderRow && len(selection.names) > 0 && config.Verbose {
+			log.Warningf("colnames detected, flag -H (--no-header-row) ignored")
+		}
 		hasHeader := !config.NoHeaderRow || len(selection.names) > 0
 
 		var key string

@@ -10,6 +10,7 @@
 4. By default, lines starting with `#` are ignored. If the header row
     starts with `#`, set flag `-C` to another uncommon symbol, e.g. `$`.
 5. Do not mix field (column) numbers and names when specifying columns to operate on.
+    Selecting columns by name overrides `-H` and emits a warning (unless `--quiet`).
 6. The CSV parser requires all lines to have the same number of fields/columns.
     Even lines containing only spaces will cause an error.
     Use `-I/--ignore-illegal-row` to skip these lines if necessary.
@@ -179,6 +180,7 @@ Attention:
   4. By default, lines starting with "#" are ignored. If the header row
      starts with "#", set flag "-C" to another uncommon symbol, e.g. '$'.
   5. Do not mix field (column) numbers and names when specifying columns to operate on.
+     Selecting columns by name overrides "-H" and emits a warning (unless --quiet).
   6. The CSV parser requires all lines to have the same number of fields/columns.
      Even lines containing only spaces will cause an error.
      Use '-I/--ignore-illegal-row' to skip these lines if necessary.
@@ -221,7 +223,7 @@ enable the "-t/--tabs" flag.
 
 Usage:
   csvtk [flags]
-  csvtk [command] 
+  csvtk [command]
 
 Commands for Information:
   corr            calculate Pearson correlation between two columns
@@ -2468,7 +2470,6 @@ Flags:
                               marks for patterns containing commas, e.g., -p '"A{2,}"'
   -P, --pattern-file string   pattern files (one pattern per line)
   -r, --use-regexp            patterns are regular expressions
-      --verbose               verbose output
 ```
 
 Examples

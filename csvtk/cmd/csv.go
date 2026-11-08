@@ -51,6 +51,8 @@ type CSVReader struct {
 	file string
 	fh   *xopen.Reader
 
+	quiet bool // Suppress reader warnings according to the global quiet setting.
+
 	NoHeaderRow   bool
 	ShowRowNumber bool
 
@@ -137,7 +139,7 @@ func (csvReader *CSVReader) Read(opt ReadOption) {
 			close(csvReader.Ch)
 		}()
 
-		fields, colnames, negativeFields, needParseHeaderRow, x2ends := parseFields(fieldStr, fieldStrSep, csvReader.NoHeaderRow, opt.Verbose)
+		fields, colnames, negativeFields, needParseHeaderRow, x2ends := parseFields(fieldStr, fieldStrSep, csvReader.NoHeaderRow, !csvReader.quiet)
 		var fieldsMap map[int]struct{}
 
 		selectWithColnames := len(fields) == 0

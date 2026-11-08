@@ -1,3 +1,9 @@
+- [csvtk v0.39.1](https://github.com/shenwei356/csvtk/releases/tag/v0.39.1)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.39.1/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.39.1)
+    - `csvtk`:
+        - warn whenever column names override `-H/--no-header-row`.
+    - `csvtk grep`:
+        - remove the unused flag `--verbose`.
 - [csvtk v0.39.0](https://github.com/shenwei356/csvtk/releases/tag/v0.39.0)
 [![Github Releases (by Release)](https://img.shields.io/github/downloads/shenwei356/csvtk/v0.39.0/total.svg)](https://github.com/shenwei356/csvtk/releases/tag/v0.39.0)
     - `csvtk`:
