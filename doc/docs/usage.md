@@ -4354,7 +4354,7 @@ Field types:
      - From 3rd to 5th column    : -k 3-5
      - Fields except for the 4th : -k -4
      - Fields except for 3rd-5th : -k -3--5
-     - Fields before the 3rd    : -k -3-
+     - Fields before the 3rd     : -k -3-
 
 Sort types:
   - Default: alphabetical order  : -k 1-
@@ -4494,37 +4494,37 @@ Examples
         
 - By a range of columns: `csvtk sort -k 1-`, `csvtk sort -k 3-5`, `csvtk sort -k -3--5`.
 
-      $ csvtk pretty testdata/digitals2.csv 
-      f1    f2     f3     f4    f5 
-      ---   ----   ----   ---   ---
-      foo   bar    xyz    1     0  
-      foo   bar2   xyz    1.5   -1 
-      foo   bar2   xyz    3     2  
-      foo   bar    xyz    5     3  
-      foo   bar2   xyz    N/A   4  
-      bar   xyz    abc    NA    2  
-      bar   xyz    abc2   1     -1 
-      bar   xyz    abc    2     0  
-      bar   xyz    abc    1     5  
-      bar   xyz    abc    3     100
-      bar   xyz2   abc3   2     3  
-      bar   xyz2   abc3   2     1
-      
-      $ csvtk sort testdata/digitals2.csv -k 1-3:N -k 4:n | csvtk pretty 
-      f1    f2     f3     f4    f5 
-      ---   ----   ----   ---   ---
-      bar   xyz    abc    1     5  
-      bar   xyz    abc    2     0  
-      bar   xyz    abc    3     100
-      bar   xyz    abc    NA    2  
-      bar   xyz    abc2   1     -1 
-      bar   xyz2   abc3   2     3  
-      bar   xyz2   abc3   2     1  
-      foo   bar    xyz    1     0  
-      foo   bar    xyz    5     3  
-      foo   bar2   xyz    1.5   -1 
-      foo   bar2   xyz    3     2  
-      foo   bar2   xyz    N/A   4
+        $ csvtk pretty testdata/digitals2.csv 
+        f1    f2     f3     f4    f5 
+        ---   ----   ----   ---   ---
+        foo   bar    xyz    1     0  
+        foo   bar2   xyz    1.5   -1 
+        foo   bar2   xyz    3     2  
+        foo   bar    xyz    5     3  
+        foo   bar2   xyz    N/A   4  
+        bar   xyz    abc    NA    2  
+        bar   xyz    abc2   1     -1 
+        bar   xyz    abc    2     0  
+        bar   xyz    abc    1     5  
+        bar   xyz    abc    3     100
+        bar   xyz2   abc3   2     3  
+        bar   xyz2   abc3   2     1
+        
+        $ csvtk sort testdata/digitals2.csv -k 1-3:N -k 4:n | csvtk pretty 
+        f1    f2     f3     f4    f5 
+        ---   ----   ----   ---   ---
+        bar   xyz    abc    1     5  
+        bar   xyz    abc    2     0  
+        bar   xyz    abc    3     100
+        bar   xyz    abc    NA    2  
+        bar   xyz    abc2   1     -1 
+        bar   xyz2   abc3   2     3  
+        bar   xyz2   abc3   2     1  
+        foo   bar    xyz    1     0  
+        foo   bar    xyz    5     3  
+        foo   bar2   xyz    1.5   -1 
+        foo   bar2   xyz    3     2  
+        foo   bar2   xyz    N/A   4
 
 
 - By ***user-defined order***
@@ -4556,37 +4556,37 @@ Examples
 
 - **By date**
 
-      $ csvtk pretty testdata/datesub.csv 
-      ID   Name    In                    Out                
-      --   -----   -------------------   -------------------
-      1    Tom     2023-08-25 11:24:00   2023-08-27 08:33:02
-      2    Sally   2023-08-25 11:28:00   2023-08-26 14:17:35
-      3    Alf     2023-08-26 11:29:00   2023-08-29 20:43:00
-      
-      $ cat testdata/datesub.csv  | csvtk sort -k In:d -k Out:dr | csvtk pretty
-      ID   Name    In                    Out                
-      --   -----   -------------------   -------------------
-      1    Tom     2023-08-25 11:24:00   2023-08-27 08:33:02
-      2    Sally   2023-08-25 11:28:00   2023-08-26 14:17:35
-      3    Alf     2023-08-26 11:29:00   2023-08-29 20:43:00
-  
-      $ csvtk pretty testdata/date3.csv 
-      day       id 
-      -------   ---
-      Oct. 1    a10
-      Jul. 14   b1 
-      Jun. 12   a9 
-      Jul. 4    b2 
-      Dec. 25   b11
+        $ csvtk pretty testdata/datesub.csv 
+        ID   Name    In                    Out                
+        --   -----   -------------------   -------------------
+        1    Tom     2023-08-25 11:24:00   2023-08-27 08:33:02
+        2    Sally   2023-08-25 11:28:00   2023-08-26 14:17:35
+        3    Alf     2023-08-26 11:29:00   2023-08-29 20:43:00
+        
+        $ cat testdata/datesub.csv  | csvtk sort -k In:d -k Out:dr | csvtk pretty
+        ID   Name    In                    Out                
+        --   -----   -------------------   -------------------
+        1    Tom     2023-08-25 11:24:00   2023-08-27 08:33:02
+        2    Sally   2023-08-25 11:28:00   2023-08-26 14:17:35
+        3    Alf     2023-08-26 11:29:00   2023-08-29 20:43:00
+    
+        $ csvtk pretty testdata/date3.csv 
+        day       id 
+        -------   ---
+        Oct. 1    a10
+        Jul. 14   b1 
+        Jun. 12   a9 
+        Jul. 4    b2 
+        Dec. 25   b11
 
-      $ cat testdata/date3.csv | csvtk sort -k 1:d | csvtk pretty 
-      day       id 
-      -------   ---
-      Jun. 12   a9 
-      Jul. 4    b2 
-      Jul. 14   b1 
-      Oct. 1    a10
-      Dec. 25   b11
+        $ cat testdata/date3.csv | csvtk sort -k 1:d | csvtk pretty 
+        day       id 
+        -------   ---
+        Jun. 12   a9 
+        Jul. 4    b2 
+        Jul. 14   b1 
+        Oct. 1    a10
+        Dec. 25   b11
 
 ## shuf
 

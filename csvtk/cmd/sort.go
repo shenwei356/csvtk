@@ -49,7 +49,7 @@ Field types:
      - From 3rd to 5th column    : -k 3-5
      - Fields except for the 4th : -k -4
      - Fields except for 3rd-5th : -k -3--5
-     - Fields before the 3rd    : -k -3-
+     - Fields before the 3rd     : -k -3-
 
 Sort types:
   - Default: alphabetical order  : -k 1-
